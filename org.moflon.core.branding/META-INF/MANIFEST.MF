@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.moflon.core.branding
+Bundle-SymbolicName: org.moflon.core.branding
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: eMoflon Developers
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
