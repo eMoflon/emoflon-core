@@ -1,4 +1,4 @@
-package org.moflon.util;
+package org.moflon.core.utilities.test;
 
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.internal.resources.Workspace;
