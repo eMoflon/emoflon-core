@@ -2,7 +2,7 @@ language: none
 
 build:
   pre_ci_boot:
-    image_name: tomsontom/oracle-java8-mvn
+    image_name: emoflon/emoflon-ci-from-github
     image_tag: latest
     pull: true
 
