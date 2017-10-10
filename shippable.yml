@@ -9,6 +9,7 @@ build:
   ci:
     - sudo apt-get --yes install maven
     - mvn clean install
+    - mvn clean install
    
 integrations:
   # See http://docs.shippable.com/ci/email-notifications/
