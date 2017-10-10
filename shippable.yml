@@ -2,12 +2,12 @@ language: none
 
 build:
   pre_ci_boot:
-    image_name: airdock/oracle-jdk
-    image_tag: 1.8
+    image_name: tomsontom/oracle-java8-mvn
+    image_tag: latest
     pull: true
 
   ci:
-    - sudo apt-get --yes install maven
+    #- sudo apt-get --yes install maven
     - mvn clean install
    
 integrations:
