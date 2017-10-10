@@ -7,7 +7,7 @@ build:
     pull: true
 
   ci:
-    - sudo apt-get install maven
+    - sudo apt-get --yes install maven
     - mvn clean install
    
 integrations:
