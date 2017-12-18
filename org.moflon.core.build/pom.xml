@@ -9,7 +9,7 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>org.moflon.emf.injection</artifactId>
+  <artifactId>org.moflon.core.build</artifactId>
   <packaging>eclipse-plugin</packaging>
 
   <version>1.0.0-SNAPSHOT</version>

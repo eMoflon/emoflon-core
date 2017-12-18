@@ -49,7 +49,7 @@ public class WorkspaceHelper
 
    /**
     * To avoid problems with line endings in version controls systems, all resources serialized by eMoflon should have consistent line endings.
-    * 
+    *
     * The following code snippet shows how to use this option:
     * <pre>
     * Resource resource = ...;
@@ -59,7 +59,7 @@ public class WorkspaceHelper
     * </pre>
     */
    public static final String DEFAULT_RESOURCE_LINE_DELIMITER = "\n";
-   
+
    /**
     * Constants for project structure
     */
@@ -102,7 +102,7 @@ public class WorkspaceHelper
     */
 
    public static final String JAVA_BUILDER_ID = "org.eclipse.jdt.core.javabuilder";
-   
+
    public static final String JAVA_WORKING_SET_ID = "org.eclipse.jdt.ui.JavaWorkingSetPage";
 
    public static final String JAVA_FILE_EXTENSION = "java";
@@ -162,7 +162,7 @@ public class WorkspaceHelper
    public static final String XTEXT_BUILDER_ID = "org.eclipse.xtext.ui.shared.xtextBuilder";
 
    public static final String XTEXT_NATURE_ID = "org.eclipse.xtext.ui.shared.xtextNature";
-   
+
    public static final String MWE2_FILE_EXTENSION = "mwe2";
 
    /**
@@ -183,7 +183,7 @@ public class WorkspaceHelper
 
    /**
     * Adds a file to project root, retrieving its contents from the specified location
-    * 
+    *
     * @param project
     *           the project to which the file will be added
     * @param fileName
@@ -215,10 +215,10 @@ public class WorkspaceHelper
 
    /**
     * Adds and fills a file to project root, containing specified contents as a string
-    * 
+    *
     * If the file does not exist, it is created.
     * If it exists, its contents are overwritten
-    * 
+    *
     * @param project
     *           Name of project the file should be added to
     * @param fileName
@@ -245,9 +245,9 @@ public class WorkspaceHelper
 
    /**
     * Creates the given file (if not exists) and stores the given contents in it.
-    * 
+    *
     * If the file exists, its content is replaced with the given content.
-    * 
+    *
     * @param file
     * @param contents
     * @param monitor
@@ -285,10 +285,10 @@ public class WorkspaceHelper
    }
 
    /**
-    * Creates the given file with the given content if the file does not exist yet. 
-    * 
+    * Creates the given file with the given content if the file does not exist yet.
+    *
     * If the file already exists, nothing happens.
-    * 
+    *
     * @param gitignoreFile the file to be created
     * @param lines the contents of the new file
     * @param monitor the progress monitor
@@ -307,7 +307,7 @@ public class WorkspaceHelper
 
    /**
     * Adds a new folder with name 'folderName' to project
-    * 
+    *
     * @param project
     *           the project on which the folder will be added
     * @param folderName
@@ -329,7 +329,7 @@ public class WorkspaceHelper
 
    /**
     * Creates a folder denoted by the path inside the given project.
-    * 
+    *
     * @param project
     * @param path
     *           the path, separated with {@link WorkspaceHelper#PATH_SEPARATOR}
@@ -368,7 +368,7 @@ public class WorkspaceHelper
 
    /**
     * Returns a handle to the /bin folder of the project
-    * 
+    *
     * @see WorkspaceHelper#BIN_FOLDER
     */
    public static IFolder getBinFolder(IProject project)
@@ -378,7 +378,7 @@ public class WorkspaceHelper
 
    /**
     * Returns a handle to the /src folder of the project
-    * 
+    *
     * @see WorkspaceHelper#SOURCE_FOLDER
     */
    public static IFolder getSourceFolder(IProject project)
@@ -388,7 +388,7 @@ public class WorkspaceHelper
 
    /**
     * Returns a handle to the /gen folder of the project
-    * 
+    *
     * @see WorkspaceHelper#GEN_FOLDER
     */
    public static IFolder getGenFolder(final IProject project)
@@ -398,7 +398,7 @@ public class WorkspaceHelper
 
    /**
     * Returns a handle to the /model folder of the project
-    * 
+    *
     * @see WorkspaceHelper#MODEL_FOLDER
     */
    public static IFolder getModelFolder(final IProject project)
@@ -408,7 +408,7 @@ public class WorkspaceHelper
 
    /**
     * Returns a handle to the /instances folder of the project
-    * 
+    *
     * @see WorkspaceHelper#INSTANCES_FOLDER
     */
    public static IFolder getInstancesFolder(final IProject project)
@@ -418,7 +418,7 @@ public class WorkspaceHelper
 
    /**
     * Returns a handle to the /lib folder of the project
-    * 
+    *
     * @see WorkspaceHelper#LIB_FOLDER
     */
    public static IFolder getLibFolder(final IProject project)
@@ -428,7 +428,7 @@ public class WorkspaceHelper
 
    /**
     * Returns a handle to the /injection folder of the project
-    * 
+    *
     * @see WorkspaceHelper#INJECTION_FOLDER
     */
    public static IFolder getInjectionFolder(final IProject project)
@@ -438,7 +438,7 @@ public class WorkspaceHelper
 
    /**
     * Creates the given folder (and any missing intermediate folders) if it does not exist yet.
-    * 
+    *
     * @param folder
     * @param monitor
     */
@@ -480,7 +480,7 @@ public class WorkspaceHelper
 
    /**
     * Adds natureId to project
-    * 
+    *
     * @param project
     *           Handle to existing project
     * @param natureId
@@ -500,7 +500,7 @@ public class WorkspaceHelper
 
    /**
     * Set up the project to a consistent java project
-    * 
+    *
     * @param project
     *           project to set up as java project
     * @param monitor
@@ -535,7 +535,7 @@ public class WorkspaceHelper
    /**
     * Creates a file at pathToFile with specified contents fileContent. All folders in the path are created if
     * necessary.
-    * 
+    *
     * @param project
     *           Project containing file to be created
     * @param pathToFile
@@ -589,7 +589,7 @@ public class WorkspaceHelper
 
    /**
     * Returns whether the given project is (1) a repository project or (2) an integration project.
-    * 
+    *
     * Returns also false if an exception would be thrown.
     */
    public static boolean isMoflonProjectNoThrow(final IProject project)
@@ -608,7 +608,7 @@ public class WorkspaceHelper
 
    /**
     * Returns whether the project is a an integration project, that is, if it contains generated code of a TGG project.
-    * 
+    *
     * @param project
     *           the project. May be null.
     */
@@ -634,7 +634,7 @@ public class WorkspaceHelper
 
    /**
     * Returns whether the project is a a repository project.
-    * 
+    *
     * @param project
     *           the project. May be null.
     */
@@ -645,7 +645,7 @@ public class WorkspaceHelper
 
    /**
     * Returns whether the project is a a repository project, if an exception is thrown, the method return false.
-    * 
+    *
     * @param project
     *           the project. May be null.
     */
@@ -662,7 +662,7 @@ public class WorkspaceHelper
 
    /**
     * Returns whether the project is a a meta-model project, that is, if it contains a meta-model
-    * 
+    *
     * @param project
     *           the project. May be null.
     */
@@ -673,7 +673,7 @@ public class WorkspaceHelper
 
    /**
     * Same as {@link #isMetamodelProject(IProject)} but catches {@link Exception}s, returning false.
-    * 
+    *
     * @param project
     * @return
     */
@@ -713,9 +713,9 @@ public class WorkspaceHelper
 
    /**
     * Returns the project with the given plugin id in the workspace.
-    * 
+    *
     * If no such project can be found, null is returned.
-    * 
+    *
     * @param pluginId
     *           the plugin id
     * @return the project with the plugin id or null if not such project exists
@@ -750,13 +750,13 @@ public class WorkspaceHelper
 
    /**
     * Returns the file name of the injection file for a given Java file.
-    * 
+    *
     * This method assumes that the first segment in the path is the source folder (e.g.,"/src"). The injection file name
     * is obtained by replacing the first segment of the input file name with {@link WorkspaceHelper#INJECTION_FOLDER}
     * and by replacing the file extension with {@link WorkspaceHelper#INJECTION_FILE_EXTENSION}.
-    * 
+    *
     * The resulting path needs to be resolved against a project via {@link IProject#getFile(IPath)}.
-    * 
+    *
     * @param javaFile
     *           the Java file
     * @return the path to the injection file
@@ -772,14 +772,14 @@ public class WorkspaceHelper
 
    /**
     * Returns the file name of the Java file for a given injection file.
-    * 
+    *
     * This method assumes that the first segment in the path is the injection folder (
     * {@link WorkspaceHelper#INJECTION_FOLDER}). The injection file name is obtained by replacing the first segment of
     * the input file name with {@link WorkspaceHelper#GEN_FOLDER} and by replacing the file extension with
     * {@link WorkspaceHelper#JAVA_FILE_EXTENSION}.
-    * 
+    *
     * The resulting path needs to be resolved against a project via {@link IProject#getFile(IPath)}.
-    * 
+    *
     * @param file
     *           the injection file
     * @return the path to the Java file
@@ -803,7 +803,7 @@ public class WorkspaceHelper
 
    /**
     * Replaces all "." in a package path by "/".
-    * 
+    *
     * @param packageName
     *           the name of the package in xyz.xyz.xyz format
     * @return the name of the package in xyz/xyz/xyz format
@@ -821,9 +821,9 @@ public class WorkspaceHelper
 
    /**
     * Returns a file handle for the EAP file in the given metamodel project.
-    * 
+    *
     * The file need not exist and needs to be checked using {@link IFile#exists()}.
-    * 
+    *
     * @param metamodelProject
     * @return the file handle. Never null.
     */
@@ -834,9 +834,9 @@ public class WorkspaceHelper
 
    /**
     * Returns the file handle of the MOCA tree of a metamodel project.
-    * 
+    *
     * The MOCA tree may not exist and has to be checked using {@link IFile#exists()}.
-    * 
+    *
     * @param metamodelProject
     * @return the file handle. Never null.
     */
@@ -857,9 +857,9 @@ public class WorkspaceHelper
 
    /**
     * Returns the file handle of the changes MOCA tree of a metamodel project.
-    * 
+    *
     * The MOCA tree may not exist and has to be checked using {@link IFile#exists()}.
-    * 
+    *
     * @param metamodelProject
     * @return the file handle. Never null.
     */
@@ -881,7 +881,7 @@ public class WorkspaceHelper
    /**
     * Returns a handle to the default location of a metamodel file ("ecore file") of a repository or integration
     * project.
-    * 
+    *
     * @param project
     *           the project of which to extract the ecore file
     */
@@ -893,7 +893,7 @@ public class WorkspaceHelper
 
    /**
     * Prints the stacktrace of the given {@link Throwable} to a string.
-    * 
+    *
     * If t is null, then the result is the empty string.
     */
    public static String printStacktraceToString(final Throwable t)
@@ -919,7 +919,7 @@ public class WorkspaceHelper
 
    /**
     * Returns a string that represents the severity of the given status object
-    * 
+    *
     * The code of this method has been extracted from {@link Status#toString()}.
     * @param status the status
     * @return the severity (as string)
@@ -948,5 +948,4 @@ public class WorkspaceHelper
          return "severity=" + severity;
       }
    }
-
 }

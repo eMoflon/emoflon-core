@@ -7,15 +7,20 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
-    <module>org.moflon.core.utilities</module>
     <module>org.moflon.core.branding</module>
+    <module>org.moflon.core.build</module>
+    <module>org.moflon.core.utilities</module>
     <module>org.moflon.core.utilities.test</module>
+    <module>org.moflon.emf.injection</module>
+    <module>org.moflon.emf.injection.ide</module>
+    <module>org.moflon.emf.injection.ui</module>
+    <module>org.moflon.emf.build</module>
   </modules>
 
   <properties>
     <tycho-version>1.0.0</tycho-version>
-  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <repositories>
@@ -23,6 +28,15 @@
       <id>oxygen</id>
       <layout>p2</layout>
       <url>http://download.eclipse.org/releases/oxygen</url>
+    </repository>
+    <!-- We could also use the 'target platform' mechanism.
+    But then we should split the .target file, which is not supported by Eclipse PDE.
+    (https://wiki.eclipse.org/Tycho/Target_Platform)
+     -->
+    <repository>
+      <id>gervarro-eclipse</id>
+      <layout>p2</layout>
+      <url>http://gervarro.org/eclipse-utils/integration-2.0.0/</url>
     </repository>
   </repositories>
 
