@@ -2,11 +2,11 @@
 <feature
       id="org.moflon.core.feature"
       label="org.moflon.core.feature"
-      version="1.0.0.qualifier"
+      version="2.32.0.qualifier"
       provider-name="eMoflon Developers"
       plugin="org.moflon.core.branding">
 
-      <description url="http://www.emoflon.org/">
+   <description url="http://www.emoflon.org/">
       This plugin provides the core functionality of the eMoflon toolsuite. Visit emoflon.github.io for more information.
    </description>
 
