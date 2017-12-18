@@ -1,0 +1,18 @@
+
+partial class AttributeConstraintBlackPatternInvocationBuilderImpl {
+
+
+
+@model callSuperAnalyzeDependencies (PatternInvocationBuilder patternInvocationBuilder, StoryPattern storyPattern, Pattern pattern) <--
+
+		super.analyzeDependencies(patternInvocationBuilder, storyPattern,
+				pattern);
+-->
+
+@model concat (String param1, int param2) <--
+
+
+		return param1+"_"+param2;
+-->
+
+}

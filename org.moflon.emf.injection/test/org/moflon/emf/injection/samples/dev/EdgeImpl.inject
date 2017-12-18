@@ -1,0 +1,10 @@
+
+partial class EdgeImpl {
+
+
+
+@model toString () <--
+      return "Edge";
+-->
+
+}

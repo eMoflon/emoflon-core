@@ -1,0 +1,67 @@
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+partial class PrecompilerHelperImpl {
+
+
+
+@model getCommonType (TGGObjectVariable ov, ObjectLinkContainer ovContainer) <--
+
+      Set<EClass> classes = new HashSet<EClass>();
+
+      for (ObjectVariable o : ovContainer.getObjectvariable())
+      {
+         if (o.getName().equals(ov.getName()))
+            classes.add((EClass) o.getType());
+      }
+
+      if (classes.size() == 1)
+         return classes.iterator().next();
+
+      Set<EClass> toBeDeleted = new HashSet<EClass>();
+      for (EClass ec : classes)
+      {
+         for (EClass superType : ec.getEAllSuperTypes())
+         {
+            toBeDeleted.add(superType);
+         }
+      }
+
+      classes.removeAll(toBeDeleted);
+
+      EClass reminder1 = null;
+      EClass reminder2 = null;
+      while (classes.size() != 1)
+      {
+         Iterator<EClass> it = classes.iterator();
+         EClass class1 = it.next();
+         EClass class2 = it.next();
+
+         if (reminder1 != null && reminder2 != null && reminder1.equals(class1) && reminder2.equals(class2))
+         {
+            System.err.println("Couldn't find common type in PrecompilerHelper");
+            return class1;
+         }
+
+         for (EClass superType : class1.getEAllSuperTypes())
+         {
+            if (class2.getEAllSuperTypes().contains(superType))
+            {
+               classes.remove(class1);
+               classes.remove(class2);
+               classes.add(superType);
+            }
+         }
+      }
+
+      return classes.iterator().next();
+-->
+
+@model isSuperType (EClass superType, EClass type) <--
+
+      return type.getEAllSuperTypes().contains(superType);
+-->
+
+}

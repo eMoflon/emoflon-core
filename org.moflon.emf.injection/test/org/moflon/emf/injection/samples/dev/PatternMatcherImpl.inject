@@ -1,0 +1,86 @@
+import java.util.List;
+import org.gervarro.democles.specification.emf.ConstraintParameter;
+import org.gervarro.democles.specification.emf.ConstraintVariable;
+import org.gervarro.democles.specification.emf.PatternBody;
+import org.gervarro.democles.specification.emf.PatternInvocationConstraint;
+
+partial class PatternMatcherImpl {
+
+@members <--
+	private static final int determineParameterIndex(final Pattern pattern,
+			final ConstraintParameter cp) {
+		final PatternBody body = pattern.getBodies().get(0);
+		final ConstraintVariable constraintVariable = cp.getReference();
+		int index = pattern.getSymbolicParameters().indexOf(constraintVariable);
+		if (index < 0) {
+			index = body.getLocalVariables().indexOf(constraintVariable);
+			if (index >= 0) {
+				index += pattern.getSymbolicParameters().size();
+			} else {
+				index = body.getConstants().indexOf(constraintVariable);
+				if (index >= 0) {
+					index += pattern.getSymbolicParameters().size()
+							+ body.getLocalVariables().size();
+				} else {
+					throw new RuntimeException("Invalid constraint parameter");
+				}
+			}
+		}
+		return index;
+	}
+	
+	public static final Adornment getBodyAdornment(final Pattern pattern,
+			final Adornment adornment) {
+		assert pattern.getSymbolicParameters().size() == adornment.size();
+		PatternBody body = pattern.getBodies().get(0);
+		int[] bindings = new int[pattern.getSymbolicParameters().size()
+				+ body.getLocalVariables().size() + body.getConstants().size()];
+		for (int i = 0; i < pattern.getSymbolicParameters().size(); i++) {
+			bindings[i] = adornment.get(i);
+		}
+		int offset = pattern.getSymbolicParameters().size();
+		for (int i = 0; i < body.getLocalVariables().size(); i++) {
+			bindings[offset + i] = Adornment.FREE;
+		}
+		offset += body.getLocalVariables().size();
+		for (int i = 0; i < body.getConstants().size(); i++) {
+			bindings[offset + i] = Adornment.BOUND;
+		}
+		return new Adornment(bindings);
+	}
+	
+	public static final Adornment getNextAdornment(Pattern pattern, Adornment adornment,
+			PatternInvocationConstraint patternInvocationConstraint) {
+		final Adornment result = Adornment.create(adornment);
+		final List<ConstraintParameter> constraintParameters = patternInvocationConstraint
+				.getParameters();
+		for (int operationIndex = 0; operationIndex < constraintParameters
+				.size(); operationIndex++) {
+			final ConstraintParameter cp = constraintParameters
+					.get(operationIndex);
+			final int index = determineParameterIndex(pattern, cp);
+			if (adornment.get(index) > Adornment.BOUND) {
+				result.set(index, Adornment.BOUND);
+			}
+		}
+		return result;
+	}
+
+	public static final Adornment getOperationAdornment(
+			final Pattern pattern,
+			final Adornment adornment,
+			final PatternInvocationConstraint patternInvocationConstraint) {
+		final List<ConstraintParameter> constraintParameters = patternInvocationConstraint
+				.getParameters();
+		final int[] result = new int[constraintParameters.size()];
+		for (int operationIndex = 0; operationIndex < constraintParameters
+				.size(); operationIndex++) {
+			final ConstraintParameter cp = constraintParameters
+					.get(operationIndex);
+			final int index = determineParameterIndex(pattern, cp);
+			result[operationIndex] = adornment.get(index);
+		}
+		return new Adornment(result);
+	}
+-->
+}

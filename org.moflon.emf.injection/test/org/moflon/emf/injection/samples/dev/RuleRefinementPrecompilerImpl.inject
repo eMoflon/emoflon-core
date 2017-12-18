@@ -1,0 +1,89 @@
+
+import java.util.HashMap;
+import org.moflon.tgg.language.TGGLinkVariable;
+import java.util.List;
+import java.util.ArrayList;
+import SDMLanguage.patterns.BindingOperator;
+import SDMLanguage.patterns.BindingSemantics;
+
+partial class RuleRefinementPrecompilerImpl {
+
+
+
+@model unifyLinkVariables (TGGRule unitedRule, TGGRule unifyTargetRule) <--
+
+		HashMap<String, List<TGGLinkVariable>> lvCollection = new HashMap();
+		for (LinkVariable lv : unitedRule.getLinkVariable()) {
+			String entryName = lv.getSource().getName() + lv.getName() + lv.getTarget().getName();
+			if (!lvCollection.containsKey(entryName))
+				lvCollection.put(entryName, new ArrayList());
+
+			lvCollection.get(entryName).add((TGGLinkVariable) lv);
+		}
+
+		////////////////////////////////
+		// take first lv and alter it //
+		////////////////////////////////
+		for (List<TGGLinkVariable> lvList : lvCollection.values()) {
+			boolean setContext = lvList.stream()
+					.filter(ov -> ov.getBindingOperator().equals(BindingOperator.CHECK_ONLY)).count() != 0;
+			if (setContext)
+				lvList.get(0).setBindingOperator(BindingOperator.CHECK_ONLY);
+
+			boolean setNegative = lvList.stream()
+					.filter(lv -> lv.getBindingSemantics().equals(BindingSemantics.NEGATIVE)).count() != 0;
+			if (setNegative)
+				lvList.get(0).setBindingSemantics(BindingSemantics.NEGATIVE);
+
+			unifyTargetRule.getLinkVariable().add(lvList.get(0));
+		}
+
+		// repair lvs to point to ovs that lie in the newly unified rule
+		HashMap<String, ObjectVariable> ovMapping = new HashMap();
+		for (ObjectVariable ov : unifyTargetRule.getObjectVariable())
+			ovMapping.put(ov.getName(), ov);
+
+		for (LinkVariable lv : unifyTargetRule.getLinkVariable()) {
+			lv.setSource(ovMapping.get(lv.getSource().getName()));
+			lv.setTarget(ovMapping.get(lv.getTarget().getName()));
+		}
+-->
+
+@model unifyObjectVariables (TGGRule unitedRule, TGGRule unifyTargetRule) <--
+
+		HashMap<String, List<TGGObjectVariable>> ovCollection = new HashMap();
+
+		// first collect all equally named ovs
+		for (ObjectVariable ov : unitedRule.getObjectVariable()) {
+			if (!ovCollection.containsKey(ov.getName()))
+				ovCollection.put(ov.getName(), new ArrayList());
+
+			ovCollection.get(ov.getName()).add((TGGObjectVariable) ov);
+		}
+
+		////////////////////////////////
+		// take first ov and alter it //
+		////////////////////////////////
+		for (List<TGGObjectVariable> ovList : ovCollection.values()) {
+			for (int i = 1; i < ovList.size(); i++) {
+				// refine type and accumulate constraints and assignments
+				this.unifyType(ovList.get(i), ovList.get(0));
+				ovList.get(0).getAttributeAssignment().addAll(ovList.get(i).getAttributeAssignment());
+				ovList.get(0).getConstraint().addAll(ovList.get(i).getConstraint());
+			}
+
+			boolean setContext = ovList.stream()
+					.filter(ov -> ov.getBindingOperator().equals(BindingOperator.CHECK_ONLY)).count() != 0;
+			if (setContext)
+				ovList.get(0).setBindingOperator(BindingOperator.CHECK_ONLY);
+
+			boolean setNegative = ovList.stream()
+					.filter(ov -> ov.getBindingSemantics().equals(BindingSemantics.NEGATIVE)).count() != 0;
+			if (setNegative)
+				ovList.get(0).setBindingSemantics(BindingSemantics.NEGATIVE);
+
+			unifyTargetRule.getObjectVariable().add(ovList.get(0));
+		}
+-->
+
+}

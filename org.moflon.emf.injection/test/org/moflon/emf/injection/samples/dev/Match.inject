@@ -1,0 +1,14 @@
+
+import java.util.HashSet;
+
+partial class Match {
+
+@members <--
+
+   public HashSet<EObject> getContextHashSet();
+
+   public HashSet<EObject> getCreatedHashSet();
+   
+-->
+
+}

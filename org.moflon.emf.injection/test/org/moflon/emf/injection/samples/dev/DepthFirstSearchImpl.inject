@@ -1,0 +1,10 @@
+partial class DepthFirstSearchImpl {
+
+@model incrementPreTraversalCounter() <--
+	return getPreTraversalCounter()+1;
+-->
+
+@model incrementPostTraversalCounter() <--
+	return getPostTraversalCounter()+1;
+-->
+}

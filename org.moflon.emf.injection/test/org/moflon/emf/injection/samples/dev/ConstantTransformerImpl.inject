@@ -1,0 +1,53 @@
+
+import org.antlr.runtime.ANTLRReaderStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.CommonTree;
+import org.apache.log4j.Logger;
+import org.moflon.core.utilities.LogUtils;
+import org.moflon.moca.MocaUtil;
+import org.moflon.moca.literalExpression.parser.LiteralExpressionLexer;
+import org.moflon.moca.literalExpression.parser.LiteralExpressionParser;
+import java.io.StringReader;
+import java.io.IOException;
+
+partial class ConstantTransformerImpl {
+
+@members <--
+
+   private static final Logger logger = Logger.getLogger(ConstantTransformerImpl.class);
+   
+-->
+
+@model parse (String string) <--
+      try
+      {
+         LiteralExpressionLexer lexer = new LiteralExpressionLexer(new ANTLRReaderStream(new StringReader(string)));
+         CommonTokenStream tokens = new CommonTokenStream(lexer);
+         LiteralExpressionParser parser = new LiteralExpressionParser(tokens);
+         CommonTree result = (CommonTree) parser.main().getTree();
+
+         return MocaUtil.commonTreeToMocaTree(result);
+      } catch (IOException | RecognitionException e)
+      {
+         LogUtils.error(logger, e);
+      }
+      return null;
+-->
+
+@model canCreateDataTypeFromString (EFactory factory, EDataType dataType, String value) <--
+      try
+      {
+         factory.createFromString(dataType, value);
+         return true;
+      } catch (IllegalArgumentException e)
+      {
+         return false;
+      }
+-->
+
+@model canCreateEnumLiteralFromString (EEnum eEnum, String value) <--
+      return eEnum.getEEnumLiteralByLiteral(value) != null;
+-->
+
+}

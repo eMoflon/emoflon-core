@@ -1,0 +1,66 @@
+
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupString;
+import org.stringtemplate.v4.compiler.CompiledST;
+import org.moflon.sdm.constraints.operationspecification.ParamIdentifier;
+import static org.moflon.sdm.constraints.operationspecification.AttributeConstraintsOperationActivator.INNER_ST_DELIMITER;
+import static org.moflon.sdm.constraints.operationspecification.AttributeConstraintsOperationActivator.OUTER_ST_DELIMITER;
+import java.util.List;
+
+partial class OperationSpecificationGroupImpl {
+
+@members <--
+
+   private final static String TEMPLATE_LOC = "platform:/plugin/org.moflon.sdm.constraints.operationspecification/lib/stringtemplates/basicStringtemplateDef.stg";
+   
+-->
+
+@model gernerateTemplate () <--
+
+
+      String finalGroupString = "group BuildInConstraints;";
+      List<ParamIdentifier> parameterIdlist = this.getParameterIDs();
+      for (OperationSpecification opSpec : this.getOperationSpecifications())
+      {
+         String userOpTemplateString = opSpec.getSpecification();
+         String declarationTemplateString = "";
+
+         for (int i = 0; i < parameterIdlist.size(); i++)
+         {
+            String identifier = INNER_ST_DELIMITER + parameterIdlist.get(i).getIdentifier() + INNER_ST_DELIMITER;
+            userOpTemplateString = userOpTemplateString.replace(identifier, OUTER_ST_DELIMITER+"p" + i + "()"+OUTER_ST_DELIMITER+OUTER_ST_DELIMITER+"Param()"+OUTER_ST_DELIMITER);
+            if (opSpec.getAdornmentString().charAt(i) == 'F')
+            {
+               declarationTemplateString = declarationTemplateString + OUTER_ST_DELIMITER+"p" + i + "()"+OUTER_ST_DELIMITER+OUTER_ST_DELIMITER+"Decl()"+OUTER_ST_DELIMITER+";\n";
+            }
+
+         }
+
+         STGroup stg = new STGroup(INNER_ST_DELIMITER, INNER_ST_DELIMITER);
+         stg.loadGroupFile("/", TEMPLATE_LOC);
+         ST decl;
+         if (opSpec.isAlwaysSuccessful())
+         {
+            decl = stg.getInstanceOf("/alwaysSuccessful");
+         } else
+         {
+            decl = stg.getInstanceOf("/notAlwaysSuccessful");
+         }
+
+         decl.add("templateName", this.getOperationIdentifier() + opSpec.getAdornmentString());
+         decl.add("bT", "::=<<");
+         decl.add("eT", ">>");
+
+         ST declST = new ST(declarationTemplateString, OUTER_ST_DELIMITER, OUTER_ST_DELIMITER);
+         stg.rawDefineTemplate("/userDeclaration", declST.impl, null);
+
+         ST operationST = new ST(userOpTemplateString, OUTER_ST_DELIMITER, OUTER_ST_DELIMITER);
+         stg.rawDefineTemplate("/userOperation", operationST.impl, null);
+         finalGroupString = finalGroupString + "\n" + decl.render();
+      }
+      this.setTemplateGroupString(finalGroupString);
+      return null;
+-->
+
+}

@@ -1,0 +1,10 @@
+
+partial class ValidationReportImpl {
+
+
+
+@model getErrorMessageCount () <--
+      return this.getErrorMessages().size();
+-->
+
+}

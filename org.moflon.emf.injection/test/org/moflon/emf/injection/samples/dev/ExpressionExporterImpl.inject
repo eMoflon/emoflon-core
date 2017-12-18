@@ -1,0 +1,22 @@
+partial class ExpressionExporterImpl
+{
+
+@model getComparingOperator(String comparingOperatorString)
+	<--
+
+		if (comparingOperatorString.toLowerCase().equals("equal"))
+			return ComparingOperator.EQUAL;
+		else if (comparingOperatorString.toLowerCase().equals("unequal"))
+			return ComparingOperator.UNEQUAL;
+		else if (comparingOperatorString.toLowerCase().equals("greater"))
+			return ComparingOperator.GREATER;
+		else if (comparingOperatorString.toLowerCase().equals("greater_or_equal"))
+			return ComparingOperator.GREATER_OR_EQUAL;
+		else if (comparingOperatorString.toLowerCase().equals("less"))
+			return ComparingOperator.LESS;
+		else if (comparingOperatorString.toLowerCase().equals("less_or_equal"))
+			return ComparingOperator.LESS_OR_EQUAL;
+		return null;
+	-->
+	 
+}

@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.moflon.emf.injection.ide
+Bundle-Vendor: eMoflon Developers
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: org.moflon.emf.injection.ide; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.moflon.emf.injection,
+ org.eclipse.xtext.ide,
+ org.eclipse.xtext.xbase.ide
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.moflon.emf.injection.ide.contentassist.antlr,
+ org.moflon.emf.injection.ide.contentassist.antlr.internal
+

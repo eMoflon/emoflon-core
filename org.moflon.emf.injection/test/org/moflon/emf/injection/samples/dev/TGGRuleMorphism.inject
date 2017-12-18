@@ -1,0 +1,13 @@
+
+import java.util.Map;
+
+partial class TGGRuleMorphism {
+
+@members <--
+
+
+	public Map<String, EObject> getNodeMappings();
+	
+-->
+
+}

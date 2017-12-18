@@ -1,0 +1,10 @@
+
+partial class PrecompilerImpl {
+
+
+
+@model handleConstraint (TGGRule tggRule, TGGConstraint tggConstraint) <--
+
+-->
+
+}

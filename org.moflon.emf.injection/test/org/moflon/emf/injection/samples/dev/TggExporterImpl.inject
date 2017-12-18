@@ -1,0 +1,91 @@
+
+import java.io.StringReader;
+import java.util.Map;
+import java.util.HashMap;
+
+partial class TggExporterImpl {
+
+@members <--
+
+   private HashMap<String, Metamodel> id2Metamodel = new HashMap<String, Metamodel>();
+
+   private HashMap<Domain, String> domain2metamodelId = new HashMap<Domain, String>();
+
+   private HashMap<TripleGraphGrammar, Node> tggToMocaNode = new HashMap<TripleGraphGrammar, Node>();
+
+   private HashMap<TGGRule, Node> tggRuleToMocaNode = new HashMap<TGGRule, Node>();
+
+   public HashMap<String, Metamodel> getId2Metamodel()
+   {
+      return id2Metamodel;
+   }
+
+   public void setId2Metamodel(HashMap<String, Metamodel> id2Metamodel)
+   {
+      this.id2Metamodel = id2Metamodel;
+   }
+
+   public HashMap<Domain, String> getDomain2metamodelId()
+   {
+      return domain2metamodelId;
+   }
+
+   public void setDomain2metamodelId(HashMap<Domain, String> domain2metamodelId)
+   {
+      this.domain2metamodelId = domain2metamodelId;
+   }
+
+   public Map<TripleGraphGrammar, Node> getTGGToMocaNode()
+   {
+      return this.tggToMocaNode;
+   }
+
+   public Map<TGGRule, Node> getTGGRuleToMocaNode()
+   {
+      return this.tggRuleToMocaNode;
+   }
+   
+-->
+
+@model computeDomainType (Attribute type) <--
+
+      if (type.getValue().toLowerCase().equals("source"))
+         return DomainType.SOURCE;
+      else if (type.getValue().toLowerCase().equals("target"))
+         return DomainType.TARGET;
+      else if (type.getValue().toLowerCase().equals("correspondence"))
+         return DomainType.CORRESPONDENCE;
+      return null;
+-->
+
+@model getAbstractCorrespondenceEClass () <--
+
+      return org.moflon.tgg.runtime.RuntimePackage.eINSTANCE.getAbstractCorrespondence();
+-->
+
+@model getAbstractRule () <--
+
+      return org.moflon.tgg.runtime.RuntimePackage.eINSTANCE.getAbstractRule();
+-->
+
+@model registerDomain (Domain domain, Attribute metamodelGuid) <--
+
+      domain2metamodelId.put(domain, metamodelGuid.getValue());
+-->
+
+@model registerMetamodel (Metamodel mm, Attribute guid) <--
+
+      this.id2Metamodel.put(guid.getValue(), mm);
+-->
+
+@model putTGGWithMocaNode (TripleGraphGrammar tgg, Node node) <--
+
+      this.tggToMocaNode.put(tgg, node);
+-->
+
+@model putTGGRuleWithMocaNode (TGGRule rule, Node node) <--
+
+      this.tggRuleToMocaNode.put(rule, node);
+-->
+
+}

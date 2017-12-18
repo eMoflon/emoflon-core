@@ -1,0 +1,15 @@
+partial class ExpressionTransformerImpl {
+
+@model lookupErrorMessage (Errors errorID) <--
+      if (Errors.MISSING_DELEGATE == errorID) {
+         return "Missing delegate expression transformer";
+      } else if (Errors.UNHANDLED_EXPRESSION == errorID) {
+         return "Unable to handle expression";
+      } else if (Errors.MISSING_PARAMETER_BINDING == errorID) {
+         return "Missing parameter binding";
+      } else if (Errors.INCOMPATIBLE_TYPE == errorID) {
+         return "Incompatible type in expression";
+      }
+      return "Unknown error";
+-->
+}

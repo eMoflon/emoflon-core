@@ -1,0 +1,371 @@
+
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
+import java.util.HashMap;
+import org.moflon.core.mocatomoflon.tgg.KernelRuleMap;
+
+partial class ExporterImpl {
+
+@members <--
+
+   // Bookkeeping collections for postprocessing
+   private HashMap<String, EClassifier> id2eclass = new HashMap<String, EClassifier>();
+
+   private HashMap<EReference, String> ref2targetId = new HashMap<EReference, String>();
+
+   private HashMap<String, EReference> id2ref = new HashMap<String, EReference>();
+
+   private HashMap<String, ObjectVariable> id2ObjectVariable = new HashMap<String, ObjectVariable>();
+
+   private HashMap<String, ActivityNode> id2ActivityNode = new HashMap<String, ActivityNode>();
+
+   private HashMap<String, EAttribute> id2Attribute = new HashMap<String, EAttribute>();
+
+   private HashMap<String, EPackage> id2Package = new HashMap<String, EPackage>();
+
+   private HashMap<String, EOperation> id2Operation = new HashMap<String, EOperation>();
+
+   private HashMap<String, EParameter> id2Parameter = new HashMap<String, EParameter>();
+
+   private HashMap<String, TGGRule> id2TGGRule = new HashMap<String, TGGRule>();
+
+   private HashMap<EReference, String> ref2Opposite = new HashMap<EReference, String>();
+
+   private HashMap<String, ETypeParameter> eTypeParameters = new HashMap<String, ETypeParameter>();
+   
+-->
+
+@model convertArbitraryStringToJavaIdentifier (String string) <--
+
+      if (string.length() == 0)
+      {
+         return "_";
+      }
+      CharacterIterator ci = new StringCharacterIterator(string);
+      StringBuilder sb = new StringBuilder();
+      for (char c = ci.first(); c != CharacterIterator.DONE; c = ci.next())
+      {
+         if (c == ' ')
+            c = '_';
+         if (sb.length() == 0)
+         {
+            if (Character.isJavaIdentifierStart(c))
+            {
+               sb.append(c);
+               continue;
+            } else
+               sb.append('_');
+         }
+         if (Character.isJavaIdentifierPart(c))
+         {
+            sb.append(c);
+         } else
+         {
+            sb.append('_');
+         }
+      }
+      ;
+      return sb.toString();
+-->
+
+@model createEdgeGuard (Attribute guardAttribute) <--
+
+      java.lang.String value = guardAttribute.getValue().toLowerCase();
+      if (value.equals(EdgeGuard.EACH_TIME.toString().toLowerCase()))
+         return EdgeGuard.EACH_TIME;
+      else if (value.equals(EdgeGuard.END.toString().toLowerCase()))
+         return EdgeGuard.END;
+      else if (value.equals(EdgeGuard.FAILURE.toString().toLowerCase()))
+         return EdgeGuard.FAILURE;
+      else if (value.equals(EdgeGuard.SUCCESS.toString().toLowerCase()))
+         return EdgeGuard.SUCCESS;
+      return EdgeGuard.NONE;
+-->
+
+@model postProcessing () <--
+
+      for (EReference reference : ref2targetId.keySet())
+      {
+         // Set targets of references
+         java.lang.String targetId = ref2targetId.get(reference);
+         org.eclipse.emf.ecore.EClassifier target = id2eclass.get(targetId);
+
+         reference.setEType(target);
+
+         // Set opposites of references
+         if (ref2Opposite.containsKey(reference))
+         {
+            java.lang.String oppositeId = ref2Opposite.get(reference);
+            EReference oppositeRef = id2ref.get(oppositeId);
+            reference.setEOpposite(oppositeRef);
+         }
+      }
+
+      // set Types for all Objects which needs a type
+      for (ETypeMap mappingObject : this.getETypeMap())
+      {
+         org.eclipse.emf.ecore.EClassifier newClassifier = null;
+
+         if (mappingObject.getTypeGuid() != "" && mappingObject.getTypeGuid() != null)
+            newClassifier = id2eclass.get(mappingObject.getTypeGuid());
+         else
+            newClassifier = org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier(mappingObject.getTypeString());
+
+         org.eclipse.emf.ecore.ETypedElement elementToBeTyped = null;
+
+         if (mappingObject.getType().equals("EOperation"))
+         {
+            elementToBeTyped = mappingObject.getEoperation();
+         } else if (mappingObject.getType().equals("EParameter"))
+         {
+            elementToBeTyped = mappingObject.getEparameter();
+         }
+
+         else if (mappingObject.getType().equals("EAttribute"))
+         {
+            elementToBeTyped = mappingObject.getEattribute();
+            EAttribute eAttr = (EAttribute) (elementToBeTyped);
+         }
+
+         if (elementToBeTyped != null && newClassifier != null)
+            elementToBeTyped.setEType(newClassifier);
+
+         else if (mappingObject.getType().equals("ObjectVariable"))
+         {
+            ObjectVariable oVa = mappingObject.getObjectvariable();
+            oVa.setType(newClassifier);
+         }
+      }
+
+      // set source and target for LinkVariables and ActivityEdges and
+      // Incoming and Outgoing for
+      // ActivityNodes and ObjectVariables
+
+      for (ConnectorMap conMapObject : this.getConnectormap())
+      {
+         // handle ActivityEdges
+         if (conMapObject.getActivityedge() != null)
+         {
+            ActivityEdge activityEdge = conMapObject.getActivityedge();
+            ActivityNode sourceActivityNode = id2ActivityNode.get(conMapObject.getSourceGuid());
+            ActivityNode targetActivityNode = id2ActivityNode.get(conMapObject.getTargetGuid());
+
+            if (activityEdge == null || sourceActivityNode == null || targetActivityNode == null)
+            {
+               throw new NullPointerException(
+                     "Invalid Activity" + "Edge with Source-GUID = " + conMapObject.getSourceGuid() + " and Target-GUID = " + conMapObject.getTargetGuid());
+            }
+
+            activityEdge.setTarget(targetActivityNode);
+            activityEdge.setSource(sourceActivityNode);
+
+            sourceActivityNode.getOutgoing().add(activityEdge);
+            targetActivityNode.getIncoming().add(activityEdge);
+         }
+         // handle LinkVariables
+         else if (conMapObject.getLinkvariable() != null)
+         {
+            LinkVariable linkVariable = conMapObject.getLinkvariable();
+            ObjectVariable sourceOv = id2ObjectVariable.get(conMapObject.getSourceGuid());
+            ObjectVariable targetOv = id2ObjectVariable.get(conMapObject.getTargetGuid());
+
+            if (sourceOv == null || targetOv == null)
+            {
+               throw new NullPointerException(
+                     "LinkVariable Source-GUID = " + conMapObject.getSourceGuid() + " Target-GUID = " + conMapObject.getTargetGuid() + " is invalid");
+            }
+
+            linkVariable.setTarget(targetOv);
+
+            linkVariable.setSource(sourceOv);
+
+            sourceOv.getOutgoingLink().add(linkVariable);
+            targetOv.getIncomingLink().add(linkVariable);
+
+         }
+      }
+
+      for (ExpressionMap exprMap : this.getExpressionmap())
+      {
+         if (exprMap.getAttributeValueExpression() != null)
+         {
+            EAttribute attribute = id2Attribute.get(exprMap.getAttributeGuid());
+            ObjectVariable ov = id2ObjectVariable.get(exprMap.getObjectGuid());
+            exprMap.getAttributeValueExpression().setAttribute(attribute);
+            exprMap.getAttributeValueExpression().setObject(ov);
+         } else if (exprMap.getObjectVariableExpression() != null)
+         {
+            ObjectVariable ov = id2ObjectVariable.get(exprMap.getObjectGuid());
+            exprMap.getObjectVariableExpression().setObject(ov);
+         } else if (exprMap.getParameterExpression() != null)
+         {
+            EParameter parameter = id2Parameter.get(exprMap.getParameterGuid());
+            exprMap.getParameterExpression().setParameter(parameter);
+         } else if (exprMap.getParameterBinding() != null)
+         {
+            EParameter parameter = id2Parameter.get(exprMap.getParameterGuid());
+            exprMap.getParameterBinding().setParameter(parameter);
+         } else if (exprMap.getMethodCallExpression() != null)
+         {
+            EOperation eOp = id2Operation.get(exprMap.getOperationGuid());
+            exprMap.getMethodCallExpression().setCallee(eOp);
+         } else if (exprMap.getAttributeAssignment() != null)
+         {
+            EAttribute eAt = id2Attribute.get(exprMap.getAttributeGuid());
+            exprMap.getAttributeAssignment().setAttribute(eAt);
+         }
+      }
+
+      for (BaseClassesMap baseMap : this.getBaseclassesmap())
+      {
+         java.lang.String[] guids = baseMap.getBaseClassesGuid().split(" ");
+         if (baseMap.getEclass() != null)
+         {
+            EClass currentClass = baseMap.getEclass();
+            for (java.lang.String guid : guids)
+            {
+               if (!"".equals(guid))
+               {
+                  org.eclipse.emf.ecore.EClassifier currentBaseClass = id2eclass.get(guid);
+                  baseMap.getEclass().getESuperTypes().add((EClass) (currentBaseClass));
+               }
+            }
+         } else if (baseMap.getTGGRule() != null)
+         {
+            TGGRule currentRule = baseMap.getTGGRule();
+            for (java.lang.String guid : guids)
+            {
+               if (guid != "")
+               {
+                  TGGRule currentBaseClass = id2TGGRule.get(guid);
+                  currentRule.getRefines().add(currentBaseClass);
+               }
+            }
+         }
+      }
+
+      for (KernelRuleMap kernelRuleMap : this.getTggexporter().getKernelRuleMap())
+      {
+         java.lang.String kernelGuid = kernelRuleMap.getKernelGuid();
+         if (kernelGuid.trim().length() > 0)
+         {
+            TGGRule kernel = id2TGGRule.get(kernelGuid);
+            TGGRule multi = kernelRuleMap.getTGGRule();
+            multi.setKernel(kernel);
+         }
+      }
+
+      for (org.moflon.tgg.language.Domain domain : this.getTggexporter().getDomain2metamodelId().keySet())
+      {
+         EPackage outermostPkg = this.id2Package.get(this.getTggexporter().getDomain2metamodelId().get(domain));
+         org.moflon.tgg.language.Metamodel mm = org.moflon.tgg.language.impl.LanguageFactoryImpl.eINSTANCE.createMetamodel();
+         mm.setOutermostPackage(outermostPkg);
+         mm.setName(outermostPkg.getName());
+         domain.setMetamodel(mm);
+         domain.getTripleGraphGrammar().getMetamodel().add(mm);
+         java.lang.String lowerName = domain.getType().toString().toLowerCase();
+         java.lang.String rightName = lowerName.substring(0, 1).toUpperCase() + lowerName.substring(1);
+         domain.setName(rightName);
+
+      }
+
+      for (org.moflon.tgg.language.TripleGraphGrammar tgg : this.getTggexporter().getTripleGraphGrammar())
+      {
+         for (TGGRule rule : tgg.getTggRule())
+         {
+            for (org.moflon.tgg.language.Domain actDomain : tgg.getDomain())
+            {
+               if (actDomain.getType() == org.moflon.tgg.language.DomainType.CORRESPONDENCE)
+                  rule.setCorrespondence(actDomain);
+               else if (actDomain.getType() == org.moflon.tgg.language.DomainType.SOURCE)
+                  rule.setSource(actDomain);
+               else if (actDomain.getType() == org.moflon.tgg.language.DomainType.TARGET)
+                  rule.setTarget(actDomain);
+            }
+         }
+
+      }
+
+      for (org.moflon.core.mocatomoflon.tgg.DomainMap map : this.getTggexporter().getDomainNodeMap())
+      {
+         org.moflon.tgg.language.Domain domain = null;
+         org.moflon.tgg.language.TripleGraphGrammar tgg = map.getTripleGraphGrammar();
+         for (org.moflon.tgg.language.Domain currDomain : tgg.getDomain())
+         {
+            if (currDomain.getName().toLowerCase().equals(map.getDomain()))
+               domain = currDomain;
+         }
+         if (map.getTGGObjectVariable() != null)
+         {
+            map.getTGGObjectVariable().setDomain(domain);
+         } else if (map.getAbstractTGGLinkVariable() != null)
+         {
+            map.getAbstractTGGLinkVariable().setDomain(domain);
+         }
+      }
+
+      for (TripleGraphGrammar tgg : this.tggexporter.getTGGToMocaNode().keySet())
+      {
+         Node tggNode = this.tggexporter.getTGGToMocaNode().get(tgg);
+         for (TGGRule rule : tgg.getTggRule())
+         {
+            this.tggexporter.handleCspsNodes(rule, tggNode, tggexporter.getTGGRuleToMocaNode().get(rule));
+         }
+
+      }
+-->
+
+@model registerActivityNode (ActivityNode activityNode, Attribute guidAttribute) <--
+
+      id2ActivityNode.put(guidAttribute.getValue(), activityNode);
+-->
+
+@model registerAttribute (Attribute value, EAttribute eAttribute) <--
+
+      id2Attribute.put(value.getValue(), eAttribute);
+-->
+
+@model registerClass (Attribute id, EClassifier eclass) <--
+
+      id2eclass.put(id.getValue(), eclass);
+-->
+
+@model registerETypeParameter (String id, ETypeParameter eTypeParameter) <--
+
+      eTypeParameters.put(id, eTypeParameter);
+-->
+
+@model registerObjectVariable (Attribute guidAttribute, ObjectVariable objectVariable) <--
+
+      id2ObjectVariable.put(guidAttribute.getValue(), objectVariable);
+-->
+
+@model registerOperation (Attribute value, EOperation operation) <--
+
+      id2Operation.put(value.getValue(), operation);
+-->
+
+@model registerPackage (EPackage pack, Attribute guid) <--
+
+      id2Package.put(guid.getValue(), pack);
+-->
+
+@model registerParameter (Attribute guid, EParameter parameter) <--
+
+      id2Parameter.put(guid.getValue(), parameter);
+-->
+
+@model registerReference (EReference reference, Attribute id, Attribute typeId, Attribute oppositeId) <--
+
+      id2ref.put(id.getValue(), reference);
+      ref2targetId.put(reference, typeId.getValue());
+      if (oppositeId != null)
+         ref2Opposite.put(reference, oppositeId.getValue());
+-->
+
+@model registerTGGRule (Attribute id, TGGRule rule) <--
+
+      this.id2TGGRule.put(id.getValue(), rule);
+-->
+
+}

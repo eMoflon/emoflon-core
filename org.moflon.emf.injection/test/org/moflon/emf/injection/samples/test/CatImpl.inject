@@ -1,0 +1,36 @@
+
+partial class CatImpl {
+
+@members <--
+
+	// arbitrary Cat code
+	private int i = -1;
+
+	public int getI() {
+		return this.i;
+	}
+	
+-->
+
+@model makeSound () <--
+
+		System.out.println("Miau");
+-->
+
+@model eatMiceThenSaySomething (String wordsToSay, int numMice) <--
+
+		System.out.println("Eating " + numMice + ".");
+		System.out.println("Blablabla");
+
+		return true;
+-->
+
+@model saySomethingThenEatMice (int numMice, String wordsToSay) <--
+
+		System.out.println("Blablabla");
+		System.out.println("Eating " + numMice + ".");
+
+		return true;
+-->
+
+}

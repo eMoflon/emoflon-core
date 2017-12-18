@@ -1,0 +1,38 @@
+
+import java.util.HashSet;
+
+
+partial class MatchImpl {
+
+@members <--
+
+   private HashSet<EObject> contextHashSet = null;
+
+   @Override
+   public HashSet<EObject> getContextHashSet()
+   {
+      if (contextHashSet == null)
+      {
+         contextHashSet = new HashSet<EObject>(getContextNodes());
+         contextHashSet.addAll(getContextEdges());
+      }
+
+      return contextHashSet;
+   }
+
+   private HashSet<EObject> createdHashSet = null;
+
+   @Override
+   public HashSet<EObject> getCreatedHashSet()
+   {
+      if (createdHashSet == null)
+      {
+         createdHashSet = new HashSet<EObject>(getToBeTranslatedNodes());
+         createdHashSet.addAll(getToBeTranslatedEdges());
+      }
+
+      return createdHashSet;
+   }
+-->
+
+}

@@ -1,0 +1,18 @@
+
+import java.util.Map;
+
+partial class TggExporter {
+
+@members <--
+
+	public java.util.HashMap<Domain, String> getDomain2metamodelId();
+
+	public java.util.HashMap<String, Metamodel> getId2Metamodel();
+
+	public Map<TripleGraphGrammar, Node> getTGGToMocaNode();
+
+	public Map<TGGRule, Node> getTGGRuleToMocaNode();
+	
+-->
+
+}

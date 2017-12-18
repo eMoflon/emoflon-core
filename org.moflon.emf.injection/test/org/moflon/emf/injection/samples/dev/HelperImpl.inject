@@ -1,0 +1,222 @@
+
+import org.apache.log4j.Logger;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.URIConverter;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.moflon.core.utilities.LogUtils;
+import org.moflon.core.utilities.MoflonUtil;
+import org.moflon.tgg.runtime.RuntimePackage;
+import org.moflon.util.eMoflonSDMUtil;
+
+partial class HelperImpl {
+
+@members <--
+
+   private static Map<String, Integer> indexMap = new HashMap<String, Integer>();
+
+   private static final Logger logger = Logger.getLogger(HelperImpl.class);
+   
+-->
+
+@model isConsistencyCheckGenerated (ApplicationTypes type) <--
+      return !type.equals(ApplicationTypes.FORWARD) && !type.equals(ApplicationTypes.BACKWARD);
+-->
+
+@model ALL () <--
+      return ApplicationTypes.ALL;
+-->
+
+@model FORWARD () <--
+      return ApplicationTypes.FORWARD;
+-->
+
+@model BACKWARD () <--
+      return ApplicationTypes.BACKWARD;
+-->
+
+@model CONSISTENCY () <--
+      return ApplicationTypes.CONSISTENCY;
+-->
+
+@model SIMULTANEOUS () <--
+      return ApplicationTypes.SIMULTANEOUS;
+-->
+
+@model SOURCE () <--
+      return DomainType.SOURCE;
+-->
+
+@model CORRESPONDENCE () <--
+      return DomainType.CORRESPONDENCE;
+-->
+
+@model TARGET () <--
+      return DomainType.TARGET;
+-->
+
+@model CHECK_ONLY () <--
+      return BindingOperator.CHECK_ONLY;
+-->
+
+@model CREATE () <--
+      return BindingOperator.CREATE;
+-->
+
+@model DESTROY () <--
+      return BindingOperator.DESTROY;
+-->
+
+@model MANDATORY () <--
+      return BindingSemantics.MANDATORY;
+-->
+
+@model NEGATIVE () <--
+      return BindingSemantics.NEGATIVE;
+-->
+
+@model OPTIONAL () <--
+      return BindingSemantics.OPTIONAL;
+-->
+
+@model BOUND () <--
+      return BindingState.BOUND;
+-->
+
+@model UNBOUND () <--
+      return BindingState.UNBOUND;
+-->
+
+@model NONE () <--
+      return EdgeGuard.NONE;
+-->
+
+@model SUCCESS () <--
+      return EdgeGuard.SUCCESS;
+-->
+
+@model FAILURE () <--
+      return EdgeGuard.FAILURE;
+-->
+
+@model EACH_TIME () <--
+      return EdgeGuard.EACH_TIME;
+-->
+
+@model END () <--
+      return EdgeGuard.END;
+-->
+
+@model EQUAL () <--
+      return ComparingOperator.EQUAL;
+-->
+
+@model copy (EObject eObject) <--
+      return EcoreUtil.copy(eObject);
+-->
+
+@model convertDirectionToInputDomain (ApplicationTypes direction) <--
+      if (direction == ApplicationTypes.FORWARD)
+         return DomainType.SOURCE;
+      else if (direction == ApplicationTypes.BACKWARD)
+         return DomainType.TARGET;
+      else
+         return null;
+-->
+
+@model determineOperationSignature (String prefix, ApplicationTypes direction, EClass variableType) <--
+      if (prefix.equals("postProcess"))
+         return prefix + direction.toString();
+
+      String shortDir = "BWD";
+      switch (direction)
+      {
+      case FORWARD:
+         shortDir = "FWD";
+         break;
+      case BACKWARD:
+         shortDir = "BWD";
+         break;
+      case CONSISTENCY:
+         shortDir = "CC";
+         break;
+      }
+
+      if (variableType == null)
+         return prefix + "_" + shortDir;
+
+      String key = prefix + "_" + shortDir + "_" + variableType.getName();
+
+      if (indexMap.containsKey(key))
+         indexMap.put(key, indexMap.get(key) + 1);
+      else
+         indexMap.put(key, 0);
+
+      return key + "_" + indexMap.get(key);
+-->
+
+@model determineOutputDomain (ApplicationTypes direction) <--
+      if (direction == ApplicationTypes.FORWARD)
+         return DomainType.TARGET;
+      else if (direction == ApplicationTypes.BACKWARD)
+         return DomainType.SOURCE;
+      else
+         return null;
+-->
+
+@model determineTypeCheckStatement (ObjectVariable ov) <--
+      String ovClassFQN = eMoflonSDMUtil.getFQN(ov.getType());
+      return "org.moflon.util.eMoflonSDMUtil.getFQN(match.getObject(\"" + ov.getName() + "\")" + ".eClass()).equals(\"" + ovClassFQN + "\")";
+-->
+
+@model getEClassFromTGGMetamodel (String className) <--
+      EClassifier result = (EClassifier) RuntimePackage.eINSTANCE.getEClassifier(className);
+
+      if (result == null)
+         result = (EClassifier) org.moflon.tgg.language.csp.CspPackage.eINSTANCE.getEClassifier(className);
+
+      if (result == null)
+         result = (EClassifier) org.moflon.tgg.language.modelgenerator.ModelgeneratorPackage.eINSTANCE.getEClassifier(className);
+
+      if (result == null)
+         result = (EClassifier) org.eclipse.emf.ecore.EcorePackage.eINSTANCE.getEClassifier(className);
+
+      if (result == null)
+         try
+         {
+            throw new Exception("EClass is unknown to TGG Compiler class finder");
+         } catch (Exception e)
+         {
+            LogUtils.error(logger, e);
+         }
+
+      return result;
+-->
+
+@model getEdgeName (String edgeName) <--
+      return "_edge_" + edgeName;
+-->
+
+@model isContainedInGlobalApplicationType (ApplicationTypes globalAppType, ApplicationTypes appType) <--
+      switch (globalAppType)
+      {
+      case ALL:
+         return true;
+      case BACKWARD:
+         return appType == globalAppType;
+      case FORWARD:
+         return appType == globalAppType;
+      default:
+         return true;
+      }
+-->
+
+}

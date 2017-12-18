@@ -1,0 +1,16 @@
+import org.eclipse.emf.ecore.EcorePackage;
+import SDMLanguage.sdmUtil.*;
+
+partial class ModelGenUtilImpl {
+
+
+
+
+@model getEBooleanClass () <--
+
+      // TODO: implement this method here but do not remove the injection marker
+      return EcorePackage.eINSTANCE.getEBoolean();
+-->
+
+
+}

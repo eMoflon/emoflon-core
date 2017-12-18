@@ -1,0 +1,26 @@
+
+partial class DirectedTriangleTopologyControlAlgorithmImpl {
+
+
+
+@model runOnNodePreprocessing (KTCNode node) <--
+      /*
+      										 * This preprocessing method sorts the links increasingly by distance, which should yield better 
+      										 * performance. 
+      										 */
+      final long ticMillis = System.currentTimeMillis();
+      org.eclipse.emf.common.util.ECollections.sort(node.getOutgoingEdges(), new java.util.Comparator<Edge>() {
+         @Override
+         public int compare(Edge o1, Edge o2)
+         {
+            final KTCLink link1 = (KTCLink) o1;
+            final KTCLink link2 = (KTCLink) o2;
+            return Double.compare(link1.getWeight(), link2.getWeight());
+         }
+
+      });
+      final long tocMillis = System.currentTimeMillis();
+      final long durationInMillis = tocMillis - ticMillis;
+-->
+
+}

@@ -1,0 +1,11 @@
+
+partial class CSPImpl {
+
+
+
+@model getValue (String ovName, String attrName) <--
+
+      return getAttributeVariable(ovName, attrName).getValue();
+-->
+
+}

@@ -1,0 +1,37 @@
+
+import org.eclipse.emf.ecore.impl.EcorePackageImpl;
+import org.moflon.core.utilities.MoflonUtil;
+import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
+import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
+import org.moflon.tgg.runtime.impl.RuntimePackageImpl;
+import java.util.regex.Pattern;
+import java.util.Map;
+
+partial class TGGCompilerImpl {
+
+@members <--
+
+   private MoflonPropertiesContainer properties;
+
+   @Override
+   public void setProperties(final MoflonPropertiesContainer moflonProperties)
+   {
+      properties = moflonProperties;
+   }
+
+   @Override
+   public MoflonPropertiesContainer getProperties()
+   {
+      return properties;
+   }
+
+   @Override
+   public String correctPathWithMappings(final String typePath)
+   {
+      Map<String, String> importMappings = MoflonPropertiesContainerHelper.mappingsToMap(properties.getImportMappings());
+      return MoflonUtil.transformPackageNameUsingImportMapping(typePath, importMappings);
+   }
+   
+-->
+
+}
