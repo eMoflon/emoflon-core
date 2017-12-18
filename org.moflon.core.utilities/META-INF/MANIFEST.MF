@@ -34,7 +34,7 @@ Export-Package: antlr,
  org.antlr.stringtemplate.language,
  org.antlr.stringtemplate.misc,
  org.antlr.tool,
- org.moflon.core.utilities;x-friends:="org.moflon.core.utilities.test",
+ org.moflon.core.utilities,
  org.moflon.core.utilities.preferences,
  org.moflon.core.xtext,
  org.moflon.util.plugins.xml,
@@ -61,3 +61,4 @@ Require-Bundle: org.apache.commons.io;bundle-version="[2.0.1,3.0.0)";visibility:
  org.eclipse.pde.core,
  org.eclipse.emf.mwe.core
 Bundle-Activator: org.moflon.core.utilities.MoflonUtilitiesActivator
+Bundle-ActivationPolicy: lazy
