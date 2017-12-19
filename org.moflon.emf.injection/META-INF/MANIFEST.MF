@@ -30,3 +30,4 @@ Export-Package: org.moflon.emf.injection,
  org.moflon.emf.injection.services,
  org.moflon.emf.injection.unparsing,
  org.moflon.emf.injection.validation
+Import-Package: org.apache.log4j
