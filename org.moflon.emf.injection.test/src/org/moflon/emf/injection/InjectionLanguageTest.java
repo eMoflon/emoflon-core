@@ -27,15 +27,15 @@ public class InjectionLanguageTest
    public void setUp() {
       parser = new InjectionLanguageTestParser();
    }
-   
+
    @Test
    public void testEmptyClassInjection() throws Exception
    {
       final URI uri = URI.createFileURI("test/org/moflon/emf/injection/TestEmptyClass.inject");
-      
+
       final InjectionFile injectionFile = InjectionFile.class.cast(parser.parse(uri));
       Assert.assertEquals(0, injectionFile.getImports().size());
-      
+
       final ClassDeclaration classDecl = injectionFile.getClassDeclaration();
       Assert.assertEquals("TestEmptyClass", classDecl.getClassName());
       Assert.assertNull(classDecl.getClassInjectionDeclaration());
@@ -59,7 +59,7 @@ public class InjectionLanguageTest
       classInjectionDeclaration.getBody();
       Assert.assertEquals(0, classDecl.getMethodDeclarations().size());
    }
-   
+
    @Test
    public void testMoflonDevInjections() throws Exception
    {
@@ -111,7 +111,7 @@ public class InjectionLanguageTest
        * Parses a resource specified by an URI and returns the resulting object tree root element.
        * @param uri URI of resource to be parsed
        * @return Root model object
-       * @throws IOException 
+       * @throws IOException
        */
       public EObject parse(URI uri) throws IOException
       {
