@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: eMoflon Preferences Infrastructure
+Bundle-SymbolicName: org.moflon.core.preferences;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: eMoflon Developers
+Require-Bundle: 
+ org.eclipse.core.runtime;bundle-version="[3.5.0,4.0.0)"
+Export-Package: org.moflon.core.preferences
+Bundle-Activator: org.moflon.core.preferences.EMoflonPreferencesActivator
+Bundle-ActivationPolicy: lazy

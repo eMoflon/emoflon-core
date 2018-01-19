@@ -8,5 +8,14 @@ Bundle-Vendor: eMoflon developers
 Require-Bundle: org.eclipse.core.resources;bundle-version="3.0.0",
  org.eclipse.core.runtime;bundle-version="3.0.0",
  org.gervarro.eclipse.workspace.util;bundle-version="2.0.0",
- org.moflon.core.utilities;bundle-version="2.0.0"
+ org.moflon.core.utilities;bundle-version="2.0.0",
+ org.eclipse.emf.ecore,
+ org.moflon.core.propertycontainer,
+ org.gervarro.eclipse.task,
+ org.eclipse.emf.ecore.xmi,
+ org.eclipse.emf.codegen.ecore,
+ org.moflon.emf.injection.ui,
+ org.moflon.emf.injection,
+ org.moflon.core.preferences,
+ org.moflon.emf.codegen
 Export-Package: org.moflon.core.build

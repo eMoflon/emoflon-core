@@ -1,4 +1,4 @@
-package org.moflon.core.utilities.preferences;
+package org.moflon.core.preferences;
 
 /**
  * Platform-independent preferences storage for eMoflon

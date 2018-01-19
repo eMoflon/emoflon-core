@@ -16,10 +16,13 @@ Require-Bundle: org.moflon.emf.injection,
  org.eclipse.compare,
  org.eclipse.xtext.builder,
  org.eclipse.xtend.lib;resolution:=optional,
- org.eclipse.xtext.xbase.lib
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.emf.codegen.ecore,
+ org.moflon.core.utilities
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.moflon.emf.injection.ui.contentassist,
+Export-Package: org.moflon.emf.injection.build,
+ org.moflon.emf.injection.ui.contentassist,
  org.moflon.emf.injection.ui.internal,
  org.moflon.emf.injection.ui.quickfix
 Bundle-Activator: org.moflon.emf.injection.ui.internal.InjectionActivator

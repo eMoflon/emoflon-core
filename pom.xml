@@ -9,11 +9,15 @@
   <modules>
     <module>org.moflon.core.branding</module>
     <module>org.moflon.core.build</module>
+    <module>org.moflon.core.preferences</module>
     <module>org.moflon.core.utilities</module>
     <module>org.moflon.core.utilities.test</module>
+    <module>org.moflon.emf.build</module>
+    <module>org.moflon.emf.codegen</module>
     <module>org.moflon.emf.injection</module>
     <module>org.moflon.emf.injection.ide</module>
     <module>org.moflon.emf.injection.ui</module>
+    <module>org.moflon.emf.injection.test</module>
     <module>org.moflon.emf.build</module>
   </modules>
 

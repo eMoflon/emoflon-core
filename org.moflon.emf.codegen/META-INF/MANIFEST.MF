@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Generic EMF code generation
+Bundle-SymbolicName: org.moflon.emf.codegen
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: eMoflon Developers
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.moflon.codegen,
+ org.moflon.emf.dependency,
+ org.moflon.emf.resource,
+ org.moflon.emf.template
+Require-Bundle: org.eclipse.equinox.registry;bundle-version="3.0.0",
+ org.eclipse.core.runtime;bundle-version="3.0.0",
+ org.eclipse.core.resources;bundle-version="3.0.0",
+ org.eclipse.emf.ecore.xmi;bundle-version="2.0.0",
+ org.eclipse.emf.codegen.ecore;bundle-version="2.13.0";visibility:=reexport,
+ org.moflon.core.propertycontainer;bundle-version="2.0.0",
+ org.moflon.core.utilities;bundle-version="2.0.0",
+ org.moflon.emf.injection,
+ org.moflon.emf.injection.ui
