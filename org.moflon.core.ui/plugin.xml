@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+    <extension point="org.eclipse.ui.perspectives">
+        <perspective class="org.moflon.ide.ui.MoflonPerspective"
+            fixed="false"
+            icon="resources/icons/moflonSmall.png"
+            id="org.moflon.ide.ui.perspective"
+            name="eMoflon"/>
+    </extension>
+</plugin>
