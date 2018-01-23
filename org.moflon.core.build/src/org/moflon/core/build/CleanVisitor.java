@@ -48,11 +48,10 @@ public final class CleanVisitor implements IResourceVisitor
    public boolean visit(final IResource resource)
    {
       final int resourceType = resource.getType();
-      switch (resourceType)
+      if (resourceType == IResource.PROJECT)
       {
-      case IResource.PROJECT:
          return resource.isAccessible() && resource.getProject() == project;
-      case IResource.ROOT:
+      } else if (resourceType != IResource.ROOT)
       {
          final String path = resource.getProjectRelativePath().toString();
 
@@ -67,7 +66,7 @@ public final class CleanVisitor implements IResourceVisitor
                try
                {
                   resource.delete(true, new NullProgressMonitor());
-               } catch (CoreException e)
+               } catch (final CoreException e)
                {
                   // Do nothing
                }
@@ -77,7 +76,6 @@ public final class CleanVisitor implements IResourceVisitor
          {
             return inclusionCondition.isPrefixMatch(path);
          }
-      }
       }
       return false;
 

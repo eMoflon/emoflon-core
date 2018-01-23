@@ -1,6 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
+    <!-- Manually specified part -->
+    <extension
+          point="org.eclipse.ui.handlers">
+        <handler class="org.moflon.emf.injection.ui.handler.CreateInjectionHandler" commandId="org.moflon.ide.ui.commands.build.CreateInjectionCommand">
+      <enabledWhen>
+        <or>
+          <with variable="selection">
+            <iterate ifEmpty="false" operator="and">
+              <and>
+                <or>
+                  <reference definitionId="org.moflon.ide.ui.definitions.hasRepositoryNature"/>
+                  <reference definitionId="org.moflon.ide.ui.definitions.hasIntegrationNature"/>
+                </or>
+                <reference definitionId="org.moflon.ide.ui.definitions.isJavaFile"/>
+                <reference definitionId="org.moflon.ide.ui.definitions.isInGenFolder"/>
+              </and>
+            </iterate>
+            <count value="1"/>
+          </with>
+          <and>
+            <with variable="activeEditorInput">
+              <reference definitionId="org.moflon.ide.ui.definitions.hasAnyMoflonNature"/>
+            </with>
+            <reference definitionId="org.moflon.ide.ui.definitions.isCompilationUnitEditor"/>
+          </and>
+        </or>
+      </enabledWhen>
+    </handler>
+    <handler class="org.moflon.emf.injection.ui.handler.SwitchBetweenJavaAndInjectionFileHandler" commandId="org.moflon.ide.ui.commands.navigate.SwitchBetweenJavaAndInjectionFile">
+      <enabledWhen>
+        <or>
+          <and>
+            <count value="1"/>
+            <iterate ifEmpty="false" operator="and">
+              <or>
+                <reference definitionId="org.moflon.ide.ui.definitions.isJavaFile"/>
+                <reference definitionId="org.moflon.ide.ui.definitions.isInjectFile"/>
+              </or>
+            </iterate>
+          </and>
+          <reference definitionId="org.moflon.ide.ui.definitions.hasJavaEditor"/>
+          <reference definitionId="org.moflon.ide.ui.definitions.hasInjectionEditor"/>
+        </or>
+      </enabledWhen>
+    </handler>
+    </extension>
+    <extension
+          point="org.eclipse.ui.menus">
+          <menuContribution allPopups="false" locationURI="popup:org.moflon.ide.ui.moflon?after=moflonGroupNavigation">
+            <command commandId="org.moflon.ide.ui.commands.build.CreateInjectionCommand" icon="resources/icons/noun_project_7402.png" label="Refresh injection for class" mnemonic="I" style="push" tooltip="Creates or updates the corresponding injection file">
+                <visibleWhen checkEnabled="false"/>
+            </command>
+            <command commandId="org.moflon.ide.ui.commands.navigate.SwitchBetweenJavaAndInjectionFile" label="Class &lt;-&gt;Injection" style="push" tooltip="Switches between Java class and injection file">
+                <visibleWhen checkEnabled="false"/>
+            </command>
+          </menuContribution>
+    </extension>
+    <extension point="org.eclipse.ui.bindings">
+        <key commandId="org.moflon.ide.ui.commands.build.CreateInjectionCommand" contextId="org.eclipse.ui.contexts.window" schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="M2+M3+E I"/>
+        <key commandId="org.moflon.ide.ui.commands.navigate.SwitchBetweenJavaAndInjectionFile" contextId="org.eclipse.ui.contexts.window" schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="M2+M3+E W"/>
+    </extension>
+
+
+      <extension point="org.eclipse.jdt.ui.cleanUps">
+        <cleanUp class="org.moflon.emf.injection.ui.saveaction.CreateInjectionsSaveAction" id="org.moflon.emf.injection.ui.saveaction.CreateInjections"/>
+        <cleanUpOptionsInitializer class="org.moflon.emf.injection.ui.saveaction.CreateInjectionsOptionsInitializer" cleanUpKind="saveAction"/>
+        <cleanUpConfigurationUI class="org.moflon.emf.injection.ui.saveaction.CreateInjectionsConfigurationUI" cleanUpKind="saveAction" name="%cleanup.createInjectionName"/>
+      </extension>
+    <!-- Auto-generated part -->
 	<extension
 		point="org.eclipse.ui.editors">
 		<editor
@@ -59,20 +128,20 @@
 			<and>
 				<reference definitionId="isActiveEditorAnInstanceOfXtextEditor"/>
 				<with variable="activeEditor">
-					<test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-						value="org.moflon.emf.injection.InjectionLanguage" 
+					<test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName"
+						value="org.moflon.emf.injection.InjectionLanguage"
 						forcePluginActivation="true"/>
-				</with>		
+				</with>
 			</and>
 		</definition>
 		<definition id="org.moflon.emf.injection.InjectionLanguage.XtextEditor.opened">
 			<and>
 				<reference definitionId="isXtextEditorActive"/>
 				<with variable="activeEditor">
-					<test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-						value="org.moflon.emf.injection.InjectionLanguage" 
+					<test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName"
+						value="org.moflon.emf.injection.InjectionLanguage"
 						forcePluginActivation="true"/>
-				</with>		
+				</with>
 			</and>
 		</definition>
 	</extension>
@@ -155,7 +224,7 @@
 		</menuContribution>
 		<!-- copy qualified name -->
 		<menuContribution locationURI="popup:#TextEditorContext?after=copy">
-			<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName" 
+			<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName"
 				style="push" tooltip="Copy Qualified Name">
 				<visibleWhen checkEnabled="false">
 					<reference definitionId="org.moflon.emf.injection.InjectionLanguage.Editor.opened" />
@@ -171,7 +240,7 @@
 			</command>
 		</menuContribution>
 		<menuContribution locationURI="popup:org.eclipse.xtext.ui.outline?after=additions">
-			<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedName" 
+			<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedName"
 				style="push" tooltip="Copy Qualified Name">
 				<visibleWhen checkEnabled="false">
 					<and>
@@ -292,7 +361,7 @@
 	<!-- Quick Outline -->
 	<extension
 		point="org.eclipse.ui.handlers">
-		<handler 
+		<handler
 			class="org.moflon.emf.injection.ui.InjectionLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
 			commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
 			<activeWhen>
@@ -352,7 +421,7 @@
 	</extension>
 	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
-		<handler 
+		<handler
 			class="org.moflon.emf.injection.ui.InjectionLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
 			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
 			<activeWhen>

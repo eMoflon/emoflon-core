@@ -31,7 +31,7 @@ public class CrossReferenceResolver implements ITask {
 	@Override
 	public IStatus run(final IProgressMonitor monitor) {
 		final MultiStatus crossReferenceResolutionStatus =
-				new MultiStatus(WorkspaceHelper.getPluginId(getClass()), 0, "Cross reference resolution failed", null);
+				new MultiStatus(WorkspaceHelper.getPluginId(getClass()), 0, "Cross-reference resolution failed", null);
 		resources.add(resource);
 		for (int i = 0; i < resources.size(); i++) {
 			final Resource resource = resources.get(i);

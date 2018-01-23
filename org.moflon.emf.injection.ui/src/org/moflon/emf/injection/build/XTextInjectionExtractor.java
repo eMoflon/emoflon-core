@@ -29,6 +29,8 @@ import org.eclipse.emf.ecore.EOperation;
 import org.moflon.core.utilities.EclipseResourceUtils;
 import org.moflon.core.utilities.MoflonUtil;
 import org.moflon.core.utilities.WorkspaceHelper;
+import org.moflon.emf.injection.ide.InjectionUtilities;
+import org.moflon.emf.injection.ide.InjectionExtractor;
 import org.moflon.emf.injection.injectionLanguage.ClassDeclaration;
 import org.moflon.emf.injection.injectionLanguage.ClassInjectionDeclaration;
 import org.moflon.emf.injection.injectionLanguage.InjectionFile;
@@ -238,8 +240,8 @@ public class XTextInjectionExtractor implements InjectionExtractor
    {
       for (final GenClass genClass : genPackage.getGenClasses())
       {
-         this.fqnToGenClassMap.put(CodeInjectionPlugin.getInterfaceName(genClass), genClass);
-         this.fqnToGenClassMap.put(CodeInjectionPlugin.getClassName(genClass), genClass);
+         this.fqnToGenClassMap.put(InjectionUtilities.getInterfaceName(genClass), genClass);
+         this.fqnToGenClassMap.put(InjectionUtilities.getClassName(genClass), genClass);
       }
       for (final GenPackage subPackage : genPackage.getSubGenPackages())
       {

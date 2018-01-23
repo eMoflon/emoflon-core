@@ -14,9 +14,9 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.moflon.emf.injection.build.CodeInjector;
-import org.moflon.emf.injection.build.InjectionExtractor;
-import org.moflon.emf.injection.build.InjectionManager;
+import org.moflon.emf.injection.ide.CodeInjector;
+import org.moflon.emf.injection.ide.InjectionExtractor;
+import org.moflon.emf.injection.ide.InjectionManager;
 
 /**
  * Unit tests for {@link InjectionManager}

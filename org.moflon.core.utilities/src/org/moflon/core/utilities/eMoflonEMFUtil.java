@@ -18,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -64,6 +65,14 @@ public class eMoflonEMFUtil
    private static final Logger logger = Logger.getLogger(eMoflonEMFUtil.class);
 
    private static Map<EClassifier, String> clazzNames = new HashMap<EClassifier, String>();
+
+   /**
+    * Disabled utility class constructor
+    */
+   private eMoflonEMFUtil()
+   {
+      throw new UtilityClassNotInstantiableException();
+   }
 
    /**
     * Creates a {@link ResourceSetImpl} and performs {@link #initializeDefault(ResourceSetImpl)} on it.
@@ -1196,6 +1205,16 @@ public class eMoflonEMFUtil
          }
       }
       return result;
+   }
+
+   /**
+    * Returns true iff the given resource is a file and has an "ecore" extension
+    * @param ecoreResource the resource to check
+    * @return check result
+    */
+   public static boolean isEcoreFile(final IResource ecoreResource)
+   {
+      return ecoreResource.getType() == IResource.FILE && "ecore".equals(ecoreResource.getFileExtension());
    }
 
 }

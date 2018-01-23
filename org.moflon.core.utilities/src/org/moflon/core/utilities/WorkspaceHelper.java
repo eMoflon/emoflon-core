@@ -98,6 +98,12 @@ public class WorkspaceHelper
    public static final String PLUGIN_ID_ECORE_XMI = "org.eclipse.emf.ecore.xmi";
 
    /**
+    * Constants for EMF codegen
+    */
+   public static final String MOFLON_EMF_BUILDER_ID = "org.moflon.emf.build.MoflonEmfBuilder";
+   public static final String MOFLON_EMF_NATURE_ID = "org.moflon.emf.build.MoflonEmfNature";
+
+   /**
     * Constants for Java
     */
 
@@ -111,49 +117,55 @@ public class WorkspaceHelper
     * Constants for EA/SDM
     */
 
+   @Deprecated
    public static final String METAMODEL_NATURE_ID = "org.moflon.ide.core.runtime.natures.MetamodelNature";
 
+   @Deprecated
    public static final String REPOSITORY_NATURE_ID = "org.moflon.ide.core.runtime.natures.RepositoryNature";
 
+   @Deprecated
    public static final String REPOSITORY_BUILDER_ID = "org.moflon.ide.core.runtime.builders.RepositoryBuilder";
 
+   @Deprecated
    public static final String METAMODEL_BUILDER_ID = "org.moflon.ide.core.runtime.builders.MetamodelBuilder";
 
+   @Deprecated
    public final static String TEMP_FOLDER = ".temp";
 
+   @Deprecated
    public static final String MOCA_XMI_FILE_EXTENSION = ".moca.xmi";
-
-   /**
-    * Constants for eMoflon-GT
-    */
-   public static final String EMOFLON_GT_EXTENSION = "mgt";
-
-   public static final String EMOFLON_GT_NATURE_ID = "org.moflon.gt.ide.natures.EMoflonGTNature";
-
-   public static final String EMOFLON_GT_BUILDER_ID = "org.moflon.gt.ide.builders.EMoflonGTBuilder";
 
    /**
     * Constants for MOSL-TGG
     */
+   @Deprecated
    public static final String MOSL_TGG_EXTENSION = "tgg";
 
+   @Deprecated
    public static final String MOSL_TGG_NATURE = "org.moflon.tgg.mosl.codeadapter.moslTGGNature";
 
+   @Deprecated
    public static final String INTEGRATION_NATURE_ID = "org.moflon.ide.core.runtime.natures.IntegrationNature";
 
+   @Deprecated
    public static final String INTEGRATION_BUILDER_ID = "org.moflon.ide.core.runtime.builders.IntegrationBuilder";
 
+   @Deprecated
    public static final String TGG_FILE_EXTENSION = ".tgg.xmi";
 
+   @Deprecated
    public static final String PRE_TGG_FILE_EXTENSION = ".pre.tgg.xmi";
 
+   @Deprecated
    public static final String PRE_ECORE_FILE_EXTENSION = ".pre.ecore";
 
    /**
     * Constants for ANTLR
     */
+   @Deprecated
    public static final String ANTLR_NATURE_ID = "org.moflon.ide.core.runtime.natures.AntlrNature";
 
+   @Deprecated
    public static final String ANTLR_BUILDER_ID = "org.moflon.ide.core.runtime.builders.AntlrBuilder";
 
    /**
@@ -180,6 +192,7 @@ public class WorkspaceHelper
    public final static String MOFLON_PROBLEM_MARKER_ID = "org.moflon.ide.marker.EMoflonProblem";
 
    public static final String INJECTION_PROBLEM_MARKER_ID = "org.moflon.ide.marker.InjectionProblem";
+
 
    /**
     * Adds a file to project root, retrieving its contents from the specified location
@@ -576,15 +589,7 @@ public class WorkspaceHelper
     */
    public static boolean isMoflonProject(final IProject project) throws CoreException
    {
-      return isRepositoryProject(project) || isIntegrationProject(project) || isMOSLGTProject(project);
-   }
-
-   /**
-    * Returns true if the given project has the {@link #EMOFLON_GT_NATURE_ID}.
-    */
-   private static boolean isMOSLGTProject(IProject project) throws CoreException
-   {
-      return project != null && project.hasNature(EMOFLON_GT_NATURE_ID);
+      return isRepositoryProject(project) || isIntegrationProject(project);
    }
 
    /**
@@ -595,15 +600,6 @@ public class WorkspaceHelper
    public static boolean isMoflonProjectNoThrow(final IProject project)
    {
       return isRepositoryProjectNoThrow(project) || isIntegrationProjectNoThrow(project);
-   }
-
-   /**
-    * Returns whether the given project is (1) a repository project, (2) an integration project, or (3) a metamodel
-    * project
-    */
-   public static boolean isMoflonOrMetamodelProject(final IProject project) throws CoreException
-   {
-      return isMoflonProject(project) || isMetamodelProject(project);
    }
 
    /**

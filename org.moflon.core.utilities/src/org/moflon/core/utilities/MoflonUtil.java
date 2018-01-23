@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
@@ -36,7 +37,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 
 /**
  * A collection of useful helper methods.
- * 
+ *
  */
 public class MoflonUtil
 {
@@ -82,7 +83,7 @@ public class MoflonUtil
 
    /**
     * Copies contents of directory named at sourceDir to directory at destination
-    * 
+    *
     * @param sourceDir
     *           Directory to be copied. Can be located in a jar or in the local filesystem
     * @param destination
@@ -133,7 +134,7 @@ public class MoflonUtil
 
    /**
     * Derive the java data type of a given Ecore data type.
-    * 
+    *
     * @param eCoreType
     *           the name of the Ecore data type class (e.g. EString)
     * @return the name of the java type class (e.g. String)
@@ -158,7 +159,7 @@ public class MoflonUtil
 
    /**
     * Determine fully qualified name of given element by iterating through package hierarchy.
-    * 
+    *
     * @param ENamedElement
     * @return
     */
@@ -179,7 +180,7 @@ public class MoflonUtil
 
    /**
     * Determine fully qualified name of given GenPackage by iterating through package hierarchy.
-    * 
+    *
     */
    public static String getFQN(final GenPackage genPackage)
    {
@@ -199,7 +200,7 @@ public class MoflonUtil
    /**
     * This method realizes our convention for determining the package name of a given EPackage.name In the future this
     * could be replaced by using the genmodel.
-    * 
+    *
     * @param packageName
     * @return
     */
@@ -314,7 +315,7 @@ public class MoflonUtil
    /**
     * This function replaces the first matching prefix of the given package name with the corresponding value of the
     * package name map
-    * 
+    *
     * @param fullyQualifiedPackageName
     *           the package name to be transformed
     * @param packageNameMap
@@ -346,9 +347,9 @@ public class MoflonUtil
 
    /**
     * Formats the given exception for debugging purposes.
-    * 
+    *
     * If available, the root cause and its stacktrace are formatted. Else, the reason of the exception is shown.
-    * 
+    *
     * @param e
     *           the exception to be formatted
     * @return the formatted exception
@@ -380,9 +381,9 @@ public class MoflonUtil
 
    /**
     * Writes the given string to file.
-    * 
+    *
     * If the file does not exist, it gets created
-    * 
+    *
     * @param content
     *           the new file content
     * @param file
@@ -392,13 +393,20 @@ public class MoflonUtil
     */
    public static void writeContentToFile(final String content, final IFile file, final IProgressMonitor monitor) throws CoreException
    {
-      SubMonitor subMon = SubMonitor.convert(monitor, "Write to file", 1);
-      if (!file.exists())
+      final SubMonitor subMon = SubMonitor.convert(monitor, "Write to file " + file, 1);
+      final ByteArrayInputStream byteStream = new ByteArrayInputStream(content.getBytes());
+      try
       {
-         file.create(new ByteArrayInputStream(content.getBytes()), true, subMon.split(1));
-      } else
+         if (!file.exists())
+         {
+            file.create(byteStream, true, subMon.split(1));
+         } else
+         {
+            file.setContents(byteStream, true, true, subMon.split(1));
+         }
+      } finally
       {
-         file.setContents(new ByteArrayInputStream(content.getBytes()), true, true, subMon.split(1));
+         IOUtils.closeQuietly(byteStream);
       }
    }
 }

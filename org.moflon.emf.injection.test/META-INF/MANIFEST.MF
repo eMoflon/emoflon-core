@@ -7,6 +7,5 @@ Bundle-Vendor: eMoflon Developers
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.moflon.emf.injection
 Require-Bundle: org.junit;bundle-version="4.10.0",
- org.moflon.emf.injection,
- org.eclipse.emf.common,
- org.eclipse.xtext
+ org.eclipse.xtext;bundle-version="2.0.0",
+ org.moflon.emf.injection;bundle-version="1.0.0"

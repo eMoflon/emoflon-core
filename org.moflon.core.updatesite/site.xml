@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.moflon.core.feature_2.32.0.qualifier.jar" id="org.moflon.core.feature" version="2.32.0.qualifier">
+      <category name="org.moflore.core.updatesite.category"/>
+   </feature>
+   <category-def name="org.moflore.core.updatesite.category" label="eMoflon Core"/>
+</site>
