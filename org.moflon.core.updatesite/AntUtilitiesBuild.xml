@@ -1,0 +1,45 @@
+<project name="org.emoflon.core.updatesite" default="clean" basedir=".">
+  <description>
+    Helper ant file for the update site of eMoflon.
+
+  	It is **important** that this script runs in the same JRE as the surrounding workspace to allow executing
+  	'eclipse.*' tasks
+  	See "External Tools Configurations..." -> [Run Config] -> JRE -> "Run in the same JRE as workspace"
+  	Otherwise, the task starting with "eclipse" will fail.
+  </description>
+  <!--
+  This target creates an archive that contains a ready-to-upload update site for eMoflon
+  -->
+  <target name="createArchive">
+
+  	<!-- Validate that a representative file is there -->
+  	<available file="artifacts.jar" property="file.exists" />
+  	<fail message="Please build update site first." unless="file.exists" />
+
+  	<delete file="build/updatesite.zip"/>
+  	<zip destfile="build/updatesite.zip"
+  		update="false">
+	    <fileset dir="." includes="features/*" excludes="**/*.signedjar"/>
+	    <fileset dir="." includes="plugins/*" excludes="**/*.signedjar"/>
+	    <fileset dir="." includes="artifacts.jar"/>
+	    <fileset dir="." includes="changelog.txt"/>
+	    <fileset dir="." includes="content.jar"/>
+	    <fileset dir="." includes="index.html"/>
+	    <fileset dir="." includes="site.xml"/>
+  	</zip>
+    <eclipse.refreshLocal resource="org.moflon.core.updatesite" depth="infinite" />
+  </target>
+
+  <!--
+  This target removes all generated artefacts
+  -->
+  <target name="clean" description="Remove generated artifacts">
+    <delete dir="build"/>
+    <delete dir="features"/>
+    <delete dir="plugins"/>
+    <delete file="artifacts.jar"/>
+    <delete file="content.jar"/>
+    <delete file="logs.zip"/>
+  	<eclipse.refreshLocal resource="org.moflon.core.updatesite" depth="infinite" />
+  </target>
+</project>
