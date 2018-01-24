@@ -70,8 +70,7 @@ public final class MonitoredGenModelBuilder implements ITask
 
       // Create EMFCodegen
       String basePackage = "";
-      String modelFolder = WorkspaceHelper.GEN_FOLDER;
-      String modelDirectory = project.getFolder(modelFolder).getFullPath().toString();
+      String modelDirectory = WorkspaceHelper.getGenFolder(project).getFullPath().toString();
 
       MoflonGenModelBuilder genModelBuilder = new MoflonGenModelBuilder(resourceSet, resources, ecoreFile, basePackage, modelDirectory, moflonProperties);
       genModelBuilder.loadDefaultSettings();

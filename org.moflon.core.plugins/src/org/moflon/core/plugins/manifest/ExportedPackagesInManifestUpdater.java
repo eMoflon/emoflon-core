@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.gervarro.eclipse.workspace.util.WorkspaceTask;
-import org.moflon.core.utilities.WorkspaceHelper;
 
 public class ExportedPackagesInManifestUpdater extends WorkspaceTask
 {
@@ -113,7 +112,7 @@ public class ExportedPackagesInManifestUpdater extends WorkspaceTask
    @Override
    public final ISchedulingRule getRule()
    {
-      final IFile manifestFile = WorkspaceHelper.getManifestFile(project);
+      final IFile manifestFile = ManifestFileUpdater.getManifestFile(project);
       return manifestFile.exists() ? manifestFile : manifestFile.getParent();
    }
 }

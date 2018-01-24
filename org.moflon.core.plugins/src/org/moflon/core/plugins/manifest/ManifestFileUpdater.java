@@ -47,6 +47,11 @@ public class ManifestFileUpdater
     **/
    public static final String IGNORE_PLUGIN_ID = "__ignore__";
 
+   public static IFile getManifestFile(final IProject project)
+   {
+      return project.getFolder("META-INF").getFile("MANIFEST.MF");
+   }
+
    /**
     * Delegates to {@link #processManifest(IProject, Function, IProgressMonitor)} using a {@link NullProgressMonitor}
     */
@@ -57,10 +62,10 @@ public class ManifestFileUpdater
 
    /**
     * Modifies the manifest of the given project.
-    * 
+    *
     * The method reads the manifest, applies the given function, and, if the function returns true, saves the manifest
     * again.
-    * 
+    *
     * @param consumer
     *           A function that returns whether it has modified the manifest.
     * @throws CoreException
@@ -69,7 +74,7 @@ public class ManifestFileUpdater
    public void processManifest(final IProject project, final Function<Manifest, Boolean> consumer, final IProgressMonitor monitor) throws CoreException
    {
       final SubMonitor subMon = SubMonitor.convert(monitor, "Processing manifest of project " + project.getName(), 100);
-      IFile manifestFile = WorkspaceHelper.getManifestFile(project);
+      IFile manifestFile = getManifestFile(project);
       Manifest manifest = new Manifest();
 
       if (manifestFile.exists())
@@ -112,7 +117,7 @@ public class ManifestFileUpdater
 
    /**
     * Updates the given attribute in the manifest.
-    * 
+    *
     * @return whether the value of the attribute changed
     */
    public static boolean updateAttribute(final Manifest manifest, final Name attribute, final String value, final AttributeUpdatePolicy updatePolicy)
@@ -139,7 +144,7 @@ public class ManifestFileUpdater
 
    /**
     * Updates the manifest (if necessary) to contain the given dependencies.
-    * 
+    *
     * @param newDependencies
     *           the dependencies to be added (if not present yet)
     * @return whether the manifest was changed
@@ -167,7 +172,7 @@ public class ManifestFileUpdater
 
    /**
     * Removes the given plugin ID from the dependencies of the given manifest
-    * 
+    *
     * @param manifest
     * @return true if the manifest has been modified by this methood, false otherwise
     */
@@ -178,7 +183,7 @@ public class ManifestFileUpdater
 
    /**
     * Removes the given plugin IDs from the dependencies of the given manifest
-    * 
+    *
     * @return true if the manifest has been modified by this methood, false otherwise
     */
    public static boolean removeDependencies(final Manifest manifest, final List<String> dependencyPluginIDsToBeRemoved)
@@ -201,7 +206,7 @@ public class ManifestFileUpdater
 
    /**
     * Removes the given plugin IDs from the dependencies of the given manifest
-    * 
+    *
     * @return true if the manifest has been modified by this methood, false otherwise
     */
    public static boolean replaceDependencies(final Manifest manifest, final Map<String, String> dependencyReplacementMap)
@@ -234,10 +239,10 @@ public class ManifestFileUpdater
 
    /**
     * Calculates all dependencies in newDependencies that are not present in existingDependencies.
-    * 
+    *
     * All dependencies containing {@link ManifestFileUpdater#IGNORE_PLUGIN_ID} are ignored. If a dependency appears in
     * both lists with different metadata (e.g., bundle-version), nothing happens.
-    * 
+    *
     * @param existingDependencies
     * @param newDependencies
     * @return the missing dependencies, a sublist of newDependencies
@@ -257,7 +262,7 @@ public class ManifestFileUpdater
 
    /**
     * Reads the dependencies of the given manifest (i.e., values of the key Require-Bundle) and splits them at commas.
-    * 
+    *
     * @param manifest
     * @return
     */
@@ -270,9 +275,9 @@ public class ManifestFileUpdater
 
    /**
     * Creates an ID-to-project mapping from the given list of projects.
-    * 
+    *
     * The projects must be plugin projects.
-    * 
+    *
     * @param projects
     * @return
     */
@@ -297,7 +302,7 @@ public class ManifestFileUpdater
 
    /**
     * Returns the list of dependencies as plugin id from the manifest file of the given project.
-    * 
+    *
     * @param project
     * @return
     */
@@ -323,7 +328,7 @@ public class ManifestFileUpdater
     * Returns the plugin ID for a given dependency entry, which may contain additional metadata, e.g.
     *
     * Input: org.moflon.ide.core;bundle-version="1.0.0"
-    * 
+    *
     * Output: org.moflon.ide.core
     */
    public static String extractPluginId(final String existingDependency)
@@ -373,7 +378,7 @@ public class ManifestFileUpdater
 
    /**
     * Sets the Require-Bundle property of the given manifest
-    * 
+    *
     * @param manifest
     *           the manifest to be manipulated
     * @param dependencies
@@ -391,7 +396,7 @@ public class ManifestFileUpdater
 
    /**
     * Joins the given list of dependencies using ","
-    * 
+    *
     * @param dependencies
     *           the dependencies
     * @return the dependency string combining all dependencies

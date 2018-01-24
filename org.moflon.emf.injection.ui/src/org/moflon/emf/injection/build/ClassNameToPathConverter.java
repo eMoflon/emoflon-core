@@ -32,21 +32,21 @@ public class ClassNameToPathConverter
 
    /**
     * Produces a project-relative path from the given qualified class name.
-    * 
+    *
     * For instance, the class name "foo.bar.Baz" is converted to "src/foo/bar/Baz.java" if the file separator is '/' and the source folder is 'src'.
-    * 
+    *
     * @param className the class name
     */
    public String toPath(final String className)
    {
-      String relativePath = className.replace('.', this.fileSeparator) + ".java";
-      String projectRelativePath = this.fileSeparator + this.sourceFolder + this.fileSeparator + relativePath;
+      final String relativePath = className.replace('.', this.fileSeparator) + ".java";
+      final String projectRelativePath = this.fileSeparator + this.sourceFolder + this.fileSeparator + relativePath;
       return projectRelativePath;
    }
 
    /**
     * Build the file path for dirty injection.
-    * 
+    *
     * @param folders
     *           Containing folders.
     * @param className
@@ -55,7 +55,7 @@ public class ClassNameToPathConverter
     */
    public String buildPathToJavaFile(List<String> folders, String className)
    {
-      StringBuilder sb = new StringBuilder();
+      final StringBuilder sb = new StringBuilder();
       sb.append(this.fileSeparator);
       sb.append(this.sourceFolder);
       for (int i = 0; i < folders.size(); i++)

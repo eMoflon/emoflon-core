@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
  * Collection of useful methods for EMFCompare
- * 
+ *
  * @author Anthony Anjorin
  */
 public class EmfCompareUtil
@@ -27,16 +27,17 @@ public class EmfCompareUtil
 
    /**
     * Compares actual to expected and returns a list of differences, filtered according to the filter flags.
-    * 
+    *
     * @param actual
     * @param expected
     * @param ignoreReferenceOrder
-    * 
+    *
     * @return <b>Unmodifiable</b> list of filtered differences.
-    * 
+    *
     * @throws IOException
     * @throws InterruptedException
     */
+    @Deprecated
    public static List<Diff> compareAndFilter(final EObject actual, final EObject expected, final boolean ignoreReferenceOrder) throws InterruptedException
    {
       IDiffProcessor diffProcessor = new DiffBuilder();

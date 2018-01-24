@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,12 +26,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.ui.wizards.JavaCapabilityConfigurationPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -45,7 +40,6 @@ public class WorkspaceHelper
    private static final Logger logger = Logger.getLogger(WorkspaceHelper.class);
 
    public final static String PATH_SEPARATOR = "/";
-
 
    /**
     * To avoid problems with line endings in version controls systems, all resources serialized by eMoflon should have consistent line endings.
@@ -66,11 +60,11 @@ public class WorkspaceHelper
 
    public final static String MODEL_FOLDER = "model";
 
-   public static final String SOURCE_FOLDER = "src";
+   private static final String SOURCE_FOLDER = "src";
 
-   public static final String BIN_FOLDER = "bin";
+   private static final String BIN_FOLDER = "bin";
 
-   public static final String LIB_FOLDER = "lib";
+   private static final String LIB_FOLDER = "lib";
 
    public static final String GEN_FOLDER = "gen";
 
@@ -78,7 +72,7 @@ public class WorkspaceHelper
 
    public static final String INJECTION_FILE_EXTENSION = "inject";
 
-   public static final String INSTANCES_FOLDER = "instances";
+   private static final String INSTANCES_FOLDER = "instances";
 
    private static final String KEEP_EMPTY_FOLDER_FILE_NAME_FOR_GIT = ".keep";
 
@@ -98,77 +92,6 @@ public class WorkspaceHelper
    public static final String PLUGIN_ID_ECORE_XMI = "org.eclipse.emf.ecore.xmi";
 
    /**
-    * Constants for EMF codegen
-    */
-   public static final String MOFLON_EMF_BUILDER_ID = "org.moflon.emf.build.MoflonEmfBuilder";
-   public static final String MOFLON_EMF_NATURE_ID = "org.moflon.emf.build.MoflonEmfNature";
-
-   /**
-    * Constants for Java
-    */
-
-   public static final String JAVA_BUILDER_ID = "org.eclipse.jdt.core.javabuilder";
-
-   public static final String JAVA_WORKING_SET_ID = "org.eclipse.jdt.ui.JavaWorkingSetPage";
-
-   public static final String JAVA_FILE_EXTENSION = "java";
-
-   /**
-    * Constants for EA/SDM
-    */
-
-   @Deprecated
-   public static final String METAMODEL_NATURE_ID = "org.moflon.ide.core.runtime.natures.MetamodelNature";
-
-   @Deprecated
-   public static final String REPOSITORY_NATURE_ID = "org.moflon.ide.core.runtime.natures.RepositoryNature";
-
-   @Deprecated
-   public static final String REPOSITORY_BUILDER_ID = "org.moflon.ide.core.runtime.builders.RepositoryBuilder";
-
-   @Deprecated
-   public static final String METAMODEL_BUILDER_ID = "org.moflon.ide.core.runtime.builders.MetamodelBuilder";
-
-   @Deprecated
-   public final static String TEMP_FOLDER = ".temp";
-
-   @Deprecated
-   public static final String MOCA_XMI_FILE_EXTENSION = ".moca.xmi";
-
-   /**
-    * Constants for MOSL-TGG
-    */
-   @Deprecated
-   public static final String MOSL_TGG_EXTENSION = "tgg";
-
-   @Deprecated
-   public static final String MOSL_TGG_NATURE = "org.moflon.tgg.mosl.codeadapter.moslTGGNature";
-
-   @Deprecated
-   public static final String INTEGRATION_NATURE_ID = "org.moflon.ide.core.runtime.natures.IntegrationNature";
-
-   @Deprecated
-   public static final String INTEGRATION_BUILDER_ID = "org.moflon.ide.core.runtime.builders.IntegrationBuilder";
-
-   @Deprecated
-   public static final String TGG_FILE_EXTENSION = ".tgg.xmi";
-
-   @Deprecated
-   public static final String PRE_TGG_FILE_EXTENSION = ".pre.tgg.xmi";
-
-   @Deprecated
-   public static final String PRE_ECORE_FILE_EXTENSION = ".pre.ecore";
-
-   /**
-    * Constants for ANTLR
-    */
-   @Deprecated
-   public static final String ANTLR_NATURE_ID = "org.moflon.ide.core.runtime.natures.AntlrNature";
-
-   @Deprecated
-   public static final String ANTLR_BUILDER_ID = "org.moflon.ide.core.runtime.builders.AntlrBuilder";
-
-   /**
     * Constants for XText
     */
    public static final String XTEXT_BUILDER_ID = "org.eclipse.xtext.ui.shared.xtextBuilder";
@@ -180,7 +103,6 @@ public class WorkspaceHelper
    /**
     * Constants misc
     */
-
    public static final String PLUGIN_NATURE_ID = "org.eclipse.pde.PluginNature"; // PDE.NATURE_ID
 
    public static final String PLUGIN_ID_ECLIPSE_RUNTIME = "org.eclipse.core.runtime";
@@ -280,6 +202,11 @@ public class WorkspaceHelper
       }
    }
 
+   /**
+    * Creates a default ".keep"-file in the given folder. The filename consists of the prefix .keep and the folder name
+    * @param folder the folder to keep in versioning system
+    * @param monitor the progress monitor
+    */
    public static void createKeepFile(final IFolder folder, final IProgressMonitor monitor)
    {
       final String filename = KEEP_EMPTY_FOLDER_FILE_NAME_FOR_GIT + folder.getName();
@@ -369,15 +296,6 @@ public class WorkspaceHelper
       return resource.getType() == IResource.FOLDER;
    }
 
-   public static void clearFolder(final IProject project, final String folder, final IProgressMonitor monitor)
-         throws CoreException, URISyntaxException, IOException
-   {
-      IFolder folderInProject = project.getFolder(folder);
-      final SubMonitor subMon = SubMonitor.convert(monitor, "", folderInProject.members().length);
-
-      for (IResource member : folderInProject.members())
-         member.delete(true, subMon.split(1));
-   }
 
    /**
     * Returns a handle to the /bin folder of the project
@@ -511,39 +429,6 @@ public class WorkspaceHelper
       project.setDescription(description, subMon.split(1));
    }
 
-   /**
-    * Set up the project to a consistent java project
-    *
-    * @param project
-    *           project to set up as java project
-    * @param monitor
-    *           a progress monitor, or null if progress reporting is not desired
-    * @return
-    */
-   public static IJavaProject setUpAsJavaProject(final IProject project, final IProgressMonitor monitor)
-   {
-      final SubMonitor subMon = SubMonitor.convert(monitor, "Set up Java project", 1);
-
-      final JavaCapabilityConfigurationPage jcpage = new JavaCapabilityConfigurationPage();
-      final IJavaProject javaProject = JavaCore.create(project);
-
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-         @Override
-         public void run()
-         {
-            jcpage.init(javaProject, null, null, true);
-            try
-            {
-               jcpage.configureJavaProject(subMon.split(1));
-            } catch (final Exception e)
-            {
-               logger.error("Exception during setup of Java project", e);
-            }
-         }
-      });
-
-      return javaProject;
-   }
 
    /**
     * Creates a file at pathToFile with specified contents fileContent. All folders in the path are created if
@@ -584,120 +469,15 @@ public class WorkspaceHelper
       }
    }
 
-   /**
-    * Returns whether the given project is (1) a repository project or (2) an integration project or (3) a MOSL-GT project
-    */
-   public static boolean isMoflonProject(final IProject project) throws CoreException
-   {
-      return isRepositoryProject(project) || isIntegrationProject(project);
-   }
-
-   /**
-    * Returns whether the given project is (1) a repository project or (2) an integration project.
-    *
-    * Returns also false if an exception would be thrown.
-    */
-   public static boolean isMoflonProjectNoThrow(final IProject project)
-   {
-      return isRepositoryProjectNoThrow(project) || isIntegrationProjectNoThrow(project);
-   }
-
-   /**
-    * Returns whether the project is a an integration project, that is, if it contains generated code of a TGG project.
-    *
-    * @param project
-    *           the project. May be null.
-    */
-   public static boolean isIntegrationProject(final IProject project) throws CoreException
-   {
-      return project.hasNature(INTEGRATION_NATURE_ID);
-   }
-
-   /**
-    * A wrapper around {@link #isIntegrationProject(IProject)}, which returns false if the original method throws an
-    * exception
-    */
-   public static boolean isIntegrationProjectNoThrow(IProject project)
-   {
-      try
-      {
-         return isIntegrationProject(project);
-      } catch (Exception e)
-      {
-         return false;
-      }
-   }
-
-   /**
-    * Returns whether the project is a a repository project.
-    *
-    * @param project
-    *           the project. May be null.
-    */
-   public static boolean isRepositoryProject(final IProject project) throws CoreException
-   {
-      return project != null && project.hasNature(REPOSITORY_NATURE_ID);
-   }
-
-   /**
-    * Returns whether the project is a a repository project, if an exception is thrown, the method return false.
-    *
-    * @param project
-    *           the project. May be null.
-    */
-   public static boolean isRepositoryProjectNoThrow(IProject project)
-   {
-      try
-      {
-         return isRepositoryProject(project);
-      } catch (Exception e)
-      {
-         return false;
-      }
-   }
-
-   /**
-    * Returns whether the project is a a meta-model project, that is, if it contains a meta-model
-    *
-    * @param project
-    *           the project. May be null.
-    */
-   public static boolean isMetamodelProject(final IProject project) throws CoreException
-   {
-      return project != null && project.hasNature(METAMODEL_NATURE_ID);
-   }
-
-   /**
-    * Same as {@link #isMetamodelProject(IProject)} but catches {@link Exception}s, returning false.
-    *
-    * @param project
-    * @return
-    */
-   public static boolean isMetamodelProjectNoThrow(final IProject project)
-   {
-      try
-      {
-         return isMetamodelProject(project);
-      } catch (Exception e)
-      {
-         return false;
-      }
-   }
-
    public static boolean isInjectionFile(final IResource resource)
    {
       return resource != null && isFile(resource) && resource.getName().endsWith("." + INJECTION_FILE_EXTENSION);
    }
 
-   public static boolean isJavaFile(final IResource resource)
-   {
-      return resource != null && isFile(resource) && resource.getName().endsWith("." + JAVA_FILE_EXTENSION);
-   }
-
    /**
     * Returns whether the given resource is of type {@link IResource#FILE}
     */
-   private static boolean isFile(final IResource resource)
+   public static boolean isFile(final IResource resource)
    {
       return resource != null && resource.getType() == IResource.FILE;
    }
@@ -766,53 +546,12 @@ public class WorkspaceHelper
       return fullInjectionPath;
    }
 
-   /**
-    * Returns the file name of the Java file for a given injection file.
-    *
-    * This method assumes that the first segment in the path is the injection folder (
-    * {@link WorkspaceHelper#INJECTION_FOLDER}). The injection file name is obtained by replacing the first segment of
-    * the input file name with {@link WorkspaceHelper#GEN_FOLDER} and by replacing the file extension with
-    * {@link WorkspaceHelper#JAVA_FILE_EXTENSION}.
-    *
-    * The resulting path needs to be resolved against a project via {@link IProject#getFile(IPath)}.
-    *
-    * @param file
-    *           the injection file
-    * @return the path to the Java file
-    */
-   public static IPath getPathToJavaFile(final IFile file)
-   {
-      final IPath packagePath = file.getProjectRelativePath().removeFirstSegments(1);
-      final IPath pathToJavaFile = packagePath.removeFileExtension().addFileExtension(JAVA_FILE_EXTENSION);
-      final IFolder genFolder = file.getProject().getFolder(WorkspaceHelper.GEN_FOLDER);
-      final IPath fullJavaPath = genFolder.getProjectRelativePath().append(pathToJavaFile);
-      return fullJavaPath;
-   }
-
    public static String getFullyQualifiedClassName(final IFile javaFile)
    {
       final IPath packagePath = javaFile.getProjectRelativePath().removeFirstSegments(1);
       final IPath pathToJavaFile = packagePath.removeFileExtension();
       final String fullyQualifiedClassName = pathToJavaFile.toPortableString().replace("/", ".");
       return fullyQualifiedClassName;
-   }
-
-   /**
-    * Replaces all "." in a package path by "/".
-    *
-    * @param packageName
-    *           the name of the package in xyz.xyz.xyz format
-    * @return the name of the package in xyz/xyz/xyz format
-    */
-   public static String formatPackagePath(String packageName)
-   {
-      String packagePath = "/" + packageName.replaceAll("\\.", "/") + "/";
-      return packagePath;
-   }
-
-   public static IFile getManifestFile(final IProject project)
-   {
-      return project.getFolder("META-INF").getFile("MANIFEST.MF");
    }
 
    /**
@@ -826,52 +565,6 @@ public class WorkspaceHelper
    public static IFile getEapFileFromMetamodelProject(final IProject metamodelProject)
    {
       return metamodelProject.getFile(metamodelProject.getName().concat(".eap"));
-   }
-
-   /**
-    * Returns the file handle of the MOCA tree of a metamodel project.
-    *
-    * The MOCA tree may not exist and has to be checked using {@link IFile#exists()}.
-    *
-    * @param metamodelProject
-    * @return the file handle. Never null.
-    */
-   public static IFile getExportedMocaTree(final IProject metamodelProject)
-   {
-      Function<String, IFile> loadMocaTree = name -> metamodelProject.getFolder(TEMP_FOLDER).getFile(name + MOCA_XMI_FILE_EXTENSION);
-
-      IFile mocaTreeFile = loadMocaTree.apply(metamodelProject.getName());
-
-      if (!mocaTreeFile.exists())
-         mocaTreeFile = loadMocaTree.apply(metamodelProject.getName().toUpperCase());
-
-      if (!mocaTreeFile.exists())
-         mocaTreeFile = loadMocaTree.apply(metamodelProject.getName().toLowerCase());
-
-      return mocaTreeFile;
-   }
-
-   /**
-    * Returns the file handle of the changes MOCA tree of a metamodel project.
-    *
-    * The MOCA tree may not exist and has to be checked using {@link IFile#exists()}.
-    *
-    * @param metamodelProject
-    * @return the file handle. Never null.
-    */
-   public static IFile getChangesMocaTree(final IProject metamodelProject)
-   {
-      Function<String, IFile> loadMocaTree = name -> metamodelProject.getFolder(TEMP_FOLDER).getFile(name + ".changes" + MOCA_XMI_FILE_EXTENSION);
-
-      IFile mocaTreeFile = loadMocaTree.apply(metamodelProject.getName());
-
-      if (!mocaTreeFile.exists())
-         mocaTreeFile = loadMocaTree.apply(metamodelProject.getName().toUpperCase());
-
-      if (!mocaTreeFile.exists())
-         mocaTreeFile = loadMocaTree.apply(metamodelProject.getName().toLowerCase());
-
-      return mocaTreeFile;
    }
 
    /**

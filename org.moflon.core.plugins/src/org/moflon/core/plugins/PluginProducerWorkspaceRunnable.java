@@ -110,7 +110,7 @@ public class PluginProducerWorkspaceRunnable implements IWorkspaceRunnable
                ManifestFileUpdater.extractDependencies(getProjectProperties().get(PluginProperties.DEPENDENCIES_KEY)));
 
          // TODO@Cleanup: This code appears to be dead because none of the mentioned projects calls this class (2018-01,23)
-         //         if (WorkspaceHelper.isIntegrationProjectNoThrow(getProject()))
+         //         if (IntegrationNature.isIntegrationProjectNoThrow(getProject()))
          //            changed |= ManifestFileUpdater.updateDependencies(manifest,
          //                  Arrays.asList(new String[] { WorkspaceHelper.DEFAULT_LOG4J_DEPENDENCY, WorkspaceHelper.getPluginId(MocaTreeFactory.class),
          //                        WorkspaceHelper.PLUGIN_ID_ECLIPSE_RUNTIME, WorkspaceHelper.getPluginId(SDMLanguagePlugin.class),

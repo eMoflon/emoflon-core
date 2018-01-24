@@ -95,22 +95,6 @@ public class eMoflonEMFUtil
    }
 
    /**
-    * If using EMF from plain Java (e.g. JUnit Tests), invoke to register EMF defaults as necessary. In a plugin
-    * context, this is not necessary. Note that this method is called on demand from {@link #init(EPackage)} and
-    * loading/saving methods.
-    *
-    * @deprecated use {@link createDefaultResourceSet() createDefaultResourceSet} method
-    */
-   @Deprecated
-   public static void registerXMIFactoryAsDefault()
-   {
-      // Add XMI factory to registry
-      Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
-      Map<String, Object> m = reg.getExtensionToFactoryMap();
-      m.put("*", new XMIResourceFactoryImpl());
-   }
-
-   /**
     * Adds an {@link ECrossReferenceAdapter} to the adapters of the given {@link ResourceSet} if no adapter exists, yet.
     *
     * @param resourceSet
