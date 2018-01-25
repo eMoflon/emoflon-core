@@ -1,10 +1,6 @@
 package org.moflon.emf.injection.tests;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -228,11 +224,10 @@ public class InjectionLanguageTest
       for (final String filename : injectFilenames)
       {
          URL url = getClass().getResource(filename);
-         File file = new File(url.toURI());
-         URI uri = URI.createFileURI(file.getAbsolutePath());
+         URI uri = URI.createURI(url.toURI().toString());
          final InjectionFile injectionFile = InjectionFile.class.cast(parser.parse(uri));
          injectionFiles.add(injectionFile);
-         Assert.assertNotNull("Problem with file: " + file, injectionFile.getClassDeclaration());
+         Assert.assertNotNull("Problem with file: " + filename, injectionFile.getClassDeclaration());
       }
       return injectionFiles;
    }
@@ -268,34 +263,5 @@ public class InjectionLanguageTest
          resource.load(null);
          return resource.getContents().get(0);
       }
-   }
-
-   private List<String> getResourceFiles(final String path) throws IOException
-   {
-      final List<String> filenames = new ArrayList<>();
-
-      try (InputStream in = getResourceAsStream(path); BufferedReader br = new BufferedReader(new InputStreamReader(in)))
-      {
-         String resource;
-
-         while ((resource = br.readLine()) != null)
-         {
-            filenames.add(resource);
-         }
-      }
-
-      return filenames;
-   }
-
-   private InputStream getResourceAsStream(String resource)
-   {
-      final InputStream in = getContextClassLoader().getResourceAsStream(resource);
-
-      return in == null ? getClass().getResourceAsStream(resource) : in;
-   }
-
-   private ClassLoader getContextClassLoader()
-   {
-      return Thread.currentThread().getContextClassLoader();
    }
 }
