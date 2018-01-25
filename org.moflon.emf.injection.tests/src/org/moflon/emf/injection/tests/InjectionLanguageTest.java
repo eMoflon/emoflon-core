@@ -1,7 +1,16 @@
 package org.moflon.emf.injection.tests;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -25,14 +34,17 @@ public class InjectionLanguageTest
    private InjectionLanguageTestParser parser;
 
    @Before
-   public void setUp() {
+   public void setUp()
+   {
       parser = new InjectionLanguageTestParser();
    }
 
    @Test
    public void testEmptyClassInjection() throws Exception
    {
-      final URI uri = URI.createFileURI("src/org/moflon/emf/injection/tests/TestEmptyClass.inject");
+      final String classpathFolderName = "/org/moflon/emf/injection/tests/samples/small/TestEmptyClass.inject";
+      final URL url = getClass().getResource(classpathFolderName);
+      final URI uri = URI.createURI(url.toURI().toString());
 
       final InjectionFile injectionFile = InjectionFile.class.cast(parser.parse(uri));
       Assert.assertEquals(0, injectionFile.getImports().size());
@@ -46,7 +58,9 @@ public class InjectionLanguageTest
    @Test
    public void testVariableInjection() throws Exception
    {
-      final URI uri = URI.createFileURI("src/org/moflon/emf/injection/tests/TestVariable.inject");
+      final String classpathFolderName = "/org/moflon/emf/injection/tests/samples/small/TestVariable.inject";
+      final URL url = getClass().getResource(classpathFolderName);
+      final URI uri = URI.createURI(url.toURI().toString());
 
       final InjectionFile injectionFile = InjectionFile.class.cast(parser.parse(uri));
       Assert.assertEquals(3, injectionFile.getImports().size());
@@ -64,29 +78,163 @@ public class InjectionLanguageTest
    @Test
    public void testMoflonDevInjections() throws Exception
    {
-      final String folder = "org/moflon/emf/injection/tests/samples/dev";
-      final String[] devSampleFiles = new File(folder).list((dir, name) -> name.endsWith(".inject"));
-      for (final String devSampleFile : devSampleFiles)
-      {
-         final String fullPath = folder + "/" + devSampleFile;
-         final URI uri = URI.createFileURI(fullPath);
-         final InjectionFile injectionFile = InjectionFile.class.cast(parser.parse(uri));
-         Assert.assertNotNull("Problem with file: " + fullPath, injectionFile.getClassDeclaration());
-      }
+      final String classpathFolderName = "/org/moflon/emf/injection/tests/samples/dev";
+      final List<String> filenames = Arrays.asList("AbstractClassNodeRuleImpl.inject", //
+            "AddedEdgeForAllNewRuleImpl.inject", //
+            "AddedEdgeForExistingNodesRuleImpl.inject", //
+            "AttributeConstraintBlackAndNacPatternTransformerImpl.inject", //
+            "AttributeConstraintBlackPatternInvocationBuilderImpl.inject", //
+            "AttributeConstraintGreenPatternTransformerImpl.inject", //
+            "AttributeConstraintLibraryImpl.inject", //
+            "AttributeConstraintLibUtilImpl.inject", //
+            "AttributeConstraintsExporterImpl.inject", //
+            "AttributeDeltaForCreationRuleImpl.inject", //
+            "AttributeDeltaForExistingRuleImpl.inject", //
+            "AttributeVariableImpl.inject", //
+            "BindingAndBlackPatternBuilderImpl.inject", //
+            "BindingFeatureHelperImpl.inject", //
+            "BlackAndNacPatternTransformerImpl.inject", //
+            "BlackPatternBuilderImpl.inject", //
+            "BoxImpl.inject", //
+            "CatImpl.inject", //
+            "CCHelperImpl.inject", //
+            "CCMatch.inject", //
+            "CCMatchImpl.inject", //
+            "CodeAdapterImpl.inject", //
+            "ConstantTransformerImpl.inject", //
+            "ContentContainerImpl.inject", //
+            "ControlFlowBuilderImpl.inject", //
+            "CoordinateImpl.inject", //
+            "CspCodeGeneratorHelperImpl.inject", //
+            "CspCodeGeneratorImpl.inject", //
+            "CSPImpl.inject", //
+            "CSPPrecompilerHelperImpl.inject", //
+            "CSPSearchPlanAdapterImpl.inject", //
+            "DatabaseValidationImpl.inject", //
+            "DECNACAnalysisImpl.inject", //
+            "DefaultExpressionTransformerImpl.inject", //
+            "DeltaAxiomImpl.inject", //
+            "DepthFirstSearchImpl.inject", //
+            "DirectedTriangleTopologyControlAlgorithmImpl.inject", //
+            "Ecore2MocaXMIConverterAdapterImpl.inject", //
+            "EdgeImpl.inject", //
+            "EdgeStateBasedConnectivityConstraintImpl.inject", //
+            "EMoflonEdgeImpl.inject", //
+            "ExistingInheritanceRuleImpl.inject", //
+            "ExporterImpl.inject", //
+            "ExportUtilImpl.inject", //
+            "ExpressionExporterImpl.inject", //
+            "ExpressionTransformerImpl.inject", //
+            "ExtendsToNodeRuleImpl.inject", //
+            "GraphElementImpl.inject", //
+            "GraphImpl.inject", //
+            "HelperImpl.inject", //
+            "IdentifierAllocatorImpl.inject", //
+            "IdentifyerHelperImpl.inject", //
+            "InjectionHelperImpl.inject", //
+            "LinkImpl.inject", //
+            "LinkVariablePostProcessingHelperImpl.inject", //
+            "Match.inject", //
+            "MatchImpl.inject", //
+            "MemberImpl.inject", //
+            "MemoryBoxUtilImpl.inject", //
+            "MocaCompareImpl.inject", //
+            "ModelgeneratorRuleResultImpl.inject", //
+            "ModelGenUtilImpl.inject", //
+            "MoDiscoTGGPreprocessingImpl.inject", //
+            "NacPatternBuilderImpl.inject", //
+            "Node.inject", //
+            "NodeImpl.inject", //
+            "OperationSpecificationGroupImpl.inject", //
+            "OSMLanguageUtilImpl.inject", //
+            "PackageAxiomImpl.inject", //
+            "ParserImpl.inject", //
+            "PatternInvocationBuilderImpl.inject", //
+            "PatternMatcherImpl.inject", //
+            "PatternVariableHandlerImpl.inject", //
+            "PrecompileLogImpl.inject", //
+            "PrecompilerHelperImpl.inject", //
+            "PrecompilerImpl.inject", //
+            "ProblemImpl.inject", //
+            "RegularPatternInvocationBuilderImpl.inject", //
+            "RuleRefinementPrecompilerImpl.inject", //
+            "ScopeValidatorImpl.inject", //
+            "StoryPatternHelperImpl.inject", //
+            "StringValueImpl.inject", //
+            "TAbstractTypeImpl.inject", //
+            "TClassImpl.inject", //
+            "TemplateUnparserImpl.inject", //
+            "TestEmptyClass.inject", //
+            "TestVariable.inject", //
+            "TFieldDefinitionImpl.inject", //
+            "TFieldSignatureImpl.inject", //
+            "TGGCompiler.inject", //
+            "TGGCompilerImpl.inject", //
+            "TGGConstraintImpl.inject", //
+            "TggExporter.inject", //
+            "TggExporterImpl.inject", //
+            "TGGGrammarDirectedGraphAxiomImpl.inject", //
+            "TGGRuleMorphism.inject", //
+            "TGGRuleMorphismImpl.inject", //
+            "TMethodDefinitionImpl.inject", //
+            "TMethodSignatureImpl.inject", //
+            "TransformerImpl.inject", //
+            "TreeElementImpl.inject", //
+            "UnparserImpl.inject", //
+            "ValidationReportImpl.inject", //
+            "ValidatorImpl.inject", //
+            "Variable.inject", //
+            "VariableImpl.inject", //
+            "VariableTypeManagerImpl.inject", //
+            "XMLParserImpl.inject", //
+            "XMLUnparserImpl.inject");
+      parseAllInjectFiles(filenames.stream().map(filename -> classpathFolderName + "/" + filename).collect(Collectors.toList()));
    }
 
    @Test
    public void testMoflonTestInjections() throws Exception
    {
-      final String folder = "org/moflon/emf/injection/tests/samples/test";
-      final String[] devSampleFiles = new File(folder).list((dir, name) -> name.endsWith(".inject"));
-      for (final String devSampleFile : devSampleFiles)
+      final String classpathFolderName = "/org/moflon/emf/injection/tests/samples/test";
+      final List<String> filenames = Arrays.asList("BoxImpl.inject", //
+            "CatImpl.inject", //
+            "ContentContainerImpl.inject", //
+            "CoordinateImpl.inject", //
+            "DatabaseValidationImpl.inject", //
+            "DirectedTriangleTopologyControlAlgorithmImpl.inject", //
+            "EdgeImpl.inject", //
+            "EdgeStateBasedConnectivityConstraintImpl.inject", //
+            "ExtendsToNodeRuleImpl.inject", //
+            "GraphElementImpl.inject", //
+            "GraphImpl.inject", //
+            "HelperImpl.inject", //
+            "LinkImpl.inject", //
+            "MemberImpl.inject", //
+            "MemoryBoxUtilImpl.inject", //
+            "MoDiscoTGGPreprocessingImpl.inject", //
+            "NodeImpl.inject", //
+            "OSMLanguageUtilImpl.inject", //
+            "TAbstractTypeImpl.inject", //
+            "TClassImpl.inject", //
+            "TFieldDefinitionImpl.inject", //
+            "TFieldSignatureImpl.inject", //
+            "TMethodDefinitionImpl.inject", //
+            "TMethodSignatureImpl.inject");
+      parseAllInjectFiles(filenames.stream().map(filename -> classpathFolderName + "/" + filename).collect(Collectors.toList()));
+   }
+
+   private List<InjectionFile> parseAllInjectFiles(final List<String> injectFilenames) throws IOException, URISyntaxException
+   {
+      final List<InjectionFile> injectionFiles = new ArrayList<>();
+      for (final String filename : injectFilenames)
       {
-         final String fullPath = folder + "/" + devSampleFile;
-         final URI uri = URI.createFileURI(fullPath);
+         URL url = getClass().getResource(filename);
+         File file = new File(url.toURI());
+         URI uri = URI.createFileURI(file.getAbsolutePath());
          final InjectionFile injectionFile = InjectionFile.class.cast(parser.parse(uri));
-         Assert.assertNotNull("Problem with file: " + fullPath, injectionFile.getClassDeclaration());
+         injectionFiles.add(injectionFile);
+         Assert.assertNotNull("Problem with file: " + file, injectionFile.getClassDeclaration());
       }
+      return injectionFiles;
    }
 
    // Source: http://www.davehofmann.de/?p=101
@@ -120,5 +268,34 @@ public class InjectionLanguageTest
          resource.load(null);
          return resource.getContents().get(0);
       }
+   }
+
+   private List<String> getResourceFiles(final String path) throws IOException
+   {
+      final List<String> filenames = new ArrayList<>();
+
+      try (InputStream in = getResourceAsStream(path); BufferedReader br = new BufferedReader(new InputStreamReader(in)))
+      {
+         String resource;
+
+         while ((resource = br.readLine()) != null)
+         {
+            filenames.add(resource);
+         }
+      }
+
+      return filenames;
+   }
+
+   private InputStream getResourceAsStream(String resource)
+   {
+      final InputStream in = getContextClassLoader().getResourceAsStream(resource);
+
+      return in == null ? getClass().getResourceAsStream(resource) : in;
+   }
+
+   private ClassLoader getContextClassLoader()
+   {
+      return Thread.currentThread().getContextClassLoader();
    }
 }
