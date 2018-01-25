@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse version="3.4"?><plugin>
+  <extension point="org.eclipse.emf.ecore.factory_override">
+    <factory class="org.moflon.core.propertycontainer.MoflonPropertyContainerCustomizedFactory" uri="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore"/>
+  </extension>
+  <extension point="org.eclipse.emf.ecore.generated_package">
+    <package class="org.moflon.core.propertycontainer.PropertycontainerPackage" genModel="model/Propertycontainer.genmodel" uri="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore"/>
+  </extension>
+</plugin>
