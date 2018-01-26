@@ -1,0 +1,52 @@
+grammar org.moflon.emf.injection.InjectionLanguage with org.eclipse.xtext.common.Terminals
+
+generate injectionLanguage "http://www.moflon.org/emf/injection/InjectionLanguage"
+
+InjectionFile:
+	imports += (RegularImport | StaticImport)*
+	classDeclaration = ClassDeclaration
+;
+
+RegularImport:
+	'import' namespace = QualifiedNameWithWildcard ';'
+;
+
+StaticImport:
+	'import' 'static' namespace = QualifiedNameWithWildcard ';'	
+;
+
+QualifiedName:
+    ID ('.' ID)*    
+;
+
+QualifiedNameWithWildcard:
+  QualifiedName '.*'?
+;
+ 
+ClassDeclaration:
+	annotations += JavaAnnotation*
+	'partial' 'class'  className = ID '{'
+	classInjectionDeclaration = ClassInjectionDeclaration?
+	methodDeclarations += MethodDeclaration*
+	'}'
+;
+
+JavaAnnotation:
+	'@' name = ID '(' parameter = STRING ')'
+;
+
+ClassInjectionDeclaration:
+	'@members' body=CODE_BLOCK
+;
+
+MethodDeclaration:
+	'@model' methodName = ID '(' (parameters += ParameterDeclaration)? (',' parameters += ParameterDeclaration)* ')' body=CODE_BLOCK
+; 
+
+ParameterDeclaration:
+	parameterType=QualifiedName parameterName=ID
+;
+
+terminal BLOCK_BEGIN: '<--';
+terminal BLOCK_END: '-->';
+terminal CODE_BLOCK: BLOCK_BEGIN .* BLOCK_END;

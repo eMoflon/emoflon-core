@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.moflon.core.feature"
-      label="org.moflon.core.feature"
-      version="1.0.0.qualifier"
+      label="eMoflon Core Components Feature"
+      version="2.32.0.qualifier"
       provider-name="eMoflon Developers"
       plugin="org.moflon.core.branding">
 
-      <description url="http://www.emoflon.org/">
+   <description url="http://www.emoflon.org/">
       This plugin provides the core functionality of the eMoflon toolsuite. Visit emoflon.github.io for more information.
    </description>
 
@@ -18,8 +18,8 @@ Hammer by Wes Breazell from the Noun Project
    </copyright>
 
    <license url="http://www.gnu.org/licenses/gpl-3.0.html;http://www.eclipse.org/org/documents/epl-v10.php">
-      eMoflon is dual-licensed under the GNU General Public License (GPL), version 3 or later, and the Eclipse Public License (EPL). 
-As a recipient of eMoflon, you may choose which license to receive the code under. 
+      eMoflon is dual-licensed under the GNU General Public License (GPL), version 3 or later, and the Eclipse Public License (EPL).
+As a recipient of eMoflon, you may choose which license to receive the code under.
 
 See here for more details on GPLv3: http://www.gnu.org/licenses/gpl-3.0.html
 See here for more details on EPL: http://www.eclipse.org/org/documents/epl-v10.php
@@ -27,10 +27,117 @@ See here for more details on EPL: http://www.eclipse.org/org/documents/epl-v10.p
 
    <url>
       <update label="eMoflon Update Site" url="https://emoflon.github.io/eclipse-plugin/beta/updatesite"/>
+      <discovery label="PlantUML update site" url="http://files.idi.ntnu.no/publish/plantuml/repository/"/>
+      <discovery label="XText update site (release)" url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
    </url>
 
    <plugin
          id="org.moflon.core.branding"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.emf.injection"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.emf.injection.ide"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.emf.injection.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.core.build"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.core.utilities"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.core.preferences"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.emf.build"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.emf.codegen"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.gervarro.eclipse.workspace.autosetup"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.gervarro.eclipse.workspace.util"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.core.plugins"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.core.propertycontainer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.core.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.emf.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.gervarro.eclipse.task"
          download-size="0"
          install-size="0"
          version="0.0.0"

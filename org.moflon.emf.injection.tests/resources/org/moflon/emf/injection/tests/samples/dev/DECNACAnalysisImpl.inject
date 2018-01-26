@@ -1,0 +1,30 @@
+
+partial class DECNACAnalysisImpl {
+
+
+
+@model determineDECovName (String createdObjectName, String referenceName) <--
+      return "__DEC_" + createdObjectName + "_" + referenceName + "_" + (int) (Math.random() * 1000000);
+-->
+
+@model newValueConformsToReferenceValue (String newValue, String referenceValue, ComparingOperator comparator) <--
+
+      switch(comparator){
+      case EQUAL:
+         return newValue.equals(referenceValue);
+      case UNEQUAL:
+         return !newValue.equals(referenceValue);
+      case GREATER:
+         return Double.valueOf(newValue) > Double.valueOf(referenceValue);
+      case GREATER_OR_EQUAL:
+         return Double.valueOf(newValue) >= Double.valueOf(referenceValue);
+      case LESS:
+         return Double.valueOf(newValue) < Double.valueOf(referenceValue);
+      case LESS_OR_EQUAL:
+         return Double.valueOf(newValue) <= Double.valueOf(referenceValue);
+      default:
+         return false;            
+      }
+-->
+
+}

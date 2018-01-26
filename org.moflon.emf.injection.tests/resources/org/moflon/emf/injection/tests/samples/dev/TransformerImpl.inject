@@ -1,0 +1,17 @@
+
+partial class TransformerImpl {
+
+
+
+@model allowedAdornmentsMissing (Node constraintNode) <--
+
+      throw new RuntimeException("Allowed adornments missing for constraint " + new LinkedList<Attribute>(constraintNode.getAttribute("constraintName")).get(0).getValue() + " in rule " + getTggrule().getName());
+-->
+
+@model stringAsBoolean (String value) <--
+
+      
+      return "true".equalsIgnoreCase(value);
+-->
+
+}

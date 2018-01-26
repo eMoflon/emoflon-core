@@ -1,0 +1,38 @@
+
+partial class BindingFeatureHelperImpl {
+
+
+
+@model getBindingOperator (String value) <--
+
+
+		if (value.toLowerCase().equals("check_only"))
+			return BindingOperator.CHECK_ONLY;
+		else if (value.toLowerCase().equals("create"))
+			return BindingOperator.CREATE;
+		else if (value.toLowerCase().equals("destroy"))
+			return BindingOperator.DESTROY;
+		return null;
+-->
+
+@model getBindingSemantics (String value) <--
+
+		if (value.toLowerCase().equals("mandatory"))
+			return BindingSemantics.MANDATORY;
+		if (value.toLowerCase().equals("negative"))
+			return BindingSemantics.NEGATIVE;
+		if (value.toLowerCase().equals("optional"))
+			return BindingSemantics.OPTIONAL;
+		return null;
+-->
+
+@model getBindingState (String value) <--
+
+		if (value.toLowerCase().equals("bound"))
+			return BindingState.BOUND;
+		else if (value.toLowerCase().equals("unbound"))
+			return BindingState.UNBOUND;
+		return null;
+-->
+
+}

@@ -1,0 +1,31 @@
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+partial class TGGRuleMorphismImpl {
+
+@members <--
+
+   protected HashMap<String, EObject> namesToObjects = new HashMap<String, EObject>();
+
+   @Override
+   public Map<String, EObject> getNodeMappings()
+   {
+      return namesToObjects;
+   }   
+   
+   
+-->
+
+@model getObject (String name) <--
+
+      return namesToObjects.get(name);
+-->
+
+@model registerObject (String name, EObject node) <--
+
+      namesToObjects.put(name, node);
+-->
+
+}

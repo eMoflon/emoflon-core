@@ -1,0 +1,92 @@
+
+import java.io.IOException;
+import org.moflon.core.utilities.LogUtils;
+import org.moflon.core.utilities.WorkspaceHelper;
+import org.moflon.sdm.constraints.operationspecification.AttributeConstraintsOperationActivator;
+import org.moflon.sdm.constraints.operationspecification.OperationspecificationPackage;
+import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+
+partial class AttributeConstraintLibUtilImpl {
+
+@members <--
+
+   public void init(ResourceSet resourceSet, IProject project)
+   {
+      this.resourceSet = resourceSet;
+      this.project = project;
+      Resource buildInLibResource = loadAttributeConstraintLibraryResource(getURIOfBuiltInLibrary(), false);
+      if (buildInLibResource == null)
+      {
+         throw new RuntimeException("Could not find built-in attribute constraint library");
+      }
+      this.setBuildInAttributeConstraintLibrary((AttributeConstraintLibrary) buildInLibResource.getContents().get(0));
+
+      Resource userDefLibResource = loadAttributeConstraintLibraryResource(getURIOfUserDefinedLibrary(), false);
+      if (userDefLibResource != null)
+      {
+         this.setUserDefinedAttributeConstraintLibrary((AttributeConstraintLibrary) userDefLibResource.getContents().get(0));
+      }
+
+   }
+
+   private Resource loadAttributeConstraintLibraryResource(URI uri, boolean createIfNotExists)
+   {
+      resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+      resourceSet.getPackageRegistry().put(OperationspecificationPackage.eNS_URI, OperationspecificationPackage.eINSTANCE);
+      Resource resource = null;
+      if (resourceSet.getURIConverter().exists(uri, null))
+      {
+         resource = resourceSet.getResource(uri, true);
+      } else if (createIfNotExists)
+      {
+         resource = resourceSet.createResource(uri);
+      }
+      return resource;
+
+   }
+
+   private URI getURIOfBuiltInLibrary()
+   {
+
+      return URI.createPlatformPluginURI(
+            "/" + WorkspaceHelper.getPluginId(AttributeConstraintsOperationActivator.class) + "/lib/buildInConstraintsLibrary/BuildInAttributeVariableConstraintLibrary.xmi", true);
+   }
+
+   private URI getURIOfUserDefinedLibrary()
+   {
+
+      return URI.createPlatformPluginURI("/" + project.getName() + "/lib/" + project.getName() + "AttributeConstraintsLib.xmi", true);
+   }
+
+   private ResourceSet resourceSet;
+
+   private IProject project;
+
+   private static final Logger logger = Logger.getLogger(AttributeConstraintLibUtilImpl.class);
+   
+-->
+
+@model saveUserDefinedAttributeConstraintLibrary () <--
+      userDefinedAttributeConstraintLibrary.setPrefix(project.getName() + "AttributeConstraintsLib");
+
+      if (userDefinedAttributeConstraintLibrary.eResource() == null)
+      {
+         Resource resource = this.loadAttributeConstraintLibraryResource(getURIOfUserDefinedLibrary(), true);
+         resource.getContents().add(userDefinedAttributeConstraintLibrary);
+      }
+
+      try
+      {
+         userDefinedAttributeConstraintLibrary.eResource().save(null);
+      } catch (IOException e)
+      {
+         LogUtils.error(logger, e);
+      }
+-->
+
+}

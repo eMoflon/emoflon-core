@@ -1,0 +1,58 @@
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+partial class CSPPrecompilerHelperImpl {
+
+
+
+@model removeDuplicateVariable (CSP csp, Variable duplicate, Variable replacement) <--
+
+      for (TGGConstraint constraint : csp.getConstraints())
+      {
+         // Carefully replace attrVar with replacement at exactly the same index
+         for (int i = 0; i < constraint.getVariables().size(); i++)
+         {
+            if (constraint.getVariables().get(i).equals(duplicate))
+            {
+               constraint.getVariables().set(i, replacement);
+               break;
+            }
+         }
+      }
+-->
+
+@model removeDuplicateConstraints (CSP csp) <--
+
+      Collection<TGGConstraint> duplicates = new ArrayList<>();
+      for (TGGConstraint constraint : csp.getConstraints())
+      {
+         for (TGGConstraint duplicate : csp.getConstraints())
+         {
+            boolean identical = false;
+
+            if (duplicates.contains(constraint) || duplicates.contains(duplicate) || constraint.equals(duplicate))
+               continue;
+
+            if (constraint.getName().equals(duplicate.getName()))
+            {
+               identical = true;
+               for (int i = 0; i < duplicate.getVariables().size(); i++)
+               {
+                  if (!duplicate.getVariables().get(i).equals(constraint.getVariables().get(i)))
+                  {
+                     identical = false;
+                     break;
+                  }
+               }
+            }
+
+            if (identical)
+               duplicates.add(duplicate);
+         }
+      }
+
+      csp.getConstraints().removeAll(duplicates);
+-->
+
+}

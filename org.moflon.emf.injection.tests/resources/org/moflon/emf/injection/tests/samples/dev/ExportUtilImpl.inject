@@ -1,0 +1,58 @@
+
+partial class ExportUtilImpl {
+
+
+
+@model equalString (String param1, String param2) <--
+
+      return param1.equals(param2);
+-->
+
+@model parseInt (String param) <--
+
+      return Integer.parseInt(param);
+-->
+
+@model concat (String param1, String param2, String param3) <--
+
+      return param1 + param2 + param3;
+-->
+
+@model parseBoolean (String param) <--
+
+      return Boolean.parseBoolean(param);
+-->
+
+@model stringIsLiteral (String value) <--
+
+      if (value.startsWith("\"") && value.endsWith("\""))
+      {
+         return true;
+      }
+      try
+      {
+         int v = Integer.parseInt(value);
+         return true;
+      } catch (NumberFormatException e)
+      {
+         return false;
+      }
+-->
+
+@model extractObjectAndAttributeName (String literalExpressionValue, Attribute emptyAttributeAttr, Attribute emptyObjectNameAttr) <--
+
+      if (literalExpressionValue.contains(".") && !literalExpressionValue.startsWith(".") && !literalExpressionValue.endsWith("."))
+      {
+         String[] splitted = literalExpressionValue.split("\\.");
+         if (splitted.length == 2)
+         {
+            emptyObjectNameAttr.setValue(splitted[0]);
+            emptyAttributeAttr.setValue(splitted[1]);
+            return true;
+         }
+      }
+
+      return false;
+-->
+
+}

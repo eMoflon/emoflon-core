@@ -1,0 +1,12 @@
+
+partial class StoryPatternHelperImpl {
+
+
+
+@model encloseAsStringLiteral (String literalToEnclose) <--
+
+
+      return "\"" + literalToEnclose + "\"";
+-->
+
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+    <extension id="org.moflon.emf.build.MoflonEmfNature" name="Moflon EMF Nature" point="org.eclipse.core.resources.natures">
+        <runtime>
+            <run class="org.moflon.emf.build.MoflonEmfNature"/>
+        </runtime>
+        <builder id="org.moflon.emf.build.MoflonEmfBuilder">
+        </builder>
+        <one-of-nature id="org.moflon.core.ui.runtime.natures.MoflonNature">
+        </one-of-nature>
+        <requires-nature id="org.eclipse.jdt.core.javanature">
+        </requires-nature>
+    </extension>
+    <extension point="org.eclipse.ui.ide.projectNatureImages">
+        <image icon="resources/icons/repositoryProject.gif" id="org.moflon.emf.ui.MoflonEmfNatureImage" natureId="org.moflon.emf.build.MoflonEmfNature"/>
+    </extension>
+    <extension id="org.moflon.emf.build.MoflonEmfBuilder" name="eMoflon EMF Builder" point="org.eclipse.core.resources.builders">
+        <builder isConfigurable="true">
+            <run class="org.moflon.emf.build.MoflonEmfBuilder"/>
+        </builder>
+    </extension>
+</plugin>

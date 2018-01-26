@@ -1,0 +1,15 @@
+
+partial class Variable {
+
+@members <--
+
+   /**
+    * Auxiliary method that calls {@link Variable#setValue(value)} and {@link Variable#setBound(true)}.
+    * Always use this method if possible.
+    * @param value
+    */
+   void bindToValue(Object value);
+   
+-->
+
+}

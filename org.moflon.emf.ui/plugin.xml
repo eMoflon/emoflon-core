@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+  <extension point="org.eclipse.ui.commands">
+    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.emf.command.CreateNewMoflonEmfProjectCommand" name="Create new eMoflon EMF project">
+        </command>
+  </extension>
+  <extension point="org.eclipse.ui.handlers">
+    <handler class="org.moflon.emf.ui.wizard.NewMoflonEmfProjectHandler" commandId="org.moflon.emf.command.CreateNewMoflonEmfProjectCommand">
+      <enabledWhen>
+        <reference definitionId="org.moflon.core.ui.definitions.isMoflonPerspective"/>
+      </enabledWhen>
+    </handler>
+  </extension>
+  <extension point="org.eclipse.ui.newWizards">
+    <wizard category="org.moflon.ide.ui.category"
+    class="org.moflon.emf.ui.wizard.NewMoflonEmfProjectWizard"
+    icon="resources/icons/moflonEmfProjectIcon.gif" id="org.moflon.emf.ui.wizard.NewMoflonEmfProjectWizard" name="New eMoflon EMF Project Wizard" project="true">
+    </wizard>
+  </extension>
+  <extension point="org.eclipse.ui.menus">
+    <menuContribution allPopups="false" locationURI="toolbar:org.moflon.ide.ui.toolbar">
+      <command commandId="org.moflon.emf.command.CreateNewMoflonEmfProjectCommand" icon="resources/icons/moflonEmfProjectIcon.gif" label="Create new eMoflon EMF project" style="push">
+        <visibleWhen checkEnabled="false">
+          <reference definitionId="org.moflon.core.ui.definitions.isMoflonPerspective"/>
+        </visibleWhen>
+      </command>
+    </menuContribution>
+  </extension>
+</plugin>

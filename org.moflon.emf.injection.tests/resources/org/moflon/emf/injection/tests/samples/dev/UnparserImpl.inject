@@ -1,0 +1,18 @@
+
+partial class UnparserImpl {
+
+
+
+@model unparse (Node node) <--
+
+
+      throw new UnsupportedOperationException();
+-->
+
+@model canUnparseFile (String fileName) <--
+
+
+      throw new UnsupportedOperationException();
+-->
+
+}

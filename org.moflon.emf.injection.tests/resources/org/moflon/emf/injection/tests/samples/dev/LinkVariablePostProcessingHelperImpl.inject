@@ -1,0 +1,46 @@
+
+import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.EPackage;
+
+partial class LinkVariablePostProcessingHelperImpl {
+
+
+
+@model getUniqueID (EObject eObject) <--
+
+		EObject current = eObject;
+		while (current != null
+				&& !EcorePackage.eINSTANCE.getEPackage().isInstance(current)) {
+			current = current.eContainer();
+		}
+		if (current != null) {
+			return ((EPackage) current).getNsURI().concat(
+					EcoreUtil.getURI(eObject).toString());
+		} else {
+			throw new RuntimeException("EObject "
+					+ EcoreUtil.getURI(eObject).toString()
+					+ " is not contained in any EPackages");
+		}
+-->
+
+@model makeSourceTargetChoiceDeterministic (LinkVariable linkVariable) <--
+
+		EReference linkVariableType = linkVariable.getType();
+
+		if (linkVariableType != null && linkVariableType.getEOpposite() != null) {
+			String srcID = getUniqueID(linkVariableType.getEContainingClass());
+			String trgID = getUniqueID(linkVariableType.getEType());
+			if (String.CASE_INSENSITIVE_ORDER.compare(srcID, trgID) < 0) {
+				ObjectVariable srcOv = linkVariable.getSource();
+				ObjectVariable trgOv = linkVariable.getTarget();
+
+				linkVariable.setTarget(srcOv);
+				linkVariable.setSource(trgOv);
+				linkVariable.setName(linkVariableType.getEOpposite().getName());
+				linkVariable.setType(linkVariableType.getEOpposite());
+			}
+		}
+-->
+
+}

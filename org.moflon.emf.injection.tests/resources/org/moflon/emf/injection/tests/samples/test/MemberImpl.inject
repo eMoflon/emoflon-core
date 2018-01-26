@@ -1,0 +1,17 @@
+
+import static java.lang.Math.*;
+import java.lang.String;
+
+partial class MemberImpl {
+
+
+
+@model countLikesFromContent () <--
+		int likes = 0;
+		for (DigitalContent content : this.getCreatedContent()) {
+			likes += content.getIsLiked().size();
+		}
+		return likes;
+-->
+
+}

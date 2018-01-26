@@ -1,0 +1,10 @@
+
+import org.moflon.tgg.language.csp.*;
+import org.moflon.tgg.algorithm.delta.attribute.CheckAttributeHelper;
+import SDMLanguage.expressions.ComparingOperator;
+
+partial class TGGGrammarDirectedGraphAxiomImpl {
+
+
+
+}

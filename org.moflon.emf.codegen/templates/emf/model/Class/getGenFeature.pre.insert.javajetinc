@@ -1,0 +1,4 @@
+<%final String preGetGenFeatureCode = generatorAdapter.getPreGetGenFeatureCode(genFeature);%>
+<%if (preGetGenFeatureCode != null) {%>
+<%    stringBuffer.append(preGetGenFeatureCode);%>
+<%}%>

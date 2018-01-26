@@ -1,0 +1,19 @@
+import org.eclipse.emf.ecore.resource.Resource;
+
+partial class NacPatternBuilderImpl {
+
+@model attachToResource(Pattern pattern, Pattern nacPattern) <--
+	Resource patternResource = pattern.eResource();
+	if (patternResource != null) {
+		patternResource.getContents().add(nacPattern);
+	}
+-->
+
+@model createAllBoundAdornment(Pattern pattern) <--
+	return new Adornment(pattern.getSymbolicParameters().size());
+-->
+
+@model createNacPatternNameAndIncrementCounter(Pattern pattern) <--
+	return pattern.getName() + "_nac_" + nacPatternCounter++;
+-->
+}

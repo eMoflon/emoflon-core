@@ -1,0 +1,28 @@
+
+partial class PrecompileLogImpl {
+
+@members <--
+
+	private class NoCommonTypeException extends RuntimeException {
+		public NoCommonTypeException(String message) {
+			super(message);
+		}
+	}
+	
+-->
+
+@model addNoCommonTypeError (TGGObjectVariable refines, TGGObjectVariable refined) <--
+
+
+		// TODO: implement this method here but do not remove the injection marker 
+		throw new NoCommonTypeException("Could not merge type of " + refines.getName() + ". Please make sure that one is a common class of the other. (" + ((TGGRule) refines.eContainer()).getName() + " <-> " + ((TGGRule) refined.eContainer()).getName() );
+-->
+
+@model throwPatternShouldBeEmptyException (TGGRule rule) <--
+
+		// TODO: implement this method here but do not remove the injection marker 
+		throw new NoCommonTypeException("The pattern of your rule: " + rule.getName()
+				+ " should not contain any elements. (" + rule.getTripleGraphGrammar().getName() + ")");
+-->
+
+}

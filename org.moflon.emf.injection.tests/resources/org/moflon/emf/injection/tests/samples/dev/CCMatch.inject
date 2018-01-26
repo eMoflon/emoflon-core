@@ -1,0 +1,17 @@
+
+import java.util.HashSet;
+
+partial class CCMatch {
+
+@members <--
+
+
+
+	public HashSet<EObject> getContextHashSet();
+
+	public HashSet<EObject> getCreatedHashSet();
+
+	
+-->
+
+}

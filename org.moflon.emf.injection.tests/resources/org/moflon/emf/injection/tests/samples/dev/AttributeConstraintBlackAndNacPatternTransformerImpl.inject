@@ -1,0 +1,206 @@
+
+import org.moflon.sdm.compiler.democles.validation.result.ResultFactory;
+import org.moflon.sdm.compiler.democles.validation.result.Severity;
+import org.moflon.sdm.compiler.democles.validation.result.ValidationReport;
+import org.moflon.sdm.constraints.constraintstodemocles.Errors;
+import org.moflon.sdm.constraints.operationspecification.ConstraintSpecification;
+import org.moflon.sdm.constraints.operationspecification.OperationSpecification;
+
+partial class AttributeConstraintBlackAndNacPatternTransformerImpl {
+
+
+
+@model callSuperPostprocess (StoryPattern storyPattern, Pattern pattern) <--
+      super.postprocess(storyPattern, pattern);
+-->
+
+@model validateConstraintLibrary (AttributeConstraintLibrary attributeConstraintLibrary) <--
+      //ValidationReport validationReport = this.getValidationReport();
+      String fileLoc = attributeConstraintLibrary.getPrefix() + "/AttributeConstraintLibrary.xmi";
+      if (attributeConstraintLibrary.getPrefix() == null || attributeConstraintLibrary.getPrefix().length() == 0)
+      {
+         ErrorMessage errorMsg = createErrorMessage(attributeConstraintLibrary.eClass());
+         errorMsg.setId(Errors.MALFORMED_ATTRIBUTE_CONSTRAINT.getLiteral() + ": Missing \"prefix\" in \"AttributeConstraintLibrary\" " + fileLoc);
+
+      }
+      for (ConstraintSpecification constSpec : attributeConstraintLibrary.getConstraintSpecifications())
+      {
+         if (constSpec.getSymbol() == null || constSpec.getSymbol().length() == 0)
+         {
+            ErrorMessage errorMsg = createErrorMessage(constSpec.eClass());
+            errorMsg.setId(Errors.MALFORMED_ATTRIBUTE_CONSTRAINT.getLiteral() + ": Missing \"symbol\" in \"ConstraintSpecification\" at index "
+                  + attributeConstraintLibrary.getConstraintSpecifications().indexOf(constSpec) + " in constraint library " + fileLoc);
+
+         }
+         if (constSpec.getOperationSpecificationGroup() == null)
+         {
+            ErrorMessage errorMsg = createErrorMessage(constSpec.eClass());
+            errorMsg.setId(Errors.MALFORMED_ATTRIBUTE_CONSTRAINT.getLiteral()
+                  + ": Missing link to \"operationSpecificationGroup\" in \"Constraintspecification\" with symbol \"" + constSpec.getSymbol()
+                  + "\" in constraint library " + fileLoc);
+         }
+
+         if (constSpec.getParameterTypes().size() <= 0)
+         {
+            ErrorMessage errorMsg = createErrorMessage(constSpec.eClass());
+            errorMsg.setId(Errors.MALFORMED_ATTRIBUTE_CONSTRAINT.getLiteral()
+                  + ": No \"ParameterTypes\" defined (at least one is required) for \"ConstraintSpecification\" with \"symbol=\"" + constSpec.getSymbol()
+                  + "\" in constraint library " + fileLoc);
+         }
+         if (constSpec.getOperationSpecificationGroup() != null)
+         {
+            if (constSpec.getOperationSpecificationGroup().getParameterIDs().size() != constSpec.getParameterTypes().size())
+            {
+               ErrorMessage errorMsg = createErrorMessage(constSpec.eClass());
+               errorMsg.setId(Errors.MALFORMED_ATTRIBUTE_CONSTRAINT.getLiteral()
+                     + ": Unequal number of \"ParameterTypes\" and \"ParameterIDs\" of \"ConstraintSpecification\" with \"symbol=" + constSpec.getSymbol()
+                     + "\" and corresponding \"OperationSpecificationGroup\"" + ". Both located in constraint library " + fileLoc);
+            }
+         }
+         for (ParameterType parameterType : constSpec.getParameterTypes())
+         {
+            if (parameterType.getType() == null)
+            {
+               ErrorMessage errorMsg = createErrorMessage(constSpec.eClass());
+               errorMsg.setId(Errors.MALFORMED_ATTRIBUTE_CONSTRAINT.getLiteral()
+                     + ": Missing \"type\" of \"ParameterType\" located in \"ConstraintSpecification\" with \"symbol=" + constSpec.getSymbol()
+                     + "\" in constraint library " + fileLoc);
+            }
+         }
+      }
+      for (OperationSpecificationGroup opSpecGroup : attributeConstraintLibrary.getOperationSpecifications())
+      {
+
+         if (opSpecGroup.getOperationSpecifications().size() <= 0)
+         {
+            ErrorMessage errorMsg = createErrorMessage(opSpecGroup.eClass());
+            errorMsg.setId(Errors.MALFORMED_ATTRIBUTE_CONSTRAINT.getLiteral()
+                  + ": No \"OperationSpecifications\" in \"operationSpecificationGroup\" with \"operationIdentifier=" + opSpecGroup.getOperationIdentifier()
+                  + "\" in constraint library " + fileLoc + "(at least one is required)");
+
+         }
+         if (opSpecGroup.getOperationIdentifier() == null || opSpecGroup.getOperationIdentifier().length() <= 0)
+         {
+            ErrorMessage errorMsg = createErrorMessage(opSpecGroup.eClass());
+            errorMsg
+                  .setId(Errors.MALFORMED_ATTRIBUTE_CONSTRAINT.getLiteral() + ": Missing \"operationIdentifier\" for \"OperationSpecificationGroup\" at index "
+                        + attributeConstraintLibrary.getOperationSpecifications().indexOf(opSpecGroup) + " in constraint library" + fileLoc);
+         } else
+         {
+            if (opSpecGroup.getOperationIdentifier() != null && opSpecGroup.getOperationIdentifier().chars().anyMatch(x -> !Character.isJavaIdentifierPart(x)))
+            {
+               ErrorMessage errorMsg = createErrorMessage(opSpecGroup.eClass());
+               errorMsg.setId(Errors.MALFORMED_ATTRIBUTE_CONSTRAINT.getLiteral()
+                     + ": Malformed \"operationIdentifier\" for \"OperationSpecificationGroup\" located at index "
+                     + attributeConstraintLibrary.getOperationSpecifications().indexOf(opSpecGroup) + " in constraint library '" + fileLoc
+                     + "' (Only valid java like identifier allowed).");
+            }
+         }
+         for (ParamIdentifier pIdentifier : opSpecGroup.getParameterIDs())
+         {
+            if (pIdentifier.getIdentifier() == null || pIdentifier.getIdentifier().length() == 0)
+            {
+               ErrorMessage errorMsg = createErrorMessage(opSpecGroup.eClass());
+               errorMsg.setId(Errors.MALFORMED_ATTRIBUTE_CONSTRAINT.getLiteral()
+                     + ": Missing the \"identifier\" for an \"ParamIdentifier\" in \"OperationSpecificationGroup\" located at index "
+                     + attributeConstraintLibrary.getOperationSpecifications().indexOf(opSpecGroup) + " in constraint library" + fileLoc + ".");
+            }
+         }
+         for (OperationSpecification opSpec : opSpecGroup.getOperationSpecifications())
+         {
+            if (opSpec.getAdornmentString() == null || opSpec.getAdornmentString().length() != opSpecGroup.getParameterIDs().size())
+            {
+               ErrorMessage errorMsg = createErrorMessage(opSpecGroup.eClass());
+               errorMsg.setId(
+                     Errors.MALFORMED_ATTRIBUTE_CONSTRAINT.getLiteral() + ": Malformed \"adornmentString\" in \"OperationSpecification\" located at index "
+                           + opSpecGroup.getOperationSpecifications().indexOf(opSpec) + " in \"OperationSpecificationGroup\" with \"operationIdentifier="
+                           + (opSpecGroup.getOperationIdentifier() != null ? opSpecGroup.getOperationIdentifier() : " ") + "\"  in constraint library" + fileLoc
+                           + ".");
+            }
+            if (opSpec.getSpecification() == null || opSpec.getSpecification().length() == 0)
+            {
+               ErrorMessage errorMsg = createErrorMessage(opSpecGroup.eClass());
+               errorMsg.setId(Errors.MALFORMED_ATTRIBUTE_CONSTRAINT.getLiteral() + ": Missing \"specification\" in \"OperationSpecification\" located at index "
+                     + opSpecGroup.getOperationSpecifications().indexOf(opSpec) + " in \"OperationSpecificationGroup\" with \"operationIdentifier="
+                     + (opSpecGroup.getOperationIdentifier() != null ? opSpecGroup.getOperationIdentifier() : " ") + "\"  in constraint library" + fileLoc
+                     + ".");
+            }
+         }
+
+      }
+-->
+
+@model validateCspConstraints (AttributeVariableConstraint attributeConstraint, CspConstraint cspConstraint) <--
+      //Lookup constraint in user defined lib first
+
+      AttributeConstraintLibrary userDefLib = this.getAttributeConstraintLibUtil().getUserDefinedAttributeConstraintLibrary();
+
+      if (userDefLib != null)
+      {
+         validateConstraintLibrary(userDefLib);
+         if (userDefLib.lookupConstraintType(attributeConstraint) != null)
+         {
+            return;
+         }
+      }
+      //Lookup constraint in build in lib     
+      AttributeConstraintLibrary buildInLib = this.getAttributeConstraintLibUtil().getBuildInAttributeConstraintLibrary();
+      if (buildInLib.lookupConstraintType(attributeConstraint) != null)
+      {
+         return;
+      }
+
+      /*
+       * Something went wrong with the constraint construction.
+       * We do not want to add constraint stubs to the user-defined constraint libary in this case.
+       */
+      if (cspConstraint.getParameters().stream().anyMatch(var -> var.getAttributeConstraintVariable() == null))
+      {
+         return;
+      }
+
+      //Create user defined lib if not exists
+      if (userDefLib == null)
+      {
+         userDefLib = OperationspecificationFactory.eINSTANCE.createAttributeConstraintLibrary();
+         this.getAttributeConstraintLibUtil().setUserDefinedAttributeConstraintLibrary(userDefLib);
+      }
+      //  create Stub
+      updateUserDefinedConstraintLib(attributeConstraint, userDefLib);
+      this.getAttributeConstraintLibUtil().saveUserDefinedAttributeConstraintLibrary();
+
+      //create Error Message
+      StringBuilder errorMsgString = new StringBuilder(Errors.UNKNOWN_ATTRIBUTE_CONSTRAINT.getLiteral());
+      errorMsgString.append(": ");
+      errorMsgString.append("\"" + cspConstraint.getName());
+      errorMsgString.append("(");
+      for (CspConstraintVariableReference var : cspConstraint.getParameters())
+      {
+         AttributeConstraintVariable attributeConstraintVariable = var.getAttributeConstraintVariable();
+         if (attributeConstraintVariable != null)
+            errorMsgString.append(attributeConstraintVariable.getType().getName() + ",");
+         else
+            errorMsgString.append("?,");
+      }
+      errorMsgString.deleteCharAt(errorMsgString.length() - 1);
+      errorMsgString.append(")\".");
+      errorMsgString.append("\n    Please complete stub in: \"" + " /lib/" + userDefLib.getPrefix() + ".xmi\"");
+
+      ValidationReport report = this.getValidationReport();
+
+      ErrorMessage errorMessage = ResultFactory.eINSTANCE.createErrorMessage();
+      errorMessage.setId(errorMsgString.toString());
+      errorMessage.setSeverity(Severity.ERROR);
+      errorMessage.getLocation().add(attributeConstraint);
+      report.getErrorMessages().add(errorMessage);
+-->
+
+@model createErrorMessage (EObject location) <--
+      ErrorMessage errorMsg = ResultFactory.eINSTANCE.createErrorMessage();
+      errorMsg.setSeverity(org.moflon.sdm.compiler.democles.validation.result.Severity.ERROR);
+      errorMsg.getLocation().add(location);
+      validationReport.getErrorMessages().add(errorMsg);
+      return errorMsg;
+-->
+
+}

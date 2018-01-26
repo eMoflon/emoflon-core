@@ -1,0 +1,21 @@
+
+partial class CCHelperImpl {
+
+
+
+@model determineCCOperationName (TGGRule rule) <--
+
+      return "isApplicable_CC";
+-->
+
+@model isSourceDomain (Domain domain) <--
+
+      return domain.getType().equals(org.moflon.tgg.language.DomainType.SOURCE);
+-->
+
+@model isTargetDomain (Domain domain) <--
+
+      return domain.getType().equals(org.moflon.tgg.language.DomainType.TARGET);
+-->
+
+}

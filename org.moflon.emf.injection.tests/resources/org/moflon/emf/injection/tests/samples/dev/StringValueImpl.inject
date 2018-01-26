@@ -1,0 +1,14 @@
+
+partial class StringValueImpl {
+
+
+
+@model concat () <--
+
+      if(next == null)
+         return value;
+      else
+         return value + next.concat();
+-->
+
+}
