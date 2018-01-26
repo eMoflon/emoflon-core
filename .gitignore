@@ -1,3 +1,6 @@
 /.settings/
 /**/target/
 /**/.polyglot.build.properties
+*.xtendbin
+
+org.moflon.core.ui/xtend-gen/org/moflon/core/ui/visualisation/EMoflonPlantUMLGenerator.java
