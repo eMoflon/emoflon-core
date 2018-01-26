@@ -6,6 +6,7 @@
 [![Project Stats](https://www.openhub.net/p/emoflon-core/widgets/project_thin_badge.gif)](https://www.openhub.net/p/emoflon-core)
 
 This repository holds core components of the model-driven engineering tool eMoflon.
+Install from http://emoflon.org/emoflon-core/org.moflon.core.releng.updatesite/
 
 Capabilities of eMoflon Core:
 * Basic EMF builder (An autobuilder that regenerates Java code whenever you modify an .ecore file)
