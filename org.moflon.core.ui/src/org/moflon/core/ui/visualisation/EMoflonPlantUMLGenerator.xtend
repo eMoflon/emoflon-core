@@ -116,7 +116,7 @@ class EMoflonPlantUMLGenerator {
 		'''
 	} 
 	
-	protected def static CharSequence plantUMLPreamble(){
+	public def static CharSequence plantUMLPreamble(){
 		'''
 			hide empty members
 			hide circle
