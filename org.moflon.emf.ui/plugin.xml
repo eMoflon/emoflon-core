@@ -20,7 +20,12 @@
   </extension>
   <extension point="org.eclipse.ui.menus">
     <menuContribution allPopups="false" locationURI="toolbar:org.moflon.ide.ui.toolbar">
-      <command commandId="org.moflon.emf.command.CreateNewMoflonEmfProjectCommand" icon="resources/icons/moflonEmfProjectIcon.gif" label="Create new eMoflon EMF project" style="push">
+      <command
+            commandId="org.moflon.emf.command.CreateNewMoflonEmfProjectCommand"
+            icon="resources/icons/moflonEmfProjectIcon.gif"
+            id="org.moflon.newEmfProject"
+            label="Create new eMoflon EMF project"
+            style="push">
         <visibleWhen checkEnabled="false">
           <reference definitionId="org.moflon.core.ui.definitions.isMoflonPerspective"/>
         </visibleWhen>
