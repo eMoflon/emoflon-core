@@ -31,6 +31,10 @@ See here for more details on EPL: http://www.eclipse.org/org/documents/epl-v10.p
       <discovery label="XText update site (release)" url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
    </url>
 
+   <requires>
+      <import plugin="net.sourceforge.plantuml.eclipse"/>
+   </requires>
+
    <plugin
          id="org.moflon.core.branding"
          download-size="0"
