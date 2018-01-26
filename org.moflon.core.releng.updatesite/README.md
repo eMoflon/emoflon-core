@@ -1,5 +1,5 @@
 ## Basic steps for creating the update site
-1. Delete all jars in /features and /plugins
+1. Delete all jars in /features and /plugins apart from org.gervarro.*
 2. Build the update site:
   * Right-click *site.xml*, *Plug-In Tools->Build Site*
   * **IMPORTANT** It is **absolutely crucial** to reset the *site.xml* file after every build of the update site
