@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.moflon.core.plugins;singleton:=true
+Bundle-Name: Components for reading, creating, and updating Eclipse plugin projects
+Bundle-Version: 2.2.0.qualifier
+Bundle-Vendor: eMoflon Developers
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.moflon.core.plugins,
+ org.moflon.core.plugins.manifest
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.emf.codegen.ecore,
+ org.gervarro.eclipse.workspace.util;bundle-version="[2.0.0,3.0.0)",
+ org.eclipse.core.runtime;bundle-version="3.9.0",
+ org.moflon.core.utilities,
+ org.eclipse.jdt.core

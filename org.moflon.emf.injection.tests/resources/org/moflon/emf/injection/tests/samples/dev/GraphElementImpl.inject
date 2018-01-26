@@ -1,0 +1,10 @@
+
+partial class GraphElementImpl {
+
+
+
+@model toString () <--
+		return this.getClass().getSimpleName() + " [id: " + this.getId() + "]";
+-->
+
+}

@@ -1,0 +1,7 @@
+/.settings/
+/bin/
+/target/
+/src-gen/*
+/xtend-gen/*
+!/**/.keep*
+/model/generated

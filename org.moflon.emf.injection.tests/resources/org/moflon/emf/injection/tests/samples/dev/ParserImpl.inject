@@ -1,0 +1,18 @@
+
+partial class ParserImpl {
+
+
+
+@model canParseFile (String fileName) <--
+      throw new UnsupportedOperationException("Please provide a subclass to parse " + fileName);
+-->
+
+@model parse (Reader reader) <--
+      throw new UnsupportedOperationException("Please provide a subclass for actual parsing!");
+-->
+
+@model parse (File file, Reader reader) <--
+      return parse(reader);
+-->
+
+}

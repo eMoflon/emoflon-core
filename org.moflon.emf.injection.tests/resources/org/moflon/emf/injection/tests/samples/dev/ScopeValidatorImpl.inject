@@ -1,0 +1,49 @@
+
+partial class ScopeValidatorImpl {
+
+
+
+@model isNull (CFVariable variable) <--
+		return variable == null;
+-->
+
+@model lookupErrorMessage (Errors errorID) <--
+		if (Errors.GREEN_BOUND_VAR_FOUND == errorID) {
+			return "A bound variable can not be newly created";
+		} else if (Errors.UNBOUND_IS_BOUND_IN_SPEC == errorID) {
+			return "Unbound variable is specified as bound";
+		} else if (Errors.BOUND_IS_UNBOUND_IN_SPEC == errorID) {
+			return "Bound variable is specified as unbound";
+		} else if (Errors.BOUND_VARIABLE_ALREADY_DELETED == errorID) {
+			return "Bound variable has been already deleted earlier";
+		} else if (Errors.RED_BOUND_VAR_IN_LOOP == errorID) {
+			return "Deletion of a bound variable is not allowed in a loop";
+		} else if (Errors.FREE_VAR_IS_RED == errorID) {
+			return "The variable constructed in this action can not be deleted";
+		} else if (Errors.GREEN_VAR_IS_NOT_NEW == errorID) {
+			return "The variable to be created has to be newly constructed";
+		} else if (Errors.BINDING_VAR_NOT_FREE == errorID) {
+			return "The variable must be newly constructed or reassigned";
+		} else if (Errors.OPTIONAL_VAR_FOUND == errorID) {
+			return "Optional variables are not supported";
+		} else if (Errors.REASSIGNED_METHOD_PARAMETER == errorID) {
+			return "Method parameters cannot be reassigned";
+		} else if (Errors.MULTIPLE_ATTRIBUTE_ASSIGNMENT == errorID) {
+			return "Attribute is assigned ambiguously";
+		} else if (Errors.EMPTY_COMPOUND_NODE == errorID) {
+			return "Empty story node with two outgoing edges can produce code in which not all activity nodes are represented";
+		} else if (Errors.INFINITE_LOOP == errorID) {
+			return "Possible infinite loop";
+		} else if (Errors.FREE_GREEN_VARIABLE_MARKED_AS_BOUND == errorID) {
+			return "Free green object variable has been incorrectly marked as bound";
+		} else if (Errors.GREEN_VARIABLE_WITH_BINDING == errorID) {
+			return "Binding in green variable is not allowed";
+		} else if (Errors.THIS_OBJECT_DELETED == errorID) {
+			return "Deletion of this object is not allowed";
+		} else if (Errors.EMPTY_FOREACH_NODE == errorID) {
+			return "For each node must contain at least one variable";
+		}
+		return "Unknown error";
+-->
+
+}

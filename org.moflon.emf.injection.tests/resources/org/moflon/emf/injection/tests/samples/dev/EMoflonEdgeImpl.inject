@@ -1,0 +1,92 @@
+
+partial class EMoflonEdgeImpl {
+
+@members <--
+
+   /*
+    * (non-Javadoc) 
+    * 
+    * @see java.lang.Object#hashCode()
+    */
+
+   private int hashCode;
+
+   private boolean hashCodeComputed = false;
+
+   @Override
+   public int hashCode()
+   {
+      if (hashCodeComputed)
+         return hashCode;
+
+      if (name != null && src != null && !src.eIsProxy() && trg != null && !trg.eIsProxy())
+      {
+         hashCode = name.hashCode() + src.hashCode() + trg.hashCode();
+         hashCodeComputed = true;
+         return hashCode;
+      }
+
+      int hashCodeName = name != null ? name.hashCode() : 0;
+      int hashCodeSrc = src != null ? src.hashCode() : 0;
+      int hashCodeTrg = trg != null ? trg.hashCode() : 0;
+
+      return hashCodeName*31 + hashCodeSrc*37 + hashCodeTrg*17;
+   }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see java.lang.Object#equals(java.lang.Object)
+    */
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+      {
+         return true;
+      }
+      if (obj == null)
+      {
+         return false;
+      }
+      if (getClass() != obj.getClass())
+      {
+         return false;
+      }
+      EMoflonEdgeImpl other = (EMoflonEdgeImpl) obj;
+      if (name == null)
+      {
+         if (other.name != null)
+         {
+            return false;
+         }
+      } else if (!name.equals(other.name))
+      {
+         return false;
+      }
+      if (src == null)
+      {
+         if (other.src != null)
+         {
+            return false;
+         }
+      } else if (!src.equals(other.src))
+      {
+         return false;
+      }
+      if (trg == null)
+      {
+         if (other.trg != null)
+         {
+            return false;
+         }
+      } else if (!trg.equals(other.trg))
+      {
+         return false;
+      }
+      return true;
+   }
+   
+-->
+
+}

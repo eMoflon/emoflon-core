@@ -1,0 +1,49 @@
+
+import org.moflon.tgg.language.csp.SignatureElement;
+
+import org.eclipse.emf.ecore.EEnum;
+import org.moflon.core.utilities.MoflonUtil;
+
+
+partial class VariableTypeManagerImpl {
+
+
+
+@model eType2JavaType (EClassifier eClassifier) <--
+
+      if (eClassifier instanceof EEnum)
+      {
+         return MoflonUtil.getFQN(eClassifier);
+      } else
+      {
+         String name = eClassifier.getName();
+         String type = MoflonUtil.eCoreTypeToJavaType(name);
+
+         return type;
+      }
+-->
+
+@model propagateSignature (TGGConstraint constraint) <--
+
+      EList<SignatureElement> signature = constraint.getSignature();
+
+      // check if signature is null (eq has no signature)
+      if (signature.size() > 0)
+      {
+         for (int i = 0; i < signature.size(); i++)
+         {
+            String type = signature.get(i).getType();
+
+            type = MoflonUtil.eCoreTypeToJavaType(type);
+
+            Variable var = constraint.getVariables().get(i);
+
+            if (var != null && var.getType() != null && var.getType().equals(""))
+            {
+               constraint.getVariables().get(i).setType(type);
+            }
+         }
+      }
+-->
+
+}

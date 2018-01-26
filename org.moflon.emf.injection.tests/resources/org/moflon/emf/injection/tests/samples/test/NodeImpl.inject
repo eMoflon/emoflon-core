@@ -1,0 +1,18 @@
+
+partial class NodeImpl {
+
+
+
+@model getOutdegree () <--
+		return this.getOutgoingEdges().size();
+-->
+
+@model getIndegree () <--
+		return this.getIncomingEdges().size();
+-->
+
+@model getDegree () <--
+		return this.getIndegree() + this.getOutdegree();
+-->
+
+}

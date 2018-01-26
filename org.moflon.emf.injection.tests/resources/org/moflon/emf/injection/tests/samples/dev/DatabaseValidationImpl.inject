@@ -1,0 +1,16 @@
+
+partial class DatabaseValidationImpl {
+
+
+
+@model determineUniquePropertyName (Entity entity) <--
+
+		return "__" + entity.getName() + "_id";
+-->
+
+@model EXACTLY_ONCE () <--
+
+		return Appearance.EXACTLY_ONCE;
+-->
+
+}

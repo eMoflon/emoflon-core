@@ -1,0 +1,35 @@
+
+import java.util.HashSet;
+
+partial class CCMatchImpl {
+
+@members <--
+
+	private HashSet<EObject> contextHashSet = null;
+
+	@Override
+	public HashSet<EObject> getContextHashSet() {
+		if (contextHashSet == null) {
+			contextHashSet = new HashSet<EObject>(getAllContextElements());
+			contextHashSet.addAll(getSourceMatch().getContextHashSet());
+			contextHashSet.addAll(getTargetMatch().getContextHashSet());
+		}
+		return contextHashSet;
+	}
+
+	private HashSet<EObject> createdHashSet = null;
+
+	@Override
+	public HashSet<EObject> getCreatedHashSet() {
+		if (createdHashSet == null) {
+			createdHashSet = new HashSet<EObject>(getCreateCorr());
+			createdHashSet.addAll(getSourceMatch().getCreatedHashSet());
+			createdHashSet.addAll(getTargetMatch().getCreatedHashSet());
+		}
+
+		return createdHashSet;
+	}
+	
+-->
+
+}

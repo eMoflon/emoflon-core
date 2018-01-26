@@ -1,0 +1,7 @@
+<%String injectedCode = generatorAdapter.getInjectedCode(isImplementation);%>
+<%if (injectedCode != null) {%>
+<%	stringBuffer.append(injectedCode);%>
+<%} else {%>
+<% // Do nothing%>
+<%}%>
+<%generatorAdapter.handleImports(isImplementation);%>

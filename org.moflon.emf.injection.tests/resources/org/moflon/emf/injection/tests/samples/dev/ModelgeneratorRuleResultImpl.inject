@@ -1,0 +1,12 @@
+
+partial class ModelgeneratorRuleResultImpl {
+
+
+
+@model getIncrementedPerformCount () <--
+
+
+      return this.performCount + 1;
+-->
+
+}

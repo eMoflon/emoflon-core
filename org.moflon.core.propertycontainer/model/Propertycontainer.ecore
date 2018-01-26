@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="ASCII"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activities="platform:/plugin/SDMLanguage/model/SDMLanguage.ecore#//activities" xmlns:callExpressions="platform:/plugin/SDMLanguage/model/SDMLanguage.ecore#//calls/callExpressions" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:expressions="platform:/plugin/SDMLanguage/model/SDMLanguage.ecore#//expressions" name="propertycontainer" nsURI="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore" nsPrefix="org.moflon.core.propertycontainer">
+  <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+    <details key="basePackage" value="org.moflon.core"/>
+  </eAnnotations>
+  <eClassifiers xsi:type="ecore:EClass" name="Dependencies" eSuperTypes="//PropertiesValue">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" defaultValueLiteral="[Automatically derived dependencies of this project]">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PropertiesValue">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" ordered="false" lowerBound="1">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AdditionalUsedGenPackages" eSuperTypes="//PropertiesValue">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Used to add additional GenPackages for code generation]">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ImportMappings" eSuperTypes="//PropertiesMapping">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Used to correct prefixes in imports for code generation]">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TGGBuildMode">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="buildMode" ordered="false" lowerBound="1" eType="//BuildMode" defaultValueLiteral="BuildMode.ALL"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" defaultValueLiteral="[Controls which TGG operationalizations are generated]">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SdmCodegeneratorMethodBodyHandler">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Value determines the MethodBodyHandler that invokes the code generator for SDMs.]">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" ordered="false" lowerBound="1" eType="//SDMCodeGeneratorIds" defaultValueLiteral="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FactoryMappings" eSuperTypes="//PropertiesMapping">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Used to correct the name of a Factory if it does not comply with our normal naming conventions]">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MoflonPropertiesContainer">
+    <eOperations xsi:type="activities:MoflonEOperation" name="updateMetamodelProjectName">
+      <eParameters name="metamodelProjectName">
+        <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eParameters>
+      <activity owningOperation="//MoflonPropertiesContainer/updateMetamodelProjectName">
+        <ownedActivityEdge source="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.0" target="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.1"/>
+        <ownedActivityEdge source="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.1" target="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.2" guard="FAILURE"/>
+        <ownedActivityEdge source="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.1" target="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.3" guard="SUCCESS"/>
+        <ownedActivityEdge source="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.2" target="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.4"/>
+        <ownedActivityNode xsi:type="activities:StartNode" outgoing="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityEdge.0"/>
+        <ownedActivityNode xsi:type="activities:StoryNode" name="Update if exists" comment="Update_if_exists" outgoing="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityEdge.1 //MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityEdge.2" incoming="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityEdge.0">
+          <storyPattern comment="Update_if_exists">
+            <objectVariable type="//MoflonPropertiesContainer" name="this" outgoingLink="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.1/@storyPattern/@linkVariable.0" bindingState="BOUND"/>
+            <objectVariable type="//MetaModelProject" name="metamodelProject" incomingLink="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.1/@storyPattern/@linkVariable.0">
+              <attributeAssignment attribute="//MetaModelProject/MetaModelProjectName">
+                <valueExpression xsi:type="callExpressions:ParameterExpression" parameter="//MoflonPropertiesContainer/updateMetamodelProjectName/metamodelProjectName"/>
+              </attributeAssignment>
+            </objectVariable>
+            <linkVariable name="metaModelProject" target="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.1/@storyPattern/@objectVariable.1" source="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.1/@storyPattern/@objectVariable.0" type="//MoflonPropertiesContainer/metaModelProject"/>
+          </storyPattern>
+        </ownedActivityNode>
+        <ownedActivityNode xsi:type="activities:StoryNode" name="CreateAndSet" comment="CreateAndSet" outgoing="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityEdge.3" incoming="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityEdge.1">
+          <storyPattern comment="CreateAndSet">
+            <objectVariable type="//MoflonPropertiesContainer" name="this" outgoingLink="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.2/@storyPattern/@linkVariable.0" bindingState="BOUND"/>
+            <objectVariable type="//MetaModelProject" name="metamodelProject" incomingLink="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.2/@storyPattern/@linkVariable.0" bindingOperator="CREATE">
+              <attributeAssignment attribute="//MetaModelProject/MetaModelProjectName">
+                <valueExpression xsi:type="callExpressions:ParameterExpression" parameter="//MoflonPropertiesContainer/updateMetamodelProjectName/metamodelProjectName"/>
+              </attributeAssignment>
+            </objectVariable>
+            <linkVariable name="metaModelProject" target="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.2/@storyPattern/@objectVariable.1" source="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityNode.2/@storyPattern/@objectVariable.0" type="//MoflonPropertiesContainer/metaModelProject"/>
+          </storyPattern>
+        </ownedActivityNode>
+        <ownedActivityNode xsi:type="activities:StopNode" incoming="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityEdge.2"/>
+        <ownedActivityNode xsi:type="activities:StopNode" incoming="//MoflonPropertiesContainer/updateMetamodelProjectName/@activity/@ownedActivityEdge.3"/>
+      </activity>
+    </eOperations>
+    <eOperations xsi:type="activities:MoflonEOperation" name="checkForMissingDefaults">
+      <activity owningOperation="//MoflonPropertiesContainer/checkForMissingDefaults">
+        <ownedActivityEdge source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.0" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.4" guard="SUCCESS"/>
+        <ownedActivityEdge source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.0" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.4" guard="FAILURE"/>
+        <ownedActivityEdge source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.1" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.2"/>
+        <ownedActivityEdge source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.2" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.5" guard="SUCCESS"/>
+        <ownedActivityEdge source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.2" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.5" guard="FAILURE"/>
+        <ownedActivityEdge source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.3" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.0" guard="FAILURE"/>
+        <ownedActivityEdge source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.3" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.0" guard="SUCCESS"/>
+        <ownedActivityEdge source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.5" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.3" guard="SUCCESS"/>
+        <ownedActivityEdge source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.5" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.3" guard="FAILURE"/>
+        <ownedActivityNode xsi:type="activities:StoryNode" name="defaultMetamodelProject" comment="defaultMetamodelProject" outgoing="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.0 //MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.1" incoming="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.5 //MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.6">
+          <storyPattern comment="defaultMetamodelProject">
+            <objectVariable type="//MoflonPropertiesContainer" name="this" outgoingLink="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.0/@storyPattern/@linkVariable.0 //MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.0/@storyPattern/@linkVariable.1" bindingState="BOUND"/>
+            <objectVariable type="//MetaModelProject" name="metamodelProject" incomingLink="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.0/@storyPattern/@linkVariable.0" bindingSemantics="NEGATIVE"/>
+            <objectVariable type="//MetaModelProject" name="newMetamodelProject" incomingLink="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.0/@storyPattern/@linkVariable.1" bindingOperator="CREATE">
+              <attributeAssignment attribute="//MetaModelProject/MetaModelProjectName">
+                <valueExpression xsi:type="expressions:LiteralExpression" value="&quot;NO_META_MODEL_PROJECT_NAME_SET_YET&quot;"/>
+              </attributeAssignment>
+            </objectVariable>
+            <linkVariable name="metaModelProject" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.0/@storyPattern/@objectVariable.1" source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.0/@storyPattern/@objectVariable.0" type="//MoflonPropertiesContainer/metaModelProject"/>
+            <linkVariable name="metaModelProject" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.0/@storyPattern/@objectVariable.2" source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.0/@storyPattern/@objectVariable.0" type="//MoflonPropertiesContainer/metaModelProject" bindingOperator="CREATE"/>
+          </storyPattern>
+        </ownedActivityNode>
+        <ownedActivityNode xsi:type="activities:StartNode" outgoing="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.2"/>
+        <ownedActivityNode xsi:type="activities:StoryNode" name="defaultReplaceGenModel" comment="defaultReplaceGenModel" outgoing="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.3 //MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.4" incoming="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.2">
+          <storyPattern comment="defaultReplaceGenModel">
+            <objectVariable type="//ReplaceGenModel" name="newRgm" incomingLink="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.2/@storyPattern/@linkVariable.0" bindingOperator="CREATE"/>
+            <objectVariable type="//ReplaceGenModel" name="rgm" incomingLink="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.2/@storyPattern/@linkVariable.1" bindingSemantics="NEGATIVE"/>
+            <objectVariable type="//MoflonPropertiesContainer" name="this" outgoingLink="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.2/@storyPattern/@linkVariable.0 //MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.2/@storyPattern/@linkVariable.1" bindingState="BOUND"/>
+            <linkVariable name="replaceGenModel" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.2/@storyPattern/@objectVariable.0" source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.2/@storyPattern/@objectVariable.2" type="//MoflonPropertiesContainer/replaceGenModel" bindingOperator="CREATE"/>
+            <linkVariable name="replaceGenModel" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.2/@storyPattern/@objectVariable.1" source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.2/@storyPattern/@objectVariable.2" type="//MoflonPropertiesContainer/replaceGenModel"/>
+          </storyPattern>
+        </ownedActivityNode>
+        <ownedActivityNode xsi:type="activities:StoryNode" name="defaultTGGBuildMode" comment="defaultTGGBuildMode" outgoing="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.5 //MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.6" incoming="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.7 //MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.8">
+          <storyPattern comment="defaultTGGBuildMode">
+            <objectVariable type="//TGGBuildMode" name="newTGGBuildMode" incomingLink="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.3/@storyPattern/@linkVariable.0" bindingOperator="CREATE"/>
+            <objectVariable type="//MoflonPropertiesContainer" name="this" outgoingLink="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.3/@storyPattern/@linkVariable.0 //MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.3/@storyPattern/@linkVariable.1" bindingState="BOUND"/>
+            <objectVariable type="//TGGBuildMode" name="tggBuildMode" incomingLink="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.3/@storyPattern/@linkVariable.1" bindingSemantics="NEGATIVE"/>
+            <linkVariable name="tGGBuildMode" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.3/@storyPattern/@objectVariable.0" source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.3/@storyPattern/@objectVariable.1" type="//MoflonPropertiesContainer/tGGBuildMode" bindingOperator="CREATE"/>
+            <linkVariable name="tGGBuildMode" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.3/@storyPattern/@objectVariable.2" source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.3/@storyPattern/@objectVariable.1" type="//MoflonPropertiesContainer/tGGBuildMode"/>
+          </storyPattern>
+        </ownedActivityNode>
+        <ownedActivityNode xsi:type="activities:StopNode" incoming="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.0 //MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.1"/>
+        <ownedActivityNode xsi:type="activities:StoryNode" name="defaultSdmCodegeneratorID" comment="defaultSdmCodegeneratorID" outgoing="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.7 //MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.8" incoming="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.3 //MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityEdge.4">
+          <storyPattern comment="defaultSdmCodegeneratorID">
+            <objectVariable type="//MoflonPropertiesContainer" name="this" outgoingLink="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.5/@storyPattern/@linkVariable.0 //MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.5/@storyPattern/@linkVariable.1" bindingState="BOUND"/>
+            <objectVariable type="//SdmCodegeneratorMethodBodyHandler" name="codegenMBH" incomingLink="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.5/@storyPattern/@linkVariable.0" bindingSemantics="NEGATIVE"/>
+            <objectVariable type="//SdmCodegeneratorMethodBodyHandler" name="newCodegenMBH" incomingLink="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.5/@storyPattern/@linkVariable.1" bindingOperator="CREATE"/>
+            <linkVariable name="sdmCodegeneratorHandlerId" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.5/@storyPattern/@objectVariable.1" source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.5/@storyPattern/@objectVariable.0" type="//MoflonPropertiesContainer/sdmCodegeneratorHandlerId"/>
+            <linkVariable name="sdmCodegeneratorHandlerId" target="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.5/@storyPattern/@objectVariable.2" source="//MoflonPropertiesContainer/checkForMissingDefaults/@activity/@ownedActivityNode.5/@storyPattern/@objectVariable.0" type="//MoflonPropertiesContainer/sdmCodegeneratorHandlerId" bindingOperator="CREATE"/>
+          </storyPattern>
+        </ownedActivityNode>
+      </activity>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dependencies" upperBound="-1" eType="//Dependencies" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="factoryMappings" upperBound="-1" eType="//FactoryMappings" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="additionalDependencies" upperBound="-1" eType="//AdditionalDependencies" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="metaModelProject" lowerBound="1" eType="//MetaModelProject" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="replaceGenModel" lowerBound="1" eType="//ReplaceGenModel" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sdmCodegeneratorHandlerId" lowerBound="1" eType="//SdmCodegeneratorMethodBodyHandler" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tGGBuildMode" lowerBound="1" eType="//TGGBuildMode" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="importMappings" upperBound="-1" eType="//ImportMappings" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="additionalUsedGenPackages" upperBound="-1" eType="//AdditionalUsedGenPackages" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Properties to configure code generation]">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="projectName" ordered="false" lowerBound="1">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ReplaceGenModel">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bool" ordered="false" lowerBound="1" defaultValueLiteral="true">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Set to false if you wish to maintain the GenModel in the project yourself]">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PropertiesMapping">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" ordered="false" lowerBound="1">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" ordered="false" lowerBound="1">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AdditionalDependencies" eSuperTypes="//PropertiesValue">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Used to add additional dependencies required for code generation]">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="BuildMode">
+    <eLiterals name="ALL" value="4" literal="ALL"/>
+    <eLiterals name="SIMULTANEOUS" value="3" literal="SIMULTANEOUS"/>
+    <eLiterals name="BACKWARD" value="2" literal="BACKWARD"/>
+    <eLiterals name="FORWARD" value="1" literal="FORWARD"/>
+    <eLiterals name="FORWARD_AND_BACKWARD" literal="FORWARD_AND_BACKWARD"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="SDMCodeGeneratorIds">
+    <eLiterals name="DEMOCLES" value="1" literal="org.moflon.compiler.sdm.democles.DemoclesMethodBodyHandler"/>
+    <eLiterals name="DEMOCLES_ATTRIBUTES" value="2" literal="org.moflon.compiler.sdm.democles.attributes.AttributeConstraintCodeGeneratorConfig"/>
+    <eLiterals name="DEMOCLES_REVERSE_NAVI" value="3" literal="org.moflon.compiler.sdm.democles.reversenavigation.ReverseNavigationCodeGeneratorConfig"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MetaModelProject">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Name of the corresponding metamodel project in the current workspace]">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="MetaModelProjectName" ordered="false" lowerBound="1">
+      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+</ecore:EPackage>

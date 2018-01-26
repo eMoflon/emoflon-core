@@ -1,0 +1,9 @@
+<%// SDM based method implementation%>
+<%String methodBody = generatorAdapter.getGeneratedMethodBody(genOperation.getEcoreOperation());%>
+<%if (methodBody != null) {%>
+<%	stringBuffer.append(methodBody);%>
+<%} else {%>
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+<%}%>

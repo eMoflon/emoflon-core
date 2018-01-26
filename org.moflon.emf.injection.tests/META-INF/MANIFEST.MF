@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.moflon.emf.injection.tests
+Bundle-SymbolicName: org.moflon.emf.injection.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: eMoflon Developers
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.moflon.emf.injection.tests
+Require-Bundle: org.junit;bundle-version="4.10.0",
+ org.eclipse.xtext;bundle-version="2.0.0",
+ org.moflon.emf.injection;bundle-version="1.0.0"

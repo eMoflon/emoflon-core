@@ -1,0 +1,118 @@
+
+import org.eclipse.emf.ecore.EPackage;
+import org.apache.commons.lang3.StringUtils;
+import org.moflon.core.utilities.MoflonUtil;
+import org.moflon.tgg.csp.CSPNotSolvableException;
+import org.moflon.tgg.csp.codegenerator.BasicFormatRenderer;
+import org.moflon.tgg.language.csp.CSP;
+import SDMLanguage.sdmUtil.*;
+import net.sf.javabdd.BDDException;
+
+partial class CspCodeGeneratorHelperImpl {
+
+
+
+@model computeConstraintOrder (ApplicationTypes direction, OperationalCSPType operationalRule) <--
+      OperationalCSP csp = getOperationalCSP(direction, operationalRule);
+
+      try
+      {
+         getCspSearchPlanAdapter().computeConstraintOrder(csp);
+      } catch (BDDException e)
+      {
+         throw new CSPNotSolvableException(csp, "Problems solving the attribute constraints of TGG rule " + getTggRule().getName() + ": " + e.getMessage());
+      } catch (Exception e)
+      {
+         throw new CSPNotSolvableException(csp, "The attribute constraint problem of TGG rule " + getTggRule().getName() + " is not solvable!");
+      }
+-->
+
+@model createGetterCall (AttributeVariable attributeVariable, EClass eClass) <--
+      String prefix = ".get" + StringUtils.capitalize(attributeVariable.getAttribute());
+      if ("boolean".equals(attributeVariable.getType()))
+      {
+         prefix = MoflonUtil.handlePrefixForBooleanAttributes(eClass.getEPackage().getName(), attributeVariable.getAttribute());
+      }
+      return attributeVariable.getObjectVariable() + prefix + "()";
+-->
+
+@model deriveVarName (AttributeVariable attributeVariable) <--
+      return "var_" + attributeVariable.getObjectVariable() + "_" + attributeVariable.getAttribute();
+-->
+
+@model getOperationalCSP (ApplicationTypes direction, OperationalCSPType operationalRule) <--
+      CSP csp = getTggRule().getCsp();
+      if (csp == null)
+         return null;
+
+      switch (direction)
+      {
+      case FORWARD:
+         switch (operationalRule)
+         {
+         case IS_APPROPRIATE:
+            return csp.getSource();
+         case IS_APPLICABLE:
+            return csp.getForward();
+
+         default:
+            throw new IllegalArgumentException("Unsupported operational rule type: " + operationalRule);
+         }
+
+      case BACKWARD:
+         switch (operationalRule)
+         {
+         case IS_APPROPRIATE:
+            return csp.getTarget();
+         case IS_APPLICABLE:
+            return csp.getBackward();
+
+         default:
+            throw new IllegalArgumentException("Unsupported operational rule type: " + operationalRule);
+         }
+
+      case SIMULTANEOUS:
+         return csp.getSimultaneous();
+
+      case CONSISTENCY:
+         return csp.getForward();
+
+      default:
+         throw new IllegalArgumentException("Unsupported direction for operationalization: " + direction);
+      }
+-->
+
+@model reportInconsistentAttributeVariable (AttributeVariable attributeVariable) <--
+      throw new RuntimeException("Attribute variable " + attributeVariable.getObjectVariable() + "." + attributeVariable.getAttribute() + " in rule "
+            + getTggRule().getName() + " is inconsistent with the corresponding meta-model!");
+-->
+
+@model reportMissingObjectVariable (AttributeVariable attributeVariable) <--
+      throw new RuntimeException("Attribute variable " + attributeVariable.getName() + " refers to missing Object Variable "
+            + attributeVariable.getObjectVariable() + " in rule " + getTggRule().getName());
+-->
+
+@model addCspImportInjections (CompilerInjection compilerInjection, EClass ruleClass) <--
+      EPackage container = (EPackage) ruleClass.eContainer();
+      while (container.eContainer() != null)
+      {
+         container = (EPackage) container.eContainer();
+      }
+      final String projectName = container.getNsPrefix();
+
+      final String[] imports = new String[] { "org.moflon.tgg.csp.*", projectName + ".csp.constraints.*", "org.moflon.tgg.csp.constraints.*", "org.moflon.tgg.language.csp.*" };
+
+      for (String importEntry : imports)
+      {
+         if (compilerInjection.getImportInjectionEntries().stream()
+               .noneMatch(entry -> entry.getContent().equals(importEntry) && entry.getEClass().equals(ruleClass)))
+         {
+            ImportInjectionEntry newEntry = SdmUtilFactory.eINSTANCE.createImportInjectionEntry();
+            newEntry.setContent(importEntry);
+            newEntry.setEClass(ruleClass);
+            compilerInjection.getImportInjectionEntries().add(newEntry);
+         }
+      }
+-->
+
+}
