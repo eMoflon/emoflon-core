@@ -28,7 +28,10 @@ Require-Bundle: org.eclipse.ui.workbench;bundle-version="3.0.0",
  org.eclipse.emf.ecore.editor;bundle-version="2.13.0",
  org.eclipse.emf.common
 Export-Package: org.moflon.core.ui,
- org.moflon.core.ui.errorhandling
+ org.moflon.core.ui.errorhandling,
+ org.moflon.core.ui.handler,
+ org.moflon.core.ui.propertytester,
+ org.moflon.core.ui.visualisation
 Bundle-Activator: org.moflon.core.ui.MoflonCoreUiActivator
 Bundle-ActivationPolicy: lazy
 
