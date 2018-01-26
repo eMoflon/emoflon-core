@@ -39,3 +39,6 @@ Licensing information can be found in [LICENSE.md](LICENSE.md).
   2. create a new eMoflon EMF project (*File -> New -> Other... -> Filter for 'eMoflon' -> New eMoflon EMF Project Wizard*),
   3. add a dummy class to the .ecore file in the */models* folder of the freshly created project, and
   4. observe how eMoflon generates the corresponding EMF-compliant Java code into the */gen* folder.
+
+## How to provide the eMoflon Core update site
+* Follow the instructions in *org.moflon.core.releng.updatesite/README.md* for building and releasing the update site
