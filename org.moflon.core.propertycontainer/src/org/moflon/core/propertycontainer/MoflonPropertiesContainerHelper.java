@@ -28,8 +28,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.moflon.core.utilities.LogUtils;
 import org.moflon.core.utilities.WorkspaceHelper;
+import org.moflon.core.utilities.XMLUtils;
 import org.moflon.core.utilities.eMoflonEMFUtil;
-import org.moflon.util.plugins.xml.XMLUtils;
 import org.w3c.dom.Document;
 
 public class MoflonPropertiesContainerHelper
