@@ -208,9 +208,6 @@
             </and>
             <or>
               <reference definitionId="org.moflon.ide.ui.definitions.hasJavaNature"/>
-              <!--<reference definitionId="org.moflon.ide.ui.definitions.hasMetamodelNature"></reference>
-                            <reference definitionId="org.moflon.ide.ui.definitions.hasRepositoryNature"></reference>
-                            <reference definitionId="org.moflon.ide.ui.definitions.hasIntegrationNature"></reference>-->
               <reference definitionId="org.moflon.ide.ui.definitions.isInPackageExplorer"/>
               <reference definitionId="org.moflon.ide.ui.definitions.isInProjectExplorer"/>
             </or>
