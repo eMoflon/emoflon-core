@@ -24,8 +24,6 @@ import org.moflon.emf.codegen.MoflonGenModelBuilder;
 
 public final class MonitoredGenModelBuilder implements ITask
 {
-   private static final String TASK_NAME = "GenModel building";
-
    private final ResourceSet resourceSet;
 
    private final IFile ecoreFile;
@@ -51,7 +49,7 @@ public final class MonitoredGenModelBuilder implements ITask
    @Override
    public final IStatus run(final IProgressMonitor monitor)
    {
-      final SubMonitor subMon = SubMonitor.convert(monitor, TASK_NAME + " task", 100);
+      final SubMonitor subMon = SubMonitor.convert(monitor, getTaskName() + " task", 100);
       IProject project = ecoreFile.getProject();
       subMon.subTask("Building or loading GenModel for project " + project.getName());
       subMon.worked(5);
@@ -87,9 +85,8 @@ public final class MonitoredGenModelBuilder implements ITask
       try
       {
          this.genModel = genModelBuilder.buildGenModel(genModelURI);
-      } catch (RuntimeException e)
+      } catch (final RuntimeException e)
       {
-         // StatusManager.getManager().handle(errorStatus, StatusManager.SHOW | StatusManager.LOG);
          return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), e.getMessage(), e);
       }
       subMon.worked(30);
@@ -126,8 +123,8 @@ public final class MonitoredGenModelBuilder implements ITask
       {
          try
          {
-            Resource genModelResource = genModel.eResource();
-            Map<String, Object> saveOptions = new HashMap<String, Object>();
+            final Resource genModelResource = genModel.eResource();
+            final Map<String, Object> saveOptions = new HashMap<String, Object>();
             saveOptions.put(Resource.OPTION_LINE_DELIMITER, WorkspaceHelper.DEFAULT_RESOURCE_LINE_DELIMITER);
             if (isNewGenModelConstructed)
             {
@@ -156,6 +153,6 @@ public final class MonitoredGenModelBuilder implements ITask
    @Override
    public final String getTaskName()
    {
-      return TASK_NAME;
+      return "GenModel building";
    }
 }

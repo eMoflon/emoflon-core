@@ -21,9 +21,6 @@
             <count value="1"/>
           </with>
           <and>
-            <with variable="activeEditorInput">
-              <reference definitionId="org.moflon.ide.ui.definitions.hasAnyMoflonNature"/>
-            </with>
             <reference definitionId="org.moflon.ide.ui.definitions.isCompilationUnitEditor"/>
           </and>
         </or>

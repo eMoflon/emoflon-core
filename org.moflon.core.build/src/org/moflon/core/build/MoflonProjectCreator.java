@@ -111,7 +111,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
                   AttributeUpdatePolicy.KEEP);
             changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_SYMBOLIC_NAME,
                   pluginProperties.get(PluginProperties.PLUGIN_ID_KEY) + ";singleton:=true", AttributeUpdatePolicy.KEEP);
-            changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_VERSION, "1.0", AttributeUpdatePolicy.KEEP);
+            changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_VERSION, "0.0.1.qualifier", AttributeUpdatePolicy.KEEP);
             changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_VENDOR, "", AttributeUpdatePolicy.KEEP);
             changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_ACTIVATION_POLICY, "lazy", AttributeUpdatePolicy.KEEP);
             changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT,
@@ -150,7 +150,9 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
    /**
     * Initializes the contents of the file {@link MoflonConventions#MOFLON_CONFIG_FILE}.
     *
-    * The file will be saved afterwards.
+    * The file will be saved after calling this method.
+    *
+    * This method initializes {@link MoflonPropertiesContainer#getSdmCodegeneratorHandlerId()} based on {@link #getCodeGeneratorHandler()}
     *
     * When overriding this method, subclasses should invoke the parent class's {@link #initializeMoflonProperties(MoflonPropertiesContainer)} in any case!
     *
