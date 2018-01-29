@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -26,8 +25,8 @@ import org.gervarro.eclipse.task.ITask;
 import org.moflon.core.preferences.EMoflonPreferencesStorage;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
+import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
-import org.moflon.core.utilities.eMoflonEMFUtil;
 
 /**
  * This class defines a generic process for processing eMoflon projects.
@@ -45,7 +44,6 @@ public abstract class GenericMoflonProcess implements ITask
    private List<Resource> resources;
 
    private MoflonPropertiesContainer moflonProperties;
-
 
    public GenericMoflonProcess(final IFile ecoreFile, final ResourceSet resourceSet, EMoflonPreferencesStorage preferencesStorage)
    {
@@ -74,33 +72,32 @@ public abstract class GenericMoflonProcess implements ITask
       final SubMonitor subMon = SubMonitor.convert(monitor, getTaskName(), 10);
 
       if (!ecoreFile.exists())
-         return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), String.format("Ecore file does not exist. Expected location: '%s'", ecoreFile));
+         return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()),
+               String.format("Ecore file does not exist. Expected location: '%s'", ecoreFile));
 
       try
       {
          // (1) Loads moflon.properties file
-         final IProject project = ecoreFile.getProject();
-         final URI projectURI = URI.createPlatformResourceURI(project.getName() + "/", true);
-         final URI moflonPropertiesURI = URI.createURI(MoflonPropertiesContainerHelper.MOFLON_CONFIG_FILE).resolve(projectURI);
-         final Resource moflonPropertiesResource = eMoflonEMFUtil.createDefaultResourceSet().getResource(moflonPropertiesURI, true);
-         this.moflonProperties = (MoflonPropertiesContainer) moflonPropertiesResource.getContents().get(0);
+         final IProject project = getEcoreFile().getProject();
+         this.moflonProperties = MoflonPropertiesContainerHelper.loadOrCreatePropertiesContainer(getProject(),
+               MoflonConventions.getDefaultMoflonPropertiesFile(project));
 
          subMon.worked(1);
          if (subMon.isCanceled())
          {
             return Status.CANCEL_STATUS;
          }
-      } catch (WrappedException wrappedException)
+      } catch (final WrappedException wrappedException)
       {
          final Exception exception = wrappedException.exception();
          return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), exception.getMessage(), exception);
-      } catch (RuntimeException runtimeException)
+      } catch (final RuntimeException runtimeException)
       {
          return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), runtimeException.getMessage(), runtimeException);
       }
 
       // (2) Load metamodel
-      final MonitoredMetamodelLoader metamodelLoader = new MonitoredMetamodelLoader(resourceSet, ecoreFile, moflonProperties);
+      final MonitoredMetamodelLoader metamodelLoader = new MonitoredMetamodelLoader(getResourceSet(), getEcoreFile(), getMoflonProperties());
       final IStatus metamodelLoaderStatus = metamodelLoader.run(subMon.split(2));
       if (subMon.isCanceled())
       {
@@ -120,7 +117,8 @@ public abstract class GenericMoflonProcess implements ITask
       return ecoreFile;
    }
 
-   public final IProject getProject() {
+   public final IProject getProject()
+   {
       return this.ecoreFile.getProject();
    }
 

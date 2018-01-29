@@ -1,5 +1,6 @@
 package org.moflon.core.utilities;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.common.util.URI;
 
@@ -20,6 +21,7 @@ import org.eclipse.emf.common.util.URI;
  */
 public class MoflonConventions
 {
+   public static final String MOFLON_CONFIG_FILE = "moflon.properties.xmi";
 
    public static URI getDefaultURIToEcoreFileInPlugin(final String pluginID)
    {
@@ -55,6 +57,11 @@ public class MoflonConventions
    public static final URI getDefaultEcoreFileURI(final IProject project)
    {
       return getDefaultProjectRelativeEcoreFileURI(project).resolve(URI.createPlatformResourceURI(project.getName() + "/", true));
+   }
+
+   public static IFile getDefaultMoflonPropertiesFile(final IProject project)
+   {
+      return project.getFile(MOFLON_CONFIG_FILE);
    }
 
 }
