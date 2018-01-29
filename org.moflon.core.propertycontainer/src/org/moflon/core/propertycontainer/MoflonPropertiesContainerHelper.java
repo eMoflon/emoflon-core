@@ -66,12 +66,12 @@ public class MoflonPropertiesContainerHelper
       {
          PropertycontainerFactory.eINSTANCE.getClass();
          moflonPropertiesContainer = (MoflonPropertiesContainer) eMoflonEMFUtil.getResourceFromFileIntoDefaultResourceSet(propertyFile).getContents().get(0);
-
       } else
       {
          moflonPropertiesContainer = PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
+         moflonPropertiesContainer.setProjectName(project.getName());
+         moflonPropertiesContainer.getReplaceGenModel().setBool(true);
       }
-      moflonPropertiesContainer.setProjectName(project.getName());
       return moflonPropertiesContainer;
    }
 
