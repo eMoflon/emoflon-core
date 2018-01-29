@@ -6,11 +6,13 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.ui.IWorkingSet;
 import org.moflon.core.build.MoflonProjectCreator;
-import org.moflon.core.plugins.PluginProperties;
 import org.moflon.core.plugins.PluginProducerWorkspaceRunnable;
+import org.moflon.core.plugins.PluginProperties;
 import org.moflon.core.ui.AbstractMoflonProjectInfoPage;
 import org.moflon.core.ui.AbstractMoflonWizard;
+import org.moflon.core.ui.WorkingSetUtilities;
 import org.moflon.core.utilities.LogUtils;
 import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.MoflonUtil;
@@ -55,6 +57,14 @@ public class NewMoflonEmfProjectWizard extends AbstractMoflonWizard
 
          ResourcesPlugin.getWorkspace().run(new PluginProducerWorkspaceRunnable(project, pluginProperties), subMon.split(1));
          subMon.worked(2);
+
+         // Add to most recent working set
+         final IWorkingSet[] recentWorkingSet = WorkingSetUtilities.getSelectedWorkingSet(getSelection(), getActivePart());
+         if (recentWorkingSet.length != 0)
+         {
+            WorkingSetUtilities.addProjectToWorkingSet(project, recentWorkingSet[0]);
+         }
+
       } catch (final Exception e)
       {
          LogUtils.error(logger, e);
