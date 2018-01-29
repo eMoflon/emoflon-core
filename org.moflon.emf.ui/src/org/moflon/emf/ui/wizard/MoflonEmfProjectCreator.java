@@ -12,6 +12,10 @@ import org.moflon.core.propertycontainer.SDMCodeGeneratorIds;
 import org.moflon.emf.build.MoflonEmfBuilder;
 import org.moflon.emf.build.MoflonEmfNature;
 
+/**
+ * Creator for eMoflon EMF projects (see {@link MoflonEmfNature})
+ * @author Roland Kluge - Initial implementation
+ */
 public class MoflonEmfProjectCreator extends MoflonProjectCreator
 {
    private static final List<String> GITIGNORE_LINES = Arrays.asList(//
