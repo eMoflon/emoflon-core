@@ -1059,13 +1059,13 @@ public class eMoflonEMFUtil
 
    /**
     * Loads the genmodel from the given project, assuming the default genmodel path as returned by
-    * {@link MoflonUtil#getDefaultPathToGenModelInProject(String)}.
+    * {@link MoflonConventions#getDefaultPathToGenModelInProject(String)}.
     *
     * @return the genmodel (if exists)
     */
    public static GenModel extractGenModelFromProject(final IProject currentProject)
    {
-      String pathInsideProject = MoflonUtil.getDefaultPathToGenModelInProject(currentProject.getName());
+      String pathInsideProject = MoflonConventions.getDefaultPathToGenModelInProject(currentProject.getName());
       IFile projectGenModelFile = currentProject.getFile(pathInsideProject);
       String pathToGenmodel = projectGenModelFile.getRawLocation().toOSString();
       ResourceSet set = createDefaultResourceSet();

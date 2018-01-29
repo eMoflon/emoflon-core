@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.moflon.core.plugins.manifest.ManifestFileUpdater;
-import org.moflon.core.utilities.MoflonUtil;
+import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 
 
@@ -165,7 +165,7 @@ public class PluginProperties
    public Collection<URI> getDependenciesAsURIs()
    {
       return getDependencies().stream().filter(dep -> !dep.equals(ManifestFileUpdater.IGNORE_PLUGIN_ID))
-            .map(dep -> MoflonUtil.getDefaultURIToEcoreFileInPlugin(dep)).collect(Collectors.toSet());
+            .map(dep -> MoflonConventions.getDefaultURIToEcoreFileInPlugin(dep)).collect(Collectors.toSet());
    }
 
    public void setDefaultValues()

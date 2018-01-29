@@ -1,5 +1,7 @@
 package org.moflon.core.utilities;
 
+import org.eclipse.emf.common.util.URI;
+
 /**
  * This class captures all conventions used by the EMF build process of eMoflon
  *
@@ -17,5 +19,30 @@ package org.moflon.core.utilities;
  */
 public class MoflonConventions
 {
+
+   public static URI getDefaultURIToEcoreFileInPlugin(final String pluginID)
+   {
+      return URI.createPlatformPluginURI("/" + pluginID + "/" + MoflonConventions.getDefaultPathToEcoreFileInProject(pluginID), true);
+   }
+
+   public static String getDefaultNameOfFileInProjectWithoutExtension(final String projectName)
+   {
+      return MoflonUtil.lastCapitalizedSegmentOf(projectName);
+   }
+
+   public static String getDefaultPathToFileInProject(final String projectName, final String ending)
+   {
+      return "model/" + getDefaultNameOfFileInProjectWithoutExtension(projectName) + ending;
+   }
+
+   public static String getDefaultPathToGenModelInProject(final String projectName)
+   {
+      return getDefaultPathToFileInProject(projectName, ".genmodel");
+   }
+
+   public static String getDefaultPathToEcoreFileInProject(final String projectName)
+   {
+      return getDefaultPathToFileInProject(projectName, ".ecore");
+   }
 
 }
