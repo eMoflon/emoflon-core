@@ -1,4 +1,4 @@
-package org.moflon.util.plugins.xml;
+package org.moflon.core.utilities;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.moflon.core.utilities.WorkspaceHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
