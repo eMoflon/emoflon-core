@@ -1097,15 +1097,20 @@ public class eMoflonEMFUtil
       return status;
    }
 
+   /**
+    * Adds a mapping from platform:/plugin to platform:/resource for the given {@link IProject} to the given {@link ResourceSet}
+    * @param set the {@link ResourceSet} to update
+    * @param project the project for which the mapping shall be added
+    * @throws CoreException if the project's metadata cannot be read
+    */
    public static final void createPluginToResourceMapping(final ResourceSet set, final IProject project) throws CoreException
    {
       if (project.isAccessible() && project.hasNature(WorkspaceHelper.PLUGIN_NATURE_ID))
       {
-         final IPluginModelBase pluginModel = PluginRegistry.findModel(project);
+         final IPluginModelBase pluginModel = findPluginModel(project);
          if (pluginModel != null)
          {
-            // Plugin projects in the workspace
-            final String pluginID = pluginModel.getBundleDescription().getSymbolicName();
+            final String pluginID = extractSymbolicName(pluginModel);
             final URI pluginURI = URI.createPlatformPluginURI(pluginID + "/", true);
             final URI resourceURI = URI.createPlatformResourceURI(project.getName() + "/", true);
             set.getURIConverter().getURIMap().put(pluginURI, resourceURI);
@@ -1129,45 +1134,53 @@ public class eMoflonEMFUtil
       createPluginToResourceMapping(set, new NullProgressMonitor());
    }
 
+   /**
+    * Determines the EMF {@link URI} of the given project
+    *
+    * If the project is an Eclipse plugin, a platform:/plugin URI is returned.
+    * Otherwise, a platform:/resource URI is returned
+    *
+    * @param project the project
+    * @return the {@link URI} of the project
+    */
    public static final URI lookupProjectURI(final IProject project)
    {
-      IPluginModelBase pluginModel = PluginRegistry.findModel(project);
-      if (pluginModel != null)
+      final IPluginModelBase pluginModel = PluginRegistry.findModel(project);
+      final boolean isPluginProject = pluginModel != null;
+      if (isPluginProject)
       {
-         // Plugin projects in the workspace
-         String pluginID = pluginModel.getBundleDescription().getSymbolicName();
+         final String pluginID = extractSymbolicName(pluginModel);
          return URI.createPlatformPluginURI(pluginID + "/", true);
       } else
       {
-         // Regular projects in the workspace
          return URI.createPlatformResourceURI(project.getName() + "/", true);
       }
    }
 
-   public static final URI getDefaultProjectRelativeEcoreFileURI(final IProject project)
-   {
-      final String ecoreFileName = MoflonUtil.lastCapitalizedSegmentOf(project.getName());
-      return URI.createURI(WorkspaceHelper.MODEL_FOLDER + "/" + ecoreFileName + WorkspaceHelper.ECORE_FILE_EXTENSION);
-   }
-
-   public static final URI getDefaultEcoreFileURI(final IProject project)
-   {
-      return getDefaultProjectRelativeEcoreFileURI(project).resolve(URI.createPlatformResourceURI(project.getName() + "/", true));
-   }
-
+   /**
+    * Returns the project in the workspace having the given URI
+    * @param namespaceURI the URI of the project
+    * @return the project or <code>null</code> if no project exists for the given URI
+    */
    public static final IProject getWorkspaceProject(final URI namespaceURI)
    {
-      assert namespaceURI.segmentCount() >= 2 && namespaceURI.isPlatformPlugin() || namespaceURI.isPlatformResource();
-      if (namespaceURI.isPlatformResource() && namespaceURI.segmentCount() >= 2)
+      if (namespaceURI.segmentCount() < 2 ) {
+         throw new IllegalArgumentException(String.format("Unsupported URI: %s. Must have at least two segments.", namespaceURI));
+      }
+      if (!namespaceURI.isPlatformPlugin() && !namespaceURI.isPlatformResource()) {
+         throw new IllegalArgumentException(String.format("Unsupported URI: %s. Must have type platform:/resource or platform:/plugin.", namespaceURI));
+      }
+
+      if (namespaceURI.isPlatformResource())
       {
          return ResourcesPlugin.getWorkspace().getRoot().getProject(namespaceURI.segment(1));
       }
-      if (namespaceURI.isPlatformPlugin() && namespaceURI.segmentCount() >= 2)
+      if (namespaceURI.isPlatformPlugin())
       {
          for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects())
          {
             IPluginModelBase pluginModel = PluginRegistry.findModel(project);
-            if (pluginModel != null && namespaceURI.segment(1).equals(pluginModel.getBundleDescription().getSymbolicName()))
+            if (pluginModel != null && namespaceURI.segment(1).equals(extractSymbolicName(pluginModel)))
             {
                return project;
             }
@@ -1176,6 +1189,11 @@ public class eMoflonEMFUtil
       return null;
    }
 
+   /**
+    * Returns all {@link EClass} (recursively) of the given {@link EPackage}.
+    * @param ePackage the package
+    * @return the list of all {@link EClass}
+    */
    public static final List<EClass> getEClasses(final EPackage ePackage)
    {
       final List<EClass> result = new LinkedList<EClass>();
@@ -1199,6 +1217,27 @@ public class eMoflonEMFUtil
    public static boolean isEcoreFile(final IResource ecoreResource)
    {
       return ecoreResource.getType() == IResource.FILE && "ecore".equals(ecoreResource.getFileExtension());
+   }
+
+   /**
+    * Extracts the symbolic name of the bundle described by the given {@link IPluginModelBase}
+    * @param pluginModel the plugin model
+    * @return the symbolic name
+    */
+   private static String extractSymbolicName(final IPluginModelBase pluginModel)
+   {
+      return pluginModel.getBundleDescription().getSymbolicName();
+   }
+
+   /**
+    * Extracts the {@link IPluginModelBase} for the given project
+    * @param project the projec
+    * @return the plugin model or <code>null</code> if the project has no plugin model
+    */
+   private static IPluginModelBase findPluginModel(final IProject project)
+   {
+      final IPluginModelBase pluginModel = PluginRegistry.findModel(project);
+      return pluginModel;
    }
 
 }

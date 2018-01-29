@@ -1,5 +1,6 @@
 package org.moflon.core.utilities;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.common.util.URI;
 
 /**
@@ -22,7 +23,7 @@ public class MoflonConventions
 
    public static URI getDefaultURIToEcoreFileInPlugin(final String pluginID)
    {
-      return URI.createPlatformPluginURI("/" + pluginID + "/" + MoflonConventions.getDefaultPathToEcoreFileInProject(pluginID), true);
+      return URI.createPlatformResourceURI("/" + pluginID + "/" + MoflonConventions.getDefaultPathToEcoreFileInProject(pluginID), true);
    }
 
    public static String getDefaultNameOfFileInProjectWithoutExtension(final String projectName)
@@ -43,6 +44,17 @@ public class MoflonConventions
    public static String getDefaultPathToEcoreFileInProject(final String projectName)
    {
       return getDefaultPathToFileInProject(projectName, ".ecore");
+   }
+
+   public static final URI getDefaultProjectRelativeEcoreFileURI(final IProject project)
+   {
+      final String ecoreFileName = MoflonUtil.lastCapitalizedSegmentOf(project.getName());
+      return URI.createURI(WorkspaceHelper.MODEL_FOLDER + "/" + ecoreFileName + WorkspaceHelper.ECORE_FILE_EXTENSION);
+   }
+
+   public static final URI getDefaultEcoreFileURI(final IProject project)
+   {
+      return getDefaultProjectRelativeEcoreFileURI(project).resolve(URI.createPlatformResourceURI(project.getName() + "/", true));
    }
 
 }
