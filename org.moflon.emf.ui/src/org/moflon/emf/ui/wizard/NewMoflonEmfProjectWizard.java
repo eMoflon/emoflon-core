@@ -12,6 +12,7 @@ import org.moflon.core.plugins.PluginProducerWorkspaceRunnable;
 import org.moflon.core.ui.AbstractMoflonProjectInfoPage;
 import org.moflon.core.ui.AbstractMoflonWizard;
 import org.moflon.core.utilities.LogUtils;
+import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.MoflonUtil;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.emf.build.MoflonEmfNature;
@@ -64,7 +65,7 @@ public class NewMoflonEmfProjectWizard extends AbstractMoflonWizard
    {
       final SubMonitor subMon = SubMonitor.convert(monitor, "Creating default files", 1);
       String defaultEcoreFile = generateDefaultEPackageForProject(project.getName());
-      WorkspaceHelper.addFile(project, MoflonUtil.getDefaultPathToEcoreFileInProject(project.getName()), defaultEcoreFile, subMon.split(1));
+      WorkspaceHelper.addFile(project, MoflonConventions.getDefaultPathToEcoreFileInProject(project.getName()), defaultEcoreFile, subMon.split(1));
    }
 
    protected void createProject(IProgressMonitor monitor, IProject project, PluginProperties pluginProperties) throws CoreException
@@ -88,7 +89,7 @@ public class NewMoflonEmfProjectWizard extends AbstractMoflonWizard
       sb.append("  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
       sb.append("  xmlns:ecore=\"http://www.eclipse.org/emf/2002/Ecore\"");
       sb.append("  name=\"" + MoflonUtil.lastSegmentOf(projectName) + "\"");
-      sb.append("  nsURI=\"" + MoflonUtil.getDefaultURIToEcoreFileInPlugin(projectName) + "\"");
+      sb.append("  nsURI=\"" + MoflonConventions.getDefaultURIToEcoreFileInPlugin(projectName) + "\"");
       sb.append("  nsPrefix=\"" + projectName + "\">");
       sb.append("</ecore:EPackage>");
       return sb.toString();

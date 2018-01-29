@@ -3,7 +3,7 @@ module org.moflon.emf.injection.GenerateInjectionLanguage
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.xtext.generator.*
 import org.eclipse.xtext.xtext.generator.model.project.*
-import org.moflon.core.xtext.*
+import org.moflon.core.utilities.xtext.*
 
 var projectName = "org.moflon.emf.injection"
 var rootPath = ".."
@@ -37,17 +37,17 @@ Workflow {
 			}
 		}
 	}
-	
+
 	component = FileCreatorMwe2Component {
         filePath = "${rootPath}/${projectName}/src-gen/.keepsrcgen"
         fileContent = "Dummy file to protect empty folder in Git.\n"
     }
-	
+
 	component = FileCreatorMwe2Component {
         filePath = "${rootPath}/${projectName}.ide/src-gen/.keepsrcgen"
         fileContent = "Dummy file to protect empty folder in Git.\n"
 	}
-	
+
 	component = FileCreatorMwe2Component {
         filePath = "${rootPath}/${projectName}.ui/src-gen/.keepsrcgen"
         fileContent = "Dummy file to protect empty folder in Git.\n"

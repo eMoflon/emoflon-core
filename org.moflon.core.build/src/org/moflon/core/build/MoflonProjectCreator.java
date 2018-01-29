@@ -37,6 +37,7 @@ import org.moflon.core.plugins.manifest.PluginManifestConstants;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
 import org.moflon.core.propertycontainer.SDMCodeGeneratorIds;
+import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 
 public abstract class MoflonProjectCreator extends WorkspaceTask implements ProjectConfigurator
@@ -55,6 +56,18 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
       this.pluginProperties = projectProperties;
       this.projectConfigurator = projectConfigurator;
    }
+
+   /**
+    * Returns the method body code generator to use.
+    * @return the code generator ID to use. May be <code>null</code>.
+    */
+   protected abstract SDMCodeGeneratorIds getCodeGeneratorHandler();
+
+   protected abstract List<String> getGitignoreLines();
+
+   protected abstract String getNatureId() throws CoreException;
+
+   protected abstract String getBuilderId() throws CoreException;
 
    @Override
    public void run(final IProgressMonitor monitor) throws CoreException
@@ -128,16 +141,48 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
                WorkspaceHelper.getBinFolder(project).getFullPath(), true, subMon.split(1));
 
          // (7) Create Moflon properties file (moflon.properties.xmi)
-         MoflonPropertiesContainer moflonProperties = MoflonPropertiesContainerHelper.createDefaultPropertiesContainer(getProject().getName(),
-               pluginProperties.getMetamodelProjectName());
-         moflonProperties.getSdmCodegeneratorHandlerId().setValue(getCodeGeneratorHandler(pluginProperties));
+         final MoflonPropertiesContainer moflonProperties = MoflonPropertiesContainerHelper.loadOrCreatePropertiesContainer(getProject(), MoflonConventions.getDefaultMoflonPropertiesFile(getProject()));
+         initializeMoflonProperties(moflonProperties);
          MoflonPropertiesContainerHelper.save(moflonProperties, subMon.split(1));
       }
    }
 
-   public IProject getProject()
+   /**
+    * Initializes the contents of the file {@link MoflonConventions#MOFLON_CONFIG_FILE}.
+    *
+    * The file will be saved afterwards.
+    *
+    * When overriding this method, subclasses should invoke the parent class's {@link #initializeMoflonProperties(MoflonPropertiesContainer)} in any case!
+    *
+    * @param moflonProperties the properties container
+    */
+   protected void initializeMoflonProperties(final MoflonPropertiesContainer moflonProperties)
+   {
+      final SDMCodeGeneratorIds codeGeneratorHandler = getCodeGeneratorHandler();
+      if (codeGeneratorHandler != null)
+      {
+         moflonProperties.getSdmCodegeneratorHandlerId().setValue(codeGeneratorHandler);
+      }
+   }
+
+   /**
+    * Returns the handle to the project that shall be created.
+    * Of course, the project need not exist yet.
+    *
+    * @return the handle to the project to create
+    */
+   public final IProject getProject()
    {
       return project;
+   }
+
+   /**
+    * Returns the properties of the plugin project to create
+    * @return the plugin properties
+    */
+   public PluginProperties getPluginProperties()
+   {
+      return pluginProperties;
    }
 
    private void validatePluginProperties() throws CoreException
@@ -157,6 +202,8 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
    /**
     * Adds a default .gitignore file to the given project to prevent adding generated files to the repository
     *
+    * The contents of the created file are fetched from {@link #getGitignoreLines()}
+    *
     * @param project the project for which to generate the .gitignore file
     * @param monitor the progress monitor
     */
@@ -166,24 +213,6 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 
       WorkspaceHelper.createGitignoreFileIfNotExists(project.getFile(WorkspaceHelper.GITIGNORE_FILENAME), //
             getGitignoreLines(), subMon.split(1));
-   }
-
-   //TODO@rkluge: Ugly, hard-coded eMoflon conventions
-   private final SDMCodeGeneratorIds getCodeGeneratorHandler(final PluginProperties metamodelProperties)
-   {
-      switch (metamodelProperties.getType())
-      {
-      case PluginProperties.INTEGRATION_PROJECT:
-         return SDMCodeGeneratorIds.DEMOCLES_REVERSE_NAVI;
-      default:
-         if (metamodelProperties.hasAttributeConstraints())
-         {
-            return SDMCodeGeneratorIds.DEMOCLES_ATTRIBUTES;
-         } else
-         {
-            return SDMCodeGeneratorIds.DEMOCLES;
-         }
-      }
    }
 
    public void createFoldersIfNecessary(final IProject project, final IProgressMonitor monitor) throws CoreException
@@ -198,7 +227,6 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
       WorkspaceHelper.createFolderIfNotExists(WorkspaceHelper.getInstancesFolder(project), subMon.split(1));
       WorkspaceHelper.createFolderIfNotExists(WorkspaceHelper.getInjectionFolder(project), subMon.split(1));
    }
-
 
    /**
     * Adds dummy files to folders that are / may be empty after project initialization.
@@ -228,13 +256,6 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
    {
       return ResourcesPlugin.getWorkspace().getRoot();
    }
-
-
-   protected abstract List<String> getGitignoreLines();
-
-   protected abstract String getNatureId() throws CoreException;
-
-   protected abstract String getBuilderId() throws CoreException;
 
    @Override
    public String[] updateNatureIDs(String[] natureIDs, final boolean added) throws CoreException

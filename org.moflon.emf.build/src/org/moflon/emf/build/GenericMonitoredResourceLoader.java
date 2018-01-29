@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.gervarro.eclipse.task.ITask;
 import org.moflon.core.build.CrossReferenceResolver;
+import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.core.utilities.eMoflonEMFUtil;
 import org.moflon.emf.codegen.dependency.PackageRemappingDependency;
@@ -203,7 +204,7 @@ public class GenericMonitoredResourceLoader implements ITask
          if (isValidProject(workspaceProject))
          {
             final URI projectURI = eMoflonEMFUtil.lookupProjectURI(workspaceProject);
-            final URI metamodelURI = eMoflonEMFUtil.getDefaultProjectRelativeEcoreFileURI(workspaceProject).resolve(projectURI);
+            final URI metamodelURI = MoflonConventions.getDefaultProjectRelativeEcoreFileURI(workspaceProject).resolve(projectURI);
             new PackageRemappingDependency(metamodelURI, false, false).getResource(this.resourceSet, false, true);
          }
          subMon.worked(1);
