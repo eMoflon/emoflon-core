@@ -12,6 +12,12 @@ import org.eclipse.emf.ecore.resource.URIConverter;
 import org.moflon.core.utilities.LogUtils;
 import org.moflon.core.utilities.WorkspaceHelper;
 
+/**
+ * This class provides utility methods for mapping platform:/plugin to platform:/resource URIs
+ *
+ * @author Roland Kluge - Initial implementation
+ *
+ */
 public class PluginURIToResourceURIRemapper
 {
    private static final Logger logger = Logger.getLogger(PluginURIToResourceURIRemapper.class);
@@ -19,7 +25,7 @@ public class PluginURIToResourceURIRemapper
    /**
     * Runs {@link PluginURIToResourceURIRemapper#createPluginToResourceMap(ResourceSet, IProject)} for any project in
     * the current workspace.
-    * 
+    *
     * @param set
     *           the resource set to be adapted
     */
@@ -38,9 +44,9 @@ public class PluginURIToResourceURIRemapper
    /**
     * Adds to the given {@link ResourceSet} an {@link URIConverter} that platform:/plugin URIs to platform:/resource
     * URIs for the given project.
-    * 
+    *
     * The project needs to be an accessible plugin project. Otherwise, nothing happens.
-    * 
+    *
     * @param set
     *           the resource set to be adapted
     * @param project

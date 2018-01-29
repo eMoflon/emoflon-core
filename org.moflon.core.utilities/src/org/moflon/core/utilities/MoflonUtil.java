@@ -1,23 +1,17 @@
 package org.moflon.core.utilities;
 
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EcorePackage;
 
@@ -41,31 +35,6 @@ public class MoflonUtil
          + "\n\n// TODO: implement this method here but do not remove the injection marker \nthrow new UnsupportedOperationException();";
 
    private static final Logger logger = Logger.getLogger(MoflonUtil.class);
-
-   public static String getDefaultPathToEcoreFileInProject(final String projectName)
-   {
-      return getDefaultPathToFileInProject(projectName, ".ecore");
-   }
-
-   public static String getDefaultPathToGenModelInProject(final String projectName)
-   {
-      return getDefaultPathToFileInProject(projectName, ".genmodel");
-   }
-
-   public static String getDefaultPathToFileInProject(final String projectName, final String ending)
-   {
-      return "model/" + getDefaultNameOfFileInProjectWithoutExtension(projectName) + ending;
-   }
-
-   public static String getDefaultNameOfFileInProjectWithoutExtension(final String projectName)
-   {
-      return MoflonUtil.lastCapitalizedSegmentOf(projectName);
-   }
-
-   public static URI getDefaultURIToEcoreFileInPlugin(final String pluginID)
-   {
-      return URI.createPlatformPluginURI("/" + pluginID + "/" + getDefaultPathToEcoreFileInProject(pluginID), true);
-   }
 
    /**
     * Derive the java data type of a given Ecore data type.
@@ -217,36 +186,5 @@ public class MoflonUtil
    {
       IStatus status = new Status(IStatus.ERROR, plugin, IStatus.OK, message, lowLevelException);
       throw new CoreException(status);
-   }
-
-   /**
-    * Writes the given string to file.
-    *
-    * If the file does not exist, it gets created
-    *
-    * @param content
-    *           the new file content
-    * @param file
-    *           the file
-    * @param monitor
-    * @throws CoreException
-    */
-   public static void writeContentToFile(final String content, final IFile file, final IProgressMonitor monitor) throws CoreException
-   {
-      final SubMonitor subMon = SubMonitor.convert(monitor, "Write to file " + file, 1);
-      final ByteArrayInputStream byteStream = new ByteArrayInputStream(content.getBytes());
-      try
-      {
-         if (!file.exists())
-         {
-            file.create(byteStream, true, subMon.split(1));
-         } else
-         {
-            file.setContents(byteStream, true, true, subMon.split(1));
-         }
-      } finally
-      {
-         IOUtils.closeQuietly(byteStream);
-      }
    }
 }

@@ -1,4 +1,4 @@
-package org.moflon.core.xtext;
+package org.moflon.core.utilities.xtext;
 
 import java.io.File;
 import java.io.IOException;

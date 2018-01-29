@@ -1,52 +1,37 @@
 package org.moflon.core.propertycontainer;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.moflon.core.utilities.LogUtils;
+import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.core.utilities.eMoflonEMFUtil;
-import org.moflon.util.plugins.xml.XMLUtils;
-import org.w3c.dom.Document;
 
 public class MoflonPropertiesContainerHelper
 {
-   public static final String MOFLON_CONFIG_FILE = "moflon.properties.xmi";
-
    /**
     * This string is used as a placeholder for the correct metamodel name
     */
    public static final String UNDEFINED_METAMODEL_NAME = "NO_META_MODEL_PROJECT_NAME_SET_YET";
 
    private static final Logger logger = Logger.getLogger(MoflonPropertiesContainerHelper.class);
-
-   // This is the list of XML element tagnames that are no longer supported
-   private static final List<String> OBSOLETE_TAGNAMES = Arrays.asList("buildFilter", "core", "debugMode", "genSdmRpCoverageInstrumentation",
-         "genTracingInstrumentation", "injectionErrorHandling", "listShuffling", "skipValidation", "strictSDMConditionalBranching");
-
 
    /**
     * Loads the eMoflon properties of the given project.
@@ -59,18 +44,9 @@ public class MoflonPropertiesContainerHelper
    {
       final SubMonitor subMon = SubMonitor.convert(monitor, "Load properties.", 1);
 
-      removeObsoleteTags(project);
-
-      final MoflonPropertiesContainer container = loadOrCreatePropertiesContainer(project, project.getFile(MOFLON_CONFIG_FILE));
+      final MoflonPropertiesContainer container = loadOrCreatePropertiesContainer(project, MoflonConventions.getDefaultMoflonPropertiesFile(project));
       final String projectName = project.getName();
-      checkForMissingDefaults(container);
-
-      // The TGG build mode is currently set during checkForMissingDefaults, where we cannot distinguish between TGG and
-      // SDM projects
-      //      if (!IntegrationNature.isIntegrationProjectNoThrow(project))
-      //      {
-      //         container.setTGGBuildMode(null);
-      //      }
+      checkAndUpdateMissingDefaults(container);
 
       if (!projectName.equals(container.getProjectName()))
       {
@@ -83,61 +59,20 @@ public class MoflonPropertiesContainerHelper
       return container;
    }
 
-   private static void removeObsoleteTags(final IProject project)
+   public static MoflonPropertiesContainer loadOrCreatePropertiesContainer(final IProject project, final IFile propertyFile)
    {
-      IFile propertiesFile = project.getFile(MOFLON_CONFIG_FILE);
-      try
-      {
-         final InputStream inputStream = propertiesFile.getContents();
-         final String content = IOUtils.toString(inputStream);
-         IOUtils.closeQuietly(inputStream);
-         // Make sure that we need to do anything at all
-         if (OBSOLETE_TAGNAMES.stream().anyMatch(tagname -> {
-            return content.contains(tagname.toString());
-         }))
-         {
-            final Document doc = XMLUtils.parseXmlDocument(content);
-
-            for (final String obsoleteTagname : OBSOLETE_TAGNAMES)
-            {
-               removeAllChildrenByTagname(doc, obsoleteTagname);
-            }
-
-            String newContent = XMLUtils.formatXmlString(doc, new NullProgressMonitor());
-            if (!newContent.equals(content))
-            {
-               propertiesFile.setContents(new ByteArrayInputStream(newContent.getBytes()), true, true, new NullProgressMonitor());
-            }
-         }
-      } catch (IOException | CoreException e)
-      {
-         LogUtils.error(logger, "Failed to remove obsolete tags from %s. Reason: %s", propertiesFile, WorkspaceHelper.printStacktraceToString(e));
-      }
-   }
-
-   private static void removeAllChildrenByTagname(final Document doc, final String tagname)
-   {
-      for (int i = 0; i < doc.getElementsByTagName(tagname).getLength(); ++i)
-         doc.getDocumentElement().removeChild(doc.getElementsByTagName(tagname).item(i));
-   }
-
-   private static MoflonPropertiesContainer loadOrCreatePropertiesContainer(final IProject project, final IFile propertyFile)
-   {
-      MoflonPropertiesContainer moflonPropertiesCont;
+      MoflonPropertiesContainer moflonPropertiesContainer;
       if (propertyFile.exists())
       {
          PropertycontainerFactory.eINSTANCE.getClass();
-         moflonPropertiesCont = (MoflonPropertiesContainer) eMoflonEMFUtil.getResourceFromFileIntoDefaultResourceSet(propertyFile).getContents().get(0);
+         moflonPropertiesContainer = (MoflonPropertiesContainer) eMoflonEMFUtil.getResourceFromFileIntoDefaultResourceSet(propertyFile).getContents().get(0);
 
       } else
       {
-         LogUtils.error(logger,
-               "Moflon property file '%s' not found in project ''. Generating default properties file. Unable to set MetamodelProject. Has to be fixed manually",
-               propertyFile, project.getName());
-         moflonPropertiesCont = PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
-
+         moflonPropertiesContainer = PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
       }
-      return moflonPropertiesCont;
+      moflonPropertiesContainer.setProjectName(project.getName());
+      return moflonPropertiesContainer;
    }
 
    public static MoflonPropertiesContainer createDefaultPropertiesContainer(final String projectName, final String metaModelProjectName)
@@ -146,11 +81,16 @@ public class MoflonPropertiesContainerHelper
       container.setProjectName(projectName);
 
       updateMetamodelProjectName(container, metaModelProjectName);
-      checkForMissingDefaults(container);
+      checkAndUpdateMissingDefaults(container);
 
       return container;
    }
 
+   /**
+    * Saves the Moflon properties at the default path (see {@link MoflonConventions#getDefaultMoflonPropertiesFile(IProject)}
+    * @param properties the properties to save
+    * @param monitor the progress monitor to report to
+    */
    public static void save(final MoflonPropertiesContainer properties, final IProgressMonitor monitor)
    {
       try
@@ -160,10 +100,10 @@ public class MoflonPropertiesContainerHelper
          final IProject project = workspace.getProject(properties.getProjectName());
          if (project == null)
          {
-            LogUtils.error(logger, "Unable to save property file '%s' for project '%s'.", MOFLON_CONFIG_FILE, properties.getProjectName());
+            LogUtils.error(logger, "Unable to save property file '%s' for project '%s'.", MoflonConventions.MOFLON_CONFIG_FILE, properties.getProjectName());
          } else
          {
-            final IFile projectFile = project.getFile(MOFLON_CONFIG_FILE);
+            final IFile projectFile = project.getFile(MoflonConventions.MOFLON_CONFIG_FILE);
             final ResourceSet set = eMoflonEMFUtil.createDefaultResourceSet();
             final URI fileURI = eMoflonEMFUtil.createFileURI(projectFile.getLocation().toString(), false);
             final Resource resource = set.createResource(fileURI);
@@ -177,7 +117,7 @@ public class MoflonPropertiesContainerHelper
          }
       } catch (final Exception e)
       {
-         LogUtils.error(logger, "Unable to save property file '%s' for project '%s':\n %s", MOFLON_CONFIG_FILE, properties.getProjectName(),
+         LogUtils.error(logger, "Unable to save property file '%s' for project '%s':\n %s", MoflonConventions.MOFLON_CONFIG_FILE, properties.getProjectName(),
                WorkspaceHelper.printStacktraceToString(e));
       }
 
@@ -186,13 +126,13 @@ public class MoflonPropertiesContainerHelper
    /**
     * This method sets the {@link MetaModelProject} of the given {@link MoflonPropertiesContainer} to the given value
     */
-   public static void updateMetamodelProjectName(final MoflonPropertiesContainer propertiesContainer, final String metamodelProjectName)
+   public static void updateMetamodelProjectName(final MoflonPropertiesContainer moflonProperties, final String metamodelProjectName)
    {
-      MetaModelProject metamodelProject = propertiesContainer.getMetaModelProject();
+      MetaModelProject metamodelProject = moflonProperties.getMetaModelProject();
       if (metamodelProject == null)
       {
          metamodelProject = PropertycontainerFactory.eINSTANCE.createMetaModelProject();
-         propertiesContainer.setMetaModelProject(metamodelProject);
+         moflonProperties.setMetaModelProject(metamodelProject);
          metamodelProject.setMetaModelProjectName(metamodelProjectName);
       }
 
@@ -202,27 +142,28 @@ public class MoflonPropertiesContainerHelper
    /**
     * Adds the minimal set of properties to a {@link MoflonPropertiesContainer}
     */
-   private static void checkForMissingDefaults(final MoflonPropertiesContainer propertiesContainer)
+   public static void checkAndUpdateMissingDefaults(final MoflonPropertiesContainer moflonProperties)
    {
       final PropertycontainerFactory factory = PropertycontainerFactory.eINSTANCE;
-      if (propertiesContainer.getReplaceGenModel() == null)
+      if (moflonProperties.getReplaceGenModel() == null)
       {
-         propertiesContainer.setReplaceGenModel(factory.createReplaceGenModel());
+         moflonProperties.setReplaceGenModel(factory.createReplaceGenModel());
       }
 
-      if (propertiesContainer.getSdmCodegeneratorHandlerId() == null)
+      if (moflonProperties.getSdmCodegeneratorHandlerId() == null)
       {
-         propertiesContainer.setSdmCodegeneratorHandlerId(factory.createSdmCodegeneratorMethodBodyHandler());
+         moflonProperties.setSdmCodegeneratorHandlerId(factory.createSdmCodegeneratorMethodBodyHandler());
       }
 
-      if (propertiesContainer.getTGGBuildMode() == null)
+      if (moflonProperties.getTGGBuildMode() == null)
       {
-         propertiesContainer.setTGGBuildMode(factory.createTGGBuildMode());
+         moflonProperties.setTGGBuildMode(factory.createTGGBuildMode());
       }
 
-      if (propertiesContainer.getMetaModelProject() == null) {
+      if (moflonProperties.getMetaModelProject() == null)
+      {
          final MetaModelProject metaModelProject = factory.createMetaModelProject();
-         propertiesContainer.setMetaModelProject(metaModelProject);
+         moflonProperties.setMetaModelProject(metaModelProject);
          metaModelProject.setMetaModelProjectName(UNDEFINED_METAMODEL_NAME);
       }
    }

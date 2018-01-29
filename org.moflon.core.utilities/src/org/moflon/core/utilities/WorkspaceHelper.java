@@ -203,8 +203,11 @@ public class WorkspaceHelper
    }
 
    /**
-    * Creates a default ".keep"-file in the given folder. The filename consists of the prefix .keep and the folder name
-    * @param folder the folder to keep in versioning system
+    * Creates a default ".keep"-file in the given folder.
+    *
+    * The name consists of the prefix .keep and the parent folder name to avoid warnings about identically named files that some build tools issue
+    *
+    * @param folder the folder to keep in version control system
     * @param monitor the progress monitor
     */
    public static void createKeepFile(final IFolder folder, final IProgressMonitor monitor)
@@ -212,7 +215,7 @@ public class WorkspaceHelper
       final String filename = KEEP_EMPTY_FOLDER_FILE_NAME_FOR_GIT + folder.getName();
       try
       {
-         final SubMonitor subMon = SubMonitor.convert(monitor, "Creating " + filename, 1);
+         final SubMonitor subMon = SubMonitor.convert(monitor, String.format("Creating %s", filename), 1);
          final IFile keepFile = folder.getFile(filename);
          if (!keepFile.exists())
          {

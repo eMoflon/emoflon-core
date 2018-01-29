@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.moflon.core.utilities
 Bundle-SymbolicName: org.moflon.core.utilities;singleton:=true
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: eMoflon Developers
 Export-Package: antlr,
  antlr.ASdebug,
@@ -35,8 +35,7 @@ Export-Package: antlr,
  org.antlr.stringtemplate.misc,
  org.antlr.tool,
  org.moflon.core.utilities,
- org.moflon.core.xtext,
- org.moflon.util.plugins.xml,
+ org.moflon.core.utilities.xtext,
  org.stringtemplate.v4,
  org.stringtemplate.v4.compiler,
  org.stringtemplate.v4.debug,

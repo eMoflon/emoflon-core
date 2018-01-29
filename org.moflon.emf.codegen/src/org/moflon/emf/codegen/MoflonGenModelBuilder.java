@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.moflon.core.propertycontainer.AdditionalDependencies;
 import org.moflon.core.propertycontainer.AdditionalUsedGenPackages;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
+import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.eMoflonEMFUtil;
 import org.moflon.emf.codegen.dependency.Dependency;
 import org.moflon.emf.codegen.dependency.DependencyTypes;
@@ -54,7 +55,7 @@ public class MoflonGenModelBuilder extends GenModelBuilder
 
       final IProject project = ecoreFile.getProject();
       final URI projectURI = eMoflonEMFUtil.lookupProjectURI(project);
-      this.ecoreURI = eMoflonEMFUtil.getDefaultProjectRelativeEcoreFileURI(project).resolve(projectURI);
+      this.ecoreURI = MoflonConventions.getDefaultProjectRelativeEcoreFileURI(project).resolve(projectURI);
    }
 
    @Override

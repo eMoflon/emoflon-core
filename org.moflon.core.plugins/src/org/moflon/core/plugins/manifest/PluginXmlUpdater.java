@@ -23,10 +23,10 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.gervarro.eclipse.workspace.util.WorkspaceTask;
-import org.moflon.core.utilities.MoflonUtil;
+import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
+import org.moflon.core.utilities.XMLUtils;
 import org.moflon.core.utilities.eMoflonEMFUtil;
-import org.moflon.util.plugins.xml.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -76,7 +76,7 @@ public class PluginXmlUpdater extends WorkspaceTask
 
    /**
     * Updates plugin.xml from the information in the given project. The genmodel is fetched from the default path.
-    * 
+    *
     * @see WorkspaceHelper#getProjectGenmodelFile(IProject)
     */
    public static final void updatePluginXml(final IProject currentProject, final IProgressMonitor monitor) throws CoreException
@@ -115,7 +115,7 @@ public class PluginXmlUpdater extends WorkspaceTask
 
          if (!output.equals(content))
          {
-            MoflonUtil.writeContentToFile(output, getPluginXml(project), subMon.split(1));
+            WorkspaceHelper.addFile(project, "plugin.xml", output, subMon.split(1));
          }
 
       } catch (IOException | XPathExpressionException e)
@@ -173,7 +173,7 @@ public class PluginXmlUpdater extends WorkspaceTask
 
    private static List<GeneratedPackageEntry> extractGeneratedPackageEntries(final IProject project, final GenModel genmodel)
    {
-      String genmodelFile = MoflonUtil.getDefaultPathToGenModelInProject(project.getName());
+      String genmodelFile = MoflonConventions.getDefaultPathToGenModelInProject(project.getName());
       final List<GeneratedPackageEntry> entries = new ArrayList<>();
       final List<GenPackage> ePackages = genmodel.getAllGenPackagesWithClassifiers();
       for (final GenPackage genPackage : ePackages)
