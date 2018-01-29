@@ -5,14 +5,20 @@ import java.io.File;
 import org.apache.log4j.Logger;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.moflon.core.utilities.LogUtils;
 
@@ -85,6 +91,25 @@ public class UiUtilities
    public static ImageDescriptor getImage(final String pluginId, final String pluginRelativePathToIcon)
    {
       return AbstractUIPlugin.imageDescriptorFromPlugin(pluginId, pluginRelativePathToIcon);
+   }
+
+   /**
+    * Open the default editor for a file in the current workbench page
+    * @param file the file to open
+    */
+   public static void openDefaultEditorForFile(final IFile file)
+   {
+      Display.getDefault().asyncExec(() -> {
+         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+         IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
+         try
+         {
+            page.openEditor(new FileEditorInput(file), desc.getId());
+         } catch (final Exception e)
+         {
+            LogUtils.error(logger, e, "Unable to open " + file);
+         }
+      });
    }
 
 }
