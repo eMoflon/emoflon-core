@@ -139,9 +139,7 @@
           </with>
           <with variable="activeEditorInput">
             <or>
-              <reference definitionId="org.moflon.ide.ui.definitions.hasIntegrationNature"/>
-              <reference definitionId="org.moflon.ide.ui.definitions.hasMetamodelNature"/>
-              <reference definitionId="org.moflon.ide.ui.definitions.hasRepositoryNature"/>
+              <reference definitionId="org.moflon.ide.ui.definitions.isProject"/>
             </or>
           </with>
           <reference definitionId="org.moflon.ide.ui.definitions.isInPackageExplorer"/>
@@ -159,9 +157,7 @@
           </with>
           <with variable="activeEditorInput">
             <or>
-              <reference definitionId="org.moflon.ide.ui.definitions.hasIntegrationNature"/>
-              <reference definitionId="org.moflon.ide.ui.definitions.hasMetamodelNature"/>
-              <reference definitionId="org.moflon.ide.ui.definitions.hasRepositoryNature"/>
+              <reference definitionId="org.moflon.ide.ui.definitions.isProject"/>
             </or>
           </with>
           <reference definitionId="org.moflon.ide.ui.definitions.isInPackageExplorer"/>
@@ -212,9 +208,6 @@
             </and>
             <or>
               <reference definitionId="org.moflon.ide.ui.definitions.hasJavaNature"/>
-              <!--<reference definitionId="org.moflon.ide.ui.definitions.hasMetamodelNature"></reference>
-                            <reference definitionId="org.moflon.ide.ui.definitions.hasRepositoryNature"></reference>
-                            <reference definitionId="org.moflon.ide.ui.definitions.hasIntegrationNature"></reference>-->
               <reference definitionId="org.moflon.ide.ui.definitions.isInPackageExplorer"/>
               <reference definitionId="org.moflon.ide.ui.definitions.isInProjectExplorer"/>
             </or>

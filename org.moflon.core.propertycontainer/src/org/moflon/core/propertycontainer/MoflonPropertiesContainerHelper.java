@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -45,8 +46,15 @@ public class MoflonPropertiesContainerHelper
       final SubMonitor subMon = SubMonitor.convert(monitor, "Load properties.", 1);
 
       final MoflonPropertiesContainer container = loadOrCreatePropertiesContainer(project, MoflonConventions.getDefaultMoflonPropertiesFile(project));
+      fixProjectNameIfNeeded(project, container);
+
+      MoflonPropertiesContainerHelper.save(container, subMon.split(1));
+      return container;
+   }
+
+   private static void fixProjectNameIfNeeded(final IProject project, final MoflonPropertiesContainer container)
+   {
       final String projectName = project.getName();
-      checkAndUpdateMissingDefaults(container);
 
       if (!projectName.equals(container.getProjectName()))
       {
@@ -54,9 +62,6 @@ public class MoflonPropertiesContainerHelper
                container.getProjectName(), projectName);
          container.setProjectName(projectName);
       }
-
-      MoflonPropertiesContainerHelper.save(container, subMon.split(1));
-      return container;
    }
 
    public static MoflonPropertiesContainer loadOrCreatePropertiesContainer(final IProject project, final IFile propertyFile)
@@ -66,25 +71,23 @@ public class MoflonPropertiesContainerHelper
       {
          PropertycontainerFactory.eINSTANCE.getClass();
          moflonPropertiesContainer = (MoflonPropertiesContainer) eMoflonEMFUtil.getResourceFromFileIntoDefaultResourceSet(propertyFile).getContents().get(0);
-
       } else
       {
-         moflonPropertiesContainer = PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
+         moflonPropertiesContainer = createDefaultPropertiesContainer(project);
+         save(moflonPropertiesContainer, new NullProgressMonitor());
       }
-      moflonPropertiesContainer.setProjectName(project.getName());
       return moflonPropertiesContainer;
    }
 
-   public static MoflonPropertiesContainer createDefaultPropertiesContainer(final String projectName, final String metaModelProjectName)
+   public static MoflonPropertiesContainer createDefaultPropertiesContainer(final IProject project)
    {
-      MoflonPropertiesContainer container = PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
-      container.setProjectName(projectName);
-
-      updateMetamodelProjectName(container, metaModelProjectName);
-      checkAndUpdateMissingDefaults(container);
-
-      return container;
+      MoflonPropertiesContainer moflonPropertiesContainer;
+      moflonPropertiesContainer = PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
+      moflonPropertiesContainer.setProjectName(project.getName());
+      moflonPropertiesContainer.setReplaceGenModel(PropertycontainerFactory.eINSTANCE.createReplaceGenModel());
+      return moflonPropertiesContainer;
    }
+
 
    /**
     * Saves the Moflon properties at the default path (see {@link MoflonConventions#getDefaultMoflonPropertiesFile(IProject)}
@@ -123,62 +126,6 @@ public class MoflonPropertiesContainerHelper
 
    }
 
-   /**
-    * This method sets the {@link MetaModelProject} of the given {@link MoflonPropertiesContainer} to the given value
-    */
-   public static void updateMetamodelProjectName(final MoflonPropertiesContainer moflonProperties, final String metamodelProjectName)
-   {
-      MetaModelProject metamodelProject = moflonProperties.getMetaModelProject();
-      if (metamodelProject == null)
-      {
-         metamodelProject = PropertycontainerFactory.eINSTANCE.createMetaModelProject();
-         moflonProperties.setMetaModelProject(metamodelProject);
-         metamodelProject.setMetaModelProjectName(metamodelProjectName);
-      }
-
-      metamodelProject.setMetaModelProjectName(metamodelProjectName);
-   }
-
-   /**
-    * Adds the minimal set of properties to a {@link MoflonPropertiesContainer}
-    */
-   public static void checkAndUpdateMissingDefaults(final MoflonPropertiesContainer moflonProperties)
-   {
-      final PropertycontainerFactory factory = PropertycontainerFactory.eINSTANCE;
-      if (moflonProperties.getReplaceGenModel() == null)
-      {
-         moflonProperties.setReplaceGenModel(factory.createReplaceGenModel());
-      }
-
-      if (moflonProperties.getSdmCodegeneratorHandlerId() == null)
-      {
-         moflonProperties.setSdmCodegeneratorHandlerId(factory.createSdmCodegeneratorMethodBodyHandler());
-      }
-
-      if (moflonProperties.getTGGBuildMode() == null)
-      {
-         moflonProperties.setTGGBuildMode(factory.createTGGBuildMode());
-      }
-
-      if (moflonProperties.getMetaModelProject() == null)
-      {
-         final MetaModelProject metaModelProject = factory.createMetaModelProject();
-         moflonProperties.setMetaModelProject(metaModelProject);
-         metaModelProject.setMetaModelProjectName(UNDEFINED_METAMODEL_NAME);
-      }
-   }
-
-   private static EObject normalize(final MoflonPropertiesContainer properties)
-   {
-      // Normalize properties to avoid unnecessary nondeterminism
-      List<Dependencies> sortedDependencies = new ArrayList<>(properties.getDependencies());
-      sortedDependencies.sort((d1, d2) -> d1.getValue().compareTo(d2.getValue()));
-      properties.getDependencies().clear();
-      properties.getDependencies().addAll(sortedDependencies);
-
-      return properties;
-   }
-
    public static Map<String, String> mappingsToMap(final List<? extends PropertiesMapping> mappings)
    {
       Map<String, String> map = new HashMap<String, String>();
@@ -200,6 +147,17 @@ public class MoflonPropertiesContainerHelper
    public static MoflonPropertiesContainer createEmptyContainer()
    {
       return PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
+   }
+
+   private static EObject normalize(final MoflonPropertiesContainer properties)
+   {
+      // Normalize properties to avoid unnecessary nondeterminism
+      List<Dependencies> sortedDependencies = new ArrayList<>(properties.getDependencies());
+      sortedDependencies.sort((d1, d2) -> d1.getValue().compareTo(d2.getValue()));
+      properties.getDependencies().clear();
+      properties.getDependencies().addAll(sortedDependencies);
+
+      return properties;
    }
 
    /**
