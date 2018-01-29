@@ -16,8 +16,8 @@ public class MoflonEmfProjectCreator extends MoflonProjectCreator
 {
    private static final List<String> GITIGNORE_LINES = Arrays.asList(//
          "/bin", //
+         "/target", //
          "/gen/*", //
-         "/model/*.ecore", "/model/*.genmodel", "/model/*.xmi", //
          "!/**/.keep*");
 
    /**
