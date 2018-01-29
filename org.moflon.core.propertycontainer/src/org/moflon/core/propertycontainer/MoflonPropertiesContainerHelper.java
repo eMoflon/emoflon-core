@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -70,7 +71,9 @@ public class MoflonPropertiesContainerHelper
       {
          moflonPropertiesContainer = PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
          moflonPropertiesContainer.setProjectName(project.getName());
+         moflonPropertiesContainer.setReplaceGenModel(PropertycontainerFactory.eINSTANCE.createReplaceGenModel());
          moflonPropertiesContainer.getReplaceGenModel().setBool(true);
+         save(moflonPropertiesContainer, new NullProgressMonitor());
       }
       return moflonPropertiesContainer;
    }
