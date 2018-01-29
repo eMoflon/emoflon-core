@@ -10,6 +10,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWizard;
 
 /**
@@ -20,6 +23,9 @@ import org.eclipse.ui.IWorkbenchWizard;
  */
 public abstract class AbstractMoflonWizard extends Wizard implements IWorkbenchWizard
 {
+   private IStructuredSelection selection;
+   private IWorkbench workbench;
+
    public AbstractMoflonWizard()
    {
       setNeedsProgressMonitor(true);
@@ -27,6 +33,9 @@ public abstract class AbstractMoflonWizard extends Wizard implements IWorkbenchW
 
    protected abstract void doFinish(final IProgressMonitor monitor) throws CoreException;
 
+   /**
+    * Invokes {@link #doFinish(IProgressMonitor)} in a separate task
+    */
    @Override
    public boolean performFinish()
    {
@@ -38,7 +47,7 @@ public abstract class AbstractMoflonWizard extends Wizard implements IWorkbenchW
             try
             {
                doFinish(subMon.split(1));
-            } catch (CoreException e)
+            } catch (final CoreException e)
             {
                throw new InvocationTargetException(e);
             }
@@ -48,10 +57,10 @@ public abstract class AbstractMoflonWizard extends Wizard implements IWorkbenchW
       try
       {
          getContainer().run(true, false, op);
-      } catch (InterruptedException e)
+      } catch (final InterruptedException e)
       {
          return false;
-      } catch (InvocationTargetException e)
+      } catch (final InvocationTargetException e)
       {
          final Throwable realException = e.getTargetException();
          MessageDialog.openError(getShell(), "Error", realException.getMessage());
@@ -61,9 +70,46 @@ public abstract class AbstractMoflonWizard extends Wizard implements IWorkbenchW
       return true;
    }
 
+   /**
+    * Initializes the properties returned by {@link #getWorkbench()} and {@link #getSelection()}
+    */
    @Override
-   public void init(IWorkbench workbench, IStructuredSelection selection) {
-
+   public void init(final IWorkbench workbench, final IStructuredSelection selection) {
+      this.workbench = workbench;
+      this.selection = selection;
    }
 
+   /**
+    *
+    * @return the {@link IWorkbench} that was passed to {@link #init(IWorkbench, IStructuredSelection)}
+    */
+   protected IWorkbench getWorkbench()
+   {
+      return workbench;
+   }
+
+   /**
+    * @return the {@link IStructuredSelection} that was passed to {@link #init(IWorkbench, IStructuredSelection)}
+    */
+   protected IStructuredSelection getSelection()
+   {
+      return selection;
+   }
+
+   /**
+    * Returns the active workbench window based on the current workbench ({@link #getWorkbench()}
+    * @return
+    *
+    * Taken from org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageOne
+    */
+   protected IWorkbenchPart getActivePart() {
+      IWorkbenchWindow activeWindow= getWorkbench().getActiveWorkbenchWindow();
+      if (activeWindow != null) {
+         IWorkbenchPage activePage= activeWindow.getActivePage();
+         if (activePage != null) {
+            return activePage.getActivePart();
+         }
+      }
+      return null;
+   }
 }
