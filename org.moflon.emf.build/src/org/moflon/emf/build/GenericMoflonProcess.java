@@ -29,7 +29,7 @@ import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 
 /**
- * This class defines a generic process for processing eMoflon projects.
+ * This class defines a generic build process for eMoflon projects.
  *
  * @see #run(IProgressMonitor)
  */
@@ -45,7 +45,7 @@ public abstract class GenericMoflonProcess implements ITask
 
    private MoflonPropertiesContainer moflonProperties;
 
-   public GenericMoflonProcess(final IFile ecoreFile, final ResourceSet resourceSet, EMoflonPreferencesStorage preferencesStorage)
+   public GenericMoflonProcess(final IFile ecoreFile, final ResourceSet resourceSet, final EMoflonPreferencesStorage preferencesStorage)
    {
       this.ecoreFile = ecoreFile;
       this.resourceSet = resourceSet;
@@ -71,9 +71,9 @@ public abstract class GenericMoflonProcess implements ITask
    {
       final SubMonitor subMon = SubMonitor.convert(monitor, getTaskName(), 10);
 
-      if (!ecoreFile.exists())
+      if (!getEcoreFile().exists())
          return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()),
-               String.format("Ecore file does not exist. Expected location: '%s'", ecoreFile));
+               String.format("Ecore file does not exist. Expected location: '%s'", getEcoreFile()));
 
       try
       {
