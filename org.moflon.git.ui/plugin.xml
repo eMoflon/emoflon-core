@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+  <extension point="org.eclipse.ui.commands">
+    <command defaultHandler="org.moflon.git.ui.handler.GitResetProjectHandler" id="org.moflon.ide.ui.commands.git.GitResetCommand" name="Reset and clean Git Repo"/>
+  </extension>
+  <extension point="org.eclipse.ui.menus">
+    <menuContribution allPopups="false" locationURI="popup:org.moflon.ide.ui.moflon?after=moflonGroupResources">
+      <command commandId="org.moflon.ide.ui.commands.git.GitResetCommand" label="Reset and Clean Git Repos" style="push" tooltip="Resets and cleans all selected Git projects">
+        <visibleWhen checkEnabled="false"/>
+      </command>
+    </menuContribution>
+  </extension>
+  <extension point="org.eclipse.ui.bindings">
+    <key commandId="org.moflon.ide.ui.commands.git.GitResetCommand" contextId="org.eclipse.ui.contexts.window" schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="M2+M3+E 0"/>
+  </extension>
+</plugin>
