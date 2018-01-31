@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -27,12 +28,21 @@ import org.eclipse.ui.ide.IDE;
 /**
  * Super class for all command handlers.
  *
+ * @author Roland Kluge - Initial implementation
  */
 public abstract class AbstractCommandHandler extends org.eclipse.core.commands.AbstractHandler
 {
 
    protected Logger logger;
 
+   /**
+    * This value should be used as standard return value for the overridden {@link IHandler#execute(ExecutionEvent)}
+    */
+   public static final Object DEFAULT_HANDLER_RESULT = null;
+
+   /**
+    * Initializes the logger of the subclass according to the dynamic type of the subclass
+    */
    public AbstractCommandHandler() {
       this.logger = Logger.getLogger(this.getClass());
    }

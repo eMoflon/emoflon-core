@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -29,6 +30,36 @@ public class SwitchBetweenJavaAndInjectionFileHandler extends AbstractCommandHan
    @Override
    public Object execute(final ExecutionEvent event) throws ExecutionException
    {
+      final IFile file = extractSelectedFile(event);
+
+      try
+      {
+         if (isInjectionFile(file))
+         {
+            final IPath javaFilePath = getPathToJavaFile(file);
+            openInEditor(file.getProject().getFile(javaFilePath));
+         } else if (isJavaFile(file))
+         {
+            final IPath injectionFilePath = WorkspaceHelper.getPathToInjection(file);
+            final IFile injectionFile = file.getProject().getFile(injectionFilePath);
+            if (injectionFile.exists())
+            {
+               openInEditor(injectionFile);
+            } else
+            {
+               logger.info("No injection for Java file " + file.getProjectRelativePath().toString());
+            }
+         }
+      } catch (final CoreException e)
+      {
+         throw new ExecutionException(e.getMessage());
+      }
+
+      return null;
+   }
+
+   private IFile extractSelectedFile(final ExecutionEvent event) throws ExecutionException
+   {
       final ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
       IFile file = null;
       if (selection instanceof StructuredSelection)
@@ -39,38 +70,16 @@ public class SwitchBetweenJavaAndInjectionFileHandler extends AbstractCommandHan
          {
             file = (IFile) firstElement;
          }
+         else if (firstElement instanceof ICompilationUnit) {
+            file = (IFile) ((ICompilationUnit) firstElement).getResource();
+         }
       } else if (selection instanceof ITextSelection)
       {
          file = getEditedFile(event);
       }
-      try
-      {
-         if (file != null)
-         {
-            if (WorkspaceHelper.isInjectionFile(file))
-            {
-               IPath javaFilePath = getPathToJavaFile(file);
-               openInEditor(file.getProject().getFile(javaFilePath));
-            } else if (isJavaFile(file))
-            {
-               IPath injectionFilePath = WorkspaceHelper.getPathToInjection(file);
-               IFile injectionFile = file.getProject().getFile(injectionFilePath);
-               if (injectionFile.exists())
-               {
-                  openInEditor(injectionFile);
-               } else
-               {
-                  logger.info("No injection for Java file " + file.getProjectRelativePath().toString());
-               }
-            }
-         }
-      } catch (CoreException e)
-      {
-         throw new ExecutionException(e.getMessage());
-      }
-
-      return null;
+      return file;
    }
+
    /**
     * Returns the file name of the Java file for a given injection file.
     *
@@ -94,8 +103,23 @@ public class SwitchBetweenJavaAndInjectionFileHandler extends AbstractCommandHan
       return fullJavaPath;
    }
 
+   /**
+    * Checks whether the given {@link IResource} appears to be a java file
+    * @param resource the resource to check. May be <code>null</code>
+    * @return true if the given resource is not null, an {@link IFile} and ends with the default Java extension
+    */
    public static boolean isJavaFile(final IResource resource)
    {
-      return resource != null && WorkspaceHelper.isFile(resource) && resource.getName().endsWith("." + JAVA_FILE_EXTENSION);
+      return WorkspaceHelper.isFile(resource) && resource.getName().endsWith("." + JAVA_FILE_EXTENSION);
+   }
+
+   /**
+    * Checks whether the given {@link IResource} appears to be a injection file
+    * @param resource the resource to check. May be <code>null</code>
+    * @return true if the given resource is not null, an {@link IFile} and ends with the default Java extension
+    */
+   public static boolean isInjectionFile(final IResource resource)
+   {
+      return WorkspaceHelper.isFile(resource) && resource.getName().endsWith("." + WorkspaceHelper.INJECTION_FILE_EXTENSION);
    }
 }
