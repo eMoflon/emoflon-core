@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jgit.api.CleanCommand;
@@ -37,56 +38,37 @@ public final class GitHelper
    /**
     * Disabled constructor
     */
-   private GitHelper() {
+   private GitHelper()
+   {
       throw new UtilityClassNotInstantiableException();
    }
 
    /**
-    * Resets and cleans the Git repository that contains the given project.
+    * @param project the project to check
+    * @return true if the project is contained in a Git repository
+    */
+   public static boolean isInGitRepository(final IProject project)
+   {
+      return findGitRepositoryRoot(project) != null;
+   }
+
+   /**
+    * Resets and cleans the given Git repository
     *
-    * If no such repository exists, an appropriate status message is returned
+    * The repository should exist
     *
     * The effect of this method is equal to <code>git reset --hard && git clean -fxd</code>
     *
-    * @param project the project from which the git repository is to be searched
+    * @param rep the repository to reset and clean
     * @param monitor the monitor to be used
-    * @return
+    * @return the success or failure status
     */
-   public static IStatus resetAndCleanContainingGitRepository(IProject project, IProgressMonitor monitor)
+   public static IStatus resetAndCleanGitRepository(final Repository rep, final IProgressMonitor monitor)
    {
-      final SubMonitor subMon = SubMonitor.convert(monitor, "Resetting Git repo for " + project, 4);
-      IPath path = project.getLocation().makeAbsolute();
-      File gitFolder = null;
-      do
-      {
-         gitFolder = new File(path + GIT_FOLDER);
-
-         if (path.isRoot() && !gitFolder.exists())
-         {
-            return new Status(IStatus.WARNING, WorkspaceHelper.getPluginId(GitHelper.class),
-                  String.format("Could not find any .git folder in %s or its parents", project.getLocation().makeAbsolute()));
-         }
-
-         path = path.removeLastSegments(1);
-      } while (!gitFolder.exists());
-      subMon.worked(1);
-
-      Repository rep = null;
-      try
-      {
-         rep = FileRepositoryBuilder.create(gitFolder);
-      } catch (final IOException e)
-      {
-         return new Status(IStatus.WARNING, WorkspaceHelper.getPluginId(GitHelper.class),
-               String.format("Exception while opening git repository in %s", gitFolder), e);
-      }
-      subMon.worked(1);
-      ProgressMonitorUtil.checkCancellation(subMon);
-
+      final SubMonitor subMon = SubMonitor.convert(monitor, "Resetting Git repository " + rep, 2);
       final Git git = new Git(rep);
       try
       {
-
          final ResetCommand resetCmd = git.reset();
          resetCmd.setMode(ResetType.HARD);
 
@@ -123,5 +105,62 @@ public final class GitHelper
       }
 
       return Status.OK_STATUS;
+   }
+
+   /**
+    * Retrieves the Git repository containing the given project.
+    * @param project the project
+    * @param multiStatus used to report problems
+    * @return the repository or <code>null</code> if the project is not inside a Git repository
+    */
+   public static Repository findGitRepository(final IProject project, final MultiStatus multiStatus)
+   {
+      final IPath pathToRepository = findGitRepositoryRoot(project);
+
+      if (pathToRepository == null)
+      {
+         multiStatus.add(new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(GitHelper.class),
+               String.format("Not a git repository: %s", project.getLocation().makeAbsolute())));
+         return null;
+      }
+
+      final File gitFolder = new File(pathToRepository + GIT_FOLDER);
+
+      try
+      {
+         final Repository rep = FileRepositoryBuilder.create(gitFolder);
+         return rep;
+      } catch (final IOException e)
+      {
+         multiStatus.add(new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(GitHelper.class),
+               String.format("Exception while opening git repository in %s", gitFolder), e));
+         return null;
+      }
+   }
+
+   /**
+    * Finds the folder containing the Git metadata folder .git in the parents of the given project
+    *
+    * @param project the project
+    * @return the folder or <code>null</code> if no such folder exists
+    */
+   private static IPath findGitRepositoryRoot(final IProject project)
+   {
+      IPath pathToRepository = project.getLocation().makeAbsolute();
+      {
+         File gitFolder = null;
+         do
+         {
+            gitFolder = new File(pathToRepository + GIT_FOLDER);
+
+            if (pathToRepository.isRoot() && !gitFolder.exists())
+            {
+               return null;
+            }
+
+            pathToRepository = pathToRepository.removeLastSegments(1);
+         } while (!gitFolder.exists());
+      }
+      return pathToRepository;
    }
 }
