@@ -16,7 +16,6 @@ import org.eclipse.emf.compare.scope.IComparisonScope;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
-
 /**
  * Collection of useful methods for EMFCompare
  *
@@ -37,7 +36,6 @@ public class EmfCompareUtil
     * @throws IOException
     * @throws InterruptedException
     */
-    @Deprecated
    public static List<Diff> compareAndFilter(final EObject actual, final EObject expected, final boolean ignoreReferenceOrder) throws InterruptedException
    {
       IDiffProcessor diffProcessor = new DiffBuilder();
