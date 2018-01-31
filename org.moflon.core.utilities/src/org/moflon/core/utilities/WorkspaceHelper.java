@@ -472,13 +472,12 @@ public class WorkspaceHelper
       }
    }
 
-   public static boolean isInjectionFile(final IResource resource)
-   {
-      return resource != null && isFile(resource) && resource.getName().endsWith("." + INJECTION_FILE_EXTENSION);
-   }
-
    /**
     * Returns whether the given resource is of type {@link IResource#FILE}
+    *
+    * The resource may be <code>null</code>.
+    *
+    * @return true if the given resource is an {@link IFile}
     */
    public static boolean isFile(final IResource resource)
    {
