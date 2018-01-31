@@ -7,11 +7,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EcorePackage;
 
@@ -98,6 +94,13 @@ public class MoflonUtil
       }
    }
 
+   /**
+    * Returns the last segment of a fully-qualified name
+    *
+    * Example: For the name 'x.y.z.A', the last segment is 'A'
+    * @param name the fully-qualified name
+    * @return the last segment of the name
+    */
    public static String lastSegmentOf(final String name)
    {
       int startOfLastSegment = name.lastIndexOf(".");
@@ -110,15 +113,27 @@ public class MoflonUtil
       return name.substring(startOfLastSegment);
    }
 
+   /**
+    * Returns the capitalized last segment of the given fully-qualified name
+    * @param name the name
+    * @return the result of capitalizing {@link #lastSegmentOf(String)}
+    */
+   public static String lastCapitalizedSegmentOf(final String name)
+   {
+      return StringUtils.capitalize(lastSegmentOf(name));
+   }
+
+   /**
+    * Returns all segments but the last one of the given fully-qualified name
+    *
+    * Example: For the name 'x.y.z.A', the result is 'x.y.z'
+    * @param name the fully-qualified name
+    * @return all but the last segment
+    */
    public static String allSegmentsButLast(final String name)
    {
       int startOfLastSegment = name.lastIndexOf(".");
       return startOfLastSegment == -1 ? "" : name.substring(0, startOfLastSegment);
-   }
-
-   public static String lastCapitalizedSegmentOf(final String name)
-   {
-      return StringUtils.capitalize(lastSegmentOf(name));
    }
 
    /**
@@ -137,10 +152,10 @@ public class MoflonUtil
       List<String> inputSegments = Arrays.asList(fullyQualifiedPackageName.split(Pattern.quote(".")));
       for (int i = inputSegments.size(); i >= 1; --i)
       {
-         final String currentPrefix = joinPackageNameSegments(inputSegments.subList(0, i));
+         final String currentPrefix = buildQualifiedName(inputSegments.subList(0, i));
          if (packageNameMap.containsKey(currentPrefix))
          {
-            String suffixToKeep = joinPackageNameSegments(inputSegments.subList(i, inputSegments.size()));
+            String suffixToKeep = buildQualifiedName(inputSegments.subList(i, inputSegments.size()));
             return packageNameMap.get(currentPrefix) + (suffixToKeep.isEmpty() ? "" : "." + suffixToKeep);
          }
       }
@@ -149,42 +164,13 @@ public class MoflonUtil
       return fullyQualifiedPackageName;
    }
 
-   private static String joinPackageNameSegments(final List<String> l)
-   {
-      return l.stream().collect(Collectors.joining("."));
-   }
-
    /**
-    * Formats the given exception for debugging purposes.
-    *
-    * If available, the root cause and its stacktrace are formatted. Else, the reason of the exception is shown.
-    *
-    * @param e
-    *           the exception to be formatted
-    * @return the formatted exception
+    * Joins the given list of segments using '.', resulting in a qualified name
+    * @param segments the segments
+    * @return the qualified name
     */
-   public static String displayExceptionAsString(final Exception e)
+   private static String buildQualifiedName(final List<String> segments)
    {
-      try
-      {
-         final String message;
-         if (null != e.getCause())
-         {
-            message = "Cause: " + ExceptionUtils.getRootCauseMessage(e) + "\nStackTrace: " + ExceptionUtils.getStackTrace(ExceptionUtils.getRootCause(e));
-         } else
-         {
-            message = "Reason: " + e.getMessage();
-         }
-         return message;
-      } catch (Exception new_e)
-      {
-         return e.getMessage();
-      }
-   }
-
-   public static void throwCoreExceptionAsError(final String message, final String plugin, final Exception lowLevelException) throws CoreException
-   {
-      IStatus status = new Status(IStatus.ERROR, plugin, IStatus.OK, message, lowLevelException);
-      throw new CoreException(status);
+      return segments.stream().collect(Collectors.joining("."));
    }
 }
