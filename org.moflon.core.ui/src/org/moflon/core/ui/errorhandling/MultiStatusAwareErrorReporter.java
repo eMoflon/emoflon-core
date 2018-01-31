@@ -8,8 +8,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.moflon.core.utilities.ErrorReporter;
+import org.moflon.core.utilities.ExceptionUtil;
 import org.moflon.core.utilities.LogUtils;
-import org.moflon.core.utilities.MoflonUtil;
 import org.moflon.core.utilities.WorkspaceHelper;
 
 /**
@@ -53,7 +53,7 @@ public class MultiStatusAwareErrorReporter implements ErrorReporter
 
             } catch (final CoreException e)
             {
-               LogUtils.error(logger, e, "Problem while reporting eMoflon errors in Eclipse: " + MoflonUtil.displayExceptionAsString(e));
+               LogUtils.error(logger, e, "Problem while reporting eMoflon errors in Eclipse: " + ExceptionUtil.displayExceptionAsString(e));
             }
          }
       }

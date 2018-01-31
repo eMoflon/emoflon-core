@@ -58,11 +58,6 @@
         <reference definitionId="org.moflon.ide.ui.definitions.hasIntegrationNature"/>
       </or>
     </definition>
-    <definition id="org.moflon.ide.ui.definitions.isInjectFile">
-      <adapt type="org.eclipse.core.resources.IResource">
-        <test property="org.eclipse.core.resources.extension" value="inject"/>
-      </adapt>
-    </definition>
     <definition id="org.moflon.ide.ui.definitions.isProject">
       <adapt type="org.eclipse.core.resources.IProject"/>
     </definition>
@@ -77,16 +72,6 @@
         <reference definitionId="org.moflon.ide.ui.definitions.isCompilationUnitEditor"/>
       </and>
     </definition>
-    <definition id="org.moflon.ide.ui.definitions.hasInjectionEditor">
-      <and>
-        <with variable="activeEditorInput">
-          <reference definitionId="org.moflon.ide.ui.definitions.hasAnyMoflonNature"/>
-        </with>
-        <with variable="activeEditorId">
-          <equals value="org.moflon.ide.ui.admin.editors.injection.InjectionTextEditor"/>
-        </with>
-      </and>
-    </definition>
     <definition id="org.moflon.ide.ui.definitions.isInProjectExplorer">
       <with variable="activePartId">
         <equals value="org.eclipse.ui.navigator.ProjectExplorer"/>
@@ -98,11 +83,9 @@
       </with>
     </definition>
   </extension>
-
   <extension point="org.eclipse.ui.newWizards">
-    <category id="org.moflon.ide.ui.category" name="eMoflon"></category>
+    <category id="org.moflon.ide.ui.category" name="eMoflon"/>
   </extension>
-
   <extension point="org.eclipse.ui.perspectives">
     <perspective class="org.moflon.core.ui.MoflonPerspective" fixed="false" icon="resources/icons/moflonSmall.png" id="org.moflon.ide.ui.MoflonPerspective" name="eMoflon"/>
   </extension>
@@ -112,24 +95,17 @@
   <extension id="org.moflon.ide.marker.EMoflonProblem" name="eMoflon Problem" point="org.eclipse.core.resources.markers">
     <super type="org.eclipse.core.resources.problemmarker"/>
   </extension>
-  <extension id="org.moflon.ide.marker.InjectionProblem" name="eMoflon Injection Problem" point="org.eclipse.core.resources.markers">
-    <super type="org.eclipse.core.resources.problemmarker"/>
-  </extension>
-  <extension id="org.moflon.textualEditor.contentTypes" name="MoflonContentTypes" point="org.eclipse.core.contenttype.contentTypes">
-    <content-type file-extensions="inject" id="org.moflon.textualEditor.contentTypes.moflon.injection" name="eMoflon Injection File" priority="high"/>
-  </extension>
   <extension point="org.eclipse.ui.commands">
     <category description="eMoflon Commands Main Category" id="org.moflon.core.ui.commands.MainCategory" name="eMoflon Commands"/>
-    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.ide.ui.commands.build.BuildCommand" name="%buildLabel"/>
-    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.ide.ui.commands.build.BuildOnlyDirtyProjectsCommand" name="%buildDirtyProjectsLabel"/>
-    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.ide.ui.commands.admin.EditLoggingConfigFile" name="Edit logging configuration"/>
-    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.ide.ui.commands.admin.ConfigureLogging" name="Configure logging"/>
-    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.ide.ui.commands.admin.ReconfigureLogging" name="Reconfigure logging"/>
-    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.ide.ui.commands.build.CreateInjectionCommand" name="Create/update injection for class"/>
-    <command description="Switches between a Java file and its injection file" id="org.moflon.ide.ui.commands.navigate.SwitchBetweenJavaAndInjectionFile" name="Java &lt;-&gt; Injection"/>
+    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.core.ui.commands.build.BuildCommand" name="%buildLabel"/>
+    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.core.ui.commands.build.BuildOnlyDirtyProjectsCommand" name="%buildDirtyProjectsLabel"/>
+    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.core.ui.commands.admin.EditLoggingConfigFile" name="Edit logging configuration"/>
+    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.core.ui.commands.admin.ConfigureLogging" name="Configure logging"/>
+    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.core.ui.commands.admin.ReconfigureLogging" name="Reconfigure logging"/>
+    <command defaultHandler="org.moflon.core.ui.handler.TouchResourceHandler" id="org.moflon.core.ui.commands.TouchResourceCommand" name="Touch Resource"/>
   </extension>
   <extension point="org.eclipse.ui.handlers">
-    <handler class="org.moflon.core.ui.handler.BuildHandler" commandId="org.moflon.ide.ui.commands.build.BuildCommand">
+    <handler class="org.moflon.core.ui.handler.BuildHandler" commandId="org.moflon.core.ui.commands.build.BuildCommand">
       <enabledWhen>
         <or>
           <with variable="selection">
@@ -147,7 +123,7 @@
         </or>
       </enabledWhen>
     </handler>
-    <handler class="org.moflon.core.ui.handler.BuildOnlyDirtyProjectsHandler" commandId="org.moflon.ide.ui.commands.build.BuildOnlyDirtyProjectsCommand">
+    <handler class="org.moflon.core.ui.handler.BuildOnlyDirtyProjectsHandler" commandId="org.moflon.core.ui.commands.build.BuildOnlyDirtyProjectsCommand">
       <enabledWhen>
         <or>
           <with variable="selection">
@@ -165,10 +141,9 @@
         </or>
       </enabledWhen>
     </handler>
-    <handler class="org.moflon.core.ui.handler.EditLoggingConfigurationHandler" commandId="org.moflon.ide.ui.commands.admin.EditLoggingConfigFile"/>
-    <handler class="org.moflon.core.ui.handler.ReconfigureLoggingHandler" commandId="org.moflon.ide.ui.commands.admin.ReconfigureLogging"/>
-    <handler class="org.moflon.core.ui.handler.EditLoggingConfigurationHandler" commandId="org.moflon.ide.ui.commands.admin.ConfigureLogging"/>
-
+    <handler class="org.moflon.core.ui.handler.EditLoggingConfigurationHandler" commandId="org.moflon.core.ui.commands.admin.EditLoggingConfigFile"/>
+    <handler class="org.moflon.core.ui.handler.ReconfigureLoggingHandler" commandId="org.moflon.core.ui.commands.admin.ReconfigureLogging"/>
+    <handler class="org.moflon.core.ui.handler.EditLoggingConfigurationHandler" commandId="org.moflon.core.ui.commands.admin.ConfigureLogging"/>
   </extension>
   <extension point="org.eclipse.ui.menus">
     <menuContribution allPopups="true" locationURI="popup:#TextEditorContext?after=additions">
@@ -216,7 +191,7 @@
         <separator name="moflonGroupNavigation"/>
         <separator name="moflonSeperator"/>
         <separator name="moflonSeperator"/>
-        <separator name="moflonGroupGit"/>
+        <separator name="moflonGroupResources"/>
       </menu>
     </menuContribution>
     <menuContribution locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
@@ -227,21 +202,21 @@
       <separator name="moflonGroupMoca"/>
       <separator name="moflonGroupTie"/>
       <separator name="moflonGroupTesting"/>
-      <separator name="moflonGroupGit"/>
+      <separator name="moflonGroupResources"/>
     </menuContribution>
     <menuContribution allPopups="false" locationURI="toolbar:org.eclipse.ui.main.toolbar">
       <toolbar id="org.moflon.ide.ui.toolbar" label="eMoflon Toolbar">
-        <command commandId="org.moflon.ide.ui.commands.build.BuildCommand" icon="resources/icons/rebuildClasses.png" label="%buildLabel" mnemonic="B" style="push" tooltip="%buildTooltip">
+        <command commandId="org.moflon.core.ui.commands.build.BuildCommand" icon="resources/icons/rebuildClasses.png" label="%buildLabel" mnemonic="B" style="push" tooltip="%buildTooltip">
           <visibleWhen checkEnabled="false">
             <reference definitionId="org.moflon.core.ui.definitions.isMoflonPerspective"/>
           </visibleWhen>
         </command>
-        <command commandId="org.moflon.ide.ui.commands.build.BuildOnlyDirtyProjectsCommand" icon="resources/icons/rebuildClassesDirtyOnly.png" label="%buildDirtyProjectsLabel" mnemonic="D" style="push" tooltip="%buildDirtyProjectsTooltip">
+        <command commandId="org.moflon.core.ui.commands.build.BuildOnlyDirtyProjectsCommand" icon="resources/icons/rebuildClassesDirtyOnly.png" label="%buildDirtyProjectsLabel" mnemonic="D" style="push" tooltip="%buildDirtyProjectsTooltip">
           <visibleWhen checkEnabled="false">
             <reference definitionId="org.moflon.core.ui.definitions.isMoflonPerspective"/>
           </visibleWhen>
         </command>
-        <command commandId="org.moflon.ide.ui.commands.admin.ConfigureLogging" icon="resources/icons/logfile.png" id="org.moflon.ide.ui.commands.admin.toolbar.ConfigureLogging" label="Logging" style="pulldown" tooltip="View and configure logging configuration for eMoflon console">
+        <command commandId="org.moflon.core.ui.commands.admin.ConfigureLogging" icon="resources/icons/logfile.png" id="org.moflon.core.ui.commands.admin.toolbar.ConfigureLogging" label="Logging" style="pulldown" tooltip="View and configure logging configuration for eMoflon console">
           <visibleWhen checkEnabled="false">
             <reference definitionId="org.moflon.core.ui.definitions.isMoflonPerspective"/>
           </visibleWhen>
@@ -249,40 +224,36 @@
       </toolbar>
     </menuContribution>
     <menuContribution allPopups="false" locationURI="popup:org.moflon.ide.ui.moflon?after=moflonGroupBuilding">
-      <command commandId="org.moflon.ide.ui.commands.build.BuildCommand" icon="resources/icons/rebuildClasses.png" label="%buildLabel" mnemonic="B" style="push" tooltip="%buildTooltip">
+      <command commandId="org.moflon.core.ui.commands.build.BuildCommand" icon="resources/icons/rebuildClasses.png" label="%buildLabel" mnemonic="B" style="push" tooltip="%buildTooltip">
         <visibleWhen checkEnabled="false"/>
       </command>
-      <command commandId="org.moflon.ide.ui.commands.build.BuildOnlyDirtyProjectsCommand" icon="resources/icons/rebuildClassesDirtyOnly.png" label="%buildDirtyProjectsLabel" mnemonic="D" style="push" tooltip="%buildDirtyProjectsTooltip">
+      <command commandId="org.moflon.core.ui.commands.build.BuildOnlyDirtyProjectsCommand" icon="resources/icons/rebuildClassesDirtyOnly.png" label="%buildDirtyProjectsLabel" mnemonic="D" style="push" tooltip="%buildDirtyProjectsTooltip">
         <visibleWhen checkEnabled="false"/>
       </command>
-
     </menuContribution>
-    <menuContribution allPopups="false" locationURI="menu:org.moflon.ide.ui.commands.admin.toolbar.ConfigureLogging">
-      <command commandId="org.moflon.ide.ui.commands.admin.EditLoggingConfigFile" icon="resources/icons/logfile.png" label="Edit config file" style="push" tooltip="Edit configuration file for eMoflon logging. To take effect, 'Reconfigure Logging' has to be executed."/>
-      <command commandId="org.moflon.ide.ui.commands.admin.ReconfigureLogging" label="Reconfigure logging" style="push" tooltip="Reconfigure logging"/>
+    <menuContribution allPopups="false" locationURI="popup:org.moflon.ide.ui.moflon?after=moflonGroupResources">
+      <command commandId="org.moflon.core.ui.commands.TouchResourceCommand" label="Touch Selected Resource(s)" style="push" tooltip="Marks the selected resoures as modified (even if they have not changed)">
+        <visibleWhen checkEnabled="false"/>
+      </command>
+    </menuContribution>
+    <menuContribution allPopups="false" locationURI="menu:org.moflon.core.ui.commands.admin.toolbar.ConfigureLogging">
+      <command commandId="org.moflon.core.ui.commands.admin.EditLoggingConfigFile" icon="resources/icons/logfile.png" label="Edit config file" style="push" tooltip="Edit configuration file for eMoflon logging. To take effect, 'Reconfigure Logging' has to be executed."/>
+      <command commandId="org.moflon.core.ui.commands.admin.ReconfigureLogging" label="Reconfigure logging" style="push" tooltip="Reconfigure logging"/>
     </menuContribution>
   </extension>
   <extension point="org.eclipse.ui.bindings">
-    <key commandId="org.moflon.ide.ui.commands.build.BuildCommand" contextId="org.eclipse.ui.contexts.window" schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="M2+M3+E B"/>
-    <key commandId="org.moflon.ide.ui.commands.build.BuildOnlyDirtyProjectsCommand" contextId="org.eclipse.ui.contexts.window" schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="M2+M3+E D"/>
+    <key commandId="org.moflon.core.ui.commands.build.BuildCommand" contextId="org.eclipse.ui.contexts.window" schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="M2+M3+E B"/>
+    <key commandId="org.moflon.core.ui.commands.build.BuildOnlyDirtyProjectsCommand" contextId="org.eclipse.ui.contexts.window" schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="M2+M3+E D"/>
+    <key commandId="org.moflon.core.ui.commands.TouchResourceCommand" contextId="org.eclipse.ui.contexts.window" schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="M2+M3+E C"/>
   </extension>
-
-  <extension
-         point="org.eclipse.core.runtime.adapters">
-      <factory
-            adaptableType="org.eclipse.core.resources.IFile"
-            class="org.moflon.core.ui.errorhandling.MultiStatusAwareErrorReporterFactory">
-         <adapter
-               type="org.moflon.core.ui.errorhandling.MultiStatusAwareErrorReporter">
+  <extension point="org.eclipse.core.runtime.adapters">
+    <factory adaptableType="org.eclipse.core.resources.IFile" class="org.moflon.core.ui.errorhandling.MultiStatusAwareErrorReporterFactory">
+      <adapter type="org.moflon.core.ui.errorhandling.MultiStatusAwareErrorReporter">
          </adapter>
-      </factory>
-   </extension>
-  <extension
-        point="net.sourceforge.plantuml.eclipse.diagramTextProvider">
-     <diagramTextProvider
-           priority="2"
-           providerClass="org.moflon.core.ui.visualisation.EMoflonModelAndMetamodelVisualiser">
+    </factory>
+  </extension>
+  <extension point="net.sourceforge.plantuml.eclipse.diagramTextProvider">
+    <diagramTextProvider priority="2" providerClass="org.moflon.core.ui.visualisation.EMoflonModelAndMetamodelVisualiser">
      </diagramTextProvider>
   </extension>
 </plugin>
-
