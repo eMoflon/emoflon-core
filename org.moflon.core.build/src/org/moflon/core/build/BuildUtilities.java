@@ -26,8 +26,8 @@ public final class BuildUtilities
 
    public static final IBuildConfiguration[] getDefaultBuildConfigurations(final Collection<IProject> projects)
    {
-      final List<IBuildConfiguration> result = new ArrayList<IBuildConfiguration>(projects.size());
-      for (IProject project : projects)
+      final List<IBuildConfiguration> result = new ArrayList<>(projects.size());
+      for (final IProject project : projects)
       {
          try
          {

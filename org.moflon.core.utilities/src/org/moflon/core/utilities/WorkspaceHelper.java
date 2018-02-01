@@ -115,7 +115,6 @@ public class WorkspaceHelper
 
    public static final String INJECTION_PROBLEM_MARKER_ID = "org.moflon.ide.marker.InjectionProblem";
 
-
    /**
     * Adds a file to project root, retrieving its contents from the specified location
     *
@@ -143,7 +142,8 @@ public class WorkspaceHelper
       try
       {
          projectFile.create(contents, true, subMon.split(1));
-      } finally {
+      } finally
+      {
          IOUtils.closeQuietly(contents);
       }
    }
@@ -299,7 +299,6 @@ public class WorkspaceHelper
       return resource.getType() == IResource.FOLDER;
    }
 
-
    /**
     * Returns a handle to the /bin folder of the project
     *
@@ -397,9 +396,9 @@ public class WorkspaceHelper
    {
       final SubMonitor subMon = SubMonitor.convert(monitor, "Create description with added natures", 1);
 
-      IProjectDescription description = project.getDescription();
+      final IProjectDescription description = project.getDescription();
 
-      List<String> natures = new ArrayList<>(Arrays.asList(description.getNatureIds()));
+      final List<String> natures = new ArrayList<>(Arrays.asList(description.getNatureIds()));
 
       if (!natures.contains(natureId))
       {
@@ -432,7 +431,6 @@ public class WorkspaceHelper
       project.setDescription(description, subMon.split(1));
    }
 
-
    /**
     * Creates a file at pathToFile with specified contents fileContent. All folders in the path are created if
     * necessary.
@@ -463,13 +461,7 @@ public class WorkspaceHelper
     */
    public static boolean isPluginProjectNoThrow(final IProject project)
    {
-      try
-      {
-         return project.hasNature(PLUGIN_NATURE_ID);
-      } catch (Exception e)
-      {
-         return false;
-      }
+      return hasNature(project, PLUGIN_NATURE_ID);
    }
 
    /**
@@ -484,9 +476,31 @@ public class WorkspaceHelper
       return resource != null && resource.getType() == IResource.FILE;
    }
 
+   /**
+    * Returns the {@link IProject} with the given name (if exists)
+    * @param projectName the name of the project
+    * @return the project or <code>null</code>
+    */
    public static IProject getProjectByName(final String projectName)
    {
       return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+   }
+
+   /**
+    * Returns true if the given {@link IProject} has the given nature ID
+    * @param project the project
+    * @param natureId the nature ID
+    * @return whether the project has the nature ID
+    */
+   public static boolean hasNature(final IProject project, final String natureId)
+   {
+      try
+      {
+         return project.getNature(natureId) != null;
+      } catch (final CoreException e)
+      {
+         return false;
+      }
    }
 
    /**
@@ -501,13 +515,13 @@ public class WorkspaceHelper
    public static IProject getProjectByPluginId(final String pluginId)
    {
       return getAllProjectsInWorkspace().stream().filter(project -> {
-         return doesProjectHavePluginId(project, pluginId);
+         return hasPluginId(project, pluginId);
       }).findAny().orElse(null);
    }
 
-   private static boolean doesProjectHavePluginId(final IProject project, final String desiredPluginId)
+   private static boolean hasPluginId(final IProject project, final String desiredPluginId)
    {
-      IPluginModelBase pluginModel = PluginRegistry.findModel(project);
+      final IPluginModelBase pluginModel = PluginRegistry.findModel(project);
       if (pluginModel != null && pluginModel.getBundleDescription() != null)
       {
          final String actualPluginId = pluginModel.getBundleDescription().getSymbolicName();
@@ -639,4 +653,5 @@ public class WorkspaceHelper
          return "severity=" + severity;
       }
    }
+
 }
