@@ -14,6 +14,7 @@
     <module>org.moflon.core.preferences</module>
     <module>org.moflon.core.propertycontainer</module>
     <module>org.moflon.core.ui</module>
+    <module>org.moflon.core.ui.autosetup</module>
     <!-- <module>org.moflon.core.updatesite</module>-->
     <!-- Not necessary -->
     <module>org.moflon.core.releng.target</module>
