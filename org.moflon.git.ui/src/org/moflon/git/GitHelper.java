@@ -153,13 +153,13 @@ public final class GitHelper
          {
             gitFolder = new File(pathToRepository + GIT_FOLDER);
 
-            if (pathToRepository.isRoot() && !gitFolder.exists())
+            if (gitFolder.exists())
             {
-               return null;
+               return pathToRepository;
             }
 
             pathToRepository = pathToRepository.removeLastSegments(1);
-         } while (!gitFolder.exists());
+         } while (!gitFolder.exists() && !pathToRepository.isRoot());
       }
       return pathToRepository;
    }
