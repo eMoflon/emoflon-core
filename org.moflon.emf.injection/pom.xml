@@ -97,11 +97,11 @@
             <fileset>
               <directory>${basedir}/../org.moflon.emf.injection.ui/src-gen/</directory>
               <includes>
-                <include>**/*</include>
+                <include>**/*</include>              
+              </includes>
               <excludes>
                 <exclude>**/.keep*</exclude>
               </excludes>
-              </includes>
             </fileset>
             <!-- <fileset> <directory>${basedir}/../org.moflon.emf.injection.ui.tests/src-gen/</directory>
               <includes> <include>**/*</include> </includes> </fileset> -->
