@@ -31,7 +31,7 @@ import org.moflon.core.utilities.ExceptionUtil;
 import org.moflon.core.utilities.LogUtils;
 
 @SuppressWarnings("restriction")
-public abstract class WorkspaceInstaller
+public class WorkspaceInstaller
 {
    protected static final Logger logger = Logger.getLogger(WorkspaceInstaller.class);
 
@@ -179,6 +179,14 @@ public abstract class WorkspaceInstaller
       // Nothing to do here
    }
 
+   /**
+    * The list of projects to be built
+    * @return all projects in the workspace
+    */
+   protected IProject[] getProjectsToBuild() {
+      return ResourcesPlugin.getWorkspace().getRoot().getProjects();
+   }
+
    // This is required to avoid NPEs when checking out plugin projects (a problem with JDT)
    private static void prepareWorkspace()
    {
@@ -196,6 +204,4 @@ public abstract class WorkspaceInstaller
    {
       return files.stream().map(f -> f.getName()).collect(Collectors.joining(", "));
    }
-
-   protected abstract IProject[] getProjectsToBuild();
 }
