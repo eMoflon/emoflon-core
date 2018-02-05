@@ -22,6 +22,9 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.gervarro.eclipse.workspace.util.WorkspaceTask;
 import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
@@ -43,7 +46,7 @@ public class PluginXmlUpdater extends WorkspaceTask
 
    private PluginXmlUpdater(final IProject project)
    {
-      this(project, eMoflonEMFUtil.extractGenModelFromProject(project));
+      this(project, extractGenModelFromProject(project));
    }
 
    private PluginXmlUpdater(final IProject project, final GenModel genModel)
@@ -83,7 +86,7 @@ public class PluginXmlUpdater extends WorkspaceTask
    {
       final SubMonitor subMon = SubMonitor.convert(monitor, "Create/update plugin.xml", 1);
 
-      updatePluginXml(currentProject, eMoflonEMFUtil.extractGenModelFromProject(currentProject), subMon.split(1));
+      updatePluginXml(currentProject, extractGenModelFromProject(currentProject), subMon.split(1));
    }
 
    public static final void updatePluginXml(final IProject currentProject, final GenModel genModel, final IProgressMonitor monitor) throws CoreException
@@ -128,6 +131,18 @@ public class PluginXmlUpdater extends WorkspaceTask
    public static Node getRootNode(final Document doc)
    {
       return doc.getElementsByTagName("plugin").item(0);
+   }
+
+   @Override
+   public String getTaskName()
+   {
+      return "Plugin.xml updater";
+   }
+
+   @Override
+   public ISchedulingRule getRule()
+   {
+      return project;
    }
 
    private static void removeExtensionPointsForGeneratedPackages(final Document doc) throws XPathExpressionException
@@ -199,15 +214,20 @@ public class PluginXmlUpdater extends WorkspaceTask
       return extensionPoints;
    }
 
-   @Override
-   public String getTaskName()
+   /**
+    * Loads the genmodel from the given project, assuming the default genmodel path as returned by
+    * {@link MoflonConventions#getDefaultPathToGenModelInProject(String)}.
+    *
+    * @return the genmodel (if exists)
+    */
+   private static GenModel extractGenModelFromProject(final IProject currentProject)
    {
-      return "Plugin.xml updater";
-   }
-
-   @Override
-   public ISchedulingRule getRule()
-   {
-      return project;
+      final String pathInsideProject = MoflonConventions.getDefaultPathToGenModelInProject(currentProject.getName());
+      final IFile projectGenModelFile = currentProject.getFile(pathInsideProject);
+      final String pathToGenmodel = projectGenModelFile.getRawLocation().toOSString();
+      final ResourceSet set = eMoflonEMFUtil.createDefaultResourceSet();
+      final Resource genModelResource = set.getResource(URI.createFileURI(pathToGenmodel), true);
+      final GenModel genmodel = (GenModel) genModelResource.getContents().get(0);
+      return genmodel;
    }
 }
