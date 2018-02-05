@@ -477,6 +477,15 @@ public class WorkspaceHelper
    }
 
    /**
+    * Returns whether the given {@link IResource} appears to be an Ecore file
+    * @param file the file to check
+    * @return true if the file is an Ecore
+    */
+   public static boolean isEcoreFile(final IResource resource) {
+      return isFile(resource) && resource.getName().endsWith(".ecore");
+   }
+
+   /**
     * Returns the {@link IProject} with the given name (if exists)
     * @param projectName the name of the project
     * @return the project or <code>null</code>
