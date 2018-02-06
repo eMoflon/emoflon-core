@@ -23,7 +23,6 @@ import org.moflon.core.plugins.manifest.ManifestFileUpdater;
 import org.moflon.core.plugins.manifest.ManifestFileUpdater.AttributeUpdatePolicy;
 import org.moflon.core.plugins.manifest.PluginManifestConstants;
 import org.moflon.core.utilities.LogUtils;
-import org.moflon.core.utilities.MoflonUtilitiesActivator;
 import org.moflon.core.utilities.WorkspaceHelper;
 
 public class PluginProducerWorkspaceRunnable implements IWorkspaceRunnable
@@ -104,17 +103,10 @@ public class PluginProducerWorkspaceRunnable implements IWorkspaceRunnable
                getProjectProperties().get(PluginProperties.JAVA_VERION), AttributeUpdatePolicy.KEEP);
 
          changed |= ManifestFileUpdater.updateDependencies(manifest, Arrays.asList(new String[] { WorkspaceHelper.PLUGIN_ID_ECORE,
-               WorkspaceHelper.PLUGIN_ID_ECORE_XMI, WorkspaceHelper.getPluginId(MoflonUtilitiesActivator.class) }));
+               WorkspaceHelper.PLUGIN_ID_ECORE_XMI }));
 
          changed |= ManifestFileUpdater.updateDependencies(manifest,
                ManifestFileUpdater.extractDependencies(getProjectProperties().get(PluginProperties.DEPENDENCIES_KEY)));
-
-         // TODO@Cleanup: This code appears to be dead because none of the mentioned projects calls this class (2018-01,23)
-         //         if (IntegrationNature.isIntegrationProjectNoThrow(getProject()))
-         //            changed |= ManifestFileUpdater.updateDependencies(manifest,
-         //                  Arrays.asList(new String[] { WorkspaceHelper.DEFAULT_LOG4J_DEPENDENCY, WorkspaceHelper.getPluginId(MocaTreeFactory.class),
-         //                        WorkspaceHelper.PLUGIN_ID_ECLIPSE_RUNTIME, WorkspaceHelper.getPluginId(SDMLanguagePlugin.class),
-         //                        WorkspaceHelper.getPluginId(TGGLanguageActivator.class), WorkspaceHelper.getPluginId(TGGRuntimePlugin.class) }));
 
          return changed;
       });
