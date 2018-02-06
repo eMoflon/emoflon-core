@@ -36,7 +36,9 @@ import org.moflon.core.plugins.manifest.ManifestFileUpdater.AttributeUpdatePolic
 import org.moflon.core.plugins.manifest.PluginManifestConstants;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
+import org.moflon.core.propertycontainer.PropertycontainerFactory;
 import org.moflon.core.propertycontainer.SDMCodeGeneratorIds;
+import org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler;
 import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 
@@ -108,7 +110,9 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
       final SDMCodeGeneratorIds codeGeneratorHandler = getCodeGeneratorHandler();
       if (codeGeneratorHandler != null)
       {
-         moflonProperties.getSdmCodegeneratorHandlerId().setValue(codeGeneratorHandler);
+         final SdmCodegeneratorMethodBodyHandler methodBodyHandlerId = PropertycontainerFactory.eINSTANCE.createSdmCodegeneratorMethodBodyHandler();
+         moflonProperties.setSdmCodegeneratorHandlerId(methodBodyHandlerId);
+         methodBodyHandlerId.setValue(codeGeneratorHandler);
       }
    }
 
