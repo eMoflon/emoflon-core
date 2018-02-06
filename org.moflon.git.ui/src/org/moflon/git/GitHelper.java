@@ -159,8 +159,8 @@ public final class GitHelper
             }
 
             pathToRepository = pathToRepository.removeLastSegments(1);
-         } while (!gitFolder.exists() && !pathToRepository.isRoot());
+         } while (!pathToRepository.isRoot());
       }
-      return pathToRepository;
+      return null;
    }
 }
