@@ -2,7 +2,7 @@
 <feature
       id="org.moflon.core.feature"
       label="eMoflon Core Components Feature"
-      version="2.32.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="eMoflon Developers"
       plugin="org.moflon.core.branding">
 
@@ -99,20 +99,6 @@ See here for more details on EPL: http://www.eclipse.org/org/documents/epl-v10.p
          unpack="false"/>
 
    <plugin
-         id="org.gervarro.eclipse.workspace.autosetup"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.gervarro.eclipse.workspace.util"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.moflon.core.plugins"
          download-size="0"
          install-size="0"
@@ -141,7 +127,14 @@ See here for more details on EPL: http://www.eclipse.org/org/documents/epl-v10.p
          unpack="false"/>
 
    <plugin
-         id="org.gervarro.eclipse.task"
+         id="org.moflon.core.ui.autosetup"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.git.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

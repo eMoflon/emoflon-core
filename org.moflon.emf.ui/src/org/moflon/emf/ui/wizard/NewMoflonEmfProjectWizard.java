@@ -46,7 +46,6 @@ public class NewMoflonEmfProjectWizard extends AbstractMoflonWizard
          final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
          final PluginProperties pluginProperties = new PluginProperties();
          pluginProperties.setDefaultValues();
-         pluginProperties.put(PluginProperties.TYPE_KEY, PluginProperties.MOFLON_EMF_PROJECT);
          pluginProperties.put(PluginProperties.NAME_KEY, projectName);
          pluginProperties.put(PluginProperties.PLUGIN_ID_KEY, projectName);
          createProject(subMon, project, pluginProperties);

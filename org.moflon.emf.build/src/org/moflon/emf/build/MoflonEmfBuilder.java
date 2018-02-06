@@ -100,7 +100,7 @@ public class MoflonEmfBuilder extends AbstractVisitorBuilder
    @Override
    protected void processResource(final IResource ecoreResource, final int kind, Map<String, String> args, final IProgressMonitor monitor)
    {
-      if (eMoflonEMFUtil.isEcoreFile(ecoreResource))
+      if (WorkspaceHelper.isEcoreFile(ecoreResource))
       {
          final IFile ecoreFile = Platform.getAdapterManager().getAdapter(ecoreResource, IFile.class);
          try
