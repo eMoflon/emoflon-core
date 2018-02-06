@@ -21,9 +21,11 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -661,6 +663,29 @@ public class WorkspaceHelper
       {
          return "severity=" + severity;
       }
+   }
+
+   /**
+    * Used to retrieve resources embedded in the plugin (jar files when
+    * installed on client machine).
+    *
+    * @param filePath
+    *            Must be relative to the plugin root and indicate an existing
+    *            resource (packaged in build)
+    * @param pluginId
+    *            The id of the plugin bundle to be searched
+    * @return URL to the resource or null if nothing was found (An URL because
+    *         resource could be inside a jar).
+    */
+   public static URL getPathRelToPlugIn(final String filePath, final String pluginId) {
+   	try {
+   		final Bundle bundle = Platform.getBundle(pluginId);
+   		if (bundle == null)
+   		   return null;
+         return FileLocator.resolve(bundle.getEntry(filePath));
+   	} catch (final Exception e) {
+   		return null;
+   	}
    }
 
 }

@@ -10,7 +10,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.moflon.core.utilities.LogUtils;
-import org.moflon.core.utilities.MoflonUtilitiesActivator;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.osgi.framework.BundleContext;
 
@@ -74,7 +73,7 @@ public class MoflonCoreUiActivator extends AbstractUIPlugin
          try
          {
             // Copy default configuration to state location
-            URL defaultConfigFile = MoflonUtilitiesActivator.getPathRelToPlugIn(RESOURCES_DEFAULT_FILES_PATH + LOG4J_CONFIG_PROPERTIES,
+            URL defaultConfigFile = WorkspaceHelper.getPathRelToPlugIn(RESOURCES_DEFAULT_FILES_PATH + LOG4J_CONFIG_PROPERTIES,
                   WorkspaceHelper.getPluginId(getClass()));
 
             FileUtils.copyURLToFile(defaultConfigFile, loggingConfigurationFile);
