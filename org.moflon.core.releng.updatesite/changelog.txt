@@ -1,1 +1,10 @@
+2018-02-06 eMoflon 1.0.0 released
+
+eMoflon Core contains core components that can be reused across different versions of eMoflon.
+
+eMoflon Core currently contains
+* Support for creating "eMoflon EMF Projects", which provide auto-build for EMF projects.
+  Method bodies can be provided via injections.
+* Utilities such as Git Reset Repository, Touch Resource, Trigger Full Build, Trigger Incremental Build
+
 2018-01-24 First pre-release of eMoflon Core

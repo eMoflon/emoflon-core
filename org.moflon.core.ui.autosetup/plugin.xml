@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension point="org.eclipse.ui.perspectiveExtensions">
+    <perspectiveExtension targetID="org.moflon.ide.ui.perspective">
+      </perspectiveExtension>
+  </extension>
+  <extension point="org.eclipse.ui.menus">
+    <menuContribution allPopups="false" locationURI="toolbar:org.eclipse.ui.main.toolbar">
+      <toolbar id="org.moflon.ide.ui.toolbar" label="eMoflon Toolbar">
+        <command commandId="org.moflon.ide.ui.commands.MoflonDevtoolsMenuCommand" icon="resources/icons/junitmoflon.png" id="org.moflon.devtools.ui.commands.toolbar.MoflonDevtoolsMenuCommand" label="Install and Configure eMoflon" style="pulldown">
+          <visibleWhen checkEnabled="false">
+            <reference definitionId="org.moflon.core.ui.definitions.isMoflonPerspective">
+                  </reference>
+          </visibleWhen>
+        </command>
+      </toolbar>
+    </menuContribution>
+    <menuContribution allPopups="false" locationURI="menu:org.moflon.devtools.ui.commands.toolbar.MoflonDevtoolsMenuCommand">
+      <command commandId="org.moflon.devtools.ui.commands.install.LoadPsfFileCommand" label="Load Custom PSF File..." style="push">
+         </command>
+    </menuContribution>
+</extension>
+<extension point="org.eclipse.ui.commands">
+    <command categoryId="org.moflon.ide.ui.commands.DevelopmentCategory" defaultHandler="org.moflon.core.ui.handler.NoActionCommandHanlder" id="org.moflon.ide.ui.commands.MoflonDevtoolsMenuCommand" name="Install Prepared eMoflon Workspaces">
+      <commandParameter id="org.moflon.devtools.ui.commands.install.workspacename" name="Workspace Name" optional="true"></commandParameter>
+    </command>
+    <category id="org.moflon.ide.ui.commands.DevelopmentCategory" name="Development commands"></category>
+    <command categoryId="org.moflon.ide.ui.commands.DevelopmentCategory" defaultHandler="org.moflon.core.ui.autosetup.handler.InstallPsfFileHandler" id="org.moflon.devtools.ui.commands.install.LoadPsfFileCommand" name="Install: Load PSF file">
+    </command>
+  </extension>
+</plugin>

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.moflon.core.utilities.tests
+Bundle-Name: Unit tests for org.moflon.core.utilities
 Bundle-SymbolicName: org.moflon.core.utilities.tests;singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Bundle-Vendor: eMoflon Developers

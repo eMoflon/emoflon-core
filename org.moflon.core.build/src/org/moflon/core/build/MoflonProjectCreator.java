@@ -36,7 +36,9 @@ import org.moflon.core.plugins.manifest.ManifestFileUpdater.AttributeUpdatePolic
 import org.moflon.core.plugins.manifest.PluginManifestConstants;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
+import org.moflon.core.propertycontainer.PropertycontainerFactory;
 import org.moflon.core.propertycontainer.SDMCodeGeneratorIds;
+import org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler;
 import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 
@@ -63,11 +65,56 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
     */
    protected abstract SDMCodeGeneratorIds getCodeGeneratorHandler();
 
+   /**
+    * Returns the list of lines for the .gitignore file to be created in the project's root folder
+    * @return the list of lines
+    */
    protected abstract List<String> getGitignoreLines();
 
+   /**
+    * Returns the ID of the nature to be added to .project
+    * @return the nature ID
+    * @throws CoreException if determining the nature ID fails
+    */
    protected abstract String getNatureId() throws CoreException;
 
+   /**
+    * Returns the ID of the builder to be added to .project
+    * @return the builder ID
+    * @throws CoreException if determining the builder ID fails
+    */
    protected abstract String getBuilderId() throws CoreException;
+
+   /**
+    * Returns true if optional compiler warnings in /gen shall be ignored
+    * The default behavior is not to ignore warnings.
+    */
+   protected boolean shallIgnoreGenWarnings()
+   {
+      return false;
+   }
+
+   /**
+    * Initializes the contents of the file {@link MoflonConventions#MOFLON_CONFIG_FILE}.
+    *
+    * The file will be saved after calling this method.
+    *
+    * This method initializes {@link MoflonPropertiesContainer#getSdmCodegeneratorHandlerId()} based on {@link #getCodeGeneratorHandler()}
+    *
+    * When overriding this method, subclasses should invoke the parent class's {@link #initializeMoflonProperties(MoflonPropertiesContainer)} in any case!
+    *
+    * @param moflonProperties the properties container
+    */
+   protected void initializeMoflonProperties(final MoflonPropertiesContainer moflonProperties)
+   {
+      final SDMCodeGeneratorIds codeGeneratorHandler = getCodeGeneratorHandler();
+      if (codeGeneratorHandler != null)
+      {
+         final SdmCodegeneratorMethodBodyHandler methodBodyHandlerId = PropertycontainerFactory.eINSTANCE.createSdmCodegeneratorMethodBodyHandler();
+         moflonProperties.setSdmCodegeneratorHandlerId(methodBodyHandlerId);
+         methodBodyHandlerId.setValue(codeGeneratorHandler);
+      }
+   }
 
    @Override
    public void run(final IProgressMonitor monitor) throws CoreException
@@ -128,7 +175,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
          final IClasspathEntry srcFolderEntry = JavaCore.newSourceEntry(WorkspaceHelper.getSourceFolder(project).getFullPath());
 
          // Integration projects contain a lot of (useful?) boilerplate code in /gen, which requires to ignore warnings such as 'unused variable', 'unused import' etc.
-         final IClasspathAttribute[] genFolderClasspathAttributes = pluginProperties.isIntegrationProject()
+         final IClasspathAttribute[] genFolderClasspathAttributes = shallIgnoreGenWarnings()
                ? new IClasspathAttribute[] { JavaCore.newClasspathAttribute("ignore_optional_problems", "true") }
                : new IClasspathAttribute[] {};
          final IClasspathEntry genFolderEntry = JavaCore.newSourceEntry(WorkspaceHelper.getGenFolder(project).getFullPath(), new IPath[0], new IPath[0], null,
@@ -141,29 +188,10 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
                WorkspaceHelper.getBinFolder(project).getFullPath(), true, subMon.split(1));
 
          // (7) Create Moflon properties file (moflon.properties.xmi)
-         final MoflonPropertiesContainer moflonProperties = MoflonPropertiesContainerHelper.loadOrCreatePropertiesContainer(getProject(), MoflonConventions.getDefaultMoflonPropertiesFile(getProject()));
+         final MoflonPropertiesContainer moflonProperties = MoflonPropertiesContainerHelper.loadOrCreatePropertiesContainer(getProject(),
+               MoflonConventions.getDefaultMoflonPropertiesFile(getProject()));
          initializeMoflonProperties(moflonProperties);
          MoflonPropertiesContainerHelper.save(moflonProperties, subMon.split(1));
-      }
-   }
-
-   /**
-    * Initializes the contents of the file {@link MoflonConventions#MOFLON_CONFIG_FILE}.
-    *
-    * The file will be saved after calling this method.
-    *
-    * This method initializes {@link MoflonPropertiesContainer#getSdmCodegeneratorHandlerId()} based on {@link #getCodeGeneratorHandler()}
-    *
-    * When overriding this method, subclasses should invoke the parent class's {@link #initializeMoflonProperties(MoflonPropertiesContainer)} in any case!
-    *
-    * @param moflonProperties the properties container
-    */
-   protected void initializeMoflonProperties(final MoflonPropertiesContainer moflonProperties)
-   {
-      final SDMCodeGeneratorIds codeGeneratorHandler = getCodeGeneratorHandler();
-      if (codeGeneratorHandler != null)
-      {
-         moflonProperties.getSdmCodegeneratorHandlerId().setValue(codeGeneratorHandler);
       }
    }
 
@@ -187,13 +215,23 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
       return pluginProperties;
    }
 
+   /**
+    * Validates the presence of the necessary keys for this builder
+    * @throws CoreException if a required key-value mapping is missing
+    */
    private void validatePluginProperties() throws CoreException
    {
-      validateNotNull(pluginProperties, PluginProperties.NAME_KEY);
-      validateNotNull(pluginProperties, PluginProperties.PLUGIN_ID_KEY);
-      validateNotNull(pluginProperties, PluginProperties.JAVA_VERION);
+      validateNotNull(getPluginProperties(), PluginProperties.NAME_KEY);
+      validateNotNull(getPluginProperties(), PluginProperties.PLUGIN_ID_KEY);
+      validateNotNull(getPluginProperties(), PluginProperties.JAVA_VERION);
    }
 
+   /**
+    * Validates that the given key is present in the given properties
+    * @param pluginProperties the properties to check
+    * @param key the key to check
+    * @throws CoreException if there is no mapping for the given key in the given properties
+    */
    private void validateNotNull(final PluginProperties pluginProperties, final String key) throws CoreException
    {
       if (!pluginProperties.containsKey(key))

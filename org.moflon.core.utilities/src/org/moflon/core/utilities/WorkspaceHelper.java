@@ -21,9 +21,11 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -115,7 +117,6 @@ public class WorkspaceHelper
 
    public static final String INJECTION_PROBLEM_MARKER_ID = "org.moflon.ide.marker.InjectionProblem";
 
-
    /**
     * Adds a file to project root, retrieving its contents from the specified location
     *
@@ -143,7 +144,8 @@ public class WorkspaceHelper
       try
       {
          projectFile.create(contents, true, subMon.split(1));
-      } finally {
+      } finally
+      {
          IOUtils.closeQuietly(contents);
       }
    }
@@ -299,7 +301,6 @@ public class WorkspaceHelper
       return resource.getType() == IResource.FOLDER;
    }
 
-
    /**
     * Returns a handle to the /bin folder of the project
     *
@@ -397,9 +398,9 @@ public class WorkspaceHelper
    {
       final SubMonitor subMon = SubMonitor.convert(monitor, "Create description with added natures", 1);
 
-      IProjectDescription description = project.getDescription();
+      final IProjectDescription description = project.getDescription();
 
-      List<String> natures = new ArrayList<>(Arrays.asList(description.getNatureIds()));
+      final List<String> natures = new ArrayList<>(Arrays.asList(description.getNatureIds()));
 
       if (!natures.contains(natureId))
       {
@@ -432,7 +433,6 @@ public class WorkspaceHelper
       project.setDescription(description, subMon.split(1));
    }
 
-
    /**
     * Creates a file at pathToFile with specified contents fileContent. All folders in the path are created if
     * necessary.
@@ -463,13 +463,7 @@ public class WorkspaceHelper
     */
    public static boolean isPluginProjectNoThrow(final IProject project)
    {
-      try
-      {
-         return project.hasNature(PLUGIN_NATURE_ID);
-      } catch (Exception e)
-      {
-         return false;
-      }
+      return hasNature(project, PLUGIN_NATURE_ID);
    }
 
    /**
@@ -484,9 +478,40 @@ public class WorkspaceHelper
       return resource != null && resource.getType() == IResource.FILE;
    }
 
+   /**
+    * Returns whether the given {@link IResource} appears to be an Ecore file
+    * @param file the file to check
+    * @return true if the file is an Ecore
+    */
+   public static boolean isEcoreFile(final IResource resource) {
+      return isFile(resource) && resource.getName().endsWith(".ecore");
+   }
+
+   /**
+    * Returns the {@link IProject} with the given name (if exists)
+    * @param projectName the name of the project
+    * @return the project or <code>null</code>
+    */
    public static IProject getProjectByName(final String projectName)
    {
       return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+   }
+
+   /**
+    * Returns true if the given {@link IProject} has the given nature ID
+    * @param project the project
+    * @param natureId the nature ID
+    * @return whether the project has the nature ID
+    */
+   public static boolean hasNature(final IProject project, final String natureId)
+   {
+      try
+      {
+         return project.getNature(natureId) != null;
+      } catch (final CoreException e)
+      {
+         return false;
+      }
    }
 
    /**
@@ -501,13 +526,13 @@ public class WorkspaceHelper
    public static IProject getProjectByPluginId(final String pluginId)
    {
       return getAllProjectsInWorkspace().stream().filter(project -> {
-         return doesProjectHavePluginId(project, pluginId);
+         return hasPluginId(project, pluginId);
       }).findAny().orElse(null);
    }
 
-   private static boolean doesProjectHavePluginId(final IProject project, final String desiredPluginId)
+   private static boolean hasPluginId(final IProject project, final String desiredPluginId)
    {
-      IPluginModelBase pluginModel = PluginRegistry.findModel(project);
+      final IPluginModelBase pluginModel = PluginRegistry.findModel(project);
       if (pluginModel != null && pluginModel.getBundleDescription() != null)
       {
          final String actualPluginId = pluginModel.getBundleDescription().getSymbolicName();
@@ -639,4 +664,28 @@ public class WorkspaceHelper
          return "severity=" + severity;
       }
    }
+
+   /**
+    * Used to retrieve resources embedded in the plugin (jar files when
+    * installed on client machine).
+    *
+    * @param filePath
+    *            Must be relative to the plugin root and indicate an existing
+    *            resource (packaged in build)
+    * @param pluginId
+    *            The id of the plugin bundle to be searched
+    * @return URL to the resource or null if nothing was found (An URL because
+    *         resource could be inside a jar).
+    */
+   public static URL getPathRelToPlugIn(final String filePath, final String pluginId) {
+   	try {
+   		final Bundle bundle = Platform.getBundle(pluginId);
+   		if (bundle == null)
+   		   return null;
+         return FileLocator.resolve(bundle.getEntry(filePath));
+   	} catch (final Exception e) {
+   		return null;
+   	}
+   }
+
 }
