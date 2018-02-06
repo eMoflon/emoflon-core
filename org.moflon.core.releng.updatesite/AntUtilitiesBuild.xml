@@ -23,7 +23,7 @@
 	    <fileset dir="." includes="index.html"/>
 	    <fileset dir="." includes="site.xml"/>
   	</zip>
-    <eclipse.refreshLocal resource="org.moflon.deployment.updatesite" depth="infinite" />
+    <antcall target="refresh"></antcall>
   </target>
 
   <!--
@@ -36,6 +36,14 @@
     <delete file="artifacts.jar"/>
     <delete file="content.jar"/>
     <delete file="logs.zip"/>
-  	<eclipse.refreshLocal resource="org.moflon.deployment.updatesite" depth="infinite" />
+    <antcall target="refresh"></antcall>
+  </target>
+
+  <!--
+  This task triggers Eclipse's refresh for the update-site project.
+  This only works if the ant script is run in the JRE of Eclipse.
+  -->
+  <target name="refresh" description="Refresh update-site project">
+  	<eclipse.refreshLocal resource="org.moflon.core.releng.updatesite" depth="infinite" />
   </target>
 </project>
