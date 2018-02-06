@@ -8,6 +8,7 @@
   <modules>
     <module>org.moflon.core.branding</module>
     <module>org.moflon.core.build</module>
+    <module>org.moflon.core.build.tests</module>
     <module>org.moflon.core.feature</module>
     <module>org.moflon.core.plugins</module>
     <module>org.moflon.core.plugins.tests</module>
