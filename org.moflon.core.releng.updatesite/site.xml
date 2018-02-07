@@ -18,10 +18,14 @@
    <feature url="features/org.gervarro.eclipse.util.feature.source_2.0.0.v20161231-0040.jar" id="org.gervarro.eclipse.util.feature.source" version="2.0.0.v20161231-0040">
       <category name="org.moflon.core.external"/>
    </feature>
-   <category-def name="org.moflon.core.category" label="eMoflon Core Features">
+   <category-def name="org.moflon.core.category" label="eMoflon Core">
       <description>
          Core Components of eMoflon
       </description>
    </category-def>
-   <category-def name="org.moflon.core.external" label="External dependencies of eMoflon Core"/>
+   <category-def name="org.moflon.core.external" label="eMoflon Core - External dependencies">
+      <description>
+         External dependencies of eMoflon Core (as backup for their original update sites)
+      </description>
+   </category-def>
 </site>
