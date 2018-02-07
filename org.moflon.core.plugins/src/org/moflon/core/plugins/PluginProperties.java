@@ -28,8 +28,6 @@ public class PluginProperties
 
    public static final String WORKING_SET_KEY = "workingSet";
 
-   public static final String JAVA_VERION = "javaVersion";
-
    public static final String DEPENDENCIES_KEY = "dependencies";
 
    public static final String NS_URI_KEY = "nsURI";
@@ -89,12 +87,6 @@ public class PluginProperties
       return getDependencies().stream()//
             .filter(dep -> !dep.equals(ManifestFileUpdater.IGNORE_PLUGIN_ID)) //
             .map(dep -> MoflonConventions.getDefaultURIToEcoreFileInPlugin(dep)).collect(Collectors.toSet());
-   }
-
-   public void setDefaultValues()
-   {
-      if (!this.containsKey(JAVA_VERION))
-         this.put(JAVA_VERION, "JavaSE-1.8");
    }
 
    public void setDependencies(final List<String> dependencies)
