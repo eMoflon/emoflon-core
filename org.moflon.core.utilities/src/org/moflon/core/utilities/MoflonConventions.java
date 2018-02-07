@@ -64,4 +64,16 @@ public class MoflonConventions
       return project.getFile(MOFLON_CONFIG_FILE);
    }
 
+   /**
+    * Returns a handle to the default location of a metamodel file ("ecore file") of an eMoflon project
+    *
+    * @param project
+    *           the project of which to extract the ecore file
+    */
+   public static IFile getDefaultEcoreFile(final IProject project)
+   {
+      String ecoreFileName = MoflonUtil.lastCapitalizedSegmentOf(project.getName());
+      return project.getFolder(WorkspaceHelper.MODEL_FOLDER).getFile(ecoreFileName + WorkspaceHelper.ECORE_FILE_EXTENSION);
+   }
+
 }
