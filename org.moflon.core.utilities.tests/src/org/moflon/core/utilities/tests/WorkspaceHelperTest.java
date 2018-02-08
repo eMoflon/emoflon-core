@@ -23,7 +23,7 @@ public class WorkspaceHelperTest
    @Test
    public void test_printStacktraceToString_null() throws Exception
    {
-      Assert.assertEquals("", WorkspaceHelper.printStacktraceToString(null));
+      Assert.assertEquals("null", WorkspaceHelper.printStacktraceToString(null));
    }
 
    @Test

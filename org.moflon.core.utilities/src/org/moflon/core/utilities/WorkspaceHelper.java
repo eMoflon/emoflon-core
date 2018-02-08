@@ -597,7 +597,7 @@ public class WorkspaceHelper
    /**
     * Prints the stacktrace of the given {@link Throwable} to a string.
     *
-    * If t is null, then the result is the empty string.
+    * If t is null, then the result is 'null'.
     */
    public static String printStacktraceToString(final Throwable throwable)
    {
