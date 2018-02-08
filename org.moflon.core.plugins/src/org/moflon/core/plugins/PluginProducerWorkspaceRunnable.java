@@ -99,11 +99,11 @@ public class PluginProducerWorkspaceRunnable implements IWorkspaceRunnable
          changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_VERSION, DEFAULT_BUNDLE_VERSION, AttributeUpdatePolicy.KEEP);
          changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_VENDOR, DEFAULT_BUNDLE_VENDOR, AttributeUpdatePolicy.KEEP);
          changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_ACTIVATION_POLICY, "lazy", AttributeUpdatePolicy.KEEP);
-         changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT,
-               getProjectProperties().get(PluginProperties.JAVA_VERION), AttributeUpdatePolicy.KEEP);
+         changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT, "JavaSE-1.8",
+               AttributeUpdatePolicy.KEEP);
 
-         changed |= ManifestFileUpdater.updateDependencies(manifest, Arrays.asList(new String[] { WorkspaceHelper.PLUGIN_ID_ECORE,
-               WorkspaceHelper.PLUGIN_ID_ECORE_XMI }));
+         changed |= ManifestFileUpdater.updateDependencies(manifest,
+               Arrays.asList(new String[] { WorkspaceHelper.PLUGIN_ID_ECORE, WorkspaceHelper.PLUGIN_ID_ECORE_XMI }));
 
          changed |= ManifestFileUpdater.updateDependencies(manifest,
                ManifestFileUpdater.extractDependencies(getProjectProperties().get(PluginProperties.DEPENDENCIES_KEY)));

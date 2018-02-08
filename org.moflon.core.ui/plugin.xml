@@ -90,7 +90,7 @@
     <perspective class="org.moflon.core.ui.MoflonPerspective" fixed="false" icon="resources/icons/moflonSmall.png" id="org.moflon.ide.ui.MoflonPerspective" name="eMoflon"/>
   </extension>
   <extension point="org.eclipse.ui.perspectiveExtensions">
-    <perspectiveExtension targetID="org.moflon.ide.ui.perspective"/>
+    <perspectiveExtension targetID="org.moflon.ide.ui.MoflonPerspective"/>
   </extension>
   <extension id="org.moflon.ide.marker.EMoflonProblem" name="eMoflon Problem" point="org.eclipse.core.resources.markers">
     <super type="org.eclipse.core.resources.problemmarker"/>

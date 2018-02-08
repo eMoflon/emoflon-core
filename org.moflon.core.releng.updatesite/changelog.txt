@@ -1,4 +1,4 @@
-2018-02-06 eMoflon 1.0.0 released
+2018-02-08 eMoflon 1.0.0 released
 
 eMoflon Core contains core components that can be reused across different versions of eMoflon.
 

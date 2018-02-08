@@ -45,7 +45,6 @@ public class NewMoflonEmfProjectWizard extends AbstractMoflonWizard
 
          final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
          final PluginProperties pluginProperties = new PluginProperties();
-         pluginProperties.setDefaultValues();
          pluginProperties.put(PluginProperties.NAME_KEY, projectName);
          pluginProperties.put(PluginProperties.PLUGIN_ID_KEY, projectName);
          createProject(subMon, project, pluginProperties);
@@ -98,7 +97,7 @@ public class NewMoflonEmfProjectWizard extends AbstractMoflonWizard
       sb.append("  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
       sb.append("  xmlns:ecore=\"http://www.eclipse.org/emf/2002/Ecore\"");
       sb.append("  name=\"" + MoflonUtil.lastSegmentOf(projectName) + "\"");
-      sb.append("  nsURI=\"" + MoflonConventions.getDefaultURIToEcoreFileInPlugin(projectName) + "\"");
+      sb.append("  nsURI=\"" + MoflonConventions.getDefaultResourceDependencyUri(projectName) + "\"");
       sb.append("  nsPrefix=\"" + projectName + "\">");
       sb.append("</ecore:EPackage>");
       return sb.toString();
