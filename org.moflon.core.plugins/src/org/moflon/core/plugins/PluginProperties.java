@@ -86,7 +86,7 @@ public class PluginProperties
    {
       return getDependencies().stream()//
             .filter(dep -> !dep.equals(ManifestFileUpdater.IGNORE_PLUGIN_ID)) //
-            .map(dep -> MoflonConventions.getDefaultURIToEcoreFileInPlugin(dep)).collect(Collectors.toSet());
+            .map(dep -> MoflonConventions.getDefaultResourceDependencyUri(dep)).collect(Collectors.toSet());
    }
 
    public void setDependencies(final List<String> dependencies)
