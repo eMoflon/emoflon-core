@@ -7,7 +7,6 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -79,12 +78,10 @@ public final class PsfFileUtilsTest
 
    private File createTemporaryFile(String classpathResource) throws IOException
    {
-      final InputStream url1 = getClass().getClassLoader().getResourceAsStream(classpathResource);
-      final File psfFile1 = File.createTempFile(getClass().getName(), ".psf");
-      final byte[] buffer = new byte[(int) 1e6];
-      IOUtils.read(url1, buffer);
-      FileUtils.writeByteArrayToFile(psfFile1, buffer);
-      return psfFile1;
+      final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(classpathResource);
+      final File tmpFile = File.createTempFile(getClass().getName(), ".psf");
+      FileUtils.copyInputStreamToFile(inputStream, tmpFile);
+      return tmpFile;
    }
 
 }
