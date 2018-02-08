@@ -161,8 +161,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
             changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_VERSION, "0.0.1.qualifier", AttributeUpdatePolicy.KEEP);
             changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_VENDOR, "", AttributeUpdatePolicy.KEEP);
             changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_ACTIVATION_POLICY, "lazy", AttributeUpdatePolicy.KEEP);
-            changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT,
-                  pluginProperties.get(PluginProperties.JAVA_VERION), AttributeUpdatePolicy.KEEP);
+            changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT, "JavaSE-1.8", AttributeUpdatePolicy.KEEP);
             return changed;
          });
 
@@ -223,7 +222,6 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
    {
       validateNotNull(getPluginProperties(), PluginProperties.NAME_KEY);
       validateNotNull(getPluginProperties(), PluginProperties.PLUGIN_ID_KEY);
-      validateNotNull(getPluginProperties(), PluginProperties.JAVA_VERION);
    }
 
    /**

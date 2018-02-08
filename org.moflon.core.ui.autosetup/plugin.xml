@@ -2,8 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
 <extension point="org.eclipse.ui.perspectiveExtensions">
-    <perspectiveExtension targetID="org.moflon.ide.ui.perspective">
-      </perspectiveExtension>
+    <perspectiveExtension targetID="org.moflon.ide.ui.MoflonPerspective"/>
   </extension>
   <extension point="org.eclipse.ui.menus">
     <menuContribution allPopups="false" locationURI="toolbar:org.eclipse.ui.main.toolbar">

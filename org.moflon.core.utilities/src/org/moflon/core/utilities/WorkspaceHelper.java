@@ -595,30 +595,17 @@ public class WorkspaceHelper
    }
 
    /**
-    * Returns a handle to the default location of a metamodel file ("ecore file") of a repository or integration
-    * project.
-    *
-    * @param project
-    *           the project of which to extract the ecore file
-    */
-   public static IFile getDefaultEcoreFile(final IProject project)
-   {
-      String ecoreFileName = MoflonUtil.lastCapitalizedSegmentOf(project.getName());
-      return project.getFolder(MODEL_FOLDER).getFile(ecoreFileName + ECORE_FILE_EXTENSION);
-   }
-
-   /**
     * Prints the stacktrace of the given {@link Throwable} to a string.
     *
-    * If t is null, then the result is the empty string.
+    * If t is null, then the result is 'null'.
     */
-   public static String printStacktraceToString(final Throwable t)
+   public static String printStacktraceToString(final Throwable throwable)
    {
-      if (null == t)
-         return "";
+      if (null == throwable)
+         return "null";
 
-      ByteArrayOutputStream stream = new ByteArrayOutputStream();
-      t.printStackTrace(new PrintStream(stream));
+      final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+      throwable.printStackTrace(new PrintStream(stream));
       return new String(stream.toByteArray());
    }
 
