@@ -7,6 +7,13 @@ build:
     pull: true
 
   ci:
+    # Run eMoflon codegen
+    - workspacePath=./emoflon-core
+    - repositoryRoot=./emoflon-core
+    - $ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath
+    - $ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath -import $repositoryRoot
+    - $ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath
+    # Run Tycho
     - mvn clean compile
     - mvn integration-test
     # Publish JUnit test results
