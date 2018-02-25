@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.osgi.framework.Bundle;
@@ -675,4 +676,35 @@ public class WorkspaceHelper
    	}
    }
 
+	/**
+	 * Returns a list of URIs to .ecore files of eMoflon EMF Projects in the
+	 * workspace.
+	 * 
+	 * @param excludeURIs
+	 *            the URIs to exclude from the list
+	 * @return the list of URIs to ecore files
+	 */
+	public static List<String> getEcoreURIsInWorkspace(final List<String> excludeURIs) {
+		ArrayList<String> uris = new ArrayList<String>();
+		Arrays.stream(ResourcesPlugin.getWorkspace().getRoot().getProjects()) //
+				.filter(project -> hasNature(project, "org.moflon.emf.build.MoflonEmfNature")) // only EMF Projects
+				.forEach(project -> {
+					IFolder modelFolder = getModelFolder(project);
+					if (modelFolder.exists()) {
+						try {
+							IResource[] members = modelFolder.members();
+							Arrays.stream(members).filter(m -> m.getFileExtension().equals("ecore")).forEach(m -> {
+								URI uri = URI.createPlatformResourceURI(m.getFullPath().toString(), true);
+								uris.add(uri.toString());
+							});
+						} catch (CoreException e) {
+							// Do nothing.
+						}
+					}
+				});
+		if (excludeURIs != null) {
+			uris.removeAll(excludeURIs);
+		}
+		return uris;
+	}
 }

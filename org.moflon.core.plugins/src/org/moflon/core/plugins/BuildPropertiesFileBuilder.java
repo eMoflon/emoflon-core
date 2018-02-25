@@ -13,47 +13,69 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.moflon.core.utilities.WorkspaceHelper;
 
-public class BuildPropertiesFileBuilder
-{
+/**
+ * Utility class for creating build.properties file.
+ */
+public class BuildPropertiesFileBuilder {
 
-   private static final String BUILD_PROPERTIES_NAME = "build.properties";
+	private static final String BUILD_PROPERTIES_NAME = "build.properties";
 
-   public void createBuildProperties(final IProject currentProject, final IProgressMonitor monitor) throws CoreException
-   {
-      try
-      {
-         final SubMonitor subMon = SubMonitor.convert(monitor, "Creating build.properties", 2);
+	/**
+	 * Creates a build.properties file in the given project with the eMoflon default
+	 * build properties.
+	 * 
+	 * @param currentProject
+	 *            the project
+	 * @param monitor
+	 *            the progress monitor
+	 * @throws CoreException
+	 */
+	public void createBuildProperties(final IProject currentProject, final IProgressMonitor monitor)
+			throws CoreException {
+		Properties buildProperties = new Properties();
+		buildProperties.put("bin.includes", "META-INF/, bin/, model/, plugin.xml, moflon.properties.xmi");
+		buildProperties.put("source..", "src/,gen/");
+		buildProperties.put("src.excludes", "injection/");
+		buildProperties.put("output..", "bin/");
+		this.createBuildProperties(currentProject, monitor, buildProperties);
+	}
 
-         IFile file = getBuildPropertiesFile(currentProject);
-         if (file.exists())
-         {
-            // Do not touch existing build.properties
-            subMon.worked(2);
-         } else
-         {
-            Properties buildProperties = new Properties();
-            buildProperties.put("bin.includes", "META-INF/, bin/, model/, plugin.xml, moflon.properties.xmi");
-            buildProperties.put("source..", "src/,gen/");
-            buildProperties.put("src.excludes", "injection/");
-            buildProperties.put("output..", "bin/");
+	/**
+	 * Creates a build.properties file in the given project with the the given build
+	 * properties.
+	 * 
+	 * @param currentProject
+	 *            the project
+	 * @param monitor
+	 *            the progress monitor
+	 * @param buildProperties
+	 *            the build properties to set
+	 * @throws CoreException
+	 */
+	public void createBuildProperties(final IProject currentProject, final IProgressMonitor monitor,
+			final Properties buildProperties) throws CoreException {
+		try {
+			final SubMonitor subMon = SubMonitor.convert(monitor, "Creating build.properties", 2);
 
-            subMon.worked(1);
+			IFile file = getBuildPropertiesFile(currentProject);
+			if (file.exists()) {
+				// Do not touch existing build.properties
+				subMon.worked(2);
+			} else {
+				subMon.worked(1);
 
-            final ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            buildProperties.store(stream, "");
+				final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				buildProperties.store(stream, "");
 
-            WorkspaceHelper.addFile(currentProject, BUILD_PROPERTIES_NAME, stream.toString(), subMon.split(1));
-         }
-      } catch (IOException e)
-      {
-         throw new CoreException(
-               new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), "Error while creating build.properties: " + e.getMessage()));
-      }
-   }
+				WorkspaceHelper.addFile(currentProject, BUILD_PROPERTIES_NAME, stream.toString(), subMon.split(1));
+			}
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()),
+					"Error while creating build.properties: " + e.getMessage()));
+		}
+	}
 
-   public IFile getBuildPropertiesFile(final IProject currentProject)
-   {
-      return currentProject.getFile(BUILD_PROPERTIES_NAME);
-   }
-
+	public IFile getBuildPropertiesFile(final IProject currentProject) {
+		return currentProject.getFile(BUILD_PROPERTIES_NAME);
+	}
 }
