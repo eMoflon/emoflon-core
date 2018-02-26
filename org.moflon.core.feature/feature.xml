@@ -26,13 +26,14 @@ See here for more details on EPL: http://www.eclipse.org/org/documents/epl-v10.p
    </license>
 
    <url>
-      <update label="eMoflon Update Site" url="https://emoflon.github.io/eclipse-plugin/beta/updatesite"/>
+      <update label="eMoflon Update Site" url="http://emoflon.org/emoflon-core/org.moflon.core.releng.updatesite/"/>
       <discovery label="PlantUML update site" url="http://files.idi.ntnu.no/publish/plantuml/repository/"/>
       <discovery label="XText update site (release)" url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
    </url>
 
    <requires>
       <import plugin="net.sourceforge.plantuml.eclipse"/>
+      <import feature="org.eclipse.xtext.runtime" version="2.12.0.v20170519-1412"/>
    </requires>
 
    <plugin
@@ -135,6 +136,27 @@ See here for more details on EPL: http://www.eclipse.org/org/documents/epl-v10.p
 
    <plugin
          id="org.moflon.git.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.gervarro.eclipse.task"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.gervarro.eclipse.workspace.autosetup"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.gervarro.eclipse.workspace.util"
          download-size="0"
          install-size="0"
          version="0.0.0"
