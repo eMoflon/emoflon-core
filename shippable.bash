@@ -4,6 +4,11 @@
 # Author: Roland Kluge
 # Date: 2018-02-27
 
+# Emulate X server via X Window Virtual Framebuffer
+apt-get update && apt-get install -y --no-install-recommends xvfb
+Xvfb :1 -screen 0 1360x1024x24 &
+export DISPLAY=:1
+
 # Prepare environment
 workspacePath=.
 repositoryRoot=.
