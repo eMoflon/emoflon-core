@@ -13,6 +13,9 @@ then
   exit -1
 fi
 
+# First trigger the MWE2 workflow using Tycho.
+mvn generate-sources -pl org.moflon.emf.injection,org.moflon.core.releng.target
+
 # Run eMoflon codegen
 $ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath || exit -1
 
