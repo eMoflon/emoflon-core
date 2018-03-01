@@ -18,14 +18,16 @@ then
   exit -1
 fi
 
-# First trigger the MWE2 workflow using Tycho.
-mvn generate-sources -pl org.moflon.emf.injection,org.moflon.core.releng.target
+# First trigger the MWE2 workflow using Tycho (not necessary, left here for documentation purposes)
+#mvn generate-sources -pl org.moflon.emf.injection,org.moflon.core.releng.target
+
+# Import only those projects that require eMoflon EMF codegen.
+$ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath \
+  -import $repositoryRoot/org.moflon.core.utilities
+  -import $repositoryRoot/org.moflon.core.propertycontainer \
+  || exit -1
 
 # Run eMoflon codegen
-$ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath || exit -1
-
-$ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath -import $repositoryRoot || exit -1
-
 $ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath || exit -1
 
 # Run Tycho
