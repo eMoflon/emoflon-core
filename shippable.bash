@@ -21,10 +21,10 @@ fi
 mvn generate-sources -pl org.moflon.emf.injection,org.moflon.core.releng.target
 
 echo "Import all projects."
-$ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath -import $repositoryRoot || exit -1
+xvfb-run $ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath -import $repositoryRoot || exit -1
 
 echo "Run eMoflon codegen"
-$ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath || exit -1
+xvfb-run $ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath || exit -1
 
 echo "Run Tycho (clean compile)"
 mvn clean compile || exit -1
