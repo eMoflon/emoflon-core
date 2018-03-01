@@ -34,7 +34,7 @@ do
     echo "Expected to find project folder '$projectFolder'"
     exit -1
   fi
-  (cd $repositoryRoot; $ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath -import $project || exit -1)
+  (cd $projectFolder; $ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath -import . || exit -1)
   #importSpecification="$importSpecification -import $projectFolder"
 done
 
