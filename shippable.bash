@@ -6,8 +6,7 @@
 
 # Emulate X server via X Window Virtual Framebuffer
 apt-get update && apt-get install --yes --no-install-recommends xvfb
-Xvfb :0 -screen 0 1024x768x24 &
-export DISPLAY=:0.0
+export DISPLAY=:99.0
 
 # Prepare environment
 workspacePath=$(pwd)/../eclipseWorkspace
@@ -22,10 +21,10 @@ fi
 mvn generate-sources -pl org.moflon.emf.injection,org.moflon.core.releng.target
 
 echo "Import all projects."
-$ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath -import $repositoryRoot || exit -1
+xvfb-run --server-args="-ac" $ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath -import $repositoryRoot || exit -1
 
 echo "Run eMoflon codegen"
-$ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath || exit -1
+xvfb-run --server-args="-ac" $ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath || exit -1
 
 echo "Run Tycho (clean compile)"
 mvn clean compile || exit -1
