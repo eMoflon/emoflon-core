@@ -1,11 +1,16 @@
 package org.moflon.emf.ui.wizard;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.ui.IWorkingSet;
 import org.moflon.core.build.MoflonProjectCreator;
 import org.moflon.core.plugins.PluginProducerWorkspaceRunnable;
@@ -83,23 +88,29 @@ public class NewMoflonEmfProjectWizard extends AbstractMoflonWizard {
 	/**
 	 * Generates an XMI representation of the EPackage corresponding to the given
 	 * project name
-	 * 
+	 *
 	 * @param projectName
 	 *            the project name from which the conventional EPackage name etc.
 	 *            are derived
 	 * @return the raw XMI file content
 	 */
 	private static String generateDefaultEPackageForProject(final String projectName) {
-		final StringBuilder sb = new StringBuilder();
-		sb.append("<?xml version=\"1.0\" encoding=\"ASCII\"?>");
-		sb.append("<ecore:EPackage xmi:version=\"2.0\"");
-		sb.append("  xmlns:xmi=\"http://www.omg.org/XMI\"");
-		sb.append("  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-		sb.append("  xmlns:ecore=\"http://www.eclipse.org/emf/2002/Ecore\"");
-		sb.append("  name=\"" + MoflonUtil.lastSegmentOf(projectName) + "\"");
-		sb.append("  nsURI=\"" + MoflonConventions.getDefaultResourceDependencyUri(projectName) + "\"");
-		sb.append("  nsPrefix=\"" + projectName + "\">");
-		sb.append("</ecore:EPackage>");
-		return sb.toString();
+		final String packageName = MoflonUtil.lastSegmentOf(projectName);
+		final URI packageUri = MoflonConventions.getDefaultResourceDependencyUri(projectName);
+		final List<String> lines = new ArrayList<>();
+		lines.add("<?xml version=\"1.0\" encoding=\"ASCII\"?>");
+		lines.add("<ecore:EPackage xmi:version=\"2.0\"");
+		lines.add("  xmlns:xmi=\"http://www.omg.org/XMI\"");
+		lines.add("  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+		lines.add("  xmlns:ecore=\"http://www.eclipse.org/emf/2002/Ecore\"");
+		lines.add("  name=\"" + packageName + "\"");
+		lines.add("  nsURI=\"" + packageUri + "\"");
+		lines.add("  nsPrefix=\"" + projectName + "\">");
+		lines.add("  <eAnnotations source=\"http://www.eclipse.org/emf/2002/GenModel\">");
+		lines.add("    <details key=\"documentation\" value=\"TODO: Add documentation for " + packageName
+				+ ". Hint: You may copy this element in the Ecore editor to add documentation to EClasses, EOperations, ...\"/>");
+		lines.add("  </eAnnotations>");
+		lines.add("</ecore:EPackage>");
+		return StringUtils.join(lines, WorkspaceHelper.DEFAULT_RESOURCE_LINE_DELIMITER);
 	}
 }
