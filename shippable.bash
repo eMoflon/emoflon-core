@@ -34,12 +34,10 @@ do
     echo "Expected to find project folder '$projectFolder'"
     exit -1
   fi
-  importSpecification="$importSpecification -import $projectFolder"
+  importSpecification="-import $projectFolder"
+  echo "  Import specification: '$importSpecification'"
+  $ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath $importSpecification || exit -1
 done
-importSpecification="-import $repositoryRoot"
-
-echo "  Import specification: '$importSpecification'"
-$ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath $importSpecification || exit -1
 
 echo "Run eMoflon codegen"
 $ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath || exit -1
