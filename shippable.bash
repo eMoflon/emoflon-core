@@ -10,7 +10,7 @@
 #export DISPLAY=:1
 
 # Prepare environment
-workspacePath=$(pwd)
+workspacePath=$(pwd)/../eclipseWorkspace
 repositoryRoot=$(pwd)
 if [ ! -f $repositoryRoot/shippable.yml ];
 then
