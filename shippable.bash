@@ -7,7 +7,7 @@
 # Emulate X server via X Window Virtual Framebuffer
 apt-get update && apt-get install -y --no-install-recommends xvfb
 Xvfb :99 &
-export DISPLAY=:99
+export DISPLAY=:99.0
 
 # Prepare environment
 workspacePath=$(pwd)/../eclipseWorkspace
