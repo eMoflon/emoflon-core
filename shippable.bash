@@ -29,7 +29,11 @@ importSpecification=""
 for project in org.moflon.core.utilities org.moflon.core.propertycontainer;
 do
   projectFolder="$repositoryRoot/$project"
-  [ -d "$projectFolder" ] || (echo "Expected to find project folder '$projectFolder'"; exit -1)
+  if [ ! -f "$projectFolder/.project" ];
+  then
+    echo "Expected to find project folder '$projectFolder'"
+    exit -1
+  fi
   importSpecification="$importSpecification -import $projectFolder"
 done
 
