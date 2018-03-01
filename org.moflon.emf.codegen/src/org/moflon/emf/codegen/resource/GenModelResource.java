@@ -16,24 +16,20 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.URIHandlerImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
-public class GenModelResource extends XMIResourceImpl
-{
-   GenModelResource(URI uri)
-   {
-      super(uri);
-      setEncoding("UTF-8");
-      getDefaultSaveOptions().put(XMLResource.OPTION_USE_ENCODED_ATTRIBUTE_STYLE, Boolean.TRUE);
-      getDefaultSaveOptions().put(XMLResource.OPTION_LINE_WIDTH, 80);
-      getDefaultSaveOptions().put(XMLResource.OPTION_URI_HANDLER, new URIHandlerImpl.PlatformSchemeAware());
-   }
+public class GenModelResource extends XMIResourceImpl {
+	GenModelResource(URI uri) {
+		super(uri);
+		setEncoding("UTF-8");
+		getDefaultSaveOptions().put(XMLResource.OPTION_USE_ENCODED_ATTRIBUTE_STYLE, Boolean.TRUE);
+		getDefaultSaveOptions().put(XMLResource.OPTION_LINE_WIDTH, 80);
+		getDefaultSaveOptions().put(XMLResource.OPTION_URI_HANDLER, new URIHandlerImpl.PlatformSchemeAware());
+	}
 
-   protected boolean useIDs()
-   {
-      return eObjectToIDMap != null || idToEObjectMap != null;
-   }
+	protected boolean useIDs() {
+		return eObjectToIDMap != null || idToEObjectMap != null;
+	}
 
-   protected XMLHelper createXMLHelper()
-   {
-      return new GenModelResourceHelper(this);
-   }
+	protected XMLHelper createXMLHelper() {
+		return new GenModelResourceHelper(this);
+	}
 }

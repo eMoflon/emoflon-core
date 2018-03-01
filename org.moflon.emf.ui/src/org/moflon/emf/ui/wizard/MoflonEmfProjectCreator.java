@@ -14,49 +14,49 @@ import org.moflon.emf.build.MoflonEmfNature;
 
 /**
  * Creator for eMoflon EMF projects (see {@link MoflonEmfNature})
+ * 
  * @author Roland Kluge - Initial implementation
  */
-public class MoflonEmfProjectCreator extends MoflonProjectCreator
-{
-   private static final List<String> GITIGNORE_LINES = Arrays.asList(//
-         "/bin", //
-         "/target", //
-         "/gen/*", //
-         "!/**/.keep*");
+public class MoflonEmfProjectCreator extends MoflonProjectCreator {
+	private static final List<String> GITIGNORE_LINES = Arrays.asList(//
+			"/bin", //
+			"/target", //
+			"/gen/*", //
+			"!/**/.keep*");
 
-   /**
-   * Pass-through constructor to {@link MoflonProjectCreator}
-   * @param project the project to create
-   * @param projectProperties the metadata to use
-   * @param projectConfigurator the project configurator
-   */
-   public MoflonEmfProjectCreator(IProject project, PluginProperties projectProperties, MoflonProjectConfigurator projectConfigurator)
-   {
-      super(project, projectProperties, projectConfigurator);
-   }
+	/**
+	 * Pass-through constructor to {@link MoflonProjectCreator}
+	 * 
+	 * @param project
+	 *            the project to create
+	 * @param projectProperties
+	 *            the metadata to use
+	 * @param projectConfigurator
+	 *            the project configurator
+	 */
+	public MoflonEmfProjectCreator(IProject project, PluginProperties projectProperties,
+			MoflonProjectConfigurator projectConfigurator) {
+		super(project, projectProperties, projectConfigurator);
+	}
 
-   @Override
-   protected List<String> getGitignoreLines()
-   {
-      return GITIGNORE_LINES;
-   }
+	@Override
+	protected List<String> getGitignoreLines() {
+		return GITIGNORE_LINES;
+	}
 
-   @Override
-   protected String getNatureId() throws CoreException
-   {
-      return MoflonEmfNature.getId();
-   }
+	@Override
+	protected String getNatureId() throws CoreException {
+		return MoflonEmfNature.getId();
+	}
 
-   @Override
-   protected String getBuilderId() throws CoreException
-   {
-      return MoflonEmfBuilder.getId();
-   }
+	@Override
+	protected String getBuilderId() throws CoreException {
+		return MoflonEmfBuilder.getId();
+	}
 
-   @Override
-   protected SDMCodeGeneratorIds getCodeGeneratorHandler()
-   {
-      return null;
-   }
+	@Override
+	protected SDMCodeGeneratorIds getCodeGeneratorHandler() {
+		return null;
+	}
 
 }

@@ -9,7 +9,6 @@ import java.util.jar.Manifest;
  */
 public final class PluginManifestConstants extends Manifest {
 
-
 	public static final Name BUNDLE_MANIFEST_VERSION = new Attributes.Name("Bundle-ManifestVersion");
 
 	public static final Name BUNDLE_NAME = new Attributes.Name("Bundle-Name");
@@ -25,7 +24,7 @@ public final class PluginManifestConstants extends Manifest {
 	public static final Name BUNDLE_CLASSPATH = new Attributes.Name("Bundle-ClassPath");
 
 	public static final Name BUNDLE_EXECUTION_ENVIRONMENT = new Attributes.Name("Bundle-RequiredExecutionEnvironment");
-	
+
 	public static final String REQUIRE_BUNDLE_KEY = "Require-Bundle";
 
 	public static final Name REQUIRE_BUNDLE = new Attributes.Name(REQUIRE_BUNDLE_KEY);
@@ -33,9 +32,7 @@ public final class PluginManifestConstants extends Manifest {
 	public static final Name MANIFEST_VERSION = Attributes.Name.MANIFEST_VERSION;
 
 	public static final String EXPORT_PACKAGE_KEY = "Export-Package";
-	
+
 	public static final Name EXPORT_PACKAGE = new Attributes.Name(EXPORT_PACKAGE_KEY);
-
-
 
 }

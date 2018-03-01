@@ -20,27 +20,26 @@ import org.eclipse.emf.codegen.ecore.genmodel.generator.GenBaseGeneratorAdapter;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.Monitor;
 
-public class CodeGenerator
-{
-   private final GeneratorAdapterFactory.Descriptor descriptor;
+public class CodeGenerator {
+	private final GeneratorAdapterFactory.Descriptor descriptor;
 
-   public CodeGenerator(final Descriptor descriptor) {
-	   this.descriptor = descriptor;
-   }
+	public CodeGenerator(final Descriptor descriptor) {
+		this.descriptor = descriptor;
+	}
 
-   public final IStatus generateCode(final GenModel genModel, final Monitor monitor)
-   {
-      final Generator generator = new Generator();
-      generator.getAdapterFactoryDescriptorRegistry().addDescriptor(GenModelPackage.eNS_URI, descriptor);
-      generator.setInput(genModel);
-      genModel.setCanGenerate(true);
+	public final IStatus generateCode(final GenModel genModel, final Monitor monitor) {
+		final Generator generator = new Generator();
+		generator.getAdapterFactoryDescriptorRegistry().addDescriptor(GenModelPackage.eNS_URI, descriptor);
+		generator.setInput(genModel);
+		genModel.setCanGenerate(true);
 
-      final Diagnostic diagnostic = generator.generate(genModel, GenBaseGeneratorAdapter.MODEL_PROJECT_TYPE, "EMoflon Code Generation", monitor);
-      final int severity = diagnostic.getSeverity();
-      if (Diagnostic.OK != severity)
-      {
-         return new Status(severity, "org.eclipse.emf.common", severity, diagnostic.getMessage(), diagnostic.getException());
-      }
-      return new Status(IStatus.OK, "org.eclipse.emf.common", "Code generation succeeded");
-   }
+		final Diagnostic diagnostic = generator.generate(genModel, GenBaseGeneratorAdapter.MODEL_PROJECT_TYPE,
+				"EMoflon Code Generation", monitor);
+		final int severity = diagnostic.getSeverity();
+		if (Diagnostic.OK != severity) {
+			return new Status(severity, "org.eclipse.emf.common", severity, diagnostic.getMessage(),
+					diagnostic.getException());
+		}
+		return new Status(IStatus.OK, "org.eclipse.emf.common", "Code generation succeeded");
+	}
 }

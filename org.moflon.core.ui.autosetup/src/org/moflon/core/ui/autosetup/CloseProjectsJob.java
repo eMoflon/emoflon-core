@@ -13,39 +13,34 @@ import org.moflon.core.utilities.ProgressMonitorUtil;
 import org.moflon.core.utilities.WorkspaceHelper;
 
 /**
- * This {@link Job} closes the list of preconfigured projects (see {@link CloseProjectsJob#CloseProjectsJob(String, List)}) upon {@link #run(IProgressMonitor)}
+ * This {@link Job} closes the list of preconfigured projects (see
+ * {@link CloseProjectsJob#CloseProjectsJob(String, List)}) upon
+ * {@link #run(IProgressMonitor)}
  *
  * @author Roland Kluge - Initial implementation
  */
-public final class CloseProjectsJob extends Job
-{
-   private final List<IProject> projects;
+public final class CloseProjectsJob extends Job {
+	private final List<IProject> projects;
 
-   public CloseProjectsJob(String name, List<IProject> projects)
-   {
-      super(name);
-      this.projects = projects;
-   }
+	public CloseProjectsJob(String name, List<IProject> projects) {
+		super(name);
+		this.projects = projects;
+	}
 
-   @Override
-   protected IStatus run(final IProgressMonitor monitor)
-   {
-      final SubMonitor closingMonitor = SubMonitor.convert(monitor, "Closing projects", projects.size());
-      try
-      {
-         for (final IProject project : projects)
-         {
-            project.close(closingMonitor.split(1));
-            ProgressMonitorUtil.checkCancellation(closingMonitor);
-         }
-      } catch (final CoreException e)
-      {
-         return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), e.getMessage(), e);
-      } finally
-      {
-         SubMonitor.done(monitor);
-      }
+	@Override
+	protected IStatus run(final IProgressMonitor monitor) {
+		final SubMonitor closingMonitor = SubMonitor.convert(monitor, "Closing projects", projects.size());
+		try {
+			for (final IProject project : projects) {
+				project.close(closingMonitor.split(1));
+				ProgressMonitorUtil.checkCancellation(closingMonitor);
+			}
+		} catch (final CoreException e) {
+			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), e.getMessage(), e);
+		} finally {
+			SubMonitor.done(monitor);
+		}
 
-      return Status.OK_STATUS;
-   }
+		return Status.OK_STATUS;
+	}
 }

@@ -11,16 +11,16 @@ import org.gervarro.eclipse.workspace.util.WorkspaceTask;
 public final class ProjectBuilderTask extends WorkspaceTask {
 	private final IBuildConfiguration[] buildConfigurations;
 	private final int kind;
-	
+
 	public ProjectBuilderTask() {
 		this(IncrementalProjectBuilder.INCREMENTAL_BUILD);
 	}
-	
+
 	public ProjectBuilderTask(final int kind) {
 		this.buildConfigurations = null;
 		this.kind = kind;
 	}
-	
+
 	public ProjectBuilderTask(final IBuildConfiguration... buildConfigurations) {
 		this(buildConfigurations, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 	}
@@ -50,7 +50,7 @@ public final class ProjectBuilderTask extends WorkspaceTask {
 	public ISchedulingRule getRule() {
 		return ResourcesPlugin.getWorkspace().getRuleFactory().buildRule();
 	}
-	   
+
 	@Override
 	public void run(final IProgressMonitor monitor) throws CoreException {
 		if (buildConfigurations != null) {
@@ -59,7 +59,7 @@ public final class ProjectBuilderTask extends WorkspaceTask {
 			ResourcesPlugin.getWorkspace().build(kind, monitor);
 		}
 	}
-	
+
 	private final String getBuildKindName() {
 		switch (kind) {
 		case IncrementalProjectBuilder.AUTO_BUILD:

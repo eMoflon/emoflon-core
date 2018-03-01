@@ -30,12 +30,12 @@ public class CrossReferenceResolver implements ITask {
 
 	@Override
 	public IStatus run(final IProgressMonitor monitor) {
-		final MultiStatus crossReferenceResolutionStatus =
-				new MultiStatus(WorkspaceHelper.getPluginId(getClass()), 0, "Cross-reference resolution failed", null);
+		final MultiStatus crossReferenceResolutionStatus = new MultiStatus(WorkspaceHelper.getPluginId(getClass()), 0,
+				"Cross-reference resolution failed", null);
 		resources.add(resource);
 		for (int i = 0; i < resources.size(); i++) {
 			final Resource resource = resources.get(i);
-			for (final TreeIterator<EObject> j = resource.getAllContents(); j.hasNext(); ) {
+			for (final TreeIterator<EObject> j = resource.getAllContents(); j.hasNext();) {
 				final EObject eObject = j.next();
 				if (eObject instanceof EDataType) {
 					j.prune();
@@ -43,10 +43,12 @@ public class CrossReferenceResolver implements ITask {
 				for (final EObject eCrossReference : eObject.eCrossReferences()) {
 					if (eCrossReference instanceof EClass) {
 						if (eCrossReference.eIsProxy()) {
-							final String proxyURI = eCrossReference instanceof InternalEObject ?
-									((InternalEObject) eCrossReference).eProxyURI().toString() + " " : "";
-							crossReferenceResolutionStatus.add(new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), "Unresolved cross reference "
-									+ proxyURI + "in " + EcoreUtil.getURI(eObject)));
+							final String proxyURI = eCrossReference instanceof InternalEObject
+									? ((InternalEObject) eCrossReference).eProxyURI().toString() + " "
+									: "";
+							crossReferenceResolutionStatus.add(new Status(IStatus.ERROR,
+									WorkspaceHelper.getPluginId(getClass()),
+									"Unresolved cross reference " + proxyURI + "in " + EcoreUtil.getURI(eObject)));
 						} else {
 							final EPackage referencedEPackage = ((EClass) eCrossReference).getEPackage();
 							if (resource != referencedEPackage.eResource()) {

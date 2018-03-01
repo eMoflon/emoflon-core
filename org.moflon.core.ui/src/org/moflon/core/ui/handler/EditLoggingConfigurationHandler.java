@@ -11,19 +11,16 @@ import org.moflon.core.ui.UiUtilities;
 /**
  * Opens the eMoflon logging configuration file for editing.
  */
-public class EditLoggingConfigurationHandler extends AbstractCommandHandler
-{
+public class EditLoggingConfigurationHandler extends AbstractCommandHandler {
 
-   @Override
-   public Object execute(final ExecutionEvent event) throws ExecutionException
-   {
-      final IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
-      openConfigFileInEditor(window);
-      return null;
-   }
+	@Override
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
+		final IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
+		openConfigFileInEditor(window);
+		return null;
+	}
 
-   public void openConfigFileInEditor(final IWorkbenchWindow window)
-   {
-      UiUtilities.openFileInEditor(window, MoflonCoreUiActivator.getDefault().getConfigFile());
-   }
+	public void openConfigFileInEditor(final IWorkbenchWindow window) {
+		UiUtilities.openFileInEditor(window, MoflonCoreUiActivator.getDefault().getConfigFile());
+	}
 }

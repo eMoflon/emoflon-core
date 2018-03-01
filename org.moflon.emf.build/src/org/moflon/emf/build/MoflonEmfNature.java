@@ -7,25 +7,21 @@ import org.moflon.core.build.nature.MoflonProjectConfigurator;
  *
  * @author Roland Kluge - Initial implementation
  */
-public class MoflonEmfNature extends MoflonProjectConfigurator
-{
-   private static final String MOFLON_EMF_NATURE_ID = "org.moflon.emf.build.MoflonEmfNature";
+public class MoflonEmfNature extends MoflonProjectConfigurator {
+	private static final String MOFLON_EMF_NATURE_ID = "org.moflon.emf.build.MoflonEmfNature";
 
-   @Override
-   protected String getBuilderId()
-   {
-      return MoflonEmfBuilder.getId();
-   }
+	@Override
+	protected String getBuilderId() {
+		return MoflonEmfBuilder.getId();
+	}
 
-   @Override
-   protected String getNatureId()
-   {
-      return MOFLON_EMF_NATURE_ID;
-   }
+	@Override
+	protected String getNatureId() {
+		return MOFLON_EMF_NATURE_ID;
+	}
 
-   public static String getId()
-   {
-      return MOFLON_EMF_NATURE_ID;
-   }
+	public static String getId() {
+		return MOFLON_EMF_NATURE_ID;
+	}
 
 }

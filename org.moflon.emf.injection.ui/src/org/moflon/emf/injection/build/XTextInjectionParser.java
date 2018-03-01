@@ -14,31 +14,33 @@ import com.google.inject.Injector;
 /**
  * A standalone Xtext-based parser for inject files
  * 
- * Courtesy to "https://wiki.eclipse.org/Xtext/FAQ#How_do_I_load_my_model_in_a_standalone_Java_application.C2.A0.3F"
+ * Courtesy to
+ * "https://wiki.eclipse.org/Xtext/FAQ#How_do_I_load_my_model_in_a_standalone_Java_application.C2.A0.3F"
  *
  * @author Roland Kluge - Initial implementation
  */
-public class XTextInjectionParser
-{
-   private XtextResourceSet resourceSet;
+public class XTextInjectionParser {
+	private XtextResourceSet resourceSet;
 
-   public XTextInjectionParser()
-   {
-      final Injector injector = InjectionActivator.getInstance().getInjector(InjectionActivator.ORG_MOFLON_EMF_INJECTION_INJECTIONLANGUAGE);
-      this.resourceSet = injector.getInstance(XtextResourceSet.class);
-      this.resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-   }
+	public XTextInjectionParser() {
+		final Injector injector = InjectionActivator.getInstance()
+				.getInjector(InjectionActivator.ORG_MOFLON_EMF_INJECTION_INJECTIONLANGUAGE);
+		this.resourceSet = injector.getInstance(XtextResourceSet.class);
+		this.resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+	}
 
-   /**
-    * Parses a resource specified by an URI and returns the resulting object tree root element.
-    * @param uri URI of resource to be parsed
-    * @return root model object
-    * @throws IOException 
-    */
-   public EObject parse(final URI uri) throws IOException
-   {
-      final Resource resource = resourceSet.createResource(uri);
-      resource.load(null);
-      return resource.getContents().get(0);
-   }
+	/**
+	 * Parses a resource specified by an URI and returns the resulting object tree
+	 * root element.
+	 * 
+	 * @param uri
+	 *            URI of resource to be parsed
+	 * @return root model object
+	 * @throws IOException
+	 */
+	public EObject parse(final URI uri) throws IOException {
+		final Resource resource = resourceSet.createResource(uri);
+		resource.load(null);
+		return resource.getContents().get(0);
+	}
 }

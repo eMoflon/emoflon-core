@@ -25,148 +25,139 @@ import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.core.utilities.eMoflonEMFUtil;
 
-public class MoflonPropertiesContainerHelper
-{
-   /**
-    * This string is used as a placeholder for the correct metamodel name
-    */
-   public static final String UNDEFINED_METAMODEL_NAME = "NO_META_MODEL_PROJECT_NAME_SET_YET";
+public class MoflonPropertiesContainerHelper {
+	/**
+	 * This string is used as a placeholder for the correct metamodel name
+	 */
+	public static final String UNDEFINED_METAMODEL_NAME = "NO_META_MODEL_PROJECT_NAME_SET_YET";
 
-   private static final Logger logger = Logger.getLogger(MoflonPropertiesContainerHelper.class);
+	private static final Logger logger = Logger.getLogger(MoflonPropertiesContainerHelper.class);
 
-   /**
-    * Loads the eMoflon properties of the given project.
-    *
-    * @param project
-    * @param monitor
-    * @return the properties. Is never null.
-    */
-   public static MoflonPropertiesContainer load(final IProject project, final IProgressMonitor monitor)
-   {
-      final SubMonitor subMon = SubMonitor.convert(monitor, "Load properties.", 1);
+	/**
+	 * Loads the eMoflon properties of the given project.
+	 *
+	 * @param project
+	 * @param monitor
+	 * @return the properties. Is never null.
+	 */
+	public static MoflonPropertiesContainer load(final IProject project, final IProgressMonitor monitor) {
+		final SubMonitor subMon = SubMonitor.convert(monitor, "Load properties.", 1);
 
-      final MoflonPropertiesContainer container = loadOrCreatePropertiesContainer(project, MoflonConventions.getDefaultMoflonPropertiesFile(project));
-      fixProjectNameIfNeeded(project, container);
+		final MoflonPropertiesContainer container = loadOrCreatePropertiesContainer(project,
+				MoflonConventions.getDefaultMoflonPropertiesFile(project));
+		fixProjectNameIfNeeded(project, container);
 
-      MoflonPropertiesContainerHelper.save(container, subMon.split(1));
-      return container;
-   }
+		MoflonPropertiesContainerHelper.save(container, subMon.split(1));
+		return container;
+	}
 
-   private static void fixProjectNameIfNeeded(final IProject project, final MoflonPropertiesContainer container)
-   {
-      final String projectName = project.getName();
+	private static void fixProjectNameIfNeeded(final IProject project, final MoflonPropertiesContainer container) {
+		final String projectName = project.getName();
 
-      if (!projectName.equals(container.getProjectName()))
-      {
-         LogUtils.warn(logger, "Project name in Moflon properties file ('%s') does not match Project. Setting correct project name to '%s'.",
-               container.getProjectName(), projectName);
-         container.setProjectName(projectName);
-      }
-   }
+		if (!projectName.equals(container.getProjectName())) {
+			LogUtils.warn(logger,
+					"Project name in Moflon properties file ('%s') does not match Project. Setting correct project name to '%s'.",
+					container.getProjectName(), projectName);
+			container.setProjectName(projectName);
+		}
+	}
 
-   public static MoflonPropertiesContainer loadOrCreatePropertiesContainer(final IProject project, final IFile propertyFile)
-   {
-      MoflonPropertiesContainer moflonPropertiesContainer;
-      if (propertyFile.exists())
-      {
-         PropertycontainerFactory.eINSTANCE.getClass();
-         moflonPropertiesContainer = (MoflonPropertiesContainer) eMoflonEMFUtil.getResourceFromFileIntoDefaultResourceSet(propertyFile).getContents().get(0);
-      } else
-      {
-         moflonPropertiesContainer = createDefaultPropertiesContainer(project);
-         save(moflonPropertiesContainer, new NullProgressMonitor());
-      }
-      return moflonPropertiesContainer;
-   }
+	public static MoflonPropertiesContainer loadOrCreatePropertiesContainer(final IProject project,
+			final IFile propertyFile) {
+		MoflonPropertiesContainer moflonPropertiesContainer;
+		if (propertyFile.exists()) {
+			PropertycontainerFactory.eINSTANCE.getClass();
+			moflonPropertiesContainer = (MoflonPropertiesContainer) eMoflonEMFUtil
+					.getResourceFromFileIntoDefaultResourceSet(propertyFile).getContents().get(0);
+		} else {
+			moflonPropertiesContainer = createDefaultPropertiesContainer(project);
+			save(moflonPropertiesContainer, new NullProgressMonitor());
+		}
+		return moflonPropertiesContainer;
+	}
 
-   public static MoflonPropertiesContainer createDefaultPropertiesContainer(final IProject project)
-   {
-      MoflonPropertiesContainer moflonPropertiesContainer;
-      moflonPropertiesContainer = PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
-      moflonPropertiesContainer.setProjectName(project.getName());
-      moflonPropertiesContainer.setReplaceGenModel(PropertycontainerFactory.eINSTANCE.createReplaceGenModel());
-      return moflonPropertiesContainer;
-   }
+	public static MoflonPropertiesContainer createDefaultPropertiesContainer(final IProject project) {
+		MoflonPropertiesContainer moflonPropertiesContainer;
+		moflonPropertiesContainer = PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
+		moflonPropertiesContainer.setProjectName(project.getName());
+		moflonPropertiesContainer.setReplaceGenModel(PropertycontainerFactory.eINSTANCE.createReplaceGenModel());
+		return moflonPropertiesContainer;
+	}
 
+	/**
+	 * Saves the Moflon properties at the default path (see
+	 * {@link MoflonConventions#getDefaultMoflonPropertiesFile(IProject)}
+	 * 
+	 * @param properties
+	 *            the properties to save
+	 * @param monitor
+	 *            the progress monitor to report to
+	 */
+	public static void save(final MoflonPropertiesContainer properties, final IProgressMonitor monitor) {
+		try {
+			final SubMonitor subMon = SubMonitor.convert(monitor, "Saving eMoflon properties", 1);
+			final IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
+			final IProject project = workspace.getProject(properties.getProjectName());
+			if (project == null) {
+				LogUtils.error(logger, "Unable to save property file '%s' for project '%s'.",
+						MoflonConventions.MOFLON_CONFIG_FILE, properties.getProjectName());
+			} else {
+				final IFile projectFile = project.getFile(MoflonConventions.MOFLON_CONFIG_FILE);
+				final ResourceSet set = eMoflonEMFUtil.createDefaultResourceSet();
+				final URI fileURI = eMoflonEMFUtil.createFileURI(projectFile.getLocation().toString(), false);
+				final Resource resource = set.createResource(fileURI);
+				resource.getContents().add(normalize(properties));
 
-   /**
-    * Saves the Moflon properties at the default path (see {@link MoflonConventions#getDefaultMoflonPropertiesFile(IProject)}
-    * @param properties the properties to save
-    * @param monitor the progress monitor to report to
-    */
-   public static void save(final MoflonPropertiesContainer properties, final IProgressMonitor monitor)
-   {
-      try
-      {
-         final SubMonitor subMon = SubMonitor.convert(monitor, "Saving eMoflon properties", 1);
-         final IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
-         final IProject project = workspace.getProject(properties.getProjectName());
-         if (project == null)
-         {
-            LogUtils.error(logger, "Unable to save property file '%s' for project '%s'.", MoflonConventions.MOFLON_CONFIG_FILE, properties.getProjectName());
-         } else
-         {
-            final IFile projectFile = project.getFile(MoflonConventions.MOFLON_CONFIG_FILE);
-            final ResourceSet set = eMoflonEMFUtil.createDefaultResourceSet();
-            final URI fileURI = eMoflonEMFUtil.createFileURI(projectFile.getLocation().toString(), false);
-            final Resource resource = set.createResource(fileURI);
-            resource.getContents().add(normalize(properties));
+				final HashMap<String, String> saveOptions = new HashMap<String, String>();
+				saveOptions.put(Resource.OPTION_LINE_DELIMITER, WorkspaceHelper.DEFAULT_RESOURCE_LINE_DELIMITER);
+				resource.save(saveOptions);
 
-            final HashMap<String, String> saveOptions = new HashMap<String, String>();
-            saveOptions.put(Resource.OPTION_LINE_DELIMITER, WorkspaceHelper.DEFAULT_RESOURCE_LINE_DELIMITER);
-            resource.save(saveOptions);
+				projectFile.refreshLocal(IResource.DEPTH_ZERO, subMon.split(1));
+			}
+		} catch (final Exception e) {
+			LogUtils.error(logger, "Unable to save property file '%s' for project '%s':\n %s",
+					MoflonConventions.MOFLON_CONFIG_FILE, properties.getProjectName(),
+					WorkspaceHelper.printStacktraceToString(e));
+		}
 
-            projectFile.refreshLocal(IResource.DEPTH_ZERO, subMon.split(1));
-         }
-      } catch (final Exception e)
-      {
-         LogUtils.error(logger, "Unable to save property file '%s' for project '%s':\n %s", MoflonConventions.MOFLON_CONFIG_FILE, properties.getProjectName(),
-               WorkspaceHelper.printStacktraceToString(e));
-      }
+	}
 
-   }
+	public static Map<String, String> mappingsToMap(final List<? extends PropertiesMapping> mappings) {
+		Map<String, String> map = new HashMap<String, String>();
 
-   public static Map<String, String> mappingsToMap(final List<? extends PropertiesMapping> mappings)
-   {
-      Map<String, String> map = new HashMap<String, String>();
+		for (PropertiesMapping mapping : mappings)
+			map.put(mapping.getKey(), mapping.getValue());
 
-      for (PropertiesMapping mapping : mappings)
-         map.put(mapping.getKey(), mapping.getValue());
+		return map;
+	}
 
-      return map;
-   }
+	public static Collection<String> mapToValues(final Collection<? extends PropertiesValue> values) {
+		List<String> list = new LinkedList<String>();
+		for (PropertiesValue value : values)
+			list.add(value.getValue());
+		return list;
+	}
 
-   public static Collection<String> mapToValues(final Collection<? extends PropertiesValue> values)
-   {
-      List<String> list = new LinkedList<String>();
-      for (PropertiesValue value : values)
-         list.add(value.getValue());
-      return list;
-   }
+	public static MoflonPropertiesContainer createEmptyContainer() {
+		return PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
+	}
 
-   public static MoflonPropertiesContainer createEmptyContainer()
-   {
-      return PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
-   }
+	private static EObject normalize(final MoflonPropertiesContainer properties) {
+		// Normalize properties to avoid unnecessary nondeterminism
+		List<Dependencies> sortedDependencies = new ArrayList<>(properties.getDependencies());
+		sortedDependencies.sort((d1, d2) -> d1.getValue().compareTo(d2.getValue()));
+		properties.getDependencies().clear();
+		properties.getDependencies().addAll(sortedDependencies);
 
-   private static EObject normalize(final MoflonPropertiesContainer properties)
-   {
-      // Normalize properties to avoid unnecessary nondeterminism
-      List<Dependencies> sortedDependencies = new ArrayList<>(properties.getDependencies());
-      sortedDependencies.sort((d1, d2) -> d1.getValue().compareTo(d2.getValue()));
-      properties.getDependencies().clear();
-      properties.getDependencies().addAll(sortedDependencies);
+		return properties;
+	}
 
-      return properties;
-   }
-
-   /**
-    * Returns the code generator configured in moflon.properties.xmi
-    */
-   public static final String getMethodBodyHandler(final MoflonPropertiesContainer moflonProperties)
-   {
-      SDMCodeGeneratorIds handlerId = moflonProperties.getSdmCodegeneratorHandlerId().getValue();
-      return handlerId.getLiteral();
-   }
+	/**
+	 * Returns the code generator configured in moflon.properties.xmi
+	 */
+	public static final String getMethodBodyHandler(final MoflonPropertiesContainer moflonProperties) {
+		SDMCodeGeneratorIds handlerId = moflonProperties.getSdmCodegeneratorHandlerId().getValue();
+		return handlerId.getLiteral();
+	}
 
 }

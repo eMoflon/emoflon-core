@@ -21,95 +21,89 @@ import org.eclipse.ui.IWorkbenchWizard;
  * @author Roland Kluge - Initial implementation
  *
  */
-public abstract class AbstractMoflonWizard extends Wizard implements IWorkbenchWizard
-{
-   private IStructuredSelection selection;
-   private IWorkbench workbench;
+public abstract class AbstractMoflonWizard extends Wizard implements IWorkbenchWizard {
+	private IStructuredSelection selection;
+	private IWorkbench workbench;
 
-   public AbstractMoflonWizard()
-   {
-      setNeedsProgressMonitor(true);
-   }
+	public AbstractMoflonWizard() {
+		setNeedsProgressMonitor(true);
+	}
 
-   protected abstract void doFinish(final IProgressMonitor monitor) throws CoreException;
+	protected abstract void doFinish(final IProgressMonitor monitor) throws CoreException;
 
-   /**
-    * Invokes {@link #doFinish(IProgressMonitor)} in a separate task
-    */
-   @Override
-   public boolean performFinish()
-   {
-      final IRunnableWithProgress op = new IRunnableWithProgress() {
-         @Override
-         public void run(final IProgressMonitor monitor) throws InvocationTargetException
-         {
-            final SubMonitor subMon = SubMonitor.convert(monitor, "Completing wizard", 1);
-            try
-            {
-               doFinish(subMon.split(1));
-            } catch (final CoreException e)
-            {
-               throw new InvocationTargetException(e);
-            }
-         }
-      };
+	/**
+	 * Invokes {@link #doFinish(IProgressMonitor)} in a separate task
+	 */
+	@Override
+	public boolean performFinish() {
+		final IRunnableWithProgress op = new IRunnableWithProgress() {
+			@Override
+			public void run(final IProgressMonitor monitor) throws InvocationTargetException {
+				final SubMonitor subMon = SubMonitor.convert(monitor, "Completing wizard", 1);
+				try {
+					doFinish(subMon.split(1));
+				} catch (final CoreException e) {
+					throw new InvocationTargetException(e);
+				}
+			}
+		};
 
-      try
-      {
-         getContainer().run(true, false, op);
-      } catch (final InterruptedException e)
-      {
-         return false;
-      } catch (final InvocationTargetException e)
-      {
-         final Throwable realException = e.getTargetException();
-         MessageDialog.openError(getShell(), "Error", realException.getMessage());
-         return false;
-      }
+		try {
+			getContainer().run(true, false, op);
+		} catch (final InterruptedException e) {
+			return false;
+		} catch (final InvocationTargetException e) {
+			final Throwable realException = e.getTargetException();
+			MessageDialog.openError(getShell(), "Error", realException.getMessage());
+			return false;
+		}
 
-      return true;
-   }
+		return true;
+	}
 
-   /**
-    * Initializes the properties returned by {@link #getWorkbench()} and {@link #getSelection()}
-    */
-   @Override
-   public void init(final IWorkbench workbench, final IStructuredSelection selection) {
-      this.workbench = workbench;
-      this.selection = selection;
-   }
+	/**
+	 * Initializes the properties returned by {@link #getWorkbench()} and
+	 * {@link #getSelection()}
+	 */
+	@Override
+	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
+		this.workbench = workbench;
+		this.selection = selection;
+	}
 
-   /**
-    *
-    * @return the {@link IWorkbench} that was passed to {@link #init(IWorkbench, IStructuredSelection)}
-    */
-   protected IWorkbench getWorkbench()
-   {
-      return workbench;
-   }
+	/**
+	 *
+	 * @return the {@link IWorkbench} that was passed to
+	 *         {@link #init(IWorkbench, IStructuredSelection)}
+	 */
+	protected IWorkbench getWorkbench() {
+		return workbench;
+	}
 
-   /**
-    * @return the {@link IStructuredSelection} that was passed to {@link #init(IWorkbench, IStructuredSelection)}
-    */
-   protected IStructuredSelection getSelection()
-   {
-      return selection;
-   }
+	/**
+	 * @return the {@link IStructuredSelection} that was passed to
+	 *         {@link #init(IWorkbench, IStructuredSelection)}
+	 */
+	protected IStructuredSelection getSelection() {
+		return selection;
+	}
 
-   /**
-    * Returns the active workbench window based on the current workbench ({@link #getWorkbench()}
-    * @return
-    *
-    * Taken from org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageOne
-    */
-   protected IWorkbenchPart getActivePart() {
-      IWorkbenchWindow activeWindow= getWorkbench().getActiveWorkbenchWindow();
-      if (activeWindow != null) {
-         IWorkbenchPage activePage= activeWindow.getActivePage();
-         if (activePage != null) {
-            return activePage.getActivePart();
-         }
-      }
-      return null;
-   }
+	/**
+	 * Returns the active workbench window based on the current workbench
+	 * ({@link #getWorkbench()}
+	 * 
+	 * @return
+	 *
+	 * 		Taken from org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageOne
+	 */
+	protected IWorkbenchPart getActivePart() {
+		IWorkbenchWindow activeWindow = getWorkbench().getActiveWorkbenchWindow();
+		if (activeWindow != null) {
+			IWorkbenchPage activePage = activeWindow.getActivePage();
+			if (activePage != null) {
+				return activePage.getActivePart();
+			}
+		}
+		return null;
+	}
 }
