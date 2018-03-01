@@ -3,7 +3,6 @@ package org.moflon.core.build;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -43,8 +42,6 @@ import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 
 public abstract class MoflonProjectCreator extends WorkspaceTask implements ProjectConfigurator {
-	private static final Logger logger = Logger.getLogger(MoflonProjectCreator.class);
-
 	private IProject project;
 
 	private PluginProperties pluginProperties;
@@ -60,7 +57,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 
 	/**
 	 * Returns the method body code generator to use.
-	 * 
+	 *
 	 * @return the code generator ID to use. May be <code>null</code>.
 	 */
 	protected abstract SDMCodeGeneratorIds getCodeGeneratorHandler();
@@ -68,14 +65,14 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 	/**
 	 * Returns the list of lines for the .gitignore file to be created in the
 	 * project's root folder
-	 * 
+	 *
 	 * @return the list of lines
 	 */
 	protected abstract List<String> getGitignoreLines();
 
 	/**
 	 * Returns the ID of the nature to be added to .project
-	 * 
+	 *
 	 * @return the nature ID
 	 * @throws CoreException
 	 *             if determining the nature ID fails
@@ -84,7 +81,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 
 	/**
 	 * Returns the ID of the builder to be added to .project
-	 * 
+	 *
 	 * @return the builder ID
 	 * @throws CoreException
 	 *             if determining the builder ID fails
@@ -157,7 +154,6 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 			addGitKeepFiles(project, subMon.split(2));
 
 			// (4) Create MANIFEST.MF file
-			logger.debug("Adding MANIFEST.MF");
 			validatePluginProperties();
 			new ManifestFileUpdater().processManifest(project, manifest -> {
 				boolean changed = false;
@@ -182,7 +178,6 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 			});
 
 			// (5) Create build.properties file
-			logger.debug("Adding build.properties");
 			new BuildPropertiesFileBuilder().createBuildProperties(project, subMon.split(1));
 
 			// (6) Configure Java settings (.classpath file)
@@ -232,7 +227,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 
 	/**
 	 * Returns the properties of the plugin project to create
-	 * 
+	 *
 	 * @return the plugin properties
 	 */
 	public PluginProperties getPluginProperties() {
@@ -241,7 +236,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 
 	/**
 	 * Validates the presence of the necessary keys for this builder
-	 * 
+	 *
 	 * @throws CoreException
 	 *             if a required key-value mapping is missing
 	 */
@@ -252,7 +247,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 
 	/**
 	 * Validates that the given key is present in the given properties
-	 * 
+	 *
 	 * @param pluginProperties
 	 *            the properties to check
 	 * @param key
