@@ -36,6 +36,7 @@ do
   fi
   importSpecification="$importSpecification -import $projectFolder"
 done
+importSpecification="-import $repositoryRoot"
 
 echo "  Import specification: '$importSpecification'"
 $ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath $importSpecification || exit -1
