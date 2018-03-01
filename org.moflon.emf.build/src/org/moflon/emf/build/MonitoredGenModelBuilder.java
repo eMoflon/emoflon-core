@@ -53,10 +53,9 @@ public final class MonitoredGenModelBuilder implements ITask {
 
 		if (this.moflonProperties == null) {
 			this.moflonProperties = MoflonPropertiesContainerHelper.load(project, subMon.split(5));
-
 		}
-		subMon.setWorkRemaining(90);
 
+		subMon.setWorkRemaining(90);
 		if (subMon.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
@@ -68,6 +67,7 @@ public final class MonitoredGenModelBuilder implements ITask {
 		final MoflonGenModelBuilder genModelBuilder = new MoflonGenModelBuilder(resourceSet, resources, ecoreFile,
 				basePackage, modelDirectory, moflonProperties);
 		genModelBuilder.loadDefaultSettings();
+
 		subMon.worked(10);
 		if (subMon.isCanceled()) {
 			return Status.CANCEL_STATUS;
@@ -82,6 +82,7 @@ public final class MonitoredGenModelBuilder implements ITask {
 		} catch (final RuntimeException e) {
 			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), e.getMessage(), e);
 		}
+
 		subMon.worked(30);
 		if (subMon.isCanceled()) {
 			return Status.CANCEL_STATUS;
@@ -99,6 +100,7 @@ public final class MonitoredGenModelBuilder implements ITask {
 
 		// Validate GenModel
 		final IStatus genModelValidationStatus = eMoflonEMFUtil.validateGenModel(this.genModel);
+
 		subMon.worked(30);
 		if (subMon.isCanceled()) {
 			return Status.CANCEL_STATUS;
@@ -115,12 +117,20 @@ public final class MonitoredGenModelBuilder implements ITask {
 		return saveStatus.isOK() ? Status.OK_STATUS : saveStatus;
 	}
 
+	/**
+	 * Saves the {@link GenModel} of this builder
+	 *
+	 * @param isNewGenModelConstructed
+	 *            if true, the {@link GenModel} is written in any case, if false it
+	 *            is only written if changed
+	 * @return the success status
+	 */
 	private IStatus saveGenModel(final boolean isNewGenModelConstructed) {
-		IStatus saveStatus;
 		try {
-			final Resource genModelResource = genModel.eResource();
+			final Resource genModelResource = this.getGenModel().eResource();
 			final Map<String, Object> saveOptions = new HashMap<String, Object>();
 			saveOptions.put(Resource.OPTION_LINE_DELIMITER, WorkspaceHelper.DEFAULT_RESOURCE_LINE_DELIMITER);
+
 			if (isNewGenModelConstructed) {
 				// Save to file (with no options)
 				genModelResource.save(saveOptions);
@@ -130,12 +140,11 @@ public final class MonitoredGenModelBuilder implements ITask {
 						Resource.OPTION_SAVE_ONLY_IF_CHANGED_MEMORY_BUFFER);
 				genModelResource.save(saveOptions);
 			}
-			saveStatus = Status.OK_STATUS;
+
+			return Status.OK_STATUS;
 		} catch (final IOException e) {
-			saveStatus = new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), IStatus.ERROR,
-					e.getMessage(), e);
+			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), IStatus.ERROR, e.getMessage(), e);
 		}
-		return saveStatus;
 	}
 
 	public final GenModel getGenModel() {
