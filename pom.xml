@@ -17,8 +17,7 @@
     <module>org.moflon.core.ui</module>
     <module>org.moflon.core.ui.autosetup</module>
     <module>org.moflon.core.ui.autosetup.tests</module>
-    <!-- <module>org.moflon.core.updatesite</module>-->
-    <!-- Not necessary -->
+    <module>org.moflon.core.releng.updatesite</module>
     <module>org.moflon.core.releng.target</module>
     <module>org.moflon.core.utilities</module>
     <module>org.moflon.core.utilities.tests</module>
