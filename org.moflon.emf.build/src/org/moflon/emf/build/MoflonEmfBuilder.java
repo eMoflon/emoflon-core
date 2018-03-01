@@ -11,6 +11,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -77,7 +78,7 @@ public class MoflonEmfBuilder extends AbstractVisitorBuilder {
 
 	/**
 	 * Converts the given {@link Status} to problem markers in the Eclipse UI
-	 * 
+	 *
 	 * @param status
 	 *            the status to be converted
 	 * @param file
@@ -99,6 +100,8 @@ public class MoflonEmfBuilder extends AbstractVisitorBuilder {
 			final IProgressMonitor monitor) {
 		if (WorkspaceHelper.isEcoreFile(ecoreResource)) {
 			final IFile ecoreFile = Platform.getAdapterManager().getAdapter(ecoreResource, IFile.class);
+			final MultiStatus emfBuilderStatus = new MultiStatus(WorkspaceHelper.getPluginId(getClass()), 0,
+					"Problems during EMF code generation", null);
 			try {
 				final SubMonitor subMon = SubMonitor.convert(monitor,
 						"Generating code for project " + getProject().getName(), 13);
@@ -128,23 +131,25 @@ public class MoflonEmfBuilder extends AbstractVisitorBuilder {
 						EMoflonPreferencesActivator.getDefault().getPreferencesStorage());
 
 				final IStatus status = codeGenerationTask.run(subMon.split(1));
-				handleErrorsAndWarnings(status, ecoreFile);
 				subMon.worked(3);
+				emfBuilderStatus.add(status);
 
 				final GenModel genModel = codeGenerationTask.getGenModel();
-				if (genModel == null)
-					throw new CoreException(new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()),
+				if (genModel == null) {
+					emfBuilderStatus.add(new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()),
 							String.format("No GenModel found for '%s'", getProject())));
+				} else {
+					ExportedPackagesInManifestUpdater.updateExportedPackageInManifest(project, genModel);
 
-				ExportedPackagesInManifestUpdater.updateExportedPackageInManifest(project, genModel);
-
-				PluginXmlUpdater.updatePluginXml(project, genModel, subMon.split(1));
+					PluginXmlUpdater.updatePluginXml(project, genModel, subMon.split(1));
+				}
 				ResourcesPlugin.getWorkspace().checkpoint(false);
 
 			} catch (final CoreException e) {
-				final IStatus status = new Status(e.getStatus().getSeverity(), WorkspaceHelper.getPluginId(getClass()),
-						e.getMessage(), e);
-				handleErrorsInEclipse(status, ecoreFile);
+				emfBuilderStatus.add(new Status(e.getStatus().getSeverity(), WorkspaceHelper.getPluginId(getClass()),
+						e.getMessage(), e));
+			} finally {
+				handleErrorsInEclipse(emfBuilderStatus, ecoreFile);
 			}
 		}
 	}
@@ -171,7 +176,7 @@ public class MoflonEmfBuilder extends AbstractVisitorBuilder {
 
 	/**
 	 * Removes all contents in /gen, but preserves all versioning files
-	 * 
+	 *
 	 * @param project
 	 *            the project to be cleaned
 	 * @throws CoreException
