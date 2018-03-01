@@ -10,8 +10,8 @@
 #export DISPLAY=:1
 
 # Prepare environment
-workspacePath=.
-repositoryRoot=.
+workspacePath=$(pwd)
+repositoryRoot=$(pwd)
 if [ ! -f $repositoryRoot/shippable.yml ];
 then
   echo "Expect to find emoflore-core repository at $repositoryRoot"
