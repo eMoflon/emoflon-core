@@ -18,7 +18,7 @@ then
 fi
 
 # First trigger the MWE2 workflow using Tycho (not necessary, left here for documentation purposes)
-#mvn generate-sources -pl org.moflon.emf.injection,org.moflon.core.releng.target
+mvn generate-sources -pl org.moflon.emf.injection,org.moflon.core.releng.target
 
 echo "Import all projects."
 $ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath -import $repositoryRoot || exit -1
