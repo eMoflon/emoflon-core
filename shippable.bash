@@ -37,6 +37,7 @@ do
   importSpecification="$importSpecification -import $projectFolder"
 done
 
+echo "  Import specification: '$importSpecification'"
 $ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath $importSpecification || exit -1
 
 echo "Run eMoflon codegen"
