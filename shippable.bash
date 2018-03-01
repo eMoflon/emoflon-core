@@ -23,7 +23,7 @@ fi
 
 # Import only those projects that require eMoflon EMF codegen.
 $ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath \
-  -import $repositoryRoot/org.moflon.core.utilities
+  -import $repositoryRoot/org.moflon.core.utilities \
   -import $repositoryRoot/org.moflon.core.propertycontainer \
   || exit -1
 
