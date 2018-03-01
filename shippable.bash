@@ -21,8 +21,8 @@ fi
 # First trigger the MWE2 workflow using Tycho (not necessary, left here for documentation purposes)
 #mvn generate-sources -pl org.moflon.emf.injection,org.moflon.core.releng.target
 
-echo "Create empty workspace"
-$ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath
+#echo "Create empty workspace"
+#$ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath
 
 echo "Import only those projects that require eMoflon EMF codegen."
 importSpecification=""
@@ -34,10 +34,12 @@ do
     echo "Expected to find project folder '$projectFolder'"
     exit -1
   fi
-  importSpecification="-import $projectFolder"
-  echo "  Import specification: '$importSpecification'"
-  $ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath $importSpecification || exit -1
+  importSpecification="$importSpecification -import $projectFolder"
 done
+
+echo "  Import specification: '$importSpecification'"
+$ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath $importSpecification || exit -1
+cat $workspacePath/.metadata/.log
 
 echo "Run eMoflon codegen"
 $ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath || exit -1
