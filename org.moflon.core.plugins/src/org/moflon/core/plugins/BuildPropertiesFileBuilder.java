@@ -23,7 +23,7 @@ public class BuildPropertiesFileBuilder {
 	/**
 	 * Creates a build.properties file in the given project with the eMoflon default
 	 * build properties.
-	 * 
+	 *
 	 * @param currentProject
 	 *            the project
 	 * @param monitor
@@ -43,7 +43,7 @@ public class BuildPropertiesFileBuilder {
 	/**
 	 * Creates a build.properties file in the given project with the the given build
 	 * properties.
-	 * 
+	 *
 	 * @param currentProject
 	 *            the project
 	 * @param monitor
@@ -57,11 +57,8 @@ public class BuildPropertiesFileBuilder {
 		try {
 			final SubMonitor subMon = SubMonitor.convert(monitor, "Creating build.properties", 2);
 
-			IFile file = getBuildPropertiesFile(currentProject);
-			if (file.exists()) {
-				// Do not touch existing build.properties
-				subMon.worked(2);
-			} else {
+			final IFile file = getBuildPropertiesFile(currentProject);
+			if (!file.exists()) {
 				subMon.worked(1);
 
 				final ByteArrayOutputStream stream = new ByteArrayOutputStream();
