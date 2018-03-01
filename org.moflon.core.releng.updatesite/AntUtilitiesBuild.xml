@@ -6,10 +6,13 @@
   	'eclipse.*' tasks
   	See "External Tools Configurations..." -> [Run Config] -> JRE -> "Run in the same JRE as workspace"
   </description>
-  <!--
-  This target creates an archive that contains a ready-to-upload update site for eMoflon
-  -->
-  <target name="createArchive">
+
+  <target name="releaseSnapshot" depends="createArchive" description="Release snapshot update site">
+    <unzip src="build/updatesite.zip" dest="$emoflonCoreUpdateSiteProjectRoot/snapshot/updatesite"></unzip>
+  	<eclipse.refreshLocal resource="emoflon-core-updatesite" depth="infinite" />
+  </target>
+
+  <target name="createArchive" description="Creates an archive that contains a ready-to-release update site for eMoflon">
   	<delete file="build/updatesite.zip"/>
   	<zip destfile="build/updatesite.zip"
   		update="false">
@@ -26,9 +29,6 @@
     <antcall target="refresh"></antcall>
   </target>
 
-  <!--
-  This target removes all generated artefacts
-  -->
   <target name="clean" description="Remove generated artifacts">
     <delete dir="build"/>
     <delete dir="features"/>
