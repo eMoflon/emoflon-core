@@ -134,6 +134,9 @@ public class MoflonEmfBuilder extends AbstractVisitorBuilder {
 				subMon.worked(3);
 				emfBuilderStatus.add(status);
 
+				if (!emfBuilderStatus.isOK())
+					return;
+
 				final GenModel genModel = codeGenerationTask.getGenModel();
 				if (genModel == null) {
 					emfBuilderStatus.add(new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()),
