@@ -9,7 +9,7 @@ import org.moflon.core.ui.AbstractCommandHandler;
  * 
  * @author Roland Kluge - Initial implementation
  */
-public class NoActionCommandHanlder extends AbstractCommandHandler {
+public class NoActionCommandHandler extends AbstractCommandHandler {
 
 	/**
 	 * Does nothing

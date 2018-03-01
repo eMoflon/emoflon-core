@@ -16,7 +16,7 @@ import org.moflon.core.utilities.WorkspaceHelper;
  * This {@link ErrorReporter} traverses the hierarchy of a {@link MultiStatus}
  * and invokes {@link #reportLeafStatus(IStatus)} for all {@link Status} that
  * are no {@link MultiStatus}
- * 
+ *
  * @author Roland Kluge - Initial implementation
  */
 public class MultiStatusAwareErrorReporter implements ErrorReporter {
@@ -26,7 +26,7 @@ public class MultiStatusAwareErrorReporter implements ErrorReporter {
 
 	/**
 	 * Marks the {@link IFile} for which errors shall be reported
-	 * 
+	 *
 	 * @param file
 	 */
 	public MultiStatusAwareErrorReporter(final IFile file) {
@@ -39,7 +39,7 @@ public class MultiStatusAwareErrorReporter implements ErrorReporter {
 	 */
 	@Override
 	public final void report(final IStatus status) {
-		if (status != null && !status.matches(IStatus.OK)) {
+		if (status != null && !status.isOK()) {
 			if (status.isMultiStatus()) {
 				for (final IStatus childStatus : status.getChildren()) {
 					report(childStatus);
@@ -59,8 +59,6 @@ public class MultiStatusAwareErrorReporter implements ErrorReporter {
 	protected void reportLeafStatus(final IStatus status) throws CoreException {
 		final IMarker validationMarker = file.createMarker(WorkspaceHelper.MOFLON_PROBLEM_MARKER_ID);
 		validationMarker.setAttribute(IMarker.MESSAGE, status.getMessage());
-		// validationMarker.setAttribute(IMarker.LOCATION,
-		// getLocationDescription(message));
 		validationMarker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 		validationMarker.setAttribute(IMarker.SEVERITY,
 				convertStatusSeverityToEclipseMarkerSeverity(status.getSeverity()));

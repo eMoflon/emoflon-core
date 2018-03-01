@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
@@ -72,7 +74,7 @@ public class eMoflonEMFUtil {
 	/**
 	 * Creates a {@link ResourceSetImpl} and performs
 	 * {@link #initializeDefault(ResourceSetImpl)} on it.
-	 * 
+	 *
 	 * @return the resource set
 	 */
 	public static final ResourceSet createDefaultResourceSet() {
@@ -83,7 +85,7 @@ public class eMoflonEMFUtil {
 
 	/**
 	 * Performs the default initialization of the given {@link ResourceSet}
-	 * 
+	 *
 	 * @param set
 	 *            the {@link ResourceSet} to initialize
 	 */
@@ -143,7 +145,7 @@ public class eMoflonEMFUtil {
 	 * Utility method to get a resource from a file into a fresh {@link ResourceSet}
 	 *
 	 * This method behaves equivalently to the follow code instructions:
-	 * 
+	 *
 	 * <pre>
 	 * final ResourceSet resourceSet = eMoflonEMFUtil.createDefaultResourceSet();
 	 * return getResourceFromFileIntoResourceSet(pathToModelFile, resourceSet);
@@ -163,7 +165,7 @@ public class eMoflonEMFUtil {
 	 *
 	 * The method returns a {@link Resource} that results from the following
 	 * initialization sequence:
-	 * 
+	 *
 	 * <pre>
 	 * installCrossReferencers(resourceSet);
 	 * Resource resource = resourceSet.getResource(eMoflonEMFUtil.createFileURI(pathToModelFile, true), true);
@@ -187,7 +189,7 @@ public class eMoflonEMFUtil {
 	 *
 	 * The method returns a {@link Resource} that results from the following
 	 * initialization sequence:
-	 * 
+	 *
 	 * <pre>
 	 * installCrossReferencers(resourceSet);
 	 * Resource resource = resourceSet.getResource(eMoflonEMFUtil.createFileURI(pathToModelFile, true), true);
@@ -487,7 +489,7 @@ public class eMoflonEMFUtil {
 	 *
 	 * Equivalent to {@link EcoreUtil#delete(EObject, boolean)}, using
 	 * <code>true</code> for the second parameter
-	 * 
+	 *
 	 * @param object
 	 *            the object to remove
 	 */
@@ -682,7 +684,7 @@ public class eMoflonEMFUtil {
 	/**
 	 * Transforms each {@link Diagnostic} message to an {@link IStatus} message and
 	 * returns all of them as result
-	 * 
+	 *
 	 * @param resourceSet
 	 *            the {@link ResourceSet} from which to collect the
 	 *            {@link Diagnostic}s
@@ -732,7 +734,7 @@ public class eMoflonEMFUtil {
 
 	/**
 	 * Returns the project in the workspace having the given URI
-	 * 
+	 *
 	 * @param namespaceURI
 	 *            the URI of the project
 	 * @return the project or <code>null</code> if no project exists for the given
@@ -767,7 +769,7 @@ public class eMoflonEMFUtil {
 	 *
 	 * The resulting count is equivalent to the maximum number of invocations of for
 	 * the {@link Iterator} returned by {@link EObject#eAllContents()}
-	 * 
+	 *
 	 * @param model
 	 *            the model of which the elements shall be counted
 	 * @return the element count
@@ -789,7 +791,7 @@ public class eMoflonEMFUtil {
 	 * The resulting count is equivalent to adding up the results for
 	 * {@link #getAllReferences(EObject)} for all elements below the given element
 	 * (see {@link EObject#eAllContents()}
-	 * 
+	 *
 	 * @param model
 	 *            the model to traverse
 	 * @return the number of {@link EReference}s
@@ -808,7 +810,7 @@ public class eMoflonEMFUtil {
 
 	/**
 	 * Returns all {@link EClass} (recursively) of the given {@link EPackage}.
-	 * 
+	 *
 	 * @param ePackage
 	 *            the package
 	 * @return the list of all {@link EClass}
@@ -828,7 +830,7 @@ public class eMoflonEMFUtil {
 	/**
 	 * Adds a mapping from platform:/plugin to platform:/resource for the given
 	 * {@link IProject} to the given {@link ResourceSet}
-	 * 
+	 *
 	 * @param set
 	 *            the {@link ResourceSet} to update
 	 * @param project
@@ -854,7 +856,7 @@ public class eMoflonEMFUtil {
 	 * in the workspace to the given {@link ResourceSet} Invokes
 	 * {@link #createPluginToResourceMapping(ResourceSet, IProject)} for each
 	 * project in the workspace
-	 * 
+	 *
 	 * @param set
 	 *            the resource set to update
 	 * @param monitor
@@ -877,7 +879,7 @@ public class eMoflonEMFUtil {
 	 * Convenience method for
 	 * {@link #createPluginToResourceMapping(ResourceSet, IProgressMonitor)} without
 	 * progress monitor
-	 * 
+	 *
 	 * @param set
 	 *            the resource set
 	 * @throws CoreException
@@ -1032,7 +1034,7 @@ public class eMoflonEMFUtil {
 	/**
 	 * Extracts the symbolic name of the bundle described by the given
 	 * {@link IPluginModelBase}
-	 * 
+	 *
 	 * @param pluginModel
 	 *            the plugin model
 	 * @return the symbolic name
@@ -1043,7 +1045,7 @@ public class eMoflonEMFUtil {
 
 	/**
 	 * Extracts the {@link IPluginModelBase} for the given project
-	 * 
+	 *
 	 * @param project
 	 *            the projec
 	 * @return the plugin model or <code>null</code> if the project has no plugin
@@ -1052,6 +1054,56 @@ public class eMoflonEMFUtil {
 	private static IPluginModelBase findPluginModel(final IProject project) {
 		final IPluginModelBase pluginModel = PluginRegistry.findModel(project);
 		return pluginModel;
+	}
+
+	/**
+	 * Performs the standard and some eMoflon-specific validation steps on the given
+	 * {@link GenModel}
+	 *
+	 * @param genModel
+	 *            the generator model to validate
+	 * @return the validation status
+	 */
+	public static IStatus validateGenModel(final GenModel genModel) {
+		final MultiStatus combinedValidationStatus = new MultiStatus(WorkspaceHelper.getPluginId(eMoflonEMFUtil.class),
+				0, "Validation problems in GenModel", null);
+		final IStatus defaultValidationResult = genModel.validate();
+		combinedValidationStatus.merge(defaultValidationResult);
+
+		genModel.getAllGenPackagesWithClassifiers().stream()//
+				.filter(eMoflonEMFUtil::containsClassifierWithSameName)//
+				.map(eMoflonEMFUtil::createSameNameValidationProblem)//
+				.forEach(status -> combinedValidationStatus.merge(status));
+
+		return combinedValidationStatus.isOK() ? Status.OK_STATUS : combinedValidationStatus;
+	}
+
+	/**
+	 * Returns an {@link IStatus} that marks the given {@link GenPackage} as
+	 * containing a homonymous {@link EClassifier}
+	 *
+	 * @param genPackage
+	 *            the package to mark
+	 * @return the marker
+	 */
+	private static Status createSameNameValidationProblem(GenPackage genPackage) {
+		return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(eMoflonEMFUtil.class),
+				String.format("An EPackage and its contained class may not have the same name (package URI: %s).",
+						genPackage.getNSURI()));
+	}
+
+	/**
+	 * Returns true iff the given {@link GenPackage} contains an {@link EClassifier}
+	 * with the same name as the package.
+	 *
+	 * @param genPackage
+	 *            the package to check
+	 * @return the search result
+	 */
+	private static boolean containsClassifierWithSameName(final GenPackage genPackage) {
+		return genPackage.getGenClassifiers().stream()
+				.filter(genClassifier -> genClassifier.getName().equals(genPackage.getPackageName())).findAny()
+				.isPresent();
 	}
 
 }

@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
@@ -71,7 +72,9 @@ public abstract class AbstractCommandHandler extends org.eclipse.core.commands.A
 			final IWorkingSet workingSet = (IWorkingSet) element;
 			for (final IAdaptable elementInWorkingSet : workingSet.getElements()) {
 				if (elementInWorkingSet instanceof IProject) {
-					projects.add((IProject) elementInWorkingSet);
+					projects.add(IProject.class.cast(elementInWorkingSet));
+				} else if (elementInWorkingSet instanceof IJavaProject) {
+					projects.add(IJavaProject.class.cast(elementInWorkingSet).getProject());
 				}
 			}
 		}
