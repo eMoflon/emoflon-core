@@ -7,12 +7,16 @@
 
 This repository holds core components of the model-driven engineering tool eMoflon.
 
-Install from http://emoflon.org/emoflon-core/org.moflon.core.releng.updatesite/
-
 Capabilities of eMoflon Core:
 * Basic EMF builder (An autobuilder that regenerates Java code whenever you modify an .ecore file)
 * eMoflon perspective
 * eMoflon console
+
+## How to install
+
+Eclipse update site available at http://emoflon.org/emoflon-core-updatesite/stable/updatesite/
+
+## Supplementary information
 
 https://emoflon.github.io/ hosts the eMoflon website with general information.
 
