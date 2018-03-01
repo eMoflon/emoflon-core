@@ -24,9 +24,9 @@ mvn generate-sources -pl org.moflon.emf.injection,org.moflon.core.releng.target
 # Run eMoflon codegen
 $ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath || exit -1
 
-$ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath -import $repositoryRoot -Djava.awt.headless=true || exit -1
+$ECLIPSE_HOME/eclipse -nosplash -application com.seeq.eclipse.importprojects.headlessimport -data $workspacePath -import $repositoryRoot || exit -1
 
-$ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath -Djava.awt.headless=true || exit -1
+$ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath || exit -1
 
 # Run Tycho
 mvn clean compile || exit -1
