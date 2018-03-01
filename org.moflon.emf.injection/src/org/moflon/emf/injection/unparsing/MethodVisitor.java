@@ -25,7 +25,7 @@ public class MethodVisitor extends ASTVisitor
 
    public MethodVisitor(final String codeForProject)
    {
-      final ASTParser parser = ASTParser.newParser(AST.JLS8);
+      final ASTParser parser = ASTParser.newParser(AST.JLS9);
       parser.setSource(codeForProject.toCharArray());
       parser.setIgnoreMethodBodies(true);
 
