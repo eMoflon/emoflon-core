@@ -16,7 +16,8 @@ public class NewMoflonEmfProjectHandler extends AbstractCommandHandler {
 		try {
 			UiUtilities.openWizard(NewMoflonEmfProjectWizard.NEW_REPOSITORY_PROJECT_WIZARD_ID, window);
 		} catch (final Exception e) {
-         LogUtils.error(logger, e, "Unable to open '%s' wizard.", NewMoflonEmfProjectWizard.NEW_REPOSITORY_PROJECT_WIZARD_ID);
+			LogUtils.error(logger, e, "Unable to open '%s' wizard.",
+					NewMoflonEmfProjectWizard.NEW_REPOSITORY_PROJECT_WIZARD_ID);
 		}
 
 		return null;

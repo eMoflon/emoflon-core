@@ -9,7 +9,8 @@ import org.gervarro.eclipse.workspace.autosetup.WorkspaceAutoSetupModule;
 import org.gervarro.eclipse.workspace.util.ProjectUtil;
 
 /**
- * Parent class for Eclipse project natures that self-organize their nature and builder IDs
+ * Parent class for Eclipse project natures that self-organize their nature and
+ * builder IDs
  *
  * @author Gergely Varró - Initial implementation
  * @author Roland Kluge - Documentation
@@ -27,24 +28,30 @@ public abstract class MoflonProjectConfigurator extends ProjectConfiguratorNatur
 	}
 
 	/**
-	 * Returns the builder ID that corresponds to the type of project managed by the particular subclass
+	 * Returns the builder ID that corresponds to the type of project managed by the
+	 * particular subclass
+	 * 
 	 * @return the builder ID
 	 */
 	protected abstract String getBuilderId();
 
-   /**
-    * Returns the nature ID that corresponds to the type of project managed by the particular subclass
-    * @return the nature ID
-    */
-   protected abstract String getNatureId();
+	/**
+	 * Returns the nature ID that corresponds to the type of project managed by the
+	 * particular subclass
+	 * 
+	 * @return the nature ID
+	 */
+	protected abstract String getNatureId();
 
-   /**
-    * Updates the given list of nature IDs to contain this configurator's nature ID
-    *
-    * @param natureIDs the list of nature IDs to manipulate
-    * @param added true if the nature ID shall be added, false if it shall be removed
-    * @see #getNatureId()
-    */
+	/**
+	 * Updates the given list of nature IDs to contain this configurator's nature ID
+	 *
+	 * @param natureIDs
+	 *            the list of nature IDs to manipulate
+	 * @param added
+	 *            true if the nature ID shall be added, false if it shall be removed
+	 * @see #getNatureId()
+	 */
 	@Override
 	public String[] updateNatureIDs(String[] natureIDs, final boolean added) throws CoreException {
 		if (added) {
@@ -67,16 +74,22 @@ public abstract class MoflonProjectConfigurator extends ProjectConfiguratorNatur
 		return natureIDs;
 	}
 
-   /**
-    * Updates the given build specification to contain this configurator's builder ID
-    *
-    * @param description the description of the project to manipulate
-    * @param buildSpecs the build specification to manipulate
-    * @param added true if the builder ID shall be added, false if it shall be removed
-    * @see #getBuilderId()()
-    */
+	/**
+	 * Updates the given build specification to contain this configurator's builder
+	 * ID
+	 *
+	 * @param description
+	 *            the description of the project to manipulate
+	 * @param buildSpecs
+	 *            the build specification to manipulate
+	 * @param added
+	 *            true if the builder ID shall be added, false if it shall be
+	 *            removed
+	 * @see #getBuilderId()()
+	 */
 	@Override
-	public ICommand[] updateBuildSpecs(final IProjectDescription description, ICommand[] buildSpecs, final boolean added) throws CoreException {
+	public ICommand[] updateBuildSpecs(final IProjectDescription description, ICommand[] buildSpecs,
+			final boolean added) throws CoreException {
 		if (added) {
 			int javaBuilderPosition = ProjectUtil.indexOf(buildSpecs, "org.eclipse.jdt.core.javabuilder");
 			int moflonBuilderPosition = ProjectUtil.indexOf(buildSpecs, builderID);
@@ -89,7 +102,8 @@ public abstract class MoflonProjectConfigurator extends ProjectConfiguratorNatur
 			}
 			if (javaBuilderPosition >= 0 && javaBuilderPosition < moflonBuilderPosition) {
 				final ICommand moflonBuilder = buildSpecs[moflonBuilderPosition];
-				System.arraycopy(buildSpecs, javaBuilderPosition, buildSpecs, javaBuilderPosition+1, moflonBuilderPosition-javaBuilderPosition);
+				System.arraycopy(buildSpecs, javaBuilderPosition, buildSpecs, javaBuilderPosition + 1,
+						moflonBuilderPosition - javaBuilderPosition);
 				moflonBuilderPosition = javaBuilderPosition++;
 				buildSpecs[moflonBuilderPosition] = moflonBuilder;
 			}
@@ -102,7 +116,8 @@ public abstract class MoflonProjectConfigurator extends ProjectConfiguratorNatur
 					System.arraycopy(oldBuilderSpecs, 0, buildSpecs, 0, moflonBuilderPosition);
 				}
 				if (moflonBuilderPosition == buildSpecs.length) {
-					System.arraycopy(oldBuilderSpecs, moflonBuilderPosition+1, buildSpecs, moflonBuilderPosition, buildSpecs.length-moflonBuilderPosition);
+					System.arraycopy(oldBuilderSpecs, moflonBuilderPosition + 1, buildSpecs, moflonBuilderPosition,
+							buildSpecs.length - moflonBuilderPosition);
 				}
 			}
 		}

@@ -16,34 +16,29 @@ import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Descriptor;
 
-public class StandalonePackageDescriptor implements Descriptor
-{
-   private final String className;
+public class StandalonePackageDescriptor implements Descriptor {
+	private final String className;
 
-   public StandalonePackageDescriptor(final String className)
-   {
-      this.className = className;
-   }
+	public StandalonePackageDescriptor(final String className) {
+		this.className = className;
+	}
 
-   @Override
-   public EPackage getEPackage()
-   {
-      try
-      {
-         Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
-         Field eInstanceField = clazz.getField("eINSTANCE");
-         Object result = eInstanceField.get(null);
-         return (EPackage) result;
-      } catch (ClassNotFoundException | SecurityException | IllegalArgumentException | IllegalAccessException | ClassCastException | NoSuchFieldException e)
-      {
-         // Do nothing
-      }
-      return null;
-   }
+	@Override
+	public EPackage getEPackage() {
+		try {
+			Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
+			Field eInstanceField = clazz.getField("eINSTANCE");
+			Object result = eInstanceField.get(null);
+			return (EPackage) result;
+		} catch (ClassNotFoundException | SecurityException | IllegalArgumentException | IllegalAccessException
+				| ClassCastException | NoSuchFieldException e) {
+			// Do nothing
+		}
+		return null;
+	}
 
-   @Override
-   public EFactory getEFactory()
-   {
-      return null;
-   }
+	@Override
+	public EFactory getEFactory() {
+		return null;
+	}
 }

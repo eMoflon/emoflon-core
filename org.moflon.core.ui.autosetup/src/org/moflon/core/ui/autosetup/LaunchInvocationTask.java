@@ -25,8 +25,7 @@ public class LaunchInvocationTask implements ITask {
 	@Override
 	public IStatus run(final IProgressMonitor monitor) {
 		try {
-			final ILaunch launch = launchConfiguration.launch(
-					ILaunchManager.RUN_MODE, monitor, true);
+			final ILaunch launch = launchConfiguration.launch(ILaunchManager.RUN_MODE, monitor, true);
 			while (!launch.isTerminated()) {
 				try {
 					Thread.sleep(10000);
@@ -39,8 +38,8 @@ public class LaunchInvocationTask implements ITask {
 			}
 			return Status.OK_STATUS;
 		} catch (final CoreException e) {
-			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()),
-					IStatus.ERROR, "Unable to launch " + launchConfiguration.getName(), e);
+			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), IStatus.ERROR,
+					"Unable to launch " + launchConfiguration.getName(), e);
 		}
 	}
 

@@ -13,21 +13,17 @@ package org.moflon.emf.codegen.resource;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl;
 
-class GenModelResourceHelper extends XMIHelperImpl
-{
+class GenModelResourceHelper extends XMIHelperImpl {
 
-   GenModelResourceHelper(GenModelResource resource)
-   {
-      super(resource);
-   }
+	GenModelResourceHelper(GenModelResource resource) {
+		super(resource);
+	}
 
-   public GenModelResource getResource()
-   {
-      return (GenModelResource) super.getResource();
-   }
+	public GenModelResource getResource() {
+		return (GenModelResource) super.getResource();
+	}
 
-   public URI deresolve(URI uri)
-   {
-      return super.deresolve(uri);
-   }
+	public URI deresolve(URI uri) {
+		return super.deresolve(uri);
+	}
 }

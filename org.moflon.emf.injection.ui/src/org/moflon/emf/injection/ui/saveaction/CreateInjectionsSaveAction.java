@@ -12,81 +12,69 @@ import org.eclipse.jdt.ui.cleanup.ICleanUpFix;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 /**
- * This save action forces saving injections on every save of a file. 
+ * This save action forces saving injections on every save of a file.
  */
-public class CreateInjectionsSaveAction implements ICleanUp
-{
-   public static final String DESCRIPTION = "Create eMoflon injections";
+public class CreateInjectionsSaveAction implements ICleanUp {
+	public static final String DESCRIPTION = "Create eMoflon injections";
 
-   public static final String KEY_CREATE_INJECTIONS = "cleanup.moflon.createinjections";
+	public static final String KEY_CREATE_INJECTIONS = "cleanup.moflon.createinjections";
 
-   private CleanUpOptions options;
+	private CleanUpOptions options;
 
-   private RefactoringStatus status;
+	private RefactoringStatus status;
 
-   @Override
-   public void setOptions(final CleanUpOptions options)
-   {
-      this.options = options;
-   }
+	@Override
+	public void setOptions(final CleanUpOptions options) {
+		this.options = options;
+	}
 
-   @Override
-   public String[] getStepDescriptions()
-   {
-      if (this.isEnabled())
-      {
-         return new String[] { DESCRIPTION };
-      }
-      return null;
-   }
+	@Override
+	public String[] getStepDescriptions() {
+		if (this.isEnabled()) {
+			return new String[] { DESCRIPTION };
+		}
+		return null;
+	}
 
-   @Override
-   public CleanUpRequirements getRequirements()
-   {
-      return new CleanUpRequirements(isEnabled(), isEnabled(), false, null);
-   }
+	@Override
+	public CleanUpRequirements getRequirements() {
+		return new CleanUpRequirements(isEnabled(), isEnabled(), false, null);
+	}
 
-   @Override
-   public ICleanUpFix createFix(final CleanUpContext context) throws CoreException
-   {
-      final ICompilationUnit compilationUnit = context.getCompilationUnit();
-      if (compilationUnit == null)
-         return null;
-      if(!isEnabled())
-         return null;
-      
-      return new CreateInjectionFix(compilationUnit);
-   }
+	@Override
+	public ICleanUpFix createFix(final CleanUpContext context) throws CoreException {
+		final ICompilationUnit compilationUnit = context.getCompilationUnit();
+		if (compilationUnit == null)
+			return null;
+		if (!isEnabled())
+			return null;
 
-   @Override
-   public RefactoringStatus checkPreConditions(final IJavaProject project, final ICompilationUnit[] compilationUnits, final IProgressMonitor monitor)
-         throws CoreException
-   {
-      if (isEnabled())
-      {
-         status = new RefactoringStatus();
-      }
-      return new RefactoringStatus();
-   }
+		return new CreateInjectionFix(compilationUnit);
+	}
 
-   @Override
-   public RefactoringStatus checkPostConditions(final IProgressMonitor monitor) throws CoreException
-   {
-      if (status == null || status.isOK())
-      {
-         return new RefactoringStatus();
-      } else
-      {
-         return status;
-      }
-   }
+	@Override
+	public RefactoringStatus checkPreConditions(final IJavaProject project, final ICompilationUnit[] compilationUnits,
+			final IProgressMonitor monitor) throws CoreException {
+		if (isEnabled()) {
+			status = new RefactoringStatus();
+		}
+		return new RefactoringStatus();
+	}
 
-   /**
-    * Returns whether this save action is enabled
-    */
-   public boolean isEnabled()
-   {
-      return options.isEnabled(KEY_CREATE_INJECTIONS);
-   }
+	@Override
+	public RefactoringStatus checkPostConditions(final IProgressMonitor monitor) throws CoreException {
+		if (status == null || status.isOK()) {
+			return new RefactoringStatus();
+		} else {
+			return status;
+		}
+	}
+
+	/**
+	 * Returns whether this save action is enabled
+	 */
+	public boolean isEnabled() {
+		return options.isEnabled(KEY_CREATE_INJECTIONS);
+	}
 
 }

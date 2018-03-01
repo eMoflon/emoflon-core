@@ -18,11 +18,9 @@ public class InjectionHandlingImportManager extends ImportManager {
 		this(compilationUnitPackage, false);
 	}
 
-	public InjectionHandlingImportManager(String compilationUnitPackage,
-			final boolean useOrderInInjectionFile) {
+	public InjectionHandlingImportManager(String compilationUnitPackage, final boolean useOrderInInjectionFile) {
 		super(compilationUnitPackage);
-		this.injectedImports = useOrderInInjectionFile ?
-				new LinkedList<String>() : new TreeSet<String>();
+		this.injectedImports = useOrderInInjectionFile ? new LinkedList<String>() : new TreeSet<String>();
 	}
 
 	public void emitSortedImports() {
@@ -67,16 +65,18 @@ public class InjectionHandlingImportManager extends ImportManager {
 		for (String importName : injectedImports) {
 			result.append(NL + "import " + importName + ";");
 		}
-// Uncomment this code instead of the for cycle above if imports have to be grouped (EMF strategy)
-//		previousPackageName = null;
-//		for (String importName : injectedImports) {
-//			String packageName = getPackageName(importName);
-//			if (previousPackageName != null && !previousPackageName.equals(packageName)) {
-//				result.append(NL);
-//			}
-//			previousPackageName = packageName;
-//			result.append(NL + "import " + importName + ";");
-//		}
+		// Uncomment this code instead of the for cycle above if imports have to be
+		// grouped (EMF strategy)
+		// previousPackageName = null;
+		// for (String importName : injectedImports) {
+		// String packageName = getPackageName(importName);
+		// if (previousPackageName != null && !previousPackageName.equals(packageName))
+		// {
+		// result.append(NL);
+		// }
+		// previousPackageName = packageName;
+		// result.append(NL + "import " + importName + ";");
+		// }
 		result.append(NL + InjectionConstants.USER_IMPORTS_END);
 		return result.toString();
 	}

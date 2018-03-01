@@ -16,19 +16,21 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.moflon.emf.injection.ide.InjectionManager;
 
 /**
- * This class provides the {@link InjectionManager}, which handles the code to be placed inside a method body.
+ * This class provides the {@link InjectionManager}, which handles the code to
+ * be placed inside a method body.
  *
- * It is embedded in the EMF code generation process inside the files 'insert.javajetinc' and 'Header.javajetinc'.
+ * It is embedded in the EMF code generation process inside the files
+ * 'insert.javajetinc' and 'Header.javajetinc'.
  */
 public class GeneratorAdapterFactory extends GenModelGeneratorAdapterFactory {
 	protected InjectionManager injectionManager;
 
 	@Override
-   public Adapter createGenModelAdapter() {
+	public Adapter createGenModelAdapter() {
 		if (genModelGeneratorAdapter == null) {
 			genModelGeneratorAdapter = new GenModelGeneratorAdapter(this) {
 				@Override
-            public boolean canGenerateModel(final Object object) {
+				public boolean canGenerateModel(final Object object) {
 					return false;
 				}
 			};
@@ -37,7 +39,7 @@ public class GeneratorAdapterFactory extends GenModelGeneratorAdapterFactory {
 	}
 
 	@Override
-   public Adapter createGenPackageAdapter() {
+	public Adapter createGenPackageAdapter() {
 		if (genPackageGeneratorAdapter == null) {
 			genPackageGeneratorAdapter = new GenPackageGeneratorAdapter(this);
 		}

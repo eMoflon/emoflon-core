@@ -11,18 +11,21 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
- * An eMoflon-specific override of {@link org.gervarro.eclipse.workspace.autosetup.ProjectNatureAndBuilderConfiguratorTask}.
+ * An eMoflon-specific override of
+ * {@link org.gervarro.eclipse.workspace.autosetup.ProjectNatureAndBuilderConfiguratorTask}.
  *
  * @author Gergely Varró - Initial implementation
  * @author Roland Kluge
  *
  */
-public class ProjectNatureAndBuilderConfiguratorTask extends org.gervarro.eclipse.workspace.autosetup.ProjectNatureAndBuilderConfiguratorTask {
+public class ProjectNatureAndBuilderConfiguratorTask
+		extends org.gervarro.eclipse.workspace.autosetup.ProjectNatureAndBuilderConfiguratorTask {
 
-   /**
-    * Passes the given values to the super constructor
-    */
-	public ProjectNatureAndBuilderConfiguratorTask(final IProject project, final boolean forceOverwrite) throws CoreException {
+	/**
+	 * Passes the given values to the super constructor
+	 */
+	public ProjectNatureAndBuilderConfiguratorTask(final IProject project, final boolean forceOverwrite)
+			throws CoreException {
 		super(project, forceOverwrite);
 	}
 

@@ -22,23 +22,23 @@ public abstract class ProjectConfiguratorNature implements IProjectNature, Proje
 	}
 
 	@Override
-	public ICommand[] updateBuildSpecs(final IProjectDescription description, final ICommand[] buildSpecs, final boolean added)
-			throws CoreException {
+	public ICommand[] updateBuildSpecs(final IProjectDescription description, final ICommand[] buildSpecs,
+			final boolean added) throws CoreException {
 		return buildSpecs;
 	}
 
 	@Override
 	public void configure() throws CoreException {
-		final ProjectNatureAndBuilderConfiguratorTask configuratorTask =
-				new ProjectNatureAndBuilderConfiguratorTask(project, false);
+		final ProjectNatureAndBuilderConfiguratorTask configuratorTask = new ProjectNatureAndBuilderConfiguratorTask(
+				project, false);
 		configuratorTask.updateBuildSpecs(this, true);
 		WorkspaceTask.executeInCurrentThread(configuratorTask, IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
 	}
 
 	@Override
 	public void deconfigure() throws CoreException {
-		final ProjectNatureAndBuilderConfiguratorTask configuratorTask =
-				new ProjectNatureAndBuilderConfiguratorTask(project, false);
+		final ProjectNatureAndBuilderConfiguratorTask configuratorTask = new ProjectNatureAndBuilderConfiguratorTask(
+				project, false);
 		configuratorTask.updateBuildSpecs(this, false);
 		WorkspaceTask.executeInCurrentThread(configuratorTask, IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
 	}
@@ -54,15 +54,13 @@ public abstract class ProjectConfiguratorNature implements IProjectNature, Proje
 	}
 
 	// Utility methods
-   protected String[] insertAtEnd(String[] ids, String interestingID)
-   {
-      ids = Arrays.copyOf(ids, ids.length + 1);
-      ids[ids.length - 1] = interestingID;
-      return ids;
-   }
+	protected String[] insertAtEnd(String[] ids, String interestingID) {
+		ids = Arrays.copyOf(ids, ids.length + 1);
+		ids[ids.length - 1] = interestingID;
+		return ids;
+	}
 
-   protected boolean containsNatureID(String[] ids, String interestingID)
-   {
-      return ProjectUtil.indexOf(ids, interestingID) >= 0;
-   }
+	protected boolean containsNatureID(String[] ids, String interestingID) {
+		return ProjectUtil.indexOf(ids, interestingID) >= 0;
+	}
 }

@@ -5,7 +5,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
 /**
- * A simple resource that immediately reads resources from a resource set using the stored URI.
+ * A simple resource that immediately reads resources from a resource set using
+ * the stored URI.
  *
  */
 public class SimpleDependency implements Dependency {
@@ -21,8 +22,8 @@ public class SimpleDependency implements Dependency {
 		return resource != null || loadContent ? resource : resourceSet.createResource(uri);
 	}
 
-	public Resource getResource(final ResourceSet resourceSet,
-			final boolean loadContent, boolean forcePreemptiveCreate) {
+	public Resource getResource(final ResourceSet resourceSet, final boolean loadContent,
+			boolean forcePreemptiveCreate) {
 		if (forcePreemptiveCreate) {
 			resourceSet.createResource(uri);
 		}

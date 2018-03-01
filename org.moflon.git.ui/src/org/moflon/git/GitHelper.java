@@ -29,138 +29,133 @@ import org.moflon.core.utilities.WorkspaceHelper;;
  * @author Roland Kluge
  *
  */
-public final class GitHelper
-{
-   private static final Logger logger = Logger.getLogger(GitHelper.class);
+public final class GitHelper {
+	private static final Logger logger = Logger.getLogger(GitHelper.class);
 
-   private static final String GIT_FOLDER = "/.git";
+	private static final String GIT_FOLDER = "/.git";
 
-   /**
-    * Disabled constructor
-    */
-   private GitHelper()
-   {
-      throw new UtilityClassNotInstantiableException();
-   }
+	/**
+	 * Disabled constructor
+	 */
+	private GitHelper() {
+		throw new UtilityClassNotInstantiableException();
+	}
 
-   /**
-    * @param project the project to check
-    * @return true if the project is contained in a Git repository
-    */
-   public static boolean isInGitRepository(final IProject project)
-   {
-      return findGitRepositoryRoot(project) != null;
-   }
+	/**
+	 * @param project
+	 *            the project to check
+	 * @return true if the project is contained in a Git repository
+	 */
+	public static boolean isInGitRepository(final IProject project) {
+		return findGitRepositoryRoot(project) != null;
+	}
 
-   /**
-    * Resets and cleans the given Git repository
-    *
-    * The repository should exist
-    *
-    * The effect of this method is equal to <code>git reset --hard && git clean -fxd</code>
-    *
-    * @param rep the repository to reset and clean
-    * @param monitor the monitor to be used
-    * @return the success or failure status
-    */
-   public static IStatus resetAndCleanGitRepository(final Repository rep, final IProgressMonitor monitor)
-   {
-      final SubMonitor subMon = SubMonitor.convert(monitor, "Resetting Git repository " + rep, 2);
-      final Git git = new Git(rep);
-      try
-      {
-         final ResetCommand resetCmd = git.reset();
-         resetCmd.setMode(ResetType.HARD);
+	/**
+	 * Resets and cleans the given Git repository
+	 *
+	 * The repository should exist
+	 *
+	 * The effect of this method is equal to
+	 * <code>git reset --hard && git clean -fxd</code>
+	 *
+	 * @param rep
+	 *            the repository to reset and clean
+	 * @param monitor
+	 *            the monitor to be used
+	 * @return the success or failure status
+	 */
+	public static IStatus resetAndCleanGitRepository(final Repository rep, final IProgressMonitor monitor) {
+		final SubMonitor subMon = SubMonitor.convert(monitor, "Resetting Git repository " + rep, 2);
+		final Git git = new Git(rep);
+		try {
+			final ResetCommand resetCmd = git.reset();
+			resetCmd.setMode(ResetType.HARD);
 
-         final CleanCommand cleanCmd = git.clean();
-         cleanCmd.setCleanDirectories(true);
-         cleanCmd.setIgnore(false);
+			final CleanCommand cleanCmd = git.clean();
+			cleanCmd.setCleanDirectories(true);
+			cleanCmd.setIgnore(false);
 
-         try
-         {
-            logger.debug("Resetting " + rep);
-            resetCmd.call();
-         } catch (final Exception e)
-         {
-            return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(GitHelper.class), String.format("Failed to reset %s", rep), e);
-         }
-         subMon.worked(1);
-         ProgressMonitorUtil.checkCancellation(subMon);
+			try {
+				logger.debug("Resetting " + rep);
+				resetCmd.call();
+			} catch (final Exception e) {
+				return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(GitHelper.class),
+						String.format("Failed to reset %s", rep), e);
+			}
+			subMon.worked(1);
+			ProgressMonitorUtil.checkCancellation(subMon);
 
-         try
-         {
-            logger.debug("Cleaning " + rep);
-            cleanCmd.call();
-         } catch (final Exception e)
-         {
-            return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(GitHelper.class), String.format("Failed to clean %s", rep), e);
-         }
-         subMon.worked(1);
-         ProgressMonitorUtil.checkCancellation(subMon);
+			try {
+				logger.debug("Cleaning " + rep);
+				cleanCmd.call();
+			} catch (final Exception e) {
+				return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(GitHelper.class),
+						String.format("Failed to clean %s", rep), e);
+			}
+			subMon.worked(1);
+			ProgressMonitorUtil.checkCancellation(subMon);
 
-         LogUtils.info(logger, "Resetting and cleaning of %s successful", rep);
-      } finally
-      {
-         git.close();
-      }
+			LogUtils.info(logger, "Resetting and cleaning of %s successful", rep);
+		} finally {
+			git.close();
+		}
 
-      return Status.OK_STATUS;
-   }
+		return Status.OK_STATUS;
+	}
 
-   /**
-    * Retrieves the Git repository containing the given project.
-    * @param project the project
-    * @param multiStatus used to report problems
-    * @return the repository or <code>null</code> if the project is not inside a Git repository
-    */
-   public static Repository findGitRepository(final IProject project, final MultiStatus multiStatus)
-   {
-      final IPath pathToRepository = findGitRepositoryRoot(project);
+	/**
+	 * Retrieves the Git repository containing the given project.
+	 * 
+	 * @param project
+	 *            the project
+	 * @param multiStatus
+	 *            used to report problems
+	 * @return the repository or <code>null</code> if the project is not inside a
+	 *         Git repository
+	 */
+	public static Repository findGitRepository(final IProject project, final MultiStatus multiStatus) {
+		final IPath pathToRepository = findGitRepositoryRoot(project);
 
-      if (pathToRepository == null)
-      {
-         multiStatus.add(new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(GitHelper.class),
-               String.format("Not a git repository: %s", project.getLocation().makeAbsolute())));
-         return null;
-      }
+		if (pathToRepository == null) {
+			multiStatus.add(new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(GitHelper.class),
+					String.format("Not a git repository: %s", project.getLocation().makeAbsolute())));
+			return null;
+		}
 
-      final File gitFolder = new File(pathToRepository + GIT_FOLDER);
+		final File gitFolder = new File(pathToRepository + GIT_FOLDER);
 
-      try
-      {
-         final Repository rep = FileRepositoryBuilder.create(gitFolder);
-         return rep;
-      } catch (final IOException e)
-      {
-         multiStatus.add(new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(GitHelper.class),
-               String.format("Exception while opening git repository in %s", gitFolder), e));
-         return null;
-      }
-   }
+		try {
+			final Repository rep = FileRepositoryBuilder.create(gitFolder);
+			return rep;
+		} catch (final IOException e) {
+			multiStatus.add(new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(GitHelper.class),
+					String.format("Exception while opening git repository in %s", gitFolder), e));
+			return null;
+		}
+	}
 
-   /**
-    * Finds the folder containing the Git metadata folder .git in the parents of the given project
-    *
-    * @param project the project
-    * @return the folder or <code>null</code> if no such folder exists
-    */
-   private static IPath findGitRepositoryRoot(final IProject project)
-   {
-      IPath pathToRepository = project.getLocation().makeAbsolute();
-      {
-         File gitFolder = null;
-         do
-         {
-            gitFolder = new File(pathToRepository + GIT_FOLDER);
+	/**
+	 * Finds the folder containing the Git metadata folder .git in the parents of
+	 * the given project
+	 *
+	 * @param project
+	 *            the project
+	 * @return the folder or <code>null</code> if no such folder exists
+	 */
+	private static IPath findGitRepositoryRoot(final IProject project) {
+		IPath pathToRepository = project.getLocation().makeAbsolute();
+		{
+			File gitFolder = null;
+			do {
+				gitFolder = new File(pathToRepository + GIT_FOLDER);
 
-            if (gitFolder.exists())
-            {
-               return pathToRepository;
-            }
+				if (gitFolder.exists()) {
+					return pathToRepository;
+				}
 
-            pathToRepository = pathToRepository.removeLastSegments(1);
-         } while (!pathToRepository.isRoot());
-      }
-      return null;
-   }
+				pathToRepository = pathToRepository.removeLastSegments(1);
+			} while (!pathToRepository.isRoot());
+		}
+		return null;
+	}
 }

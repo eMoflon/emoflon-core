@@ -30,91 +30,80 @@ import org.eclipse.ui.ide.IDE;
  *
  * @author Roland Kluge - Initial implementation
  */
-public abstract class AbstractCommandHandler extends org.eclipse.core.commands.AbstractHandler
-{
+public abstract class AbstractCommandHandler extends org.eclipse.core.commands.AbstractHandler {
 
-   protected Logger logger;
+	protected Logger logger;
 
-   /**
-    * This value should be used as standard return value for the overridden {@link IHandler#execute(ExecutionEvent)}
-    */
-   public static final Object DEFAULT_HANDLER_RESULT = null;
+	/**
+	 * This value should be used as standard return value for the overridden
+	 * {@link IHandler#execute(ExecutionEvent)}
+	 */
+	public static final Object DEFAULT_HANDLER_RESULT = null;
 
-   /**
-    * Initializes the logger of the subclass according to the dynamic type of the subclass
-    */
-   public AbstractCommandHandler() {
-      this.logger = Logger.getLogger(this.getClass());
-   }
+	/**
+	 * Initializes the logger of the subclass according to the dynamic type of the
+	 * subclass
+	 */
+	public AbstractCommandHandler() {
+		this.logger = Logger.getLogger(this.getClass());
+	}
 
-   /**
-    * Tries to extract the project(s) from the given element.
-    *
-    * For files, the containing project is returned.
-    * For working sets, the contained projects are returned
-    *
-    * @param selectionIterator
-    * @return the containing projects (if exists), otherwise an empty list
-    */
-   protected static List<IProject> getProjects(final Object element)
-   {
-      final List<IProject> projects = new ArrayList<>();
-      if (element instanceof IResource)
-      {
-         final IResource resource = (IResource) element;
-         final IProject project = resource.getProject();
-         projects.add(project);
-      }
-      else if (element instanceof IJavaElement)
-      {
-         final IJavaElement javaElement = (IJavaElement) element;
-         final IProject project = javaElement.getJavaProject().getProject();
-         projects.add(project);
-      }
-      else if (element instanceof IWorkingSet)
-      {
-         final IWorkingSet workingSet = (IWorkingSet) element;
-         for (final IAdaptable elementInWorkingSet : workingSet.getElements()) {
-            if (elementInWorkingSet instanceof IProject)
-            {
-               projects.add((IProject)elementInWorkingSet);
-            }
-         }
-      }
-      return projects;
-   }
+	/**
+	 * Tries to extract the project(s) from the given element.
+	 *
+	 * For files, the containing project is returned. For working sets, the
+	 * contained projects are returned
+	 *
+	 * @param selectionIterator
+	 * @return the containing projects (if exists), otherwise an empty list
+	 */
+	protected static List<IProject> getProjects(final Object element) {
+		final List<IProject> projects = new ArrayList<>();
+		if (element instanceof IResource) {
+			final IResource resource = (IResource) element;
+			final IProject project = resource.getProject();
+			projects.add(project);
+		} else if (element instanceof IJavaElement) {
+			final IJavaElement javaElement = (IJavaElement) element;
+			final IProject project = javaElement.getJavaProject().getProject();
+			projects.add(project);
+		} else if (element instanceof IWorkingSet) {
+			final IWorkingSet workingSet = (IWorkingSet) element;
+			for (final IAdaptable elementInWorkingSet : workingSet.getElements()) {
+				if (elementInWorkingSet instanceof IProject) {
+					projects.add((IProject) elementInWorkingSet);
+				}
+			}
+		}
+		return projects;
+	}
 
-   protected static IFile getEditedFile(final ExecutionEvent event)
-   {
-      return (IFile)HandlerUtil.getActiveEditor(event).getEditorInput().getAdapter(IFile.class);
-   }
+	protected static IFile getEditedFile(final ExecutionEvent event) {
+		return (IFile) HandlerUtil.getActiveEditor(event).getEditorInput().getAdapter(IFile.class);
+	}
 
-   public void openInEditor(final IFile targetFile) throws CoreException, PartInitException
-   {
-      IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-      HashMap<String, Object> map = new HashMap<String, Object>();
-      map.put(IMarker.LINE_NUMBER, new Integer(1));
-      IMarker marker;
+	public void openInEditor(final IFile targetFile) throws CoreException, PartInitException {
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put(IMarker.LINE_NUMBER, new Integer(1));
+		IMarker marker;
 
-      marker = targetFile.createMarker(IMarker.TEXT);
+		marker = targetFile.createMarker(IMarker.TEXT);
 
-      marker.setAttributes(map);
-      IDE.openEditor(page, targetFile);
-      marker.delete();
-   }
+		marker.setAttributes(map);
+		IDE.openEditor(page, targetFile);
+		marker.delete();
+	}
 
-   protected static Collection<IProject> getProjectsFromSelection(final IStructuredSelection selection)
-   {
-      final List<IProject> projects = new ArrayList<>();
-      if (selection instanceof StructuredSelection)
-      {
-         final StructuredSelection structuredSelection = (StructuredSelection) selection;
-         for (final Iterator<?> selectionIterator = structuredSelection.iterator(); selectionIterator.hasNext();)
-         {
-            projects.addAll(getProjects(selectionIterator.next()));
-         }
-      }
+	protected static Collection<IProject> getProjectsFromSelection(final IStructuredSelection selection) {
+		final List<IProject> projects = new ArrayList<>();
+		if (selection instanceof StructuredSelection) {
+			final StructuredSelection structuredSelection = (StructuredSelection) selection;
+			for (final Iterator<?> selectionIterator = structuredSelection.iterator(); selectionIterator.hasNext();) {
+				projects.addAll(getProjects(selectionIterator.next()));
+			}
+		}
 
-      return projects;
-   }
+		return projects;
+	}
 }
