@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
@@ -1064,23 +1065,45 @@ public class eMoflonEMFUtil {
 	 * @return the validation status
 	 */
 	public static IStatus validateGenModel(final GenModel genModel) {
-		final MultiStatus customValidationStatus = new MultiStatus(WorkspaceHelper.getPluginId(eMoflonEMFUtil.class), 0,
-				"Validation problems in GenModel", null);
+		final MultiStatus combinedValidationStatus = new MultiStatus(WorkspaceHelper.getPluginId(eMoflonEMFUtil.class),
+				0, "Validation problems in GenModel", null);
 		final IStatus defaultValidationResult = genModel.validate();
-		customValidationStatus.merge(defaultValidationResult);
+		combinedValidationStatus.merge(defaultValidationResult);
 
-		genModel.getAllGenPackagesWithClassifiers().stream()
-				.forEach(genPackage -> genPackage.getGenClassifiers().stream().forEach(genClassifier -> {
-					if (genClassifier.getName().equals(genPackage.getPackageName())) {
-						customValidationStatus.add(new Status(IStatus.ERROR,
-								WorkspaceHelper.getPluginId(eMoflonEMFUtil.class),
-								String.format(
-										"An EPackage and its contained class may not have the same name (package URI: %s).",
-										genPackage.getNSURI())));
-					}
-				}));
+		genModel.getAllGenPackagesWithClassifiers().stream()//
+				.filter(eMoflonEMFUtil::containsClassifierWithSameName)//
+				.map(eMoflonEMFUtil::createSameNameValidationProblem)//
+				.forEach(status -> combinedValidationStatus.merge(status));
 
-		return customValidationStatus.isOK() ? Status.OK_STATUS : customValidationStatus;
+		return combinedValidationStatus.isOK() ? Status.OK_STATUS : combinedValidationStatus;
+	}
+
+	/**
+	 * Returns an {@link IStatus} that marks the given {@link GenPackage} as
+	 * containing a homonymous {@link EClassifier}
+	 *
+	 * @param genPackage
+	 *            the package to mark
+	 * @return the marker
+	 */
+	private static Status createSameNameValidationProblem(GenPackage genPackage) {
+		return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(eMoflonEMFUtil.class),
+				String.format("An EPackage and its contained class may not have the same name (package URI: %s).",
+						genPackage.getNSURI()));
+	}
+
+	/**
+	 * Returns true iff the given {@link GenPackage} contains an {@link EClassifier}
+	 * with the same name as the package.
+	 *
+	 * @param genPackage
+	 *            the package to check
+	 * @return the search result
+	 */
+	private static boolean containsClassifierWithSameName(final GenPackage genPackage) {
+		return genPackage.getGenClassifiers().stream()
+				.filter(genClassifier -> genClassifier.getName().equals(genPackage.getPackageName())).findAny()
+				.isPresent();
 	}
 
 }
