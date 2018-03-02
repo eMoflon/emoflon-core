@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.moflon.core.feature_1.0.0.qualifier.jar" id="org.moflon.core.feature" version="1.0.0.qualifier">
+      <category name="org.moflon.core.category"/>
+   </feature>
+   <category-def name="org.moflon.core.category" label="eMoflon Core">
+      <description>
+         Core Components of eMoflon
+      </description>
+   </category-def>
+   <repository-reference location="http://files.idi.ntnu.no/publish/plantuml/repository/" enabled="true" />
+   <repository-reference location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/" enabled="true" />
+   <repository-reference location="http://gervarro.org/eclipse-utils/" enabled="true" />
+   <repository-reference location="http://gervarro.org/external" enabled="true" />
+</site>
