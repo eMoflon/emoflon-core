@@ -9,10 +9,6 @@
           <with variable="selection">
             <iterate ifEmpty="false" operator="and">
               <and>
-                <or>
-                  <reference definitionId="org.moflon.ide.ui.definitions.hasRepositoryNature"/>
-                  <reference definitionId="org.moflon.ide.ui.definitions.hasIntegrationNature"/>
-                </or>
                 <reference definitionId="org.moflon.ide.ui.definitions.isJavaFile"/>
                 <reference definitionId="org.moflon.ide.ui.definitions.isInGenFolder"/>
               </and>
