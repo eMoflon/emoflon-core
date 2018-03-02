@@ -16,19 +16,18 @@
 
 
   <target name="releaseSnapshot" depends="createArchive" description="Release snapshot update site">
-    <delete>
+    <delete failonerror="false">
       <fileset dir="${updateSiteLocationSnapshot}">
         <include name="**/*" />
       </fileset>
     </delete>
-
     <unzip src="${updateSiteArchive}" dest="${updateSiteLocationSnapshot}">
     </unzip>
     <eclipse.refreshLocal resource="${emoflonCoreUpdatesiteProject}" depth="infinite" />
   </target>
 
   <target name="releaseStable" depends="createArchive" description="Release stable update site">
-    <delete>
+    <delete failonerror="false">
       <fileset dir="${updateSiteLocationStable}">
         <include name="**/*" />
       </fileset>
