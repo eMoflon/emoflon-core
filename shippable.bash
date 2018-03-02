@@ -31,10 +31,10 @@
 #xvfb-run --server-args="-ac" $ECLIPSE_HOME/eclipse -nosplash -application org.eclipse.jdt.apt.core.aptBuild -data $workspacePath || exit -1
 
 echo "Run Tycho (clean compile)"
-mvn clean compile || exit -1
+mvn -q clean compile || exit -1
 
 echo "Run Tycho (integration-test)"
-mvn integration-test || exit -1
+mvn -q integration-test || exit -1
 
 echo "Publish JUnit test results"
 find . -path "*/target/*/TEST*.xml" -exec cp {} /root/src/github.com/eMoflon/emoflon-core/shippable/testresults/ \;
