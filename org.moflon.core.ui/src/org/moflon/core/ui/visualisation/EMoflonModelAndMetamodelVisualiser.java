@@ -13,10 +13,10 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.presentation.EcoreEditor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentsEList;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 
@@ -25,14 +25,18 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 
 	@Override
 	protected String getDiagramBody(IEditorPart editor, ISelection selection) {
-		return maybeVisualiseMetamodel(editor)
-				.orElse(maybeVisualiseModel(editor).orElse(EMoflonPlantUMLGenerator.emptyDiagram()));
+		return maybeVisualiseMetamodel(editor)//
+				.orElse(maybeVisualiseModel(editor)//
+						.orElse(EMoflonPlantUMLGenerator.emptyDiagram()));//
 	}
 
 	@SuppressWarnings("rawtypes")
 	private Optional<List> multiSelectionInEcoreEditor(IEditorPart editor) {
-		return Optional.of(editor).flatMap(maybeCast(EcoreEditor.class)).map(EcoreEditor::getSelection)
-				.flatMap(maybeCast(IStructuredSelection.class)).map(IStructuredSelection::toList);
+		return Optional.of(editor.getSite().getSelectionProvider())//
+				.flatMap(maybeCast(ISelectionProvider.class))//
+				.map(ISelectionProvider::getSelection)//
+				.flatMap(maybeCast(IStructuredSelection.class))//
+				.map(IStructuredSelection::toList);//
 	}
 
 	private Optional<String> maybeVisualiseMetamodel(IEditorPart editor) {
@@ -55,14 +59,18 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 
 	private Optional<Pair<Collection<EObject>, Collection<Pair<String, Pair<EObject, EObject>>>>> extractModelElementsFromEditor(
 			IEditorPart editor2) {
-		return Optional.of(editor).flatMap(this::multiSelectionInEcoreEditor)
-				.map(this::determineObjectsAndLinksToVisualise).map(p -> p.getLeft().isEmpty() ? null : p);
+		return Optional.of(editor)//
+				.flatMap(this::multiSelectionInEcoreEditor)//
+				.map(this::determineObjectsAndLinksToVisualise)//
+				.map(p -> p.getLeft().isEmpty() ? null : p);//
 	}
 
 	private Optional<Pair<Collection<EClass>, Collection<EReference>>> extractMetamodelElementsFromEditor(
 			IEditorPart editor) {
-		return Optional.of(editor).flatMap(this::multiSelectionInEcoreEditor)
-				.map(this::determineClassesAndRefsToVisualise).map(p -> p.getLeft().isEmpty() ? null : p);
+		return Optional.of(editor)//
+				.flatMap(this::multiSelectionInEcoreEditor)//
+				.map(this::determineClassesAndRefsToVisualise)//
+				.map(p -> p.getLeft().isEmpty() ? null : p);//
 	}
 
 	private Pair<Collection<EClass>, Collection<EReference>> determineClassesAndRefsToVisualise(
@@ -81,8 +89,10 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 		}
 
 		else {
-			Collection<EClass> chosenClasses = selection.stream().filter(EClass.class::isInstance)
-					.map(EClass.class::cast).collect(Collectors.toSet());
+			Collection<EClass> chosenClasses = selection.stream()//
+					.filter(EClass.class::isInstance)//
+					.map(EClass.class::cast)//
+					.collect(Collectors.toSet());//
 
 			return Pair.of(chosenClasses, determineReferencesToVisualize(chosenClasses));
 		}
@@ -103,16 +113,19 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 		}
 
 		else {
-			Collection<EObject> chosenObjects = selection.stream().filter(EObject.class::isInstance)
-					.map(EObject.class::cast).collect(Collectors.toSet());
+			Collection<EObject> chosenObjects = selection.stream()//
+					.filter(EObject.class::isInstance)//
+					.map(EObject.class::cast)//
+					.collect(Collectors.toSet());//
 
 			return Pair.of(chosenObjects, determineLinksToVisualize(chosenObjects));
 		}
 	}
 
 	private Collection<EReference> determineReferencesToVisualize(Collection<EClass> chosenClasses) {
-		Collection<EReference> refs = chosenClasses.stream().flatMap(c -> c.getEReferences().stream())
-				.collect(Collectors.toSet());
+		Collection<EReference> refs = chosenClasses.stream()//
+				.flatMap(c -> c.getEReferences().stream())//
+				.collect(Collectors.toSet());//
 		return refs;
 	}
 
@@ -140,8 +153,10 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 	}
 
 	private List<Resource> resourceChosen(Collection<Object> selection) {
-		List<Resource> resourceChosen = selection.stream().filter(Resource.class::isInstance).map(Resource.class::cast)
-				.collect(Collectors.toList());
+		List<Resource> resourceChosen = selection.stream()//
+				.filter(Resource.class::isInstance)//
+				.map(Resource.class::cast)//
+				.collect(Collectors.toList());//
 		return resourceChosen;
 
 	}
