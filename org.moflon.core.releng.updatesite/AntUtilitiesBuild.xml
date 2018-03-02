@@ -7,33 +7,41 @@
     See "External Tools Configurations..." -> [Run Config] -> JRE -> "Run in the same JRE as workspace"
     </description>
 
+  <property name="buildDirectory" value="build"/>
+  <property name="updateSiteSourceProject" value="org.moflon.core.releng.updatesite"/>
+  <property name="emoflonCoreUpdatesiteProject" value="emoflon-core-updatesite"/>
+  <property name="updateSiteLocationSnapshot" value="${emoflonCoreUpdateSiteProjectRoot}/snapshot/updatesite"/>
+  <property name="updateSiteLocationStable" value="${emoflonCoreUpdateSiteProjectRoot}/stable/updatesite"/>
+  <property name="updateSiteArchive" value="${buildDirectory}/updatesite.zip"/>
+
+
   <target name="releaseSnapshot" depends="createArchive" description="Release snapshot update site">
     <delete>
-      <fileset dir="${emoflonCoreUpdateSiteProjectRoot}/snapshot/updatesite">
+      <fileset dir="${updateSiteLocationSnapshot}">
         <include name="**/*" />
       </fileset>
     </delete>
 
-    <unzip src="build/updatesite.zip" dest="${emoflonCoreUpdateSiteProjectRoot}/snapshot/updatesite">
+    <unzip src="${updateSiteArchive}" dest="${updateSiteLocationSnapshot}">
     </unzip>
-    <eclipse.refreshLocal resource="emoflon-core-updatesite" depth="infinite" />
+    <eclipse.refreshLocal resource="${emoflonCoreUpdatesiteProject}" depth="infinite" />
   </target>
 
   <target name="releaseStable" depends="createArchive" description="Release stable update site">
     <delete>
-      <fileset dir="${emoflonCoreUpdateSiteProjectRoot}/stable/updatesite">
+      <fileset dir="${updateSiteLocationStable}">
         <include name="**/*" />
       </fileset>
     </delete>
 
-    <unzip src="build/updatesite.zip" dest="${emoflonCoreUpdateSiteProjectRoot}/stable/updatesite">
+    <unzip src="${updateSiteArchive}" dest="${updateSiteLocationStable}">
     </unzip>
-    <eclipse.refreshLocal resource="emoflon-core-updatesite" depth="infinite" />
+    <eclipse.refreshLocal resource="${emoflonCoreUpdatesiteProject}" depth="infinite" />
   </target>
 
   <target name="createArchive" description="Creates an archive that contains a ready-to-release update site for eMoflon">
-    <delete file="build/updatesite.zip" />
-    <zip destfile="build/updatesite.zip" update="false">
+    <delete file="${updateSiteArchive}" />
+    <zip destfile="${updateSiteArchive}" update="false">
       <fileset dir="." includes="features/*" excludes="**/*.signedjar" />
       <fileset dir="." includes="plugins/*" excludes="**/*.signedjar" />
       <fileset dir="." includes="artifacts.jar" />
@@ -49,7 +57,7 @@
   </target>
 
   <target name="clean" description="Remove generated artifacts">
-    <delete dir="build" />
+    <delete dir="${buildDirectory}" />
     <delete dir="features" />
     <delete dir="plugins" />
     <delete file="artifacts.jar" />
@@ -64,6 +72,6 @@
       This only works if the ant script is run in the JRE of Eclipse.
     -->
   <target name="refresh" description="Refresh update-site project">
-    <eclipse.refreshLocal resource="org.moflon.core.releng.updatesite" depth="infinite" />
+    <eclipse.refreshLocal resource="${updateSiteSourceProject}" depth="infinite" />
   </target>
 </project>
