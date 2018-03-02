@@ -13,10 +13,10 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.presentation.EcoreEditor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentsEList;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 
@@ -32,9 +32,9 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 
 	@SuppressWarnings("rawtypes")
 	private Optional<List> multiSelectionInEcoreEditor(IEditorPart editor) {
-		return Optional.of(editor)//
-				.flatMap(maybeCast(EcoreEditor.class))//
-				.map(EcoreEditor::getSelection)//
+		return Optional.of(editor.getSite().getSelectionProvider())//
+				.flatMap(maybeCast(ISelectionProvider.class))//
+				.map(ISelectionProvider::getSelection)//
 				.flatMap(maybeCast(IStructuredSelection.class))//
 				.map(IStructuredSelection::toList);//
 	}
