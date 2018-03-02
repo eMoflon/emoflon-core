@@ -1,4 +1,4 @@
-2018-02-08 eMoflon 1.0.0 released
+2018-03-02 eMoflon 1.0.0 released
 
 eMoflon Core contains core components that can be reused across different versions of eMoflon.
 
@@ -7,4 +7,5 @@ eMoflon Core currently contains
   Method bodies can be provided via injections.
 * Utilities such as Git Reset Repository, Touch Resource, Trigger Full Build, Trigger Incremental Build
 
+2018-02-08 Second pre-release of eMoflon Core
 2018-01-24 First pre-release of eMoflon Core

@@ -25,11 +25,6 @@
         <test property="org.eclipse.core.resources.path" value="*/gen/*"/>
       </adapt>
     </definition>
-    <definition id="org.moflon.ide.ui.definitions.hasIntegrationNature">
-      <adapt type="org.eclipse.core.resources.IResource">
-        <test property="org.eclipse.core.resources.projectNature" value="org.moflon.ide.core.runtime.natures.IntegrationNature"/>
-      </adapt>
-    </definition>
     <definition id="org.moflon.ide.ui.definitions.isXmiFile">
       <adapt type="org.eclipse.core.resources.IResource">
         <test property="org.eclipse.core.resources.name" value="*.xmi"/>
@@ -53,9 +48,6 @@
     <definition id="org.moflon.ide.ui.definitions.hasAnyMoflonNature">
       <or>
         <reference definitionId="org.moflon.ide.ui.definitions.hasJavaNature"/>
-        <reference definitionId="org.moflon.ide.ui.definitions.hasMetamodelNature"/>
-        <reference definitionId="org.moflon.ide.ui.definitions.hasRepositoryNature"/>
-        <reference definitionId="org.moflon.ide.ui.definitions.hasIntegrationNature"/>
       </or>
     </definition>
     <definition id="org.moflon.ide.ui.definitions.isProject">
@@ -163,9 +155,6 @@
             <iterate ifEmpty="false" operator="or">
               <or>
                 <reference definitionId="org.moflon.ide.ui.definitions.hasJavaNature"/>
-                <!--<reference definitionId="org.moflon.ide.ui.definitions.hasMetamodelNature"></reference>
-                                <reference definitionId="org.moflon.ide.ui.definitions.hasRepositoryNature"></reference>
-                                <reference definitionId="org.moflon.ide.ui.definitions.hasIntegrationNature"></reference>-->
               </or>
             </iterate>
             <and>
@@ -175,9 +164,6 @@
               <with variable="activeEditorInput">
                 <or>
                   <reference definitionId="org.moflon.ide.ui.definitions.hasJavaNature"/>
-                  <!--<reference definitionId="org.moflon.ide.ui.definitions.hasMetamodelNature"></reference>
-                                    <reference definitionId="org.moflon.ide.ui.definitions.hasRepositoryNature"></reference>
-                                    <reference definitionId="org.moflon.ide.ui.definitions.hasIntegrationNature"></reference>-->
                 </or>
               </with>
             </and>

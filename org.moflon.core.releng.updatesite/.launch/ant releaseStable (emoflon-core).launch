@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.ant.AntLaunchConfigurationType">
+<stringAttribute key="bad_container_name" value="\org.moflon.core.releng.updatesite\.lau"/>
 <booleanAttribute key="org.eclipse.ant.ui.DEFAULT_VM_INSTALL" value="false"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/org.moflon.core.releng.updatesite/AntUtilitiesBuild.xml"/>
@@ -10,6 +11,14 @@
 <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.ant.ui.AntClasspathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.moflon.core.releng.updatesite"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.ant.ui.AntClasspathProvider"/>
+<mapAttribute key="org.eclipse.ui.externaltools.ATTR_ANT_PROPERTIES">
+<mapEntry key="eclipse.pdebuild.home" value="C:\Users\rkluge\Documents\Programme\oxygen_L0\plugins\org.eclipse.pde.build_3.9.300.v20170515-0912\."/>
+<mapEntry key="eclipse.pdebuild.scripts" value="C:\Users\rkluge\Documents\Programme\oxygen_L0\plugins\org.eclipse.pde.build_3.9.300.v20170515-0912\scripts"/>
+<mapEntry key="eclipse.pdebuild.templates" value="C:\Users\rkluge\Documents\Programme\oxygen_L0\plugins\org.eclipse.pde.build_3.9.300.v20170515-0912\templates"/>
+<mapEntry key="emoflonCoreUpdateSiteProjectRoot" value="${workspace_loc:/emoflon-core-updatesite}"/>
+</mapAttribute>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_ANT_TARGETS" value="releaseStable,"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:/org.moflon.core.releng.updatesite/AntUtilitiesBuild.xml}"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:/org.moflon.core.releng.updatesite}"/>
 <stringAttribute key="process_factory_id" value="org.eclipse.ant.ui.remoteAntProcessFactory"/>
 </launchConfiguration>

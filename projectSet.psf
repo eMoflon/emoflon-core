@@ -2,6 +2,7 @@
 <psf version="2.0">
 <provider id="org.eclipse.egit.core.GitProvider">
 <project reference="1.0,https://github.com/eMoflon/emoflon-core-updatesite.git,master,."/>
+<project reference="1.0,https://github.com/eMoflon/emoflon-releng.git,master,org.moflon.releng.signing"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.branding"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.build"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.build.tests"/>

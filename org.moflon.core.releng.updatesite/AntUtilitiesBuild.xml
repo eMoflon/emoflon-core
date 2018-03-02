@@ -1,57 +1,76 @@
 <project name="org.moflon.deployment.updatesite" default="clean" basedir=".">
-	<description>
+  <description>
     Helper ant file for the update site of eMoflon.
 
-  	**NOTE:** It is important that the script runs in the same JRE as the surrounding workspace to allow executing
-  	'eclipse.*' tasks
-  	See "External Tools Configurations..." -> [Run Config] -> JRE -> "Run in the same JRE as workspace"
-  </description>
+    **NOTE:** It is important that the script runs in the same JRE as the surrounding workspace to allow executing
+    'eclipse.*' tasks
+    See "External Tools Configurations..." -> [Run Config] -> JRE -> "Run in the same JRE as workspace"
+    </description>
 
-	<target name="releaseSnapshot" depends="createArchive" description="Release snapshot update site">
-		<delete>
-			<fileset dir="${emoflonCoreUpdateSiteProjectRoot}/snapshot/updatesite">
-				<include name="**/*" />
-			</fileset>
-		</delete>
+  <property name="buildDirectory" value="build"/>
+  <property name="updateSiteSourceProject" value="org.moflon.core.releng.updatesite"/>
+  <property name="emoflonCoreUpdatesiteProject" value="emoflon-core-updatesite"/>
+  <property name="updateSiteLocationSnapshot" value="${emoflonCoreUpdateSiteProjectRoot}/snapshot/updatesite"/>
+  <property name="updateSiteLocationStable" value="${emoflonCoreUpdateSiteProjectRoot}/stable/updatesite"/>
+  <property name="updateSiteArchive" value="${buildDirectory}/updatesite.zip"/>
 
-		<unzip src="build/updatesite.zip" dest="${emoflonCoreUpdateSiteProjectRoot}/snapshot/updatesite">
-		</unzip>
-		<eclipse.refreshLocal resource="emoflon-core-updatesite" depth="infinite" />
-	</target>
 
-	<target name="createArchive" description="Creates an archive that contains a ready-to-release update site for eMoflon">
-		<delete file="build/updatesite.zip" />
-		<zip destfile="build/updatesite.zip" update="false">
-			<fileset dir="." includes="features/*" excludes="**/*.signedjar" />
-			<fileset dir="." includes="plugins/*" excludes="**/*.signedjar" />
-			<fileset dir="." includes="artifacts.jar" />
-			<fileset dir="." includes="associateSites.xml" />
-			<fileset dir="." includes="changelog.txt" />
-			<fileset dir="." includes="content.jar" />
-			<fileset dir="." includes="ea-ecore-addin.zip" />
-			<fileset dir="." includes="index.html" />
-			<fileset dir="." includes="site.xml" />
-		</zip>
-		<antcall target="refresh">
-		</antcall>
-	</target>
+  <target name="releaseSnapshot" depends="createArchive" description="Release snapshot update site">
+    <delete failonerror="false">
+      <fileset dir="${updateSiteLocationSnapshot}">
+        <include name="**/*" />
+      </fileset>
+    </delete>
+    <unzip src="${updateSiteArchive}" dest="${updateSiteLocationSnapshot}">
+    </unzip>
+    <eclipse.refreshLocal resource="${emoflonCoreUpdatesiteProject}" depth="infinite" />
+  </target>
 
-	<target name="clean" description="Remove generated artifacts">
-		<delete dir="build" />
-		<delete dir="features" />
-		<delete dir="plugins" />
-		<delete file="artifacts.jar" />
-		<delete file="content.jar" />
-		<delete file="logs.zip" />
-		<antcall target="refresh">
-		</antcall>
-	</target>
+  <target name="releaseStable" depends="createArchive" description="Release stable update site">
+    <delete failonerror="false">
+      <fileset dir="${updateSiteLocationStable}">
+        <include name="**/*" />
+      </fileset>
+    </delete>
 
-	<!--
-  This task triggers Eclipse's refresh for the update-site project.
-  This only works if the ant script is run in the JRE of Eclipse.
-  -->
-	<target name="refresh" description="Refresh update-site project">
-		<eclipse.refreshLocal resource="org.moflon.core.releng.updatesite" depth="infinite" />
-	</target>
+    <unzip src="${updateSiteArchive}" dest="${updateSiteLocationStable}">
+    </unzip>
+    <eclipse.refreshLocal resource="${emoflonCoreUpdatesiteProject}" depth="infinite" />
+  </target>
+
+  <target name="createArchive" description="Creates an archive that contains a ready-to-release update site for eMoflon">
+    <delete file="${updateSiteArchive}" />
+    <zip destfile="${updateSiteArchive}" update="false">
+      <fileset dir="." includes="features/*" excludes="**/*.signedjar" />
+      <fileset dir="." includes="plugins/*" excludes="**/*.signedjar" />
+      <fileset dir="." includes="artifacts.jar" />
+      <fileset dir="." includes="associateSites.xml" />
+      <fileset dir="." includes="changelog.txt" />
+      <fileset dir="." includes="content.jar" />
+      <fileset dir="." includes="ea-ecore-addin.zip" />
+      <fileset dir="." includes="index.html" />
+      <fileset dir="." includes="site.xml" />
+    </zip>
+    <antcall target="refresh">
+    </antcall>
+  </target>
+
+  <target name="clean" description="Remove generated artifacts">
+    <delete dir="${buildDirectory}" />
+    <delete dir="features" />
+    <delete dir="plugins" />
+    <delete file="artifacts.jar" />
+    <delete file="content.jar" />
+    <delete file="logs.zip" />
+    <antcall target="refresh">
+    </antcall>
+  </target>
+
+  <!--
+      This task triggers Eclipse's refresh for the update-site project.
+      This only works if the ant script is run in the JRE of Eclipse.
+    -->
+  <target name="refresh" description="Refresh update-site project">
+    <eclipse.refreshLocal resource="${updateSiteSourceProject}" depth="infinite" />
+  </target>
 </project>
