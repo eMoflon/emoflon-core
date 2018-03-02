@@ -94,6 +94,7 @@
     <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.core.ui.commands.admin.EditLoggingConfigFile" name="Edit logging configuration"/>
     <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.core.ui.commands.admin.ConfigureLogging" name="Configure logging"/>
     <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.core.ui.commands.admin.ReconfigureLogging" name="Reconfigure logging"/>
+    <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.ide.ui.moflon" name="eMoflon popup"></command>
     <command defaultHandler="org.moflon.core.ui.handler.TouchResourceHandler" id="org.moflon.core.ui.commands.TouchResourceCommand" name="Touch Resource"/>
   </extension>
   <extension point="org.eclipse.ui.handlers">
