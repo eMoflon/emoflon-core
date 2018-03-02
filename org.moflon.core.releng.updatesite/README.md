@@ -4,6 +4,7 @@
 2. Build the update site:
     * Right-click *site.xml*, *Plug-In Tools->Build Site*
     * **IMPORTANT** It is **absolutely crucial** to reset the *site.xml* file after every build of the update site
+      * This can be achieved in Eclipse via *Right-click site.xml -> Replace With -> HEAD revision*
     * When opening *site.xml*, the entries per category should
        * SHOULD look like this: "org.moflon.core.feature (2.32.0.qualifier)"
        * SHOULD NOT look like this: "features/org.moflon.core.feature_2.32.0.201702211758.jar"
