@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
-import org.apache.commons.lang3.tuple.Pair;
 
 class EMoflonPlantUMLGenerator {
 	
@@ -42,12 +41,16 @@ class EMoflonPlantUMLGenerator {
 			«ENDFOR»
 		«ENDFOR»
 		«FOR r : refs»
-		«identifierForClass(r.EContainingClass)»«IF r.isContainment» *«ENDIF»--> «multiplicityFor(r)» «identifierForClass(r.EReferenceType)» : "«r.name»"
+			«IF(r.EOpposite === null)»
+				«identifierForClass(r.EContainingClass)»«IF r.isContainment» *«ENDIF»--> "«multiplicityFor(r)»" «identifierForClass(r.EReferenceType)» : "«r.name»"
+			«ELSE»
+				«identifierForClass(r.EContainingClass)»«IF r.isContainment» *«ENDIF»"«r.EOpposite.name» «multiplicityFor(r.EOpposite)»" <--> "«r.name» «multiplicityFor(r)»" «identifierForClass(r.EReferenceType)»
+			«ENDIF»
 		«ENDFOR»
 		'''
 	}
 	
-	public def static String visualiseModelElements(Collection<EObject> objects, Collection<Pair<String, Pair<EObject, EObject>>> links){
+	public def static String visualiseModelElements(Collection<EObject> objects, Collection<VisualEdge> links){
 		idMap.clear
 		
 		'''
@@ -57,13 +60,17 @@ class EMoflonPlantUMLGenerator {
 		}
 		«ENDFOR»
 		«FOR l : links»
-		«identifierForObject(l.right.left)» --> «identifierForObject(l.right.right)» : "«l.left»"
+			«IF(!l.hasEOpposite)»
+				«identifierForObject(l.src)» --> «identifierForObject(l.trg)» : "«l.name»"
+			«ELSE»
+				«identifierForObject(l.src)» "«l.oppositeName»" <-->  "«l.name»" «identifierForObject(l.trg)»
+			«ENDIF»
 		«ENDFOR»
 		'''
 	}
 	
 	private def static multiplicityFor(EReference r) {
-		'''"«IF r.lowerBound == -1»*«ELSE»«r.lowerBound»«ENDIF»..«IF r.upperBound == -1»*«ELSE»«r.upperBound»«ENDIF»"'''
+		'''«IF r.lowerBound == -1»*«ELSE»«r.lowerBound»«ENDIF»..«IF r.upperBound == -1»*«ELSE»«r.upperBound»«ENDIF»'''
 	}
 	
 	private def static String identifierForClass(EClass c)
@@ -84,7 +91,7 @@ class EMoflonPlantUMLGenerator {
 		'''«idMap.get(o)».«o.eClass.name»'''	
 	}
 	
-	def static String visualiseCorrModel(Collection<EObject> corrObjects, Collection<EObject> sourceObjects, Collection<EObject> targetObjects, Collection<Pair<String, Pair<EObject, EObject>>> links)
+	def static String visualiseCorrModel(Collection<EObject> corrObjects, Collection<EObject> sourceObjects, Collection<EObject> targetObjects, Collection<VisualEdge> links)
 	{	
 		idMap.clear
 		'''
@@ -111,7 +118,7 @@ class EMoflonPlantUMLGenerator {
 		«ENDFOR»
 		
 		«FOR l : links»
-			«identifierForObject(l.right.left,'_')» --> «identifierForObject(l.right.right,'_')» : "«l.left»"
+			«identifierForObject(l.src,'_')» --> «identifierForObject(l.trg,'_')» : "«l.name»"
 		«ENDFOR»
 		'''
 	} 
