@@ -18,6 +18,7 @@
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.ui.autosetup.tests"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.utilities"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.utilities.tests"/>
+<project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.xtext"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.emf.build"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.emf.codegen"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.emf.injection"/>
@@ -58,6 +59,7 @@
 <item elementID="=org.moflon.core.plugins" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.moflon.core.preferences" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.moflon.core.utilities" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.moflon.core.xtext" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.moflon.core.plugins.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.moflon.core.utilities.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>

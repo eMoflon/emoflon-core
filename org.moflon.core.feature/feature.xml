@@ -33,7 +33,7 @@ See here for more details on EPL: http://www.eclipse.org/org/documents/epl-v10.p
 
    <requires>
       <import plugin="net.sourceforge.plantuml.eclipse" version="1.1.19" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.runtime" version="2.12.0"/>
+      <import feature="org.eclipse.xtext.runtime" version="2.12.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -157,6 +157,13 @@ See here for more details on EPL: http://www.eclipse.org/org/documents/epl-v10.p
 
    <plugin
          id="org.gervarro.eclipse.workspace.util"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.moflon.core.xtext"
          download-size="0"
          install-size="0"
          version="0.0.0"
