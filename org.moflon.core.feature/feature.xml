@@ -32,8 +32,8 @@ See here for more details on EPL: http://www.eclipse.org/org/documents/epl-v10.p
    </url>
 
    <requires>
-      <import plugin="net.sourceforge.plantuml.eclipse"/>
-      <import feature="org.eclipse.xtext.runtime" version="2.12.0.v20170519-1412"/>
+      <import plugin="net.sourceforge.plantuml.eclipse" version="1.1.19" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtext.runtime" version="2.12.0"/>
    </requires>
 
    <plugin
