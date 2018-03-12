@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentsEList;
+import org.eclipse.emf.ecore.util.EContentsEList.FeatureIterator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -41,7 +42,27 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 
 	private Optional<String> maybeVisualiseMetamodel(IEditorPart editor) {
 		return extractMetamodelElementsFromEditor(editor)
-				.map(p -> EMoflonPlantUMLGenerator.visualiseEcoreElements(p.getLeft(), p.getRight()));
+				.map(p -> EMoflonPlantUMLGenerator.visualiseEcoreElements(p.getLeft(), handleEOpposites(p.getRight())));
+	}
+
+	private Collection<EReference> handleEOpposites(Collection<EReference> refs) {
+		Collection<EReference> refsWithOnlyOneEOpposite = new ArrayList<>();
+		for (EReference eReference : refs) {
+			if (eReference.getEOpposite() == null || !refsWithOnlyOneEOpposite.contains(eReference.getEOpposite()))
+				refsWithOnlyOneEOpposite.add(eReference);
+		}
+
+		return refsWithOnlyOneEOpposite;
+	}
+	
+	private Collection<VisualEdge> handleEOppositesForLinks(Collection<VisualEdge> links){
+		Collection<VisualEdge> linksWithOnlyOneEOpposite = new ArrayList<>();
+		for (VisualEdge link : links) {
+			if (!link.hasEOpposite() || !linksWithOnlyOneEOpposite.contains(link.findEOpposite(links).orElse(null)))
+				linksWithOnlyOneEOpposite.add(link);
+		}
+
+		return linksWithOnlyOneEOpposite;
 	}
 
 	private Optional<String> maybeVisualiseModel(IEditorPart editor) {
@@ -57,7 +78,7 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 		});
 	}
 
-	private Optional<Pair<Collection<EObject>, Collection<Pair<String, Pair<EObject, EObject>>>>> extractModelElementsFromEditor(
+	private Optional<Pair<Collection<EObject>, Collection<VisualEdge>>> extractModelElementsFromEditor(
 			IEditorPart editor2) {
 		return Optional.of(editor)//
 				.flatMap(this::multiSelectionInEcoreEditor)//
@@ -98,7 +119,7 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 		}
 	}
 
-	private Pair<Collection<EObject>, Collection<Pair<String, Pair<EObject, EObject>>>> determineObjectsAndLinksToVisualise(
+	private Pair<Collection<EObject>, Collection<VisualEdge>> determineObjectsAndLinksToVisualise(
 			Collection<Object> selection) {
 		Collection<EObject> chosenObjectsfromResource = new ArrayList<EObject>();
 		if (selection.size() == 1 && !resourceChosen(selection).isEmpty()) {
@@ -130,26 +151,29 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Collection<Pair<String, Pair<EObject, EObject>>> determineLinksToVisualize(
-			Collection<EObject> chosenObjects) {
-		Collection<Pair<String, Pair<EObject, EObject>>> refs = new HashSet<>();
+	private Collection<VisualEdge> determineLinksToVisualize(Collection<EObject> chosenObjects) {
+		Collection<VisualEdge> links = new HashSet<>();
 		for (EObject o : new ArrayList<EObject>(chosenObjects)) {
-			for (EContentsEList.FeatureIterator featureIterator = (EContentsEList.FeatureIterator) o.eCrossReferences()
-					.iterator(); featureIterator.hasNext();) {
-				EObject eObject = (EObject) featureIterator.next();
-				EReference eReference = (EReference) featureIterator.feature();
-				if (chosenObjects.contains(eObject))
-					refs.add(Pair.of(eReference.getName(), Pair.of(o, eObject)));
+			for (EContentsEList.FeatureIterator featureIterator = //
+					(EContentsEList.FeatureIterator) o.eCrossReferences().iterator(); featureIterator.hasNext();) {
+				addVisualEdge(featureIterator, chosenObjects, links, o);
 			}
-			for (EContentsEList.FeatureIterator featureIterator = (EContentsEList.FeatureIterator) o.eContents()
-					.iterator(); featureIterator.hasNext();) {
-				EObject eObject = (EObject) featureIterator.next();
-				EReference eReference = (EReference) featureIterator.feature();
-				if (chosenObjects.contains(eObject))
-					refs.add(Pair.of(eReference.getName(), Pair.of(o, eObject)));
+			for (EContentsEList.FeatureIterator featureIterator = //
+					(EContentsEList.FeatureIterator) o.eContents().iterator(); featureIterator.hasNext();) {
+				addVisualEdge(featureIterator, chosenObjects, links, o);
 			}
 		}
-		return refs;
+
+		return handleEOppositesForLinks(links);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void addVisualEdge(FeatureIterator featureIterator, Collection<EObject> chosenObjects,
+			Collection<VisualEdge> refs, EObject src) {
+		EObject trg = (EObject) featureIterator.next();
+		EReference eReference = (EReference) featureIterator.feature();
+		if (chosenObjects.contains(trg))
+			refs.add(new VisualEdge(eReference, src, trg));
 	}
 
 	private List<Resource> resourceChosen(Collection<Object> selection) {
@@ -194,7 +218,7 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 		return sourceOrTargetObjects;
 	}
 
-	private Collection<Pair<String, Pair<EObject, EObject>>> determineLinksToVisualizeForCorrModel(
+	private Collection<VisualEdge> determineLinksToVisualizeForCorrModel(
 			Collection<EObject> chosenObjectsfromResource) {
 		Collection<EObject> correspondenceObjects = new ArrayList<EObject>();
 		correspondenceObjects.addAll(sourceTargetObjectsForCorrespondenceModel(chosenObjectsfromResource, "source"));
