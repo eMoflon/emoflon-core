@@ -733,6 +733,18 @@ public class eMoflonEMFUtil {
 	}
 
 	/**
+	 * Determines the EMF {@link URI} of the given project, always using platform:/resource
+	 * URI as default
+	 *
+	 * @param project
+	 *            the project
+	 * @return the {@link URI} of the project
+	 */
+	public static final URI lookupProjectURIAsPlatformResource(final IProject project) {
+		return URI.createPlatformResourceURI(project.getName() + "/", true);
+	}
+
+	/**
 	 * Returns the project in the workspace having the given URI
 	 *
 	 * @param namespaceURI
