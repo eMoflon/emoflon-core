@@ -198,7 +198,7 @@ public class GenericMonitoredResourceLoader implements ITask {
 		final SubMonitor subMon = SubMonitor.convert(monitor, "Loading workspace projects", workspaceProjects.length);
 		for (final IProject workspaceProject : workspaceProjects) {
 			if (isValidProject(workspaceProject)) {
-				final URI projectURI = eMoflonEMFUtil.lookupProjectURI(workspaceProject);
+				final URI projectURI = eMoflonEMFUtil.lookupProjectURIAsPlatformResource(workspaceProject);
 				final URI metamodelURI = MoflonConventions.getDefaultProjectRelativeEcoreFileURI(workspaceProject)
 						.resolve(projectURI);
 				new PackageRemappingDependency(metamodelURI, false, false).getResource(this.resourceSet, false, true);
