@@ -21,6 +21,7 @@
     <module>org.moflon.core.releng.target</module>
     <module>org.moflon.core.utilities</module>
     <module>org.moflon.core.utilities.tests</module>
+    <module>org.moflon.core.xtext</module>
     <module>org.moflon.emf.build</module>
     <module>org.moflon.emf.codegen</module>
     <module>org.moflon.emf.injection</module>
