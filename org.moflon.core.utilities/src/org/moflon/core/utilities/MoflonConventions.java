@@ -111,8 +111,17 @@ public class MoflonConventions {
 	 *            the project
 	 * @return the URI
 	 */
-	public static final URI getDefaultProjectRelativeEcoreFileURI(final IProject project) {
+	public static URI getDefaultProjectRelativeEcoreFileURI(final IProject project) {
 		return URI.createURI(getDefaultPathToEcoreFileInProject(project.getName()));
+	}
+
+	/**
+	 * @deprecated Use {@link #getDefaultProjectRelativeEcoreFileURI(IProject)}
+	 */
+	@Deprecated // Since 2017-03-13
+	public static URI getDefaultURIToEcoreFileInPlugin(final String projectName) {
+		final IProject project = WorkspaceHelper.getProjectByName(projectName);
+		return getDefaultProjectRelativeEcoreFileURI(project);
 	}
 
 	/**

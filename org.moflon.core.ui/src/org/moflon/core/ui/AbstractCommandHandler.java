@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -15,10 +16,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PartInitException;
@@ -81,11 +86,23 @@ public abstract class AbstractCommandHandler extends org.eclipse.core.commands.A
 		return projects;
 	}
 
+	/**
+	 * Tries to extract the edited file from the given {@link ExecutionEvent}
+	 * 
+	 * @param event
+	 *            the event to analyze
+	 * @return the file of the active editor or <code>null</code> if there is no active editor
+	 */
 	protected static IFile getEditedFile(final ExecutionEvent event) {
-		return (IFile) HandlerUtil.getActiveEditor(event).getEditorInput().getAdapter(IFile.class);
+		final IEditorPart activeEditor = HandlerUtil.getActiveEditor(event);
+		if (activeEditor != null) {
+			return (IFile) activeEditor.getEditorInput().getAdapter(IFile.class);
+		}
+		
+		return null;
 	}
 
-	public void openInEditor(final IFile targetFile) throws CoreException, PartInitException {
+	protected void openInEditor(final IFile targetFile) throws CoreException, PartInitException {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put(IMarker.LINE_NUMBER, new Integer(1));
@@ -96,6 +113,38 @@ public abstract class AbstractCommandHandler extends org.eclipse.core.commands.A
 		marker.setAttributes(map);
 		IDE.openEditor(page, targetFile);
 		marker.delete();
+	}
+
+	/**
+	 * Extracts the edited file from the selection of the given
+	 * {@link ExecutionEvent}
+	 * 
+	 * Currently, {@link StructuredSelection} and {@link ITextSelection} are
+	 * supported selection types. For all other types, <code>null</code> is
+	 * returned.
+	 * 
+	 * @param event
+	 *            the event to analyze
+	 * @return the file or <code>null</code>
+	 * @throws ExecutionException
+	 *             if extracting the selection from the given event fails
+	 */
+	protected IFile extractSelectedFile(final ExecutionEvent event) throws ExecutionException {
+		final ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
+
+		if (selection instanceof StructuredSelection) {
+			final StructuredSelection structuredSelection = (StructuredSelection) selection;
+			final Object firstElement = structuredSelection.getFirstElement();
+			if (firstElement instanceof IFile) {
+				return (IFile) firstElement;
+			} else if (firstElement instanceof ICompilationUnit) {
+				return (IFile) ((ICompilationUnit) firstElement).getResource();
+			}
+		} else if (selection instanceof ITextSelection) {
+			return getEditedFile(event);
+		}
+
+		return null;
 	}
 
 	protected static Collection<IProject> getProjectsFromSelection(final IStructuredSelection selection) {
