@@ -17,75 +17,98 @@ import org.moflon.core.utilities.MoflonConventions;
  *
  * Instances of this class store the metadata of one generic eMoflon project.
  */
-public class PluginProperties {
+public class PluginProperties
+{
+   public static final String TYPE_KEY = "type";
 
-	public static final String TYPE_KEY = "type";
+   public static final String NAME_KEY = "name";
 
-	public static final String NAME_KEY = "name";
+   public static final String PLUGIN_ID_KEY = "pluginId";
 
-	public static final String PLUGIN_ID_KEY = "pluginId";
+   public static final String WORKING_SET_KEY = "workingSet";
 
-	public static final String WORKING_SET_KEY = "workingSet";
+   public static final String DEPENDENCIES_KEY = "dependencies";
 
-	public static final String DEPENDENCIES_KEY = "dependencies";
+   public static final String NS_URI_KEY = "nsURI";
 
-	public static final String NS_URI_KEY = "nsURI";
+   /**
+    * Inside MANIFEST.MF, dependencies are separated using this token
+    */
+   private static final String DEPENDENCIES_SEPARATOR = ",";
+   
+   private Map<String, String> data = new HashMap<>();
 
-	private Map<String, String> data = new HashMap<>();
+   public PluginProperties()
+   {
+      this(new HashMap<String, String>());
+   }
 
-	public PluginProperties() {
-		this(new HashMap<String, String>());
-	}
+   private PluginProperties(final Map<String, String> data)
+   {
+      this.data = new HashMap<>(data);
+   }
 
-	private PluginProperties(final Map<String, String> data) {
-		this.data = new HashMap<>(data);
-	}
+   public boolean containsKey(final String key)
+   {
+      return this.data.containsKey(key);
+   }
 
-	public boolean containsKey(final String key) {
-		return this.data.containsKey(key);
-	}
+   public String get(final String key)
+   {
+      return this.data.get(key);
+   }
 
-	public String get(final String key) {
-		return this.data.get(key);
-	}
+   public void put(final String key, final String value)
+   {
+      this.data.put(key, value);
+   }
 
-	public void put(final String key, final String value) {
-		this.data.put(key, value);
-	}
+   public String getType()
+   {
+      return get(PluginProperties.TYPE_KEY);
+   }
 
-	public String getType() {
-		return get(PluginProperties.TYPE_KEY);
-	}
+   public String getNsUri()
+   {
+      return this.get(NS_URI_KEY);
+   }
 
-	public String getNsUri() {
-		return this.get(NS_URI_KEY);
-	}
+   public String getProjectName()
+   {
+      return this.get(NAME_KEY);
+   }
 
-	public String getProjectName() {
-		return this.get(NAME_KEY);
-	}
+   public Collection<String> getDependencies()
+   {
+      if (!this.data.containsKey(DEPENDENCIES_KEY))
+         return null;
 
-	public Collection<String> getDependencies() {
-		if (!this.data.containsKey(DEPENDENCIES_KEY))
-			return null;
+      final String dependenciesString = this.get(DEPENDENCIES_KEY);
+      return dependenciesString.isEmpty() ? Collections.<String> emptyList() : Arrays.asList(dependenciesString.split(DEPENDENCIES_SEPARATOR));
+   }
 
-		return this.get(DEPENDENCIES_KEY).isEmpty() ? Collections.<String>emptyList()
-				: Arrays.asList(this.get(DEPENDENCIES_KEY).split(","));
-	}
+   public Collection<URI> getDependenciesAsURIs()
+   {
+      return getDependencies().stream()//
+            .filter(dep -> !dep.equals(ManifestFileUpdater.IGNORE_PLUGIN_ID)) //
+            .map(dep -> MoflonConventions.getDefaultResourceDependencyUri(dep)).collect(Collectors.toSet());
+   }
 
-	public Collection<URI> getDependenciesAsURIs() {
-		return getDependencies().stream()//
-				.filter(dep -> !dep.equals(ManifestFileUpdater.IGNORE_PLUGIN_ID)) //
-				.map(dep -> MoflonConventions.getDefaultResourceDependencyUri(dep)).collect(Collectors.toSet());
-	}
+   public void setDependencies(final List<String> dependencies)
+   {
+      this.put(DEPENDENCIES_KEY, dependencies.stream().collect(Collectors.joining(DEPENDENCIES_SEPARATOR)));
+   }
 
-	public void setDependencies(final List<String> dependencies) {
-		this.put(DEPENDENCIES_KEY, dependencies.stream().collect(Collectors.joining(",")));
-	}
+   @Deprecated // Since 2017-03-13
+   public void setDefaultValues()
+   {
+      // empty
+   }
 
-	@Override
-	public String toString() {
-		return "MetamodelProperties [data=" + data + "]";
-	}
+   @Override
+   public String toString()
+   {
+      return "MetamodelProperties [data=" + data + "]";
+   }
 
 }
