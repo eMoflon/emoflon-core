@@ -8,11 +8,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.handlers.HandlerUtil;
 import org.moflon.core.ui.AbstractCommandHandler;
 import org.moflon.core.utilities.WorkspaceHelper;
 
@@ -42,7 +37,7 @@ public class SwitchBetweenJavaAndInjectionFileHandler extends AbstractCommandHan
 				if (injectionFile.exists()) {
 					openInEditor(injectionFile);
 				} else {
-					logger.info("No injection for Java file " + file.getProjectRelativePath().toString());
+					logger.debug("No injection for Java file " + file.getProjectRelativePath().toString());
 				}
 			}
 		} catch (final CoreException e) {
@@ -50,23 +45,6 @@ public class SwitchBetweenJavaAndInjectionFileHandler extends AbstractCommandHan
 		}
 
 		return null;
-	}
-
-	private IFile extractSelectedFile(final ExecutionEvent event) throws ExecutionException {
-		final ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
-		IFile file = null;
-		if (selection instanceof StructuredSelection) {
-			final StructuredSelection structuredSelection = (StructuredSelection) selection;
-			final Object firstElement = structuredSelection.getFirstElement();
-			if (firstElement instanceof IFile) {
-				file = (IFile) firstElement;
-			} else if (firstElement instanceof ICompilationUnit) {
-				file = (IFile) ((ICompilationUnit) firstElement).getResource();
-			}
-		} else if (selection instanceof ITextSelection) {
-			file = getEditedFile(event);
-		}
-		return file;
 	}
 
 	/**
