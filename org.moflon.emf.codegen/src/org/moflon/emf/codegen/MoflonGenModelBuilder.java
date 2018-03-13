@@ -52,7 +52,9 @@ public class MoflonGenModelBuilder extends GenModelBuilder {
 		this.moflonProperties = moflonProperties;
 
 		final IProject project = ecoreFile.getProject();
-		final URI projectURI = eMoflonEMFUtil.lookupProjectURIAsPlatformResource(project);
+		//TODO@aanjorin: The following statement does not work with emoflon-tool (TGG compilation fails)
+		// final URI projectURI = eMoflonEMFUtil.lookupProjectURIAsPlatformResource(project);
+		final URI projectURI = eMoflonEMFUtil.lookupProjectURI(project);
 		this.ecoreURI = MoflonConventions.getDefaultProjectRelativeEcoreFileURI(project).resolve(projectURI);
 	}
 
