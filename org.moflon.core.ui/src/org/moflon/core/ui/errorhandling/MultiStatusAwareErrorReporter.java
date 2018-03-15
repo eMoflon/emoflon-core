@@ -3,6 +3,7 @@ package org.moflon.core.ui.errorhandling;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -57,7 +58,8 @@ public class MultiStatusAwareErrorReporter implements ErrorReporter {
 	}
 
 	protected void reportLeafStatus(final IStatus status) throws CoreException {
-		final IMarker validationMarker = file.createMarker(WorkspaceHelper.MOFLON_PROBLEM_MARKER_ID);
+	   final IResource markedResource = file.exists() ? file : file.getProject();
+      final IMarker validationMarker = markedResource.createMarker(WorkspaceHelper.MOFLON_PROBLEM_MARKER_ID);
 		validationMarker.setAttribute(IMarker.MESSAGE, status.getMessage());
 		validationMarker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 		validationMarker.setAttribute(IMarker.SEVERITY,
