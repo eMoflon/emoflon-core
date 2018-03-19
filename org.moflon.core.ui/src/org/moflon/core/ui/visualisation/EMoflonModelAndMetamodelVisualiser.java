@@ -13,6 +13,7 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentsEList;
 import org.eclipse.emf.ecore.util.EContentsEList.FeatureIterator;
@@ -202,8 +203,20 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 	}
 
 	private boolean objectIsACorrespondenceLink(EObject next) {
-		return next.eClass().getEStructuralFeature("source") != null
-				&& next.eClass().getEStructuralFeature("target") != null;
+		EStructuralFeature refSrc = next.eClass().getEStructuralFeature("source");
+		EStructuralFeature refTrg = next.eClass().getEStructuralFeature("target");
+		
+		if(refSrc != null && refTrg != null) {
+			if(refSrc instanceof EReference && refTrg instanceof EReference) {
+				EObject src = (EObject) next.eGet(refSrc);
+				EObject trg = (EObject) next.eGet(refTrg);
+				
+				if(src != null && trg != null)
+					return true;
+			}
+		}
+		
+		return false;
 	}
 
 	private Collection<EObject> sourceTargetObjectsForCorrespondenceModel(Collection<EObject> chosenObjectsfromResource,

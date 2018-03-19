@@ -31,6 +31,12 @@ class EMoflonPlantUMLGenerator {
 			title Choose an element that can be visualised
 		'''
 	}
+	
+	public static def String errorDiagram(){
+		'''
+			title I'm having problems visualising the current selection (check your console).
+		'''
+	}
 
 	public def static String visualiseEcoreElements(Collection<EClass> eclasses, Collection<EReference> refs){
 		'''
