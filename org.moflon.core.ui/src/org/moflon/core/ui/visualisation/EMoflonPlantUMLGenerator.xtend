@@ -31,6 +31,12 @@ class EMoflonPlantUMLGenerator {
 			title Choose an element that can be visualised
 		'''
 	}
+	
+	public static def String errorDiagram(){
+		'''
+			title I'm having problems visualising the current selection (check your console).
+		'''
+	}
 
 	public def static String visualiseEcoreElements(Collection<EClass> eclasses, Collection<EReference> refs){
 		'''
@@ -44,7 +50,7 @@ class EMoflonPlantUMLGenerator {
 			«IF(r.EOpposite === null)»
 				«identifierForClass(r.EContainingClass)»«IF r.isContainment» *«ENDIF»--> "«multiplicityFor(r)»" «identifierForClass(r.EReferenceType)» : "«r.name»"
 			«ELSE»
-				«identifierForClass(r.EContainingClass)»«IF r.isContainment» *«ENDIF»"«r.EOpposite.name» «multiplicityFor(r.EOpposite)»" <--> "«r.name» «multiplicityFor(r)»" «identifierForClass(r.EReferenceType)»
+				«identifierForClass(r.EContainingClass)»"«r.EOpposite.name» «multiplicityFor(r.EOpposite)»" «IF r.isContainment»*«ELSE»<«ENDIF»--> "«r.name» «multiplicityFor(r)»" «identifierForClass(r.EReferenceType)»
 			«ENDIF»
 		«ENDFOR»
 		'''

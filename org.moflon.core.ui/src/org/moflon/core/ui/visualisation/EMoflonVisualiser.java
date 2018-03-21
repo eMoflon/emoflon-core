@@ -3,16 +3,29 @@ package org.moflon.core.ui.visualisation;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
+import org.moflon.core.utilities.ExceptionUtil;
 
 import net.sourceforge.plantuml.eclipse.utils.DiagramTextProvider;
 
 public abstract class EMoflonVisualiser implements DiagramTextProvider {
 
+	private static final Logger logger = Logger.getLogger(EMoflonVisualiser.class);
+	
 	@Override
 	public String getDiagramText(IEditorPart editor, ISelection selection) {
-		return EMoflonPlantUMLGenerator.wrapInTags(getDiagramBody(editor, selection));
+		Optional<String> diagram = Optional.empty();
+		try {
+			String d = getDiagramBody(editor, selection);
+			diagram = Optional.of(d);
+		} catch(Exception e) {
+			logger.error(e + ExceptionUtil.displayExceptionAsString(e));
+			e.printStackTrace();
+		}
+		
+		return EMoflonPlantUMLGenerator.wrapInTags(diagram.orElse(EMoflonPlantUMLGenerator.errorDiagram()));
 	}
 
 	abstract protected String getDiagramBody(IEditorPart editor, ISelection selection);
