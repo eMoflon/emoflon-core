@@ -19,6 +19,7 @@ import org.moflon.core.build.CrossReferenceResolver;
 import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.core.utilities.eMoflonEMFUtil;
+import org.moflon.emf.codegen.MoflonGenModelBuilder;
 import org.moflon.emf.codegen.dependency.PackageRemappingDependency;
 import org.moflon.emf.codegen.dependency.SimpleDependency;
 
@@ -223,11 +224,7 @@ public class GenericMonitoredResourceLoader implements ITask {
 	 *            the project to read the Ecore file from
 	 */
 	private void loadProjectRelatedDependency(final IProject project) {
-		final URI projectURI = eMoflonEMFUtil.lookupProjectURI(project);
-		// TODO@aanjorin: The following statement does not work with emoflon-tool (TGG
-		// compilation fails)
-		// final URI projectURI =
-		// eMoflonEMFUtil.lookupProjectURIAsPlatformResource(project);
+		final URI projectURI = MoflonGenModelBuilder.determineProjectUrisBasedOnPreferences(project);
 		final URI metamodelURI = MoflonConventions.getDefaultProjectRelativeEcoreFileURI(project).resolve(projectURI);
 		final PackageRemappingDependency dependency = new PackageRemappingDependency(metamodelURI,
 				!PackageRemappingDependency.HANDLE_GENERATED_EPACKAGE_URIS,

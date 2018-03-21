@@ -30,6 +30,11 @@ public class EMoflonPreferencesStorage {
 	private boolean reachabilityEnabled;
 
 	/**
+	 * Stores the preferred {@link PlatformUriType}
+	 */
+   private PlatformUriType preferredPlatformUriType;
+
+	/**
 	 * Sets the validation timeout in milliseconds
 	 * 
 	 * @param validationTimeout
@@ -39,6 +44,10 @@ public class EMoflonPreferencesStorage {
 		this.validationTimeout = validationTimeout;
 	}
 
+	/**
+	 * Returns the timeout for the reachability validation (in milliseconds)
+	 * @return the validation timeout
+	 */
 	public int getValidationTimeout() {
 		return this.validationTimeout;
 	}
@@ -54,6 +63,10 @@ public class EMoflonPreferencesStorage {
 		this.maximumAdornmentSize = maximumAdornmentSize;
 	}
 
+	/**
+	 * @return the maximum size of adornments to analyze using reachability analysis
+	 * @see #setReachabilityMaximumAdornmentSize(int)
+	 */
 	public int getMaximumAdornmentSize() {
 		return this.maximumAdornmentSize;
 	}
@@ -69,7 +82,30 @@ public class EMoflonPreferencesStorage {
 		this.reachabilityEnabled = reachabilityEnabled;
 	}
 
+	/**
+	 * @return  true if the reachability analysis shall be enabled, false
+    *            otherwise
+	 * @see #setReachabilityEnabled(boolean)
+	 */
 	public boolean getReachabilityEnabled() {
 		return reachabilityEnabled;
 	}
+	
+	/**
+	 * Configures the preferred {@link PlatformUriType}
+	 * @param preferredPlatformUriType the preferred {@link PlatformUriType}
+	 */
+	public void setPreferredPlatformUriType(final PlatformUriType preferredPlatformUriType)
+   {
+      this.preferredPlatformUriType = preferredPlatformUriType;
+   }
+
+	/**
+	 * Returns the {@link PlatformUriType} that shall be used by the build process to represent resources in workspace projects.
+	 * @return the preferred URI type
+	 */
+   public PlatformUriType getPreferredGenModelPlatformUriType()
+   {
+      return this.preferredPlatformUriType;
+   }
 }
