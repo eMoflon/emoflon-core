@@ -30,7 +30,7 @@ public class EMoflonPreferencesStorage {
 	/**
 	 * Default value for {@link #getPreferredGenModelPlatformUriType()}
 	 */
-	public static final PlatformUriType DEFAULT_PLATFORM_URI_TYPE = PlatformUriType.PLUGIN;
+	public static final PlatformUriType DEFAULT_PLATFORM_URI_TYPE = PlatformUriType.RESOURCE;
 
 	/**
 	 * Stores the configured validation timeout in milliseconds. 'null' if not set.
