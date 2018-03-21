@@ -82,6 +82,12 @@ public class MultiStatusAwareErrorReporter implements ErrorReporter {
 		LogUtils.error(logger, status.getMessage());
 	}
 
+	/**
+	 * Converts the severity values from the world of {@link IStatus} to the world of {@link IMarker}.
+	 * @param value the {@link IStatus} severity
+	 * @return the {@link IMarker} severity
+	 * @throws CoreException if the value cannot be translated
+	 */
 	private static final int convertStatusSeverityToEclipseMarkerSeverity(final int value) throws CoreException {
 		if (value >= IStatus.ERROR) {
 			return IMarker.SEVERITY_ERROR;
