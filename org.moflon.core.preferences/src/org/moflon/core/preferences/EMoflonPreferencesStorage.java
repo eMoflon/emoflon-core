@@ -50,7 +50,7 @@ public class EMoflonPreferencesStorage {
 	/**
 	 * Stores the preferred {@link PlatformUriType}
 	 */
-   private PlatformUriType preferredPlatformUriType;
+   private PlatformUriType preferredPlatformUriType = DEFAULT_PLATFORM_URI_TYPE;
 
 	/**
 	 * Sets the validation timeout in milliseconds
