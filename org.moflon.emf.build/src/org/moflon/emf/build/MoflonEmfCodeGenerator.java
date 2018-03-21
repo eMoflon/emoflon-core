@@ -18,7 +18,6 @@ import org.eclipse.emf.common.util.BasicMonitor;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.moflon.core.preferences.EMoflonPreferencesStorage;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
-import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.emf.codegen.CodeGenerator;
 import org.moflon.emf.codegen.InjectionAwareGeneratorAdapterFactory;
@@ -114,15 +113,13 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 		return injectionManager;
 	}
 
+	/**
+	 * Returns the project name to be displayed
+	 * @param moflonProperties the properties container to consult
+	 * @return the project name
+	 */
 	protected String getFullProjectName(final MoflonPropertiesContainer moflonProperties) {
-		final String metaModelProjectName = moflonProperties.getMetaModelProject().getMetaModelProjectName();
-		final String fullProjectName;
-		if (MoflonPropertiesContainerHelper.UNDEFINED_METAMODEL_NAME.equals(metaModelProjectName)) {
-			fullProjectName = moflonProperties.getProjectName();
-		} else {
-			fullProjectName = metaModelProjectName + "::" + moflonProperties.getProjectName();
-		}
-		return fullProjectName;
+		return moflonProperties.getProjectName();
 	}
 
 	/**
