@@ -19,7 +19,9 @@ import org.moflon.core.build.CrossReferenceResolver;
 import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.core.utilities.eMoflonEMFUtil;
+import org.moflon.emf.codegen.MoflonGenModelBuilder;
 import org.moflon.emf.codegen.dependency.PackageRemappingDependency;
+import org.moflon.emf.codegen.dependency.SimpleDependency;
 
 /**
  * Generic resource-loading process
@@ -52,6 +54,9 @@ public class GenericMonitoredResourceLoader implements ITask {
 		this.file = file;
 	}
 
+	/**
+	 * Returns the name of this task
+	 */
 	@Override
 	public String getTaskName() {
 		return "Resource loading";
@@ -193,20 +198,40 @@ public class GenericMonitoredResourceLoader implements ITask {
 		return Status.OK_STATUS;
 	}
 
+	/**
+	 * Creates a resource for each project in the workspace that fulfills
+	 * {@link #isValidProject(IProject)}
+	 * 
+	 * @param monitor
+	 *            the progress monitor
+	 */
 	protected void createResourcesForWorkspaceProjects(final IProgressMonitor monitor) {
 		final IProject[] workspaceProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		final SubMonitor subMon = SubMonitor.convert(monitor, "Loading workspace projects", workspaceProjects.length);
 		for (final IProject workspaceProject : workspaceProjects) {
 			if (isValidProject(workspaceProject)) {
-				//TODO@aanjorin: The following statement does not work with emoflon-tool (TGG compilation fails)
-				// final URI projectURI = eMoflonEMFUtil.lookupProjectURIAsPlatformResource(workspaceProject);
-				final URI projectURI = eMoflonEMFUtil.lookupProjectURI(workspaceProject);
-				final URI metamodelURI = MoflonConventions.getDefaultProjectRelativeEcoreFileURI(workspaceProject)
-						.resolve(projectURI);
-				new PackageRemappingDependency(metamodelURI, false, false).getResource(this.resourceSet, false, true);
+				loadProjectRelatedDependency(workspaceProject);
 			}
 			subMon.worked(1);
 		}
+	}
+
+	/**
+	 * Loads the Ecore metamodel of the given project. Precondition: the project
+	 * fulfills {@link #isValidProject(IProject)}
+	 * 
+	 * @param project
+	 *            the project to read the Ecore file from
+	 */
+	private void loadProjectRelatedDependency(final IProject project) {
+		final URI projectURI = MoflonGenModelBuilder.determineProjectUriBasedOnPreferences(project);
+		final URI metamodelURI = MoflonConventions.getDefaultProjectRelativeEcoreFileURI(project).resolve(projectURI);
+		final PackageRemappingDependency dependency = new PackageRemappingDependency(metamodelURI,
+				!PackageRemappingDependency.HANDLE_GENERATED_EPACKAGE_URIS,
+				!PackageRemappingDependency.USE_GENERATED_EPACKAGE_RESOURCE);
+		dependency.getResource(this.resourceSet, //
+				!SimpleDependency.LOAD_CONTENT, //
+				SimpleDependency.FORCE_PREEMPTIVE_CREATE);
 	}
 
 	/**
@@ -218,6 +243,6 @@ public class GenericMonitoredResourceLoader implements ITask {
 	 * @return true iff the project can be handled
 	 */
 	protected boolean isValidProject(final IProject project) {
-		return project.isAccessible();
+		return project.isAccessible() && MoflonConventions.getDefaultEcoreFile(project).exists();
 	}
 }

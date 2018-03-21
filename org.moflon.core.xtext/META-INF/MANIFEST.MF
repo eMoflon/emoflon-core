@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.moflon.ide.mosl.core
+Bundle-Name: org.moflon.core.xtext
 Bundle-SymbolicName: org.moflon.core.xtext;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
