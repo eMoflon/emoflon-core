@@ -224,7 +224,7 @@ public class GenericMonitoredResourceLoader implements ITask {
 	 *            the project to read the Ecore file from
 	 */
 	private void loadProjectRelatedDependency(final IProject project) {
-		final URI projectURI = MoflonGenModelBuilder.determineProjectUrisBasedOnPreferences(project);
+		final URI projectURI = MoflonGenModelBuilder.determineProjectUriBasedOnPreferences(project);
 		final URI metamodelURI = MoflonConventions.getDefaultProjectRelativeEcoreFileURI(project).resolve(projectURI);
 		final PackageRemappingDependency dependency = new PackageRemappingDependency(metamodelURI,
 				!PackageRemappingDependency.HANDLE_GENERATED_EPACKAGE_URIS,

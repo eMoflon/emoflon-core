@@ -6,13 +6,31 @@ package org.moflon.core.preferences;
  * @author Roland Kluge - Initial implementation
  */
 public class EMoflonPreferencesStorage {
+   
+   /**
+    * Indicates unbounded adornment size for {@link #getMaximumAdornmentSize()} 
+    */
 	public static final int REACHABILITY_MAX_ADORNMENT_SIZE_INFINITY = 0;
 
+	/**
+	 * Default value for {@link #getMaximumAdornmentSize()}
+	 */
 	public static final int DEFAULT_REACHABILITY_MAX_ADORNMENT_SIZE = REACHABILITY_MAX_ADORNMENT_SIZE_INFINITY;
 
+	/**
+	 * Default value for {@link #getValidationTimeout()}
+	 */
 	public static final int DEFAULT_VALIDATION_TIMEOUT_MILLIS = 30000;
 
+	/**
+	 * Default value for {@link #getReachabilityEnabled()}
+	 */
 	public static final boolean DEFAULT_REACHABILITIY_IS_ENABLED = true;
+	
+	/**
+	 * Default value for {@link #getPreferredGenModelPlatformUriType()}
+	 */
+	public static final PlatformUriType DEFAULT_PLATFORM_URI_TYPE = PlatformUriType.PLUGIN;
 
 	/**
 	 * Stores the configured validation timeout in milliseconds. 'null' if not set.
@@ -93,10 +111,13 @@ public class EMoflonPreferencesStorage {
 	
 	/**
 	 * Configures the preferred {@link PlatformUriType}
-	 * @param preferredPlatformUriType the preferred {@link PlatformUriType}
+	 * @param preferredPlatformUriType the preferred {@link PlatformUriType}. Must not be <code>null</code>.
 	 */
 	public void setPreferredPlatformUriType(final PlatformUriType preferredPlatformUriType)
    {
+	   if (preferredPlatformUriType == null)
+	      throw new IllegalArgumentException("Only non-null values allowed for preferred platform URI type.");
+	   
       this.preferredPlatformUriType = preferredPlatformUriType;
    }
 

@@ -58,7 +58,7 @@ public class MoflonGenModelBuilder extends GenModelBuilder
 
       final IProject project = ecoreFile.getProject();
 
-      final URI projectURI = determineProjectUrisBasedOnPreferences(project);
+      final URI projectURI = determineProjectUriBasedOnPreferences(project);
       this.ecoreURI = MoflonConventions.getDefaultProjectRelativeEcoreFileURI(project).resolve(projectURI);
    }
 
@@ -123,12 +123,25 @@ public class MoflonGenModelBuilder extends GenModelBuilder
     * @param project the project
     * @return the corresponding {@link URI}
     */
-   public static URI determineProjectUrisBasedOnPreferences(final IProject project)
+   public static URI determineProjectUriBasedOnPreferences(final IProject project)
    {
       final URI projectURI;
       final EMoflonPreferencesStorage preferencesStorage = EMoflonPreferencesActivator.getDefault().getPreferencesStorage();
       final PlatformUriType preferredGenModelPlatformUriType = preferencesStorage.getPreferredGenModelPlatformUriType();
-      switch (preferredGenModelPlatformUriType)
+      projectURI = determineProjectUriBasedOnPlatformUriType(project, preferredGenModelPlatformUriType);
+      return projectURI;
+   }
+
+   /**
+    * Returns a platform:/ {@link URI} for the given project based on the given {@link PlatformUriType}
+    * @param project the project
+    * @param platformUriType the {@link PlatformUriType}
+    * @return the corresponding {@link URI}
+    */
+   private static URI determineProjectUriBasedOnPlatformUriType(final IProject project, final PlatformUriType platformUriType)
+   {
+      final URI projectURI;
+      switch (platformUriType)
       {
       case RESOURCE:
          projectURI = eMoflonEMFUtil.lookupProjectURIAsPlatformResource(project);
