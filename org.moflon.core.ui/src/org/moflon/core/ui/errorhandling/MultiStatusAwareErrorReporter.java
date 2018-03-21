@@ -56,9 +56,24 @@ public class MultiStatusAwareErrorReporter implements ErrorReporter {
 			}
 		}
 	}
+	
+	/**
+	 * Returns the file configured via the constructor
+	 * @return the file of this reporter
+	 */
+	public IFile getFile()
+   {
+      return file;
+   }
 
+	/**
+	 * This method reports a leaf status (not a {@link MultiStatus}) by creating a marker at the configured file (#getFile())
+	 * @param status the status to report
+	 * @throws CoreException if creating the marker fails
+	 */
 	protected void reportLeafStatus(final IStatus status) throws CoreException {
-	   final IResource markedResource = file.exists() ? file : file.getProject();
+	   final IFile file = getFile();
+      final IResource markedResource = file.exists() ? file : file.getProject();
       final IMarker validationMarker = markedResource.createMarker(WorkspaceHelper.MOFLON_PROBLEM_MARKER_ID);
 		validationMarker.setAttribute(IMarker.MESSAGE, status.getMessage());
 		validationMarker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
