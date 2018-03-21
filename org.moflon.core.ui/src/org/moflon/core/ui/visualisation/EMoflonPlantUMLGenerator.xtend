@@ -41,7 +41,7 @@ class EMoflonPlantUMLGenerator {
 	public def static String visualiseEcoreElements(Collection<EClass> eclasses, Collection<EReference> refs){
 		'''
 		«FOR c : eclasses»
-		class «identifierForClass(c)»
+		«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c)»
 			«FOR s : c.ESuperTypes»
 			«identifierForClass(c)»--|>«identifierForClass(s)»
 			«ENDFOR»
