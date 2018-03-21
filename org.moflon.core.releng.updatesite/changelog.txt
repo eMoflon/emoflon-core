@@ -1,3 +1,12 @@
+2018-03-21 eMoflon 1.1.0 released
+
+This is a minor bugfix release
+
+New features and fixed bugs (see https://github.com/eMoflon/emoflon-core/issues?utf8=✓&q=is%3Aissue closed%3A2018-03-02..2018-03-21)
+* Allow 'Touch resource in text editor
+* Improved visualization support for eOpposites
+* Hint how to use documentation in genmodels
+
 2018-03-02 eMoflon 1.0.0 released
 
 eMoflon Core contains core components that can be reused across different versions of eMoflon.
