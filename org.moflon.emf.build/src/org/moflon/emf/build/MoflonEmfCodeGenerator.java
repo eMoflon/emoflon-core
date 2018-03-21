@@ -115,7 +115,9 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 
 	/**
 	 * Returns the project name to be displayed
-	 * @param moflonProperties the properties container to consult
+	 * 
+	 * @param moflonProperties
+	 *            the properties container to consult
 	 * @return the project name
 	 */
 	protected String getFullProjectName(final MoflonPropertiesContainer moflonProperties) {
