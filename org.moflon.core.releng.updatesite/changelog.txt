@@ -1,3 +1,9 @@
+2018-03-22 eMoflon 1.1.1 released
+
+Default URI type switched to platform:/reesource instead of platform:/plugin
+
+Issue https://github.com/eMoflon/emoflon-core/issues/50
+
 2018-03-21 eMoflon 1.1.0 released
 
 This is a minor bugfix release
