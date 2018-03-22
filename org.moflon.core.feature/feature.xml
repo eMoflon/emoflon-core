@@ -2,7 +2,7 @@
 <feature
       id="org.moflon.core.feature"
       label="eMoflon Core Components Feature"
-      version="1.1.0.qualifier"
+      version="1.1.1.qualifier"
       provider-name="eMoflon Developers"
       plugin="org.moflon.core.branding">
 
