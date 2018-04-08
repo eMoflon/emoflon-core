@@ -1,7 +1,7 @@
 package org.moflon.emf.codegen;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
@@ -22,6 +22,7 @@ import org.moflon.core.preferences.PlatformUriType;
 import org.moflon.core.propertycontainer.AdditionalDependencies;
 import org.moflon.core.propertycontainer.AdditionalUsedGenPackages;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
+import org.moflon.core.utilities.ExtensionsUtil;
 import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.eMoflonEMFUtil;
 import org.moflon.emf.codegen.dependency.Dependency;
@@ -31,7 +32,10 @@ import org.moflon.emf.codegen.dependency.SimpleDependency;
 public class MoflonGenModelBuilder extends GenModelBuilder {
 	protected static final Logger logger = Logger.getLogger(MoflonGenModelBuilder.class);
 
-	private static Optional<URIPreferenceExtension> uriPreferenceExtension;
+	private static final String URI_PREF_EXTENSION_ID = "org.moflon.emf.codegen.URIPreferenceExtension";
+
+	private static Collection<URIPreferenceExtension> uriPreferenceExtension = ExtensionsUtil
+			.collectExtensions(URI_PREF_EXTENSION_ID, "class", URIPreferenceExtension.class);
 
 	// The model file used for code generation
 	protected IFile ecoreFile;
@@ -119,7 +123,10 @@ public class MoflonGenModelBuilder extends GenModelBuilder {
 	 * @return the corresponding {@link URI}
 	 */
 	public static URI determineProjectUriBasedOnPreferences(final IProject project) {
-		final PlatformUriType preferredGenModelPlatformUriType = uriPreferenceExtension.orElse(PlatformUriType.PLUGIN);
+		final PlatformUriType preferredGenModelPlatformUriType = uriPreferenceExtension.stream()//
+				.map(URIPreferenceExtension::getPlatformURIType)//
+				.findAny()//
+				.orElse(PlatformUriType.PLUGIN);
 		final URI projectURI = determineProjectUriBasedOnPlatformUriType(project, preferredGenModelPlatformUriType);
 		return projectURI;
 	}
