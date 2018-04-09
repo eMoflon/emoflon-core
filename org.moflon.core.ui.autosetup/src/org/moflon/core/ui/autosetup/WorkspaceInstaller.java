@@ -3,8 +3,10 @@ package org.moflon.core.ui.autosetup;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -23,6 +25,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.team.internal.ui.wizards.ImportProjectSetOperation;
+import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.ui.IWorkingSet;
 import org.gervarro.eclipse.workspace.util.WorkspaceTask;
 import org.gervarro.eclipse.workspace.util.WorkspaceTaskJob;
@@ -66,45 +69,9 @@ public class WorkspaceInstaller {
 			logger.info(String.format("Checking out %d projects and %d working sets in %s.", numberOfProjects,
 					numberOfWorkingSets, joinedPaths));
 
-			final ImportProjectSetOperation importProjectSetOperation = new ImportProjectSetOperation(null, psfContent,
-					psfFiles.size() > 1 ? null : psfFiles.get(0).getAbsolutePath(), new IWorkingSet[0]) {
-
-				@Override
-				public String getJobName() {
-					return "Checking out projects";
-				}
-
-				@Override
-				public ISchedulingRule getSchedulingRule() {
-					return ResourcesPlugin.getWorkspace().getRoot();
-				}
-
-				@Override
-				public void done(final IJobChangeEvent event) {
-					if (event.getResult().isOK()) {
-						final WorkspaceTask buildConfiguratorTask = new WorkspaceTask() {
-
-							@Override
-							public void run(IProgressMonitor monitor) throws CoreException {
-								performBuildAndTest(label);
-							}
-
-							@Override
-							public String getTaskName() {
-								return "Configuring build and test process";
-							}
-
-							@Override
-							public ISchedulingRule getRule() {
-								return ResourcesPlugin.getWorkspace().getRoot();
-							}
-						};
-						new WorkspaceTaskJob(buildConfiguratorTask).schedule();
-					}
-				}
-
-			};
-			importProjectSetOperation.run();
+			createImportProjectSetOperation(psfContent, //
+					psfFiles.size() > 1 ? null : psfFiles.get(0).getAbsolutePath(), //
+					label).run();
 		} catch (final InterruptedException e) {
 			// Operation cancelled by the user on the GUI
 			throw new OperationCanceledException();
@@ -126,6 +93,46 @@ public class WorkspaceInstaller {
 			logger.error(message);
 			return;
 		}
+	}
+
+	private TeamOperation createImportProjectSetOperation(String psfContent, String urlString, String label) {
+		return new ImportProjectSetOperation(null, psfContent, urlString, new IWorkingSet[0]) {
+
+			@Override
+			public String getJobName() {
+				return "Checking out projects";
+			}
+
+			@Override
+			public ISchedulingRule getSchedulingRule() {
+				return ResourcesPlugin.getWorkspace().getRoot();
+			}
+
+			@Override
+			public void done(final IJobChangeEvent event) {
+				if (event.getResult().isOK()) {
+					final WorkspaceTask buildConfiguratorTask = new WorkspaceTask() {
+
+						@Override
+						public void run(IProgressMonitor monitor) throws CoreException {
+							performBuildAndTest(label);
+						}
+
+						@Override
+						public String getTaskName() {
+							return "Configuring build and test process";
+						}
+
+						@Override
+						public ISchedulingRule getRule() {
+							return ResourcesPlugin.getWorkspace().getRoot();
+						}
+					};
+					new WorkspaceTaskJob(buildConfiguratorTask).schedule();
+				}
+			}
+
+		};
 	}
 
 	private final void performBuildAndTest(final String label) {
@@ -188,5 +195,10 @@ public class WorkspaceInstaller {
 
 	private static String joinBasenames(final List<File> files) {
 		return files.stream().map(f -> f.getName()).collect(Collectors.joining(", "));
+	}
+
+	public void installPsfFile(URL url, String label) {
+		Optional<String> psfContent = PsfFileUtils.extractPsfFileContent(url);
+		psfContent.ifPresent(psf -> createImportProjectSetOperation(psf, url.toString(), label));
 	}
 }

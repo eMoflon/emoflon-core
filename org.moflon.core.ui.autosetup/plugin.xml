@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="RegisterPsfUrlExtension" name="RegisterPsfUrlExtension" schema="schema/RegisterPsfUrlExtension.exsd"/>
 <extension point="org.eclipse.ui.perspectiveExtensions">
     <perspectiveExtension targetID="org.moflon.ide.ui.MoflonPerspective"/>
   </extension>
@@ -14,6 +15,11 @@
           </visibleWhen>
         </command>
       </toolbar>
+    </menuContribution>
+    <menuContribution
+          allPopups="false"
+          class="org.moflon.core.ui.autosetup.handler.PopulatePsfUrlMenu"
+          locationURI="menu:org.moflon.devtools.ui.commands.toolbar.MoflonDevtoolsMenuCommand">
     </menuContribution>
     <menuContribution allPopups="false" locationURI="menu:org.moflon.devtools.ui.commands.toolbar.MoflonDevtoolsMenuCommand">
       <command commandId="org.moflon.devtools.ui.commands.install.LoadPsfFileCommand" label="Load Custom PSF File..." style="push">
