@@ -25,11 +25,12 @@ public class PopulatePsfUrlMenu extends ExtensionContributionFactory {
 
 	@Override
 	public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
-		additions.addContributionItem(new ContributionItem() {
-			@Override
-			public void fill(Menu menu, int index) {
-				registerPsfUrlExtensions.forEach(ext -> {
-					MenuItem mi = new MenuItem(menu, SWT.DEFAULT, index);
+		registerPsfUrlExtensions.forEach(ext -> {
+			additions.addContributionItem(new ContributionItem() {
+				@Override
+				public void fill(Menu menu, int index) {
+					logger.debug("Inserting " + ext.getLabel() + " at " + index);
+					MenuItem mi = new MenuItem(menu, SWT.DEFAULT, menu.getItemCount());
 					mi.setText(ext.getLabel());
 					mi.addSelectionListener(new SelectionAdapter() {
 						@Override
@@ -39,8 +40,8 @@ public class PopulatePsfUrlMenu extends ExtensionContributionFactory {
 							new WorkspaceInstaller().installPsfFile(ext.getUrl(), ext.getLabel());
 						}
 					});
-				});
-			}
-		}, null);
+				}
+			}, null);
+		});
 	}
 }
