@@ -1,15 +1,24 @@
 package org.moflon.core.ui.autosetup;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.moflon.core.utilities.ExceptionUtil;
 import org.moflon.core.utilities.UtilityClassNotInstantiableException;
 import org.moflon.core.utilities.XMLUtils;
 import org.w3c.dom.Document;
@@ -20,6 +29,8 @@ import org.w3c.dom.NodeList;
  * Utility class for working with PSF files.
  */
 public final class PsfFileUtils {
+
+	private static Logger logger = Logger.getLogger(PsfFileUtils.class);
 
 	private PsfFileUtils() {
 		throw new UtilityClassNotInstantiableException();
@@ -60,5 +71,46 @@ public final class PsfFileUtils {
 			psfContents.add(FileUtils.readFileToString(new File(absolutePathToPSF)));
 		}
 		return psfContents;
+	}
+
+	public static Optional<String> extractPsfFileContent(final URL url) {
+		try {
+			URLConnection connection = url.openConnection();
+			connection.setReadTimeout(60 * 1000);
+			String enc = connection.getContentEncoding();
+			if (enc == null)
+				enc = ResourcesPlugin.getEncoding();
+			return Optional.of(read(connection.getInputStream(), enc));
+		} catch (Exception e) {
+			logger.error(ExceptionUtil.displayExceptionAsString(e));
+			// Fail silently but return empty optional
+		}
+
+		return Optional.empty();
+	}
+
+	public static String read(InputStream is, String encoding) throws IOException {
+		if (is == null)
+			throw new IOException("Stream is null");
+
+		BufferedReader reader = null;
+		try {
+			StringBuffer buffer = new StringBuffer();
+			char[] part = new char[2048];
+			int read = 0;
+			reader = new BufferedReader(new InputStreamReader(is, encoding));
+			while ((read = reader.read(part)) != -1)
+				buffer.append(part, 0, read);
+
+			return buffer.toString();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException ex) {
+					// silently ignored
+				}
+			}
+		}
 	}
 }
