@@ -20,9 +20,8 @@ import org.moflon.emf.build.MoflonEmfNature;
 public class MoflonEmfProjectCreator extends MoflonProjectCreator {
 	private static final List<String> GITIGNORE_LINES = Arrays.asList(//
 			"/bin", //
-			"/target", //
-			"/gen/*", //
-			"!/**/.keep*");
+			"/gen", //
+			"/model/*.genmodel");
 
 	/**
 	 * Pass-through constructor to {@link MoflonProjectCreator}
