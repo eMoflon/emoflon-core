@@ -22,6 +22,10 @@
           locationURI="menu:org.moflon.devtools.ui.commands.toolbar.MoflonDevtoolsMenuCommand">
     </menuContribution>
     <menuContribution allPopups="false" locationURI="menu:org.moflon.devtools.ui.commands.toolbar.MoflonDevtoolsMenuCommand">
+       <separator
+             name="org.moflon.core.ui.autosetup.separator1"
+             visible="true">
+       </separator>
       <command commandId="org.moflon.devtools.ui.commands.install.LoadPsfFileCommand" label="Load Custom PSF File..." style="push">
          </command>
     </menuContribution>
