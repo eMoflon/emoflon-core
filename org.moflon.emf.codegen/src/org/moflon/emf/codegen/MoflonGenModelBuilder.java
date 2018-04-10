@@ -17,7 +17,6 @@ import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.moflon.core.preferences.EMoflonPreferencesStorage;
 import org.moflon.core.preferences.PlatformUriType;
 import org.moflon.core.propertycontainer.AdditionalDependencies;
 import org.moflon.core.propertycontainer.AdditionalUsedGenPackages;
@@ -115,9 +114,9 @@ public class MoflonGenModelBuilder extends GenModelBuilder {
 	}
 
 	/**
-	 * Returns a platform:/ {@link URI} for the given project based on the
-	 * corresponding preferences in {@link EMoflonPreferencesStorage}
+	 * Returns a platform:/ {@link URI} for the given project based on the visible {@link URIPreferenceExtension}s
 	 * 
+	 * If multiple extensions exist, the preference of one extension is taken nondeterministically.
 	 * @param project
 	 *            the project
 	 * @return the corresponding {@link URI}
@@ -126,7 +125,7 @@ public class MoflonGenModelBuilder extends GenModelBuilder {
 		final PlatformUriType preferredGenModelPlatformUriType = uriPreferenceExtension.stream()//
 				.map(URIPreferenceExtension::getPlatformURIType)//
 				.findAny()//
-				.orElse(PlatformUriType.PLUGIN);
+				.orElse(PlatformUriType.DEFAULT);
 		final URI projectURI = determineProjectUriBasedOnPlatformUriType(project, preferredGenModelPlatformUriType);
 		return projectURI;
 	}

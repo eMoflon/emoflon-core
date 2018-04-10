@@ -305,12 +305,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 	 *            the progress monitor
 	 */
 	protected void addGitKeepFiles(final IProject project, final IProgressMonitor monitor) {
-		final SubMonitor subMon = SubMonitor.convert(monitor, "Creating .keep* files for Git within project " + project,
-				3);
-
-		WorkspaceHelper.createKeepFile(WorkspaceHelper.getSourceFolder(project), subMon.split(1));
-		WorkspaceHelper.createKeepFile(WorkspaceHelper.getGenFolder(project), subMon.split(1));
-		WorkspaceHelper.createKeepFile(WorkspaceHelper.getModelFolder(project), subMon.split(1));
+	   // Nothing to do in this class
 	}
 
 	@Override
