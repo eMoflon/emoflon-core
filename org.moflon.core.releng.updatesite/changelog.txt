@@ -1,10 +1,18 @@
-2018-03-22 eMoflon 1.1.1 released
+2018-04-10 eMoflon Core 1.2.0 released
 
-Default URI type switched to platform:/reesource instead of platform:/plugin
+Minor improvements:
+* Default URI type switched back to platform:/plugin for backward compatibility
+  * Preferred URI type is now configurable via an extension point.
+* More concise .gitignore files
+* See also https://github.com/eMoflon/emoflon-core/issues?utf8=✓&q=is%3Aissue closed%3A2018-03-22..2018-04-10
+
+2018-03-22 eMoflon Core 1.1.1 released
+
+Default URI type switched to platform:/resource instead of platform:/plugin
 
 Issue https://github.com/eMoflon/emoflon-core/issues/50
 
-2018-03-21 eMoflon 1.1.0 released
+2018-03-21 eMoflon Core 1.1.0 released
 
 This is a minor bugfix release
 
