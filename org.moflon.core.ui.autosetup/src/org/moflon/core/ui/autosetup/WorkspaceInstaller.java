@@ -199,6 +199,12 @@ public class WorkspaceInstaller {
 
 	public void installPsfFile(URL url, String label) {
 		Optional<String> psfContent = PsfFileUtils.extractPsfFileContent(url);
-		psfContent.ifPresent(psf -> createImportProjectSetOperation(psf, url.toString(), label));
+		psfContent.ifPresent(psf -> {
+			try {
+				createImportProjectSetOperation(psf, url.toString(), label).run();
+			} catch (Exception e) {
+				logger.error(ExceptionUtil.displayExceptionAsString(e));
+			}
+		});
 	}
 }

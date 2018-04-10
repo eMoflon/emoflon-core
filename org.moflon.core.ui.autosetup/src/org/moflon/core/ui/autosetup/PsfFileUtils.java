@@ -76,10 +76,11 @@ public final class PsfFileUtils {
 	public static Optional<String> extractPsfFileContent(final URL url) {
 		try {
 			URLConnection connection = url.openConnection();
+			connection.setReadTimeout(60 * 1000);
 			String enc = connection.getContentEncoding();
 			if (enc == null)
 				enc = ResourcesPlugin.getEncoding();
-			return Optional.of(read(connection.getInputStream(), enc, connection.getContentLength()));
+			return Optional.of(read(connection.getInputStream(), enc));
 		} catch (Exception e) {
 			logger.error(ExceptionUtil.displayExceptionAsString(e));
 			// Fail silently but return empty optional
@@ -88,7 +89,7 @@ public final class PsfFileUtils {
 		return Optional.empty();
 	}
 
-	public static String read(InputStream is, String encoding, int length) throws IOException {
+	public static String read(InputStream is, String encoding) throws IOException {
 		if (is == null)
 			throw new IOException("Stream is null");
 
