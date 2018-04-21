@@ -33,9 +33,10 @@ import org.moflon.core.utilities.ProgressMonitorUtil;
 import org.moflon.core.utilities.WorkspaceHelper;
 
 final class ExploreEMoflonProjectsJob extends Job {
-	private static final String JUNIT_TEST_LAUNCHER_FILE_NAME_PATTERN = "^.*[Test|TestSuite].*[.]launch$";
-
 	private static final Logger logger = Logger.getLogger(ExploreEMoflonProjectsJob.class);
+
+	private static final String LAUNCH_EXT = ".launch";
+	private static final CharSequence AUTO_TESTSUITE = "AutoTestSuite";
 
 	private final List<Job> jobs;
 
@@ -105,7 +106,7 @@ final class ExploreEMoflonProjectsJob extends Job {
 				final List<IFile> selectedLaunchConfigurations = Arrays.asList(testProjectCandidate.members()).stream()//
 						.filter(m -> m instanceof IFile) //
 						.map(m -> (IFile) m.getAdapter(IFile.class))//
-						.filter(f -> f.getName().matches(JUNIT_TEST_LAUNCHER_FILE_NAME_PATTERN))//
+						.filter(f -> f.getName().endsWith(LAUNCH_EXT) && f.getName().contains(AUTO_TESTSUITE))//
 						.collect(Collectors.toList());
 				launchConfigurations.addAll(selectedLaunchConfigurations);
 			} catch (final CoreException e) {
