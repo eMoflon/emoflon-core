@@ -33,4 +33,5 @@ Export-Package: org.moflon.core.ui,
  org.moflon.core.ui.visualisation
 Bundle-Activator: org.moflon.core.ui.MoflonCoreUiActivator
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.moflon.core.ui
 

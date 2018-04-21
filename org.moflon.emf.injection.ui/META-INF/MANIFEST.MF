@@ -30,3 +30,4 @@ Export-Package: org.moflon.emf.injection.build,
  org.moflon.emf.injection.ui.internal,
  org.moflon.emf.injection.ui.quickfix
 Bundle-Activator: org.moflon.emf.injection.ui.internal.InjectionActivator
+Automatic-Module-Name: org.moflon.emf.injection.ui

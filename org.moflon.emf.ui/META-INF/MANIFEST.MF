@@ -23,4 +23,5 @@ Require-Bundle: org.eclipse.ui.workbench;bundle-version="3.0.0",
  org.eclipse.xtend.lib.macro,
  org.moflon.emf.codegen
 Export-Package: org.moflon.emf.ui.wizard
+Automatic-Module-Name: org.moflon.emf.ui
 
