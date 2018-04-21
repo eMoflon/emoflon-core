@@ -16,4 +16,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.moflon.emf.injection.ide,
  org.moflon.emf.injection.ide.contentassist.antlr,
  org.moflon.emf.injection.ide.contentassist.antlr.internal
+Automatic-Module-Name: org.moflon.emf.injection.ide
 

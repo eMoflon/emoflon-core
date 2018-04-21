@@ -16,3 +16,4 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.11.1",
  org.moflon.core.ui;bundle-version="1.0.0",
  org.moflon.core.utilities;bundle-version="3.0.0"
 Bundle-Vendor: eMoflon developers
+Automatic-Module-Name: org.moflon.git.ui

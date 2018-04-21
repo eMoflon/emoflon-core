@@ -59,3 +59,4 @@ Require-Bundle: org.apache.commons.io;bundle-version="[2.0.1,3.0.0)";visibility:
  org.eclipse.pde.core,
  org.eclipse.emf.mwe.core
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.moflon.core.utilities

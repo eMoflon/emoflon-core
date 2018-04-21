@@ -20,3 +20,4 @@ Require-Bundle: org.eclipse.equinox.registry;bundle-version="3.0.0",
  org.eclipse.core.expressions;bundle-version="3.6.0"
 Export-Package: org.moflon.core.ui.autosetup,
  org.moflon.core.ui.autosetup.handler
+Automatic-Module-Name: org.moflon.core.ui.autosetup

@@ -18,3 +18,4 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.0.0",
  org.moflon.core.plugins;bundle-version="2.2.0"
 Export-Package: org.moflon.core.build,
  org.moflon.core.build.nature
+Automatic-Module-Name: org.moflon.core.build
