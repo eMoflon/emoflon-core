@@ -36,7 +36,7 @@ final class ExploreEMoflonProjectsJob extends Job {
 	private static final Logger logger = Logger.getLogger(ExploreEMoflonProjectsJob.class);
 
 	private static final String LAUNCH_EXT = ".launch";
-	private static final CharSequence AUTO_TESTSUITE = "AutoTestSuite";
+	private static final CharSequence AUTO_TESTSUITE = "TestSuite";
 
 	private final List<Job> jobs;
 
