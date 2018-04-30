@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
@@ -34,7 +35,8 @@ public class MoflonPropertiesContainerHelper {
 	private static final Logger logger = Logger.getLogger(MoflonPropertiesContainerHelper.class);
 
 	/**
-	 * Loads the eMoflon properties of the given project.
+	 * Loads the eMoflon properties of the given project. If a properties file does
+	 * not exist yet, it will be created.
 	 *
 	 * @param project
 	 * @param monitor
@@ -49,6 +51,20 @@ public class MoflonPropertiesContainerHelper {
 
 		MoflonPropertiesContainerHelper.save(container, subMon.split(1));
 		return container;
+	}
+
+	/**
+	 * Loads the eMoflon properties of the given project. If a properties file does
+	 * not exist, the returned Optional will be empty.
+	 * 
+	 * @param project
+	 *            the project
+	 * @return an Optional for the properties
+	 */
+	public static Optional<MoflonPropertiesContainer> loadIfExists(final IProject project) {
+		return Optional.of(MoflonConventions.getDefaultMoflonPropertiesFile(project)) //
+				.filter(f -> f.exists()) //
+				.map(f -> loadPropertiesContainer(f));
 	}
 
 	private static void fixProjectNameIfNeeded(final IProject project, final MoflonPropertiesContainer container) {
@@ -67,13 +83,17 @@ public class MoflonPropertiesContainerHelper {
 		MoflonPropertiesContainer moflonPropertiesContainer;
 		if (propertyFile.exists()) {
 			PropertycontainerFactory.eINSTANCE.getClass();
-			moflonPropertiesContainer = (MoflonPropertiesContainer) eMoflonEMFUtil
-					.getResourceFromFileIntoDefaultResourceSet(propertyFile).getContents().get(0);
+			moflonPropertiesContainer = loadPropertiesContainer(propertyFile);
 		} else {
 			moflonPropertiesContainer = createDefaultPropertiesContainer(project);
 			save(moflonPropertiesContainer, new NullProgressMonitor());
 		}
 		return moflonPropertiesContainer;
+	}
+
+	private static MoflonPropertiesContainer loadPropertiesContainer(final IFile propertyFile) {
+		Resource resource = eMoflonEMFUtil.getResourceFromFileIntoDefaultResourceSet(propertyFile);
+		return (MoflonPropertiesContainer) resource.getContents().get(0);
 	}
 
 	public static MoflonPropertiesContainer createDefaultPropertiesContainer(final IProject project) {
