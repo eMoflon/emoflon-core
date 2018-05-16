@@ -38,6 +38,12 @@ class EMoflonPlantUMLGenerator {
 		'''
 	}
 
+	public static def String toBigDiagram(){
+		'''
+			title This diagram would be so big, trying to render it would fry your Eclipse instance
+		'''
+	}
+
 	public def static String visualiseEcoreElements(Collection<EClass> eclasses, Collection<EReference> refs){
 		'''
 		«FOR c : eclasses»
