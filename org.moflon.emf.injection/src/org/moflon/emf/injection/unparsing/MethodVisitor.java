@@ -11,7 +11,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.moflon.core.utilities.MoflonUtil;
+import org.moflon.core.utilities.EcoreUtils;
 
 /**
  * A helper class for extracting specified methods from the AST created by
@@ -44,7 +44,7 @@ public class MethodVisitor extends ASTVisitor {
 	}
 
 	public static String signatureFor(final EOperation eOperation) {
-		String signature = MoflonUtil.getFQN(eOperation.getEContainingClass()) + "_" + eOperation.getName();
+		String signature = EcoreUtils.getFQN(eOperation.getEContainingClass()) + "_" + eOperation.getName();
 		for (final EParameter param : eOperation.getEParameters()) {
 			signature += "_" + param.getName() + "_" + getNameOfClassifier(param.getEType());
 		}
