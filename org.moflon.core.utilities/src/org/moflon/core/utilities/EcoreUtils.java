@@ -1,6 +1,7 @@
 package org.moflon.core.utilities;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.ENamedElement;
@@ -42,7 +43,12 @@ public class EcoreUtils {
 		if (class1 == null || class2 == null) {
 			return false;
 		}
-		return getFQN(class1).equals(getFQN(class2));
+		Optional<String> fqn1 = getFQNIfPossible(class1);
+		Optional<String> fqn2 = getFQNIfPossible(class2);
+		
+		return fqn1
+				.flatMap(f1 -> fqn2.map(f2 -> f1.equals(f2)))
+				.orElse(false);
 	}
 
 	/**
@@ -52,6 +58,7 @@ public class EcoreUtils {
 	 * @param ENamedElement
 	 *            the named element
 	 * @return the fully qualified name of the element
+	 * @deprecated Use {@link #getFQNIfPossible(ENamedElement)} instead.
 	 */
 	public static String getFQN(final ENamedElement element) {
 		String fqn = element.getName();
@@ -61,5 +68,35 @@ public class EcoreUtils {
 			fqn = e.getName() + "." + fqn;
 		}
 		return fqn;
+	}
+	
+	/**
+	 * Determine fully qualified name of given element by iterating through the
+	 * package hierarchy.  Performs null handling.
+	 *
+	 * @param ENamedElement
+	 *            the named element
+	 * @return the fully qualified name of the element or an empty optional
+	 */
+	public static Optional<String> getFQNIfPossible(final ENamedElement element) {
+		if(element == null)
+			return Optional.empty();
+		
+		String fqn = element.getName();
+		
+		if(fqn == null)
+			return Optional.empty();
+		
+		ENamedElement e = element;
+		while (e.eContainer() != null) {
+			e = (ENamedElement) e.eContainer();
+			
+			if(e.getName() == null)
+				return Optional.empty();
+			
+			fqn = e.getName() + "." + fqn;
+		}
+		
+		return Optional.of(fqn);
 	}
 }
