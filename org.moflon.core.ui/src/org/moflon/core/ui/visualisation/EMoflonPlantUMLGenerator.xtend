@@ -8,10 +8,9 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 
 class EMoflonPlantUMLGenerator {
+	static var idMap = new HashMap<EObject, String>();
 	
-	private static var idMap = new HashMap<EObject, String>();
-	
-	public static def String wrapInTags(String body){
+	static def String wrapInTags(String body){
 		'''
 			@startuml
 			«body»
@@ -26,25 +25,25 @@ class EMoflonPlantUMLGenerator {
 		'''«idMap.get(o)»«separator»«o.eClass.name»'''	
 	}
 	
-	public static def String emptyDiagram(){
+	static def String emptyDiagram(){
 		'''
 			title Choose an element that can be visualised
 		'''
 	}
 	
-	public static def String errorDiagram(){
+	static def String errorDiagram(){
 		'''
 			title I'm having problems visualising the current selection (check your console).
 		'''
 	}
 
-	public static def String toBigDiagram(){
+	static def String toBigDiagram(){
 		'''
 			title This diagram would be so big, trying to render it would fry your Eclipse instance
 		'''
 	}
 
-	public def static String visualiseEcoreElements(Collection<EClass> eclasses, Collection<EReference> refs){
+	def static String visualiseEcoreElements(Collection<EClass> eclasses, Collection<EReference> refs){
 		'''
 		«FOR c : eclasses»
 			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c)»
@@ -64,7 +63,7 @@ class EMoflonPlantUMLGenerator {
 		'''
 	}
 	
-	public def static String visualiseModelElements(Collection<EObject> objects, Collection<VisualEdge> links){
+	def static String visualiseModelElements(Collection<EObject> objects, Collection<VisualEdge> links){
 		idMap.clear
 		
 		'''
@@ -137,7 +136,7 @@ class EMoflonPlantUMLGenerator {
 		'''
 	} 
 	
-	public def static CharSequence plantUMLPreamble(){
+	def static CharSequence plantUMLPreamble(){
 		'''
 			hide empty members
 			hide circle
