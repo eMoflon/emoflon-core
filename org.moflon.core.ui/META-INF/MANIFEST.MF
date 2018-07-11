@@ -34,4 +34,5 @@ Export-Package: org.moflon.core.ui,
 Bundle-Activator: org.moflon.core.ui.MoflonCoreUiActivator
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.moflon.core.ui
+Import-Package: org.eclipse.emf.edit.domain
 

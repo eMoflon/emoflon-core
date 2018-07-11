@@ -21,9 +21,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.moflon.core.ui.VisualiserUtilities;
 
 public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 	private IEditorPart editor;
+	private boolean isEmptySelectionSupported = false;
 
 	@Override
 	protected String getDiagramBody(IEditorPart editor, ISelection selection) {
@@ -55,8 +57,8 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 
 		return refsWithOnlyOneEOpposite;
 	}
-	
-	private Collection<VisualEdge> handleEOppositesForLinks(Collection<VisualEdge> links){
+
+	private Collection<VisualEdge> handleEOppositesForLinks(Collection<VisualEdge> links) {
 		Collection<VisualEdge> linksWithOnlyOneEOpposite = new ArrayList<>();
 		for (VisualEdge link : links) {
 			if (!link.hasEOpposite() || !linksWithOnlyOneEOpposite.contains(link.findEOpposite(links).orElse(null)))
@@ -205,17 +207,17 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 	private boolean objectIsACorrespondenceLink(EObject next) {
 		EStructuralFeature refSrc = next.eClass().getEStructuralFeature("source");
 		EStructuralFeature refTrg = next.eClass().getEStructuralFeature("target");
-		
-		if(refSrc != null && refTrg != null) {
-			if(refSrc instanceof EReference && refTrg instanceof EReference) {
+
+		if (refSrc != null && refTrg != null) {
+			if (refSrc instanceof EReference && refTrg instanceof EReference) {
 				EObject src = (EObject) next.eGet(refSrc);
 				EObject trg = (EObject) next.eGet(refTrg);
-				
-				if(src != null && trg != null)
+
+				if (src != null && trg != null)
 					return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -242,12 +244,37 @@ public class EMoflonModelAndMetamodelVisualiser extends EMoflonVisualiser {
 	@Override
 	public boolean supportsEditor(IEditorPart editor) {
 		this.editor = editor;
-		return extractMetamodelElementsFromEditor(editor).isPresent()
-				|| extractModelElementsFromEditor(editor).isPresent();
+
+		// check if editor currently has Ecore related model loaded
+		boolean hasEcoreFileLoaded = VisualiserUtilities.checkFileExtensionSupport(editor, "ecore")
+				|| VisualiserUtilities.checkFileExtensionSupport(editor, "xmi")
+				|| VisualiserUtilities.checkFileExtensionSupport(editor, "genmodel");
+
+		// check if the editor internally handles Ecore EObjects
+		List<EObject> allElements = VisualiserUtilities.extractEcoreElements(editor);
+		isEmptySelectionSupported = allElements != null;
+
+		// if only one of the above conditions is true, there is still a possibility
+		// that a given selection might be supported
+		return hasEcoreFileLoaded || isEmptySelectionSupported;
 	}
 
 	@Override
 	public boolean supportsSelection(ISelection selection) {
+		// only Ecore selections are supported
+		if (!VisualiserUtilities.isEcoreSelection(selection)) {
+			return false;
+		}
+
+		// empty Ecore selections are supported only if the editor can provide Ecore
+		// elements, this is checked and remembered in supportsEditor(...)
+		List<EObject> ecoreSelection = VisualiserUtilities.extractEcoreSelection(selection);
+		if (ecoreSelection.size() == 0 && !isEmptySelectionSupported) {
+			return false;
+		}
+
+		// TODO: add distinction for metamodels and models
+
 		return true;
 	}
 }
