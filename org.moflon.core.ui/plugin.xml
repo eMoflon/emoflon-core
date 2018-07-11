@@ -240,7 +240,7 @@
     </factory>
   </extension>
   <extension point="net.sourceforge.plantuml.eclipse.diagramTextProvider">
-    <diagramTextProvider priority="2" providerClass="org.moflon.core.ui.visualisation.EMoflonModelAndMetamodelVisualiser">
+    <diagramTextProvider priority="normal" providerClass="org.moflon.core.ui.visualisation.EMoflonModelAndMetamodelVisualiser">
      </diagramTextProvider>
   </extension>
 </plugin>
