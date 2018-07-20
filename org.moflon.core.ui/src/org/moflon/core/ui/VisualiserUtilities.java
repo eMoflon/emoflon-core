@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -167,7 +169,7 @@ public class VisualiserUtilities {
 				.map(Resource.class::cast)//
 				.flatMap(VisualiserUtilities::expandResource)//
 				.collect(Collectors.toList());
-		
+
 		// enhances performance of contains operation later
 		HashSet<EObject> cache = new HashSet<>(result);
 
@@ -231,5 +233,40 @@ public class VisualiserUtilities {
 		resource.getAllContents().forEachRemaining(elements::add);
 		return elements.stream()//
 				.filter(elem -> elem != null);
+	}
+
+	/**
+	 * States whether the given list of elements contains any metamodel elements.
+	 * 
+	 * @param elements
+	 *            The list of elements that is to be checked for the existence of
+	 *            metamodel elements. This list, nor any of its elements, must be
+	 *            <code>null</code>.
+	 * @return <code>true</code>, if the given list contains at least one metamodel
+	 *         element. <code>false</code> otherwise.
+	 */
+	public static boolean hasMetamodelElements(List<EObject> elements) {
+		return elements.stream()//
+				.filter(e -> e instanceof EModelElement || e instanceof EGenericType)//
+				.findAny()//
+				.isPresent();
+	}
+
+	/**
+	 * States whether the given list of elements contains any model elements.
+	 * 
+	 * @param elements
+	 *            The list of elements that is to be checked for the existence of
+	 *            model elements. This list, nor any of its elements, must be
+	 *            <code>null</code>.
+	 * @return <code>true</code>, if the given list contains at least one model
+	 *         element. <code>false</code> otherwise.
+	 */
+	public static boolean hasModelElements(List<EObject> elements) {
+		return elements.stream()//
+				.filter(e -> !(e instanceof EModelElement))//
+				.filter(e -> !(e instanceof EGenericType))//
+				.findAny()//
+				.isPresent();
 	}
 }

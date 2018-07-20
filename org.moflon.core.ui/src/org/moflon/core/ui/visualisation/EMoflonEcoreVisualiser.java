@@ -25,12 +25,7 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 	private boolean isEmptySelectionSupported = false;
 
 	/**
-	 * Stores the superset of Ecore elements, that are to be visualised.
-	 */
-	private List<EObject> latestEditorContents;
-
-	/**
-	 * Stores a subset of Ecore elements, that are to be visualised.
+	 * Stores a subset of Ecore elements, that are to be visualised..
 	 */
 	private List<EObject> latestSelection;
 
@@ -46,8 +41,8 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 		// time, it is not possible to check for specific elements from Ecore metamodels
 		// or models. This has to be done in #supportsSelection(...), when it is clear
 		// whether the selection is empty or not.
-		latestEditorContents = VisualiserUtilities.extractEcoreElements(editor);
-		isEmptySelectionSupported = latestEditorContents != null;
+		latestSelection = VisualiserUtilities.extractEcoreElements(editor);
+		isEmptySelectionSupported = latestSelection != null;
 
 		// if only one of the above conditions is true, there is still a possibility
 		// that a given selection might be supported
@@ -63,41 +58,45 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 
 		// empty Ecore selections are supported only if the editor can provide Ecore
 		// elements, this is checked and remembered in supportsEditor(...)
-		latestSelection = VisualiserUtilities.extractEcoreSelection(selection);
-		if (latestSelection.isEmpty() && !isEmptySelectionSupported) {
+		List<EObject> ecoreSelection = VisualiserUtilities.extractEcoreSelection(selection);
+		if (ecoreSelection == null || ecoreSelection.isEmpty()) {
 			return false;
 		}
+		latestSelection = ecoreSelection;
 
-		boolean isSupported = supportsSelection(latestEditorContents, latestSelection);
+		boolean isSupported = supportsSelection(latestSelection);
 		return isSupported;
 	}
 
 	/**
-	 * Checks whether or not a given Ecore selection, with respect to a superset of
-	 * Ecore elements, is supposed to be supported by this Ecore visualiser.
+	 * Checks whether or not a given Ecore selection is supposed to be supported by
+	 * this Ecore visualiser.
 	 * 
-	 * @param superset
-	 *            All Ecore elements that could be visualised. Contains the given
-	 *            selection as a subset.
 	 * @param selection
-	 *            All Ecore elements that supposed to be visualised.
+	 *            All Ecore elements that are supposed to be visualised.
 	 * @return <code>true</code> if the given selection is supported, otherwise
 	 *         <code>false</code>.
 	 */
-	protected abstract boolean supportsSelection(List<EObject> superset, List<EObject> selection);
+	protected abstract boolean supportsSelection(List<EObject> selection);
 
 	@Override
 	public String getDiagramBody(IEditorPart editor, ISelection selection) {
-		// TODO: Fix case in which selection is null and editor contains both metamodel and model elements.
-		if (latestSelection.isEmpty() && latestEditorContents.isEmpty()) {
-			// If both editor and selection are empty, an empty diagram is returned.
+		// In order to save processing time latestSelection already contains the
+		// best fit for an ecore selection and does not have to be recalculated from
+		// editor and selection. It is determined during the calls of
+		// supportsEdidtor(...) and supportsSelection(...).
+		// Note that if a specific selection is null, empty, or simply not supported,
+		// latestSelection is supposed to contain the whole editor output.
+		// This in turn can be again null, empty or not supported, because the check for
+		// editor support is quite tolerant. This is why this has to be checked here
+		// again.
+		if (latestSelection == null || latestSelection.isEmpty()) {
 			return EMoflonPlantUMLGenerator.emptyDiagram();
-		} else if (latestSelection.isEmpty()) {
-			// Instead of an empty selection the whole editor content is visualised.
-			return getDiagramBody(latestEditorContents);
-		} else {
-			return getDiagramBody(latestSelection);
+		} else if (VisualiserUtilities.hasMetamodelElements(latestSelection)
+				&& VisualiserUtilities.hasModelElements(latestSelection)) {
+			return EMoflonPlantUMLGenerator.emptyDiagram();
 		}
+		return getDiagramBody(latestSelection);
 	}
 
 	/**

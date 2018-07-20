@@ -10,12 +10,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.eclipse.emf.ecore.EGenericType;
-import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EContentsEList;
 import org.eclipse.emf.ecore.util.EContentsEList.FeatureIterator;
+import org.moflon.core.ui.VisualiserUtilities;
 
 /**
  * Visualises UML Object Diagrams for Ecore models.
@@ -24,18 +23,11 @@ import org.eclipse.emf.ecore.util.EContentsEList.FeatureIterator;
 public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser {
 
 	@Override
-	public boolean supportsSelection(List<EObject> superset, List<EObject> selection) {
-		// If no element is selected, the whole editor content is to be displayed,
-		// therefore it must be checked for the correct Ecore elements.
-		List<EObject> ecoreSelection = selection.isEmpty() ? superset : selection;
-
+	public boolean supportsSelection(List<EObject> selection) {
 		// An Ecore model must contain EObjects only, which are not EModelElements. If
 		// it contains other
 		// elements, the selection is not supported by this visualiser.
-		return !ecoreSelection.stream()//
-				.filter(e -> e instanceof EModelElement || e instanceof EGenericType)//
-				.findAny()//
-				.isPresent();
+		return !VisualiserUtilities.hasMetamodelElements(selection);
 	}
 
 	@Override
