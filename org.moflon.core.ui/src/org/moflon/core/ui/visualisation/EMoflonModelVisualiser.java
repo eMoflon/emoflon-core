@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EContentsEList;
@@ -32,31 +31,22 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser {
 
 	@Override
 	protected String getDiagramBody(List<EObject> elements) {
-		Pair<Collection<EObject>, Collection<VisualEdge>> p = determineObjectsAndLinksToVisualise(elements);
-		return EMoflonPlantUMLGenerator.visualiseModelElements(p.getLeft(), p.getRight());
+		List<EObject> objects = determineObjectsToVisualise(elements);
+		List<VisualEdge> links = handleEOppositesForLinks(determineLinksToVisualise(objects));
+		return EMoflonPlantUMLGenerator.visualiseModelElements(objects, links);
 	}
 
-	// --------------------------------------------------------------------------
-	// --------------------------------------------------------------------------
-	// --------------------------------------------------------------------------
-	// TODO: REFACTOR
-
-	private Pair<Collection<EObject>, Collection<VisualEdge>> determineObjectsAndLinksToVisualise(
-			Collection<EObject> selection) {
-
-		Collection<EObject> chosenObjects = selection.stream()//
+	private List<EObject> determineObjectsToVisualise(List<EObject> selection) {
+		return selection.stream()//
 				.filter(EObject.class::isInstance)//
 				.map(EObject.class::cast)//
-				.collect(Collectors.toSet());//
-
-		return Pair.of(chosenObjects, determineLinksToVisualize(chosenObjects));
-
+				.collect(Collectors.toList());//
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Collection<VisualEdge> determineLinksToVisualize(Collection<EObject> chosenObjects) {
-		Collection<VisualEdge> links = new HashSet<>();
-		for (EObject o : new ArrayList<EObject>(chosenObjects)) {
+	private List<VisualEdge> determineLinksToVisualise(List<EObject> chosenObjects) {
+		HashSet<VisualEdge> links = new HashSet<>();
+		for (EObject o : chosenObjects) {
 			for (EContentsEList.FeatureIterator featureIterator = //
 					(EContentsEList.FeatureIterator) o.eCrossReferences().iterator(); featureIterator.hasNext();) {
 				addVisualEdge(featureIterator, chosenObjects, links, o);
@@ -67,7 +57,7 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser {
 			}
 		}
 
-		return handleEOppositesForLinks(links);
+		return new ArrayList<>(links);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -79,8 +69,8 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser {
 			refs.add(new VisualEdge(eReference, src, trg));
 	}
 
-	private Collection<VisualEdge> handleEOppositesForLinks(Collection<VisualEdge> links) {
-		Collection<VisualEdge> linksWithOnlyOneEOpposite = new ArrayList<>();
+	private List<VisualEdge> handleEOppositesForLinks(List<VisualEdge> links) {
+		List<VisualEdge> linksWithOnlyOneEOpposite = new ArrayList<>();
 		for (VisualEdge link : links) {
 			if (!link.hasEOpposite() || !linksWithOnlyOneEOpposite.contains(link.findEOpposite(links).orElse(null)))
 				linksWithOnlyOneEOpposite.add(link);

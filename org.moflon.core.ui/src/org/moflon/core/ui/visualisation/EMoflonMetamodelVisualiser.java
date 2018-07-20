@@ -4,11 +4,9 @@
 package org.moflon.core.ui.visualisation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -29,27 +27,12 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 
 	@Override
 	protected String getDiagramBody(List<EObject> elements) {
-		Pair<Collection<EClass>, Collection<EReference>> p = determineClassesAndRefsToVisualise(elements);
-		return EMoflonPlantUMLGenerator.visualiseEcoreElements(p.getLeft(), handleEOpposites(p.getRight()));
+		List<EClass> classes = determineClassesToVisualise(elements);
+		List<EReference> refs = handleEOpposites(determineReferencesToVisualise(classes));
+		return EMoflonPlantUMLGenerator.visualiseEcoreElements(classes, refs);
 	}
 
-	// --------------------------------------------------------------------------
-	// --------------------------------------------------------------------------
-	// --------------------------------------------------------------------------
-	// TODO: REFACTOR
-
-	private Collection<EReference> handleEOpposites(Collection<EReference> refs) {
-		Collection<EReference> refsWithOnlyOneEOpposite = new ArrayList<>();
-		for (EReference eReference : refs) {
-			if (eReference.getEOpposite() == null || !refsWithOnlyOneEOpposite.contains(eReference.getEOpposite()))
-				refsWithOnlyOneEOpposite.add(eReference);
-		}
-
-		return refsWithOnlyOneEOpposite;
-	}
-
-	private Pair<Collection<EClass>, Collection<EReference>> determineClassesAndRefsToVisualise(
-			Collection<EObject> selection) {
+	private List<EClass> determineClassesToVisualise(List<EObject> selection) {
 		// TODO: Fix selection bug where only EClasses will be visualised, but not
 		// eclasses of operations / attributes and other lower-level EModelElements.
 		// Instead, if the selection contains such an element, it should be replaced by
@@ -57,18 +40,25 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 		// TODO: Fix bug where EPackages cannot be visualised. Instead, they should
 		// represent their content, i.e. all EClass and elements contained in EClasses
 		// (see above) should be visualised.
-		Collection<EClass> chosenClasses = selection.stream()//
+		return selection.stream()//
 				.filter(EClass.class::isInstance)//
 				.map(EClass.class::cast)//
-				.collect(Collectors.toSet());//
-
-		return Pair.of(chosenClasses, determineReferencesToVisualize(chosenClasses));
+				.collect(Collectors.toList());//
 	}
 
-	private Collection<EReference> determineReferencesToVisualize(Collection<EClass> chosenClasses) {
-		Collection<EReference> refs = chosenClasses.stream()//
+	private List<EReference> determineReferencesToVisualise(List<EClass> chosenClasses) {
+		return chosenClasses.stream()//
 				.flatMap(c -> c.getEReferences().stream())//
-				.collect(Collectors.toSet());//
-		return refs;
+				.collect(Collectors.toList());//
+	}
+
+	private List<EReference> handleEOpposites(List<EReference> refs) {
+		List<EReference> refsWithOnlyOneEOpposite = new ArrayList<>();
+		for (EReference eReference : refs) {
+			if (eReference.getEOpposite() == null || !refsWithOnlyOneEOpposite.contains(eReference.getEOpposite()))
+				refsWithOnlyOneEOpposite.add(eReference);
+		}
+
+		return refsWithOnlyOneEOpposite;
 	}
 }
