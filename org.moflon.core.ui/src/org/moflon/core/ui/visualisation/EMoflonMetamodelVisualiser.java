@@ -4,12 +4,19 @@
 package org.moflon.core.ui.visualisation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.moflon.core.ui.VisualiserUtilities;
 
 /**
@@ -33,17 +40,49 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 	}
 
 	private List<EClass> determineClassesToVisualise(List<EObject> selection) {
-		// TODO: Fix selection bug where only EClasses will be visualised, but not
-		// eclasses of operations / attributes and other lower-level EModelElements.
-		// Instead, if the selection contains such an element, it should be replaced by
-		// its defining EClass, if this EClass is not already present in the selection.
-		// TODO: Fix bug where EPackages cannot be visualised. Instead, they should
-		// represent their content, i.e. all EClass and elements contained in EClasses
-		// (see above) should be visualised.
-		return selection.stream()//
+		ArrayList<EClass> result = new ArrayList<>(selection.size());
+
+		HashSet<EClass> cache = new HashSet<>();
+
+		// retrieve classes, and enclosing classes of operations, attributes...
+		// TODO: resolve EDataType as well?
+		for (EObject eobject : selection) {
+			EClass eclass = null;
+
+			if (eobject instanceof EClass) {
+				eclass = (EClass) eobject;
+			} else if (eobject instanceof EStructuralFeature) {
+				// EReference and EAttribute
+				EStructuralFeature efeature = (EStructuralFeature) eobject;
+				eclass = efeature.getEContainingClass();
+			} else if (eobject instanceof EOperation) {
+				EOperation eoperation = (EOperation) eobject;
+				eclass = eoperation.getEContainingClass();
+			} else if (eobject instanceof EParameter) {
+				EParameter eparameter = (EParameter) eobject;
+				eclass = eparameter.getEOperation().getEContainingClass();
+			} else if(eobject instanceof EGenericType) {
+				EGenericType etype = (EGenericType) eobject;
+				eclass = etype.getEClassifier() instanceof EClass ? (EClass) etype.getEClassifier() : null;
+			} 
+
+			if (eclass != null && cache.add(eclass)) {
+				result.add(eclass);
+			}
+		}
+
+		// expand EPackages, retrieve classes and add them to result
+		selection.stream()//
+				.filter(EPackage.class::isInstance)//
+				.map(EPackage.class::cast)//
+				.flatMap(epackage -> Stream.concat(Stream.of(epackage), epackage.getESubpackages().stream()))//
+				.flatMap(epackage -> epackage.getEClassifiers().stream())//
 				.filter(EClass.class::isInstance)//
 				.map(EClass.class::cast)//
-				.collect(Collectors.toList());//
+				.filter(cache::add)//
+				.forEach(result::add);
+
+		return result;
 	}
 
 	private List<EReference> determineReferencesToVisualise(List<EClass> chosenClasses) {
