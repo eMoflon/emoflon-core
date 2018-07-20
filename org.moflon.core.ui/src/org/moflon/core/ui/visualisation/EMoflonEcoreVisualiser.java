@@ -88,6 +88,7 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 
 	@Override
 	public String getDiagramBody(IEditorPart editor, ISelection selection) {
+		// TODO: Fix case in which selection is null and editor contains both metamodel and model elements.
 		if (latestSelection.isEmpty() && latestEditorContents.isEmpty()) {
 			// If both editor and selection are empty, an empty diagram is returned.
 			return EMoflonPlantUMLGenerator.emptyDiagram();

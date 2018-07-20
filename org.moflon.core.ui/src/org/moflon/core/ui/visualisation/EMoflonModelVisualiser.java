@@ -7,22 +7,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentsEList;
 import org.eclipse.emf.ecore.util.EContentsEList.FeatureIterator;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorPart;
 
 /**
  * Visualises UML Object Diagrams for Ecore models.
@@ -46,15 +39,9 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser {
 	}
 
 	@Override
-	public String getDiagramBody(IEditorPart editor, ISelection selection) {
-		// TODO: refactor
-		return maybeVisualiseModel(editor)//
-				.orElse(EMoflonPlantUMLGenerator.emptyDiagram());//
-	}
-
-	@Override
 	protected String getDiagramBody(List<EObject> elements) {
-		throw new UnsupportedOperationException("Not yet implemented!");
+		Pair<Collection<EObject>, Collection<VisualEdge>> p = determineObjectsAndLinksToVisualise(elements);
+		return EMoflonPlantUMLGenerator.visualiseModelElements(p.getLeft(), p.getRight());
 	}
 
 	// --------------------------------------------------------------------------
@@ -62,58 +49,15 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser {
 	// --------------------------------------------------------------------------
 	// TODO: REFACTOR
 
-	private Optional<String> maybeVisualiseModel(IEditorPart editor) {
-		return extractModelElementsFromEditor(editor)//
-				.map(p -> EMoflonPlantUMLGenerator.visualiseModelElements(p.getLeft(), p.getRight()));
-	}
-
-	private Optional<Pair<Collection<EObject>, Collection<VisualEdge>>> extractModelElementsFromEditor(
-			IEditorPart editor2) {
-		return Optional.of(editor2)//
-				.flatMap(this::multiSelectionInEcoreEditor)//
-				.map(this::determineObjectsAndLinksToVisualise)//
-				.map(p -> p.getLeft().isEmpty() ? null : p);//
-	}
-
-	@SuppressWarnings("rawtypes")
-	private Optional<List> multiSelectionInEcoreEditor(IEditorPart editor) {
-		return Optional.of(editor.getSite().getSelectionProvider())//
-				.flatMap(maybeCast(ISelectionProvider.class))//
-				.map(ISelectionProvider::getSelection)//
-				.flatMap(maybeCast(IStructuredSelection.class))//
-				.map(IStructuredSelection::toList);//
-	}
-
 	private Pair<Collection<EObject>, Collection<VisualEdge>> determineObjectsAndLinksToVisualise(
-			Collection<Object> selection) {
-		Collection<EObject> chosenObjectsfromResource = new ArrayList<EObject>();
-		if (selection.size() == 1 && !resourceChosen(selection).isEmpty()) {
-			TreeIterator<EObject> eAllContents = resourceChosen(selection).get(0).getAllContents();
-			while (eAllContents.hasNext()) {
-				EObject next = eAllContents.next();
-				if (next instanceof EObject)
-					chosenObjectsfromResource.add(next);
-			}
+			Collection<EObject> selection) {
 
-			return Pair.of(chosenObjectsfromResource, determineLinksToVisualize(chosenObjectsfromResource));
-		}
+		Collection<EObject> chosenObjects = selection.stream()//
+				.filter(EObject.class::isInstance)//
+				.map(EObject.class::cast)//
+				.collect(Collectors.toSet());//
 
-		else {
-			Collection<EObject> chosenObjects = selection.stream()//
-					.filter(EObject.class::isInstance)//
-					.map(EObject.class::cast)//
-					.collect(Collectors.toSet());//
-
-			return Pair.of(chosenObjects, determineLinksToVisualize(chosenObjects));
-		}
-	}
-
-	private List<Resource> resourceChosen(Collection<Object> selection) {
-		List<Resource> resourceChosen = selection.stream()//
-				.filter(Resource.class::isInstance)//
-				.map(Resource.class::cast)//
-				.collect(Collectors.toList());//
-		return resourceChosen;
+		return Pair.of(chosenObjects, determineLinksToVisualize(chosenObjects));
 
 	}
 
@@ -152,5 +96,4 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser {
 
 		return linksWithOnlyOneEOpposite;
 	}
-
 }

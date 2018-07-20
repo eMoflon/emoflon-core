@@ -6,21 +6,14 @@ package org.moflon.core.ui.visualisation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorPart;
 
 /**
  * Visualises UML Class Diagrams for Ecore metamodels.
@@ -44,25 +37,15 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 	}
 
 	@Override
-	public String getDiagramBody(IEditorPart editor, ISelection selection) {
-		// TODO: refactor
-		return maybeVisualiseMetamodel(editor)//
-				.orElse(EMoflonPlantUMLGenerator.emptyDiagram());//
-	}
-
-	@Override
 	protected String getDiagramBody(List<EObject> elements) {
-		throw new UnsupportedOperationException("Not yet implemented!");
+		Pair<Collection<EClass>, Collection<EReference>> p = determineClassesAndRefsToVisualise(elements);
+		return EMoflonPlantUMLGenerator.visualiseEcoreElements(p.getLeft(), handleEOpposites(p.getRight()));
 	}
 
 	// --------------------------------------------------------------------------
 	// --------------------------------------------------------------------------
 	// --------------------------------------------------------------------------
 	// TODO: REFACTOR
-	private Optional<String> maybeVisualiseMetamodel(IEditorPart editor) {
-		return extractMetamodelElementsFromEditor(editor)
-				.map(p -> EMoflonPlantUMLGenerator.visualiseEcoreElements(p.getLeft(), handleEOpposites(p.getRight())));
-	}
 
 	private Collection<EReference> handleEOpposites(Collection<EReference> refs) {
 		Collection<EReference> refsWithOnlyOneEOpposite = new ArrayList<>();
@@ -74,55 +57,21 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 		return refsWithOnlyOneEOpposite;
 	}
 
-	private Optional<Pair<Collection<EClass>, Collection<EReference>>> extractMetamodelElementsFromEditor(
-			IEditorPart editor) {
-		return Optional.of(editor)//
-				.flatMap(this::multiSelectionInEcoreEditor)//
-				.map(this::determineClassesAndRefsToVisualise)//
-				.map(p -> p.getLeft().isEmpty() ? null : p);//
-	}
-
-	@SuppressWarnings("rawtypes")
-	private Optional<List> multiSelectionInEcoreEditor(IEditorPart editor) {
-		return Optional.of(editor.getSite().getSelectionProvider())//
-				.flatMap(maybeCast(ISelectionProvider.class))//
-				.map(ISelectionProvider::getSelection)//
-				.flatMap(maybeCast(IStructuredSelection.class))//
-				.map(IStructuredSelection::toList);//
-	}
-
 	private Pair<Collection<EClass>, Collection<EReference>> determineClassesAndRefsToVisualise(
-			Collection<Object> selection) {
-		Collection<EClass> chosenClassesfromResource = new ArrayList<EClass>();
-		if (selection.size() == 1 && !resourceChosen(selection).isEmpty()) {
-			TreeIterator<EObject> eAllContents = resourceChosen(selection).get(0).getAllContents();
-			while (eAllContents.hasNext()) {
-				EObject next = eAllContents.next();
-				if (next instanceof EClass) {
-					chosenClassesfromResource.add((EClass) next);
-				}
-			}
+			Collection<EObject> selection) {
+		// TODO: Fix selection bug where only EClasses will be visualised, but not
+		// eclasses of operations / attributes and other lower-level EModelElements.
+		// Instead, if the selection contains such an element, it should be replaced by
+		// its defining EClass, if this EClass is not already present in the selection.
+		// TODO: Fix bug where EPackages cannot be visualised. Instead, they should
+		// represent their content, i.e. all EClass and elements contained in EClasses
+		// (see above) should be visualised.
+		Collection<EClass> chosenClasses = selection.stream()//
+				.filter(EClass.class::isInstance)//
+				.map(EClass.class::cast)//
+				.collect(Collectors.toSet());//
 
-			return Pair.of(chosenClassesfromResource, determineReferencesToVisualize(chosenClassesfromResource));
-		}
-
-		else {
-			Collection<EClass> chosenClasses = selection.stream()//
-					.filter(EClass.class::isInstance)//
-					.map(EClass.class::cast)//
-					.collect(Collectors.toSet());//
-
-			return Pair.of(chosenClasses, determineReferencesToVisualize(chosenClasses));
-		}
-	}
-
-	private List<Resource> resourceChosen(Collection<Object> selection) {
-		List<Resource> resourceChosen = selection.stream()//
-				.filter(Resource.class::isInstance)//
-				.map(Resource.class::cast)//
-				.collect(Collectors.toList());//
-		return resourceChosen;
-
+		return Pair.of(chosenClasses, determineReferencesToVisualize(chosenClasses));
 	}
 
 	private Collection<EReference> determineReferencesToVisualize(Collection<EClass> chosenClasses) {
