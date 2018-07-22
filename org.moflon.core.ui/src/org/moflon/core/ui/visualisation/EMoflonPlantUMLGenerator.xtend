@@ -43,7 +43,7 @@ class EMoflonPlantUMLGenerator {
 		'''
 	}
 
-	def static String visualiseEcoreElements(Collection<EClass> eclasses, Collection<EReference> refs){
+	def static String visualiseEcoreElements(Collection<EClass> eclasses, Collection<VisualEdge> refs){
 		'''
 		«FOR c : eclasses»
 			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c)»
@@ -52,13 +52,16 @@ class EMoflonPlantUMLGenerator {
 			«identifierForClass(s)»<|--«identifierForClass(c)»
 			«ENDFOR»
 		«ENDFOR»
-		«FOR r : refs»
-			«IF(r.EOpposite === null)»
-				«identifierForClass(r.EContainingClass)»«IF r.isContainment» *«ENDIF»--> "«multiplicityFor(r)»" «identifierForClass(r.EReferenceType)» : "«r.name»"
+		«FOR ref : refs»
+			«var EReference r = ref.getType()»
+			«var EClass src = r.EContainingClass»
+			«var EClass trg = r.EReferenceType»
+			«IF(!ref.hasEOpposite)»
+				«identifierForClass(src)»«IF r.isContainment» *«ENDIF»--> "«multiplicityFor(r)»" «identifierForClass(trg)» : "«r.name»"
 			«ELSE»
-				«identifierForClass(r.EContainingClass)»"«r.EOpposite.name» «multiplicityFor(r.EOpposite)»" «IF r.isContainment»*«ELSE»<«ENDIF»--«IF r.EOpposite.isContainment»*«ELSE»>«ENDIF» "«r.name» «multiplicityFor(r)»" «identifierForClass(r.EReferenceType)»
+				«identifierForClass(src)»"«r.EOpposite.name» «multiplicityFor(r.EOpposite)»" «IF r.isContainment»*«ELSE»<«ENDIF»--«IF r.EOpposite.isContainment»*«ELSE»>«ENDIF» "«r.name» «multiplicityFor(r)»" «identifierForClass(trg)»
 			«ENDIF»
-			«IF(r.EReferenceType.abstract)»abstract «ENDIF»class «identifierForClass(r.EReferenceType)»
+			«IF(trg.abstract)»abstract «ENDIF»class «identifierForClass(trg)»
 		«ENDFOR»
 		'''
 	}

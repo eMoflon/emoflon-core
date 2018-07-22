@@ -3,6 +3,7 @@
  */
 package org.moflon.core.ui.visualisation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -92,7 +93,8 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 		// again.
 		if (latestSelection == null || latestSelection.isEmpty()) {
 			return EMoflonPlantUMLGenerator.emptyDiagram();
-		} else if (VisualiserUtilities.hasMetamodelElements(latestSelection)
+		} 
+		if (VisualiserUtilities.hasMetamodelElements(latestSelection)
 				&& VisualiserUtilities.hasModelElements(latestSelection)) {
 			return EMoflonPlantUMLGenerator.emptyDiagram();
 		}
@@ -109,4 +111,21 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 	 */
 	protected abstract String getDiagramBody(List<EObject> elements);
 
+	/**
+	 * For a given list of {@link VisualEdge} instances, return only one {@link VisualEdge} for every bidirectional association. 
+	 * 
+	 * For example, if two classes cl1 and cl2 do share a bidirectional association cl1 <-> cl2, only one {@link VisualEdge} instance will be returned, describing only one navigation direction, e.g. cl1 <- cl2. In short, for every bidirectional association, the opposing edge will not be returned. No guarantees can be made which edge of bidirectional association will be returned.
+	 * 
+	 * @param edges The list of edges, each one representing one navigation direction of an association, which may contain the opposing navigation direction of a bidirectional association.
+	 * @return The list of edges without any opposing navigation direction.
+	 */
+	protected List<VisualEdge> handleOpposites(List<VisualEdge> edges) {
+		List<VisualEdge> edgesWithoutEOpposite = new ArrayList<>();
+		for (VisualEdge edge : edges) {
+			if (!edge.hasEOpposite() || !edgesWithoutEOpposite.contains(edge.findEOpposite(edges).orElse(null)))
+				edgesWithoutEOpposite.add(edge);
+		}
+
+		return edgesWithoutEOpposite;
+	}
 }

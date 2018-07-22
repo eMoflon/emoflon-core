@@ -32,7 +32,7 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser {
 	@Override
 	protected String getDiagramBody(List<EObject> elements) {
 		List<EObject> objects = determineObjectsToVisualise(elements);
-		List<VisualEdge> links = handleEOppositesForLinks(determineLinksToVisualise(objects));
+		List<VisualEdge> links = handleOpposites(determineLinksToVisualise(objects));
 		return EMoflonPlantUMLGenerator.visualiseModelElements(objects, links);
 	}
 
@@ -67,15 +67,5 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser {
 		EReference eReference = (EReference) featureIterator.feature();
 		if (chosenObjects.contains(trg))
 			refs.add(new VisualEdge(eReference, src, trg));
-	}
-
-	private List<VisualEdge> handleEOppositesForLinks(List<VisualEdge> links) {
-		List<VisualEdge> linksWithOnlyOneEOpposite = new ArrayList<>();
-		for (VisualEdge link : links) {
-			if (!link.hasEOpposite() || !linksWithOnlyOneEOpposite.contains(link.findEOpposite(links).orElse(null)))
-				linksWithOnlyOneEOpposite.add(link);
-		}
-
-		return linksWithOnlyOneEOpposite;
 	}
 }

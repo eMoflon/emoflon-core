@@ -15,7 +15,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
-import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.moflon.core.ui.VisualiserUtilities;
 
@@ -35,7 +34,7 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 	@Override
 	protected String getDiagramBody(List<EObject> elements) {
 		List<EClass> classes = determineClassesToVisualise(elements);
-		List<EReference> refs = handleEOpposites(determineReferencesToVisualise(classes));
+		List<VisualEdge> refs = handleOpposites(determineReferencesToVisualise(classes));
 		return EMoflonPlantUMLGenerator.visualiseEcoreElements(classes, refs);
 	}
 
@@ -61,10 +60,10 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 			} else if (eobject instanceof EParameter) {
 				EParameter eparameter = (EParameter) eobject;
 				eclass = eparameter.getEOperation().getEContainingClass();
-			} else if(eobject instanceof EGenericType) {
+			} else if (eobject instanceof EGenericType) {
 				EGenericType etype = (EGenericType) eobject;
 				eclass = etype.getEClassifier() instanceof EClass ? (EClass) etype.getEClassifier() : null;
-			} 
+			}
 
 			if (eclass != null && cache.add(eclass)) {
 				result.add(eclass);
@@ -85,19 +84,10 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 		return result;
 	}
 
-	private List<EReference> determineReferencesToVisualise(List<EClass> chosenClasses) {
+	private List<VisualEdge> determineReferencesToVisualise(List<EClass> chosenClasses) {
 		return chosenClasses.stream()//
 				.flatMap(c -> c.getEReferences().stream())//
+				.map(ref -> new VisualEdge(ref, ref.getEContainingClass(), ref.getEReferenceType()))//
 				.collect(Collectors.toList());//
-	}
-
-	private List<EReference> handleEOpposites(List<EReference> refs) {
-		List<EReference> refsWithOnlyOneEOpposite = new ArrayList<>();
-		for (EReference eReference : refs) {
-			if (eReference.getEOpposite() == null || !refsWithOnlyOneEOpposite.contains(eReference.getEOpposite()))
-				refsWithOnlyOneEOpposite.add(eReference);
-		}
-
-		return refsWithOnlyOneEOpposite;
 	}
 }
