@@ -27,6 +27,13 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 	 */
 	private List<EObject> latestSelection;
 
+	/**
+	 * Resembles the superset of all elements that could potentially be visualised.
+	 * Typically determined by all the elements currently handled by the associated
+	 * editor.
+	 */
+	private List<EObject> allElements;
+
 	@Override
 	public boolean supportsEditor(IEditorPart editor) {
 		// check if editor currently has Ecore related model loaded
@@ -39,8 +46,9 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 		// time, it is not possible to check for specific elements from Ecore metamodels
 		// or models. This has to be done in #supportsSelection(...), when it is clear
 		// whether the selection is empty or not.
-		latestSelection = VisualiserUtilities.extractEcoreElements(editor);
-		isEmptySelectionSupported = latestSelection != null;
+		allElements = VisualiserUtilities.extractEcoreElements(editor);
+		latestSelection = allElements;
+		isEmptySelectionSupported = allElements != null;
 
 		// if only one of the above conditions is true, there is still a possibility
 		// that a given selection might be supported
@@ -61,6 +69,10 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 			return false;
 		}
 		latestSelection = ecoreSelection;
+		// in case no elements can be extracted from the editor, allElements is set to the selection
+		if(!isEmptySelectionSupported) {
+			allElements = ecoreSelection;
+		}
 
 		boolean isSupported = supportsSelection(latestSelection);
 		return isSupported;
@@ -107,6 +119,15 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 	 *         PlantUML DSL.
 	 */
 	protected abstract String getDiagramBody(List<EObject> elements);
+	
+	/**
+	 * Getter for {@link #allElements}.
+	 * 
+	 * @return All elements that can potentially be visualised.
+	 */
+	protected List<EObject> getAllElements() {
+		return allElements;
+	}
 
 	/**
 	 * For a given list of {@link VisualEdge} instances, return only one
@@ -117,7 +138,8 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 	 * describing only one navigation direction, e.g. cl1 <- cl2. In short, for
 	 * every bidirectional association, the opposing edge will not be returned. No
 	 * guarantees can be made which direction of a bidirectional association will be
-	 * returned. If there is a unidirectional {@link VisualEdge}, it will be returned.
+	 * returned. If there is a unidirectional {@link VisualEdge}, it will be
+	 * returned.
 	 * 
 	 * @param edges
 	 *            The list of edges, each one representing one navigation direction

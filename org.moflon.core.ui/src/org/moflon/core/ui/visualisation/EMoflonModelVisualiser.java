@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EContentsEList;
@@ -33,11 +31,34 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser {
 		return EMoflonPlantUMLGenerator.visualiseModelElements(objects, links);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private List<EObject> determineObjectsToVisualise(List<EObject> selection) {
-		return selection.stream()//
-				.filter(EObject.class::isInstance)//
-				.map(EObject.class::cast)//
-				.collect(Collectors.toList());//
+		HashSet<EObject> cache = new HashSet<>(selection);
+		
+		List<EObject> result = new ArrayList<>(selection);
+		for (EObject o : selection) {
+			// add parent if there is one
+			if(o.eContainer() != null && cache.add(o.eContainer())) {
+				result.add(o.eContainer());
+			}
+			
+			for (EContentsEList.FeatureIterator featureIterator = //
+					(EContentsEList.FeatureIterator) o.eCrossReferences().iterator(); featureIterator.hasNext();) {
+				EObject trg = (EObject) featureIterator.next();
+				if(cache.add(trg)) {
+					result.add(trg);
+				}
+			}
+			for (EContentsEList.FeatureIterator featureIterator = //
+					(EContentsEList.FeatureIterator) o.eContents().iterator(); featureIterator.hasNext();) {
+				EObject trg = (EObject) featureIterator.next();
+				if(cache.add(trg)) {
+					result.add(trg);
+				}
+			}
+		}
+		
+		return result;
 	}
 
 	@SuppressWarnings("rawtypes")

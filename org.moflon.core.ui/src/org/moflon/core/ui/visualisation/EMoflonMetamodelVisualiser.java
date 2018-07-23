@@ -12,6 +12,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.moflon.core.ui.VisualiserUtilities;
 
@@ -30,9 +31,16 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 
 	@Override
 	protected String getDiagramBody(List<EObject> elements) {
-		List<EClass> classes = determineClassesToVisualise(elements);
-		List<VisualEdge> refs = handleOpposites(determineReferencesToVisualise(classes));
-		return EMoflonPlantUMLGenerator.visualiseEcoreElements(classes, refs);
+		List<EClass> allClasses = getAllElements().stream()//
+				.filter(EClass.class::isInstance)//
+				.map(EClass.class::cast)//
+				.collect(Collectors.toList());
+		
+		List<EClass> chosenClasses = determineClassesToVisualise(elements);
+		List<EClass> chosenClassesWithNeighbors = expandByNeighborHood(allClasses, chosenClasses);
+		
+		List<VisualEdge> refs = handleOpposites(determineReferencesToVisualise(chosenClassesWithNeighbors));
+		return EMoflonPlantUMLGenerator.visualiseEcoreElements(chosenClassesWithNeighbors, refs);
 	}
 
 	private List<EClass> determineClassesToVisualise(List<EObject> selection) {
@@ -80,24 +88,51 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 
 		return result;
 	}
+	
+	private List<EClass> expandByNeighborHood(List<EClass> allClasses, List<EClass> chosenClasses) {
+		HashSet<EClass> cache = new HashSet<>(chosenClasses);
+		
+		// add all neighboring classes by reference and generalisation dependency
+		HashSet<EClass> result = new HashSet<>(chosenClasses);
+		for(EClass c : allClasses) {
+			// neighborhood by reference
+			for(EReference r : c.getEReferences()) {
+				EClass t = r.getEReferenceType();
+				if(cache.contains(c) || cache.contains(t)) {
+					result.add(c);
+					result.add(t);
+				}
+			}
+			// neighborhood by generalisation dependency
+			for(EClass s : c.getESuperTypes()) {
+				if(cache.contains(c) || cache.contains(s)) {
+					result.add(c);
+					result.add(s);
+				}
+			}
+		}
+		
+		return new ArrayList<>(result);
+	}
 
 	private List<VisualEdge> determineReferencesToVisualise(List<EClass> chosenClasses) {
 		HashSet<EClass> cache = new HashSet<>(chosenClasses);
 
-		// Gather all references in between selected classes and between selected classes and non-selectéd classes.
+		// Gather all references in between selected classes and between selected classes and non-selected classes.
 		List<VisualEdge> result = chosenClasses.stream()//
 				.flatMap(c -> c.getEReferences().stream())//
-				.filter(ref -> cache.contains(ref.getEContainingClass()) || cache.contains(ref.getEReferenceType()))
+				.filter(ref -> cache.contains(ref.getEContainingClass()) && cache.contains(ref.getEReferenceType()))
 				.map(ref -> new VisualEdge(ref, EdgeType.REFERENCE, ref.getEContainingClass(), ref.getEReferenceType()))//
 				.collect(Collectors.toList());//
-		// TODO: Add support for unidirectional refs with source not in and target in
-		// list of chosen classes.
 		
-		// Gather all generalisation references.
-		chosenClasses.stream()//
-			.filter(c -> !c.getESuperTypes().isEmpty())//
-			.forEach(c -> c.getESuperTypes().forEach(s -> result.add(new VisualEdge(null, EdgeType.GENERALISATION, c, s))));
-		// TODO: Add support for base class outside of selection and super class inside of selection.
+		// Gather all generalisation dependencies.
+		for(EClass c : chosenClasses) {
+			for(EClass s : c.getESuperTypes()) {
+				if(cache.contains(c) && cache.contains(s)) {
+					result.add(new VisualEdge(null, EdgeType.GENERALISATION, c, s));
+				}
+			}
+		}
 
 		return result;
 	}

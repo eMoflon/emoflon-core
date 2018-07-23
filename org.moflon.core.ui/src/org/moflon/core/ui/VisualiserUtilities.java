@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
@@ -195,6 +197,11 @@ public class VisualiserUtilities {
 	 * list.
 	 * </p>
 	 * 
+	 * <p>
+	 * <b>Note:</b> There won't be any {@link EGenericType}, {@link EEnumLiteral} or
+	 * {@link EDataType} references in the returned list.
+	 * </p>
+	 * 
 	 * @param resources
 	 *            of which all contained elements are to be returned - cannot be
 	 *            null
@@ -221,6 +228,11 @@ public class VisualiserUtilities {
 	 * stream.
 	 * </p>
 	 * 
+	 * <p>
+	 * <b>Note:</b> There won't be any {@link EGenericType}, {@link EEnumLiteral} or
+	 * {@link EDataType} references in the returned stream.
+	 * </p>
+	 * 
 	 * @param resource
 	 *            The resource that is to be expanded.
 	 * @return The stream of {@link EObject} instances in order of expansions.
@@ -229,7 +241,10 @@ public class VisualiserUtilities {
 		List<EObject> elements = new ArrayList<>();
 		resource.getAllContents().forEachRemaining(elements::add);
 		return elements.stream()//
-				.filter(elem -> elem != null);
+				.filter(elem -> elem != null)//
+				.filter(elem -> !(elem instanceof EGenericType))//
+				.filter(elem -> !(elem instanceof EEnumLiteral))//
+				.filter(elem -> !(elem instanceof EDataType));
 	}
 
 	/**
