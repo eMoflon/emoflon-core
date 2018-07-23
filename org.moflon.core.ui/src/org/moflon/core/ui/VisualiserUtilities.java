@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.moflon.core.ui;
 
 import java.util.ArrayList;

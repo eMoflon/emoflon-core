@@ -47,22 +47,8 @@ class EMoflonPlantUMLGenerator {
 		'''
 		«FOR c : eclasses»
 			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c)»
-			«FOR s : c.ESuperTypes»
-			«IF(s.abstract)»abstract «ENDIF»class «identifierForClass(s)»
-			«identifierForClass(s)»<|--«identifierForClass(c)»
-			«ENDFOR»
 		«ENDFOR»
-		«FOR ref : refs»
-			«var EReference r = ref.getType()»
-			«var EClass src = r.EContainingClass»
-			«var EClass trg = r.EReferenceType»
-			«IF(!ref.hasEOpposite)»
-				«identifierForClass(src)»«IF r.isContainment» *«ENDIF»--> "«multiplicityFor(r)»" «identifierForClass(trg)» : "«r.name»"
-			«ELSE»
-				«identifierForClass(src)»"«r.EOpposite.name» «multiplicityFor(r.EOpposite)»" «IF r.isContainment»*«ELSE»<«ENDIF»--«IF r.EOpposite.isContainment»*«ELSE»>«ENDIF» "«r.name» «multiplicityFor(r)»" «identifierForClass(trg)»
-			«ENDIF»
-			«IF(trg.abstract)»abstract «ENDIF»class «identifierForClass(trg)»
-		«ENDFOR»
+		«visualiseEdges(refs)»
 		'''
 	}
 	
@@ -75,11 +61,31 @@ class EMoflonPlantUMLGenerator {
 			«visualiseAllAttributes(o)»
 		}
 		«ENDFOR»
-		«FOR l : links»
-			«IF(!l.hasEOpposite)»
-				«identifierForObject(l.src)» --> «identifierForObject(l.trg)» : "«l.name»"
+		«visualiseEdges(links)»
+		'''
+	}
+	
+	def private static String visualiseEdges(Collection<VisualEdge> edges) {
+		'''
+		«FOR edge: edges»
+			«IF(edge.edgeType == EdgeType.REFERENCE)»
+				«var EReference ref = edge.type»
+				«var EClass src = ref.EContainingClass»
+				«var EClass trg = ref.EReferenceType»
+				«IF(!edge.hasEOpposite)»
+					«identifierForClass(src)»«IF ref.isContainment» *«ENDIF»--> "«multiplicityFor(ref)»" «identifierForClass(trg)» : "«ref.name»"
+				«ELSE»
+					«identifierForClass(src)»"«ref.EOpposite.name» «multiplicityFor(ref.EOpposite)»" «IF ref.isContainment»*«ELSE»<«ENDIF»--«IF ref.EOpposite.isContainment»*«ELSE»>«ENDIF» "«ref.name» «multiplicityFor(ref)»" «identifierForClass(trg)»
+				«ENDIF»
+			«ELSEIF(edge.edgeType == EdgeType.GENERALISATION)»
+				«identifierForClass(edge.trg as EClass)»<|--«identifierForClass(edge.src as EClass)»
+			«ELSEIF(edge.edgeType == EdgeType.LINK)»
+				«IF(!edge.hasEOpposite)»
+					«identifierForObject(edge.src)» --> «identifierForObject(edge.trg)» : "«edge.name»"
+				«ELSE»
+					«identifierForObject(edge.src)» "«edge.oppositeName»" <-->  "«edge.name»" «identifierForObject(edge.trg)»
+				«ENDIF»
 			«ELSE»
-				«identifierForObject(l.src)» "«l.oppositeName»" <-->  "«l.name»" «identifierForObject(l.trg)»
 			«ENDIF»
 		«ENDFOR»
 		'''

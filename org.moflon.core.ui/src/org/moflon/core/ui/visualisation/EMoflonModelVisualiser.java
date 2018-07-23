@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.moflon.core.ui.visualisation;
 
 import java.util.ArrayList;
@@ -66,6 +63,6 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser {
 		EObject trg = (EObject) featureIterator.next();
 		EReference eReference = (EReference) featureIterator.feature();
 		if (chosenObjects.contains(trg))
-			refs.add(new VisualEdge(eReference, src, trg));
+			refs.add(new VisualEdge(eReference, EdgeType.LINK,  src, trg));
 	}
 }

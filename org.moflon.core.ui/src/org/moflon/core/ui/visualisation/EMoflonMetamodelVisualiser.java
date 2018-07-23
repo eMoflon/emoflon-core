@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.moflon.core.ui.visualisation;
 
 import java.util.ArrayList;
@@ -85,9 +82,23 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 	}
 
 	private List<VisualEdge> determineReferencesToVisualise(List<EClass> chosenClasses) {
-		return chosenClasses.stream()//
+		HashSet<EClass> cache = new HashSet<>(chosenClasses);
+
+		// Gather all references in between selected classes and between selected classes and non-selectéd classes.
+		List<VisualEdge> result = chosenClasses.stream()//
 				.flatMap(c -> c.getEReferences().stream())//
-				.map(ref -> new VisualEdge(ref, ref.getEContainingClass(), ref.getEReferenceType()))//
+				.filter(ref -> cache.contains(ref.getEContainingClass()) || cache.contains(ref.getEReferenceType()))
+				.map(ref -> new VisualEdge(ref, EdgeType.REFERENCE, ref.getEContainingClass(), ref.getEReferenceType()))//
 				.collect(Collectors.toList());//
+		// TODO: Add support for unidirectional refs with source not in and target in
+		// list of chosen classes.
+		
+		// Gather all generalisation references.
+		chosenClasses.stream()//
+			.filter(c -> !c.getESuperTypes().isEmpty())//
+			.forEach(c -> c.getESuperTypes().forEach(s -> result.add(new VisualEdge(null, EdgeType.GENERALISATION, c, s))));
+		// TODO: Add support for base class outside of selection and super class inside of selection.
+
+		return result;
 	}
 }
