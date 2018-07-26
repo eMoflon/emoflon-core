@@ -1,8 +1,8 @@
 package org.moflon.core.ui.visualisation;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -12,9 +12,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
-import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.moflon.core.ui.VisualiserUtilities;
+import org.moflon.core.ui.visualisation.strategy.ClassDiagramStrategies;
 
 /**
  * Visualises UML Class Diagrams for Ecore metamodels.
@@ -22,32 +22,46 @@ import org.moflon.core.ui.VisualiserUtilities;
  */
 public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 
+	/**
+	 * Allows chained operations on a diagram. Should at least be {@link Function#identity()}.
+	 */
+	private Function<ClassDiagram, ClassDiagram> strategy;
+	
+	public EMoflonMetamodelVisualiser() {
+		super();
+		
+		// set default strategy
+		strategy = ClassDiagramStrategies::determineEdgesForSelection;//
+		strategy = strategy.andThen(ClassDiagramStrategies::expandNeighbourhoodBidirectional);
+	}
+	
 	@Override
-	public boolean supportsSelection(List<EObject> selection) {
+	public boolean supportsSelection(Collection<EObject> selection) {
 		// An Ecore metamodel must contain EModelElements only. If it contains other
 		// elements, the selection is not supported by this visualiser.
 		return !VisualiserUtilities.hasModelElements(selection);
 	}
 
 	@Override
-	protected String getDiagramBody(List<EObject> elements) {
-		List<EClass> allClasses = getAllElements().stream()//
+	protected String getDiagramBody(Collection<EObject> selection) {
+		HashSet<EClass> allClasses = getAllElements().stream()//
 				.filter(EClass.class::isInstance)//
 				.map(EClass.class::cast)//
-				.collect(Collectors.toList());
+				.collect(Collectors.toCollection(HashSet::new));
 		
-		List<EClass> chosenClasses = determineClassesToVisualise(elements);
-		List<EClass> chosenClassesWithNeighbors = expandByNeighborHood(allClasses, chosenClasses);
+		// For every selected EModelElement choose an appropriate EClass to represent it.
+		Collection<EClass> chosenClasses = resolveSelection(selection);
 		
-		List<VisualEdge> refs = handleOpposites(determineReferencesToVisualise(chosenClassesWithNeighbors));
-		return EMoflonPlantUMLGenerator.visualiseEcoreElements(chosenClassesWithNeighbors, refs);
+		// Create diagram and process it using the defined strategy.
+		ClassDiagram diagram = strategy.apply(new ClassDiagram(allClasses, chosenClasses));
+		diagram.setEdges(handleOpposites(diagram.getEdges()));
+		
+		return EMoflonPlantUMLGenerator.visualiseEcoreElements(diagram);
 	}
 
-	private List<EClass> determineClassesToVisualise(List<EObject> selection) {
-		ArrayList<EClass> result = new ArrayList<>(selection.size());
-
-		HashSet<EClass> cache = new HashSet<>();
-
+	private Collection<EClass> resolveSelection(Collection<EObject> selection) {
+		HashSet<EClass> result = new HashSet<>(selection.size());
+		
 		// retrieve classes, and enclosing classes of operations, attributes...
 		// TODO: resolve EDataType as well?
 		for (EObject eobject : selection) {
@@ -70,7 +84,7 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 				eclass = etype.getEClassifier() instanceof EClass ? (EClass) etype.getEClassifier() : null;
 			}
 
-			if (eclass != null && cache.add(eclass)) {
+			if (eclass != null && !result.contains(eclass)) {
 				result.add(eclass);
 			}
 		}
@@ -83,56 +97,8 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 				.flatMap(epackage -> epackage.getEClassifiers().stream())//
 				.filter(EClass.class::isInstance)//
 				.map(EClass.class::cast)//
-				.filter(cache::add)//
+				.filter(cls -> !result.contains(cls))//
 				.forEach(result::add);
-
-		return result;
-	}
-	
-	private List<EClass> expandByNeighborHood(List<EClass> allClasses, List<EClass> chosenClasses) {
-		HashSet<EClass> cache = new HashSet<>(chosenClasses);
-		
-		// add all neighboring classes by reference and generalisation dependency
-		HashSet<EClass> result = new HashSet<>(chosenClasses);
-		for(EClass c : allClasses) {
-			// neighborhood by reference
-			for(EReference r : c.getEReferences()) {
-				EClass t = r.getEReferenceType();
-				if(cache.contains(c) || cache.contains(t)) {
-					result.add(c);
-					result.add(t);
-				}
-			}
-			// neighborhood by generalisation dependency
-			for(EClass s : c.getESuperTypes()) {
-				if(cache.contains(c) || cache.contains(s)) {
-					result.add(c);
-					result.add(s);
-				}
-			}
-		}
-		
-		return new ArrayList<>(result);
-	}
-
-	private List<VisualEdge> determineReferencesToVisualise(List<EClass> chosenClasses) {
-		HashSet<EClass> cache = new HashSet<>(chosenClasses);
-
-		// Gather all references in between selected classes and between selected classes and non-selected classes.
-		List<VisualEdge> result = chosenClasses.stream()//
-				.flatMap(c -> c.getEReferences().stream())//
-				.filter(ref -> cache.contains(ref.getEContainingClass()) && cache.contains(ref.getEReferenceType()))
-				.map(ref -> new VisualEdge(ref, EdgeType.REFERENCE, ref.getEContainingClass(), ref.getEReferenceType()))//
-				.collect(Collectors.toList());//
-		
-		// Gather all generalisation dependencies.
-		for(EClass c : chosenClasses) {
-			for(EClass s : c.getESuperTypes()) {
-				if(cache.contains(c) && cache.contains(s)) {
-					result.add(new VisualEdge(null, EdgeType.GENERALISATION, c, s));
-				}
-			}
-		}
 
 		return result;
 	}

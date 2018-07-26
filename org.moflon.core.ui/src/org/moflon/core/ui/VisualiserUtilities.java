@@ -1,6 +1,6 @@
 package org.moflon.core.ui;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,12 +81,12 @@ public class VisualiserUtilities {
 	 *         {@link IEditingDomainProvider} interface, and if the
 	 *         {@link EditingDomain} or the {@link ResourceSet} of the editor is
 	 *         <code>null</code>. If there is a {@link ResourceSet} stored with the
-	 *         editor, then all resources will be extracted and the resulting list
-	 *         of {@link EObject}s is returned. This list can be empty, if no
+	 *         editor, then all resources will be extracted and the resulting collection
+	 *         of {@link EObject}s is returned. This collection can be empty, if no
 	 *         {@link EObject}s are stored in the editor's resources, however, no
 	 *         <code>null</code> references will be contained.
 	 */
-	public static List<EObject> extractEcoreElements(IEditorPart editor) {
+	public static Collection<EObject> extractEcoreElements(IEditorPart editor) {
 		if (editor == null || !(editor instanceof IEditingDomainProvider)) {
 			return null;
 		}
@@ -150,10 +150,10 @@ public class VisualiserUtilities {
 	 *            <code>null</code>.
 	 * @return <code>null</code> is returned, if the given selection is not an Ecore
 	 *         selection. Otherwise the internal selection is extracted and
-	 *         returned. The returned list can be empty, if the selection is empty.
-	 *         The wrapped list won't contain any <code>null</code> references.
+	 *         returned. The returned collection can be empty, if the selection is empty.
+	 *         The wrapped collection won't contain any <code>null</code> references.
 	 */
-	public static List<EObject> extractEcoreSelection(ISelection selection) {
+	public static Collection<EObject> extractEcoreSelection(ISelection selection) {
 		if (!isEcoreSelection(selection)) {
 			return null;
 		}
@@ -162,15 +162,12 @@ public class VisualiserUtilities {
 		List<?> internalSelection = ((IStructuredSelection) selection).toList();
 
 		// expand resources and add them to result
-		List<EObject> result = internalSelection.stream()//
+		HashSet<EObject> result = internalSelection.stream()//
 				.filter(e -> e != null)//
 				.filter(Resource.class::isInstance)//
 				.map(Resource.class::cast)//
 				.flatMap(VisualiserUtilities::expandResource)//
-				.collect(Collectors.toList());
-
-		// enhances performance of contains operation later
-		HashSet<EObject> cache = new HashSet<>(result);
+				.collect(Collectors.toCollection(HashSet::new));
 
 		// add remaining EObjects of selection, apart from those already contained in
 		// resources, to the result.
@@ -178,7 +175,7 @@ public class VisualiserUtilities {
 				.filter(e -> e != null)//
 				.filter(EObject.class::isInstance)//
 				.map(EObject.class::cast)//
-				.filter(e -> !cache.contains(e))//
+				.filter(e -> !result.contains(e))//
 				.forEach(result::add);
 
 		return result;
@@ -188,40 +185,30 @@ public class VisualiserUtilities {
 	 * Extracts all {@link EObject} instances from a given {@link ResourceSet}.
 	 * 
 	 * <p>
-	 * <b>Note:</b> The order of the returned elements is prescribed by
-	 * {@link Resource#getAllContents()}.
-	 * </p>
-	 * 
-	 * <p>
 	 * <b>Note:</b> There won't be any <code>null</code> references in the returned
-	 * list.
+	 * collection.
 	 * </p>
 	 * 
 	 * <p>
 	 * <b>Note:</b> There won't be any {@link EGenericType}, {@link EEnumLiteral} or
-	 * {@link EDataType} references in the returned list.
+	 * {@link EDataType} references in the returned collection.
 	 * </p>
 	 * 
 	 * @param resources
 	 *            of which all contained elements are to be returned - cannot be
-	 *            null
+	 *            <code>null</code>
 	 * @return the {@link EObject} instances contained in each of the given
-	 *         resources, in order of expansion
+	 *         resources
 	 */
-	public static List<EObject> expandResources(ResourceSet resources) {
+	public static Collection<EObject> expandResources(ResourceSet resources) {
 		return resources.getResources().stream()//
 				.filter(res -> res != null)//
 				.flatMap(VisualiserUtilities::expandResource)//
-				.collect(Collectors.toList());
+				.collect(Collectors.toCollection(HashSet::new));
 	}
 
 	/**
 	 * Extracts all {@link EObject} instances from a given {@link Resource}.
-	 * 
-	 * <p>
-	 * <b>Note:</b> The order of the returned elements is prescribed by
-	 * {@link Resource#getAllContents()}.
-	 * </p>
 	 * 
 	 * <p>
 	 * <b>Note:</b> There won't be any <code>null</code> references in the returned
@@ -238,7 +225,7 @@ public class VisualiserUtilities {
 	 * @return The stream of {@link EObject} instances in order of expansions.
 	 */
 	private static Stream<EObject> expandResource(Resource resource) {
-		List<EObject> elements = new ArrayList<>();
+		HashSet<EObject> elements = new HashSet<>();
 		resource.getAllContents().forEachRemaining(elements::add);
 		return elements.stream()//
 				.filter(elem -> elem != null)//
@@ -248,16 +235,16 @@ public class VisualiserUtilities {
 	}
 
 	/**
-	 * States whether the given list of elements contains any metamodel elements.
+	 * States whether the given collection of elements contains any metamodel elements.
 	 * 
 	 * @param elements
-	 *            The list of elements that is to be checked for the existence of
-	 *            metamodel elements. This list, nor any of its elements, must be
+	 *            The collection of elements that is to be checked for the existence of
+	 *            metamodel elements. Neither this collection, nor any of its elements, must be
 	 *            <code>null</code>.
-	 * @return <code>true</code>, if the given list contains at least one metamodel
+	 * @return <code>true</code>, if the given collection contains at least one metamodel
 	 *         element. <code>false</code> otherwise.
 	 */
-	public static boolean hasMetamodelElements(List<EObject> elements) {
+	public static boolean hasMetamodelElements(Collection<EObject> elements) {
 		return elements.stream()//
 				.filter(e -> e instanceof EModelElement || e instanceof EGenericType)//
 				.findAny()//
@@ -265,16 +252,16 @@ public class VisualiserUtilities {
 	}
 
 	/**
-	 * States whether the given list of elements contains any model elements.
+	 * States whether the given collection of elements contains any model elements.
 	 * 
 	 * @param elements
-	 *            The list of elements that is to be checked for the existence of
-	 *            model elements. This list, nor any of its elements, must be
+	 *            The collection of elements that is to be checked for the existence of
+	 *            model elements. Neither this collection, nor any of its elements, must be
 	 *            <code>null</code>.
-	 * @return <code>true</code>, if the given list contains at least one model
+	 * @return <code>true</code>, if the given collection contains at least one model
 	 *         element. <code>false</code> otherwise.
 	 */
-	public static boolean hasModelElements(List<EObject> elements) {
+	public static boolean hasModelElements(Collection<EObject> elements) {
 		return elements.stream()//
 				.filter(e -> !(e instanceof EModelElement))//
 				.filter(e -> !(e instanceof EGenericType))//

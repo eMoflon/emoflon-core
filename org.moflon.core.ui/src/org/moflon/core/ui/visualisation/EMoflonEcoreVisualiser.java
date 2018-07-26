@@ -1,8 +1,7 @@
 package org.moflon.core.ui.visualisation;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.Collection;
+import java.util.HashSet;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
@@ -25,14 +24,14 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 	/**
 	 * Stores a subset of Ecore elements, that are to be visualised..
 	 */
-	private List<EObject> latestSelection;
+	private Collection<EObject> latestSelection;
 
 	/**
 	 * Resembles the superset of all elements that could potentially be visualised.
 	 * Typically determined by all the elements currently handled by the associated
 	 * editor.
 	 */
-	private List<EObject> allElements;
+	private Collection<EObject> allElements;
 
 	@Override
 	public boolean supportsEditor(IEditorPart editor) {
@@ -64,7 +63,7 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 
 		// empty Ecore selections are supported only if the editor can provide Ecore
 		// elements, this is checked and remembered in supportsEditor(...)
-		List<EObject> ecoreSelection = VisualiserUtilities.extractEcoreSelection(selection);
+		Collection<EObject> ecoreSelection = VisualiserUtilities.extractEcoreSelection(selection);
 		if (ecoreSelection == null || ecoreSelection.isEmpty()) {
 			return false;
 		}
@@ -87,7 +86,7 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 	 * @return <code>true</code> if the given selection is supported, otherwise
 	 *         <code>false</code>.
 	 */
-	protected abstract boolean supportsSelection(List<EObject> selection);
+	protected abstract boolean supportsSelection(Collection<EObject> selection);
 
 	@Override
 	public String getDiagramBody(IEditorPart editor, ISelection selection) {
@@ -118,14 +117,14 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 	 * @return The generated diagram text describing the given elements using the
 	 *         PlantUML DSL.
 	 */
-	protected abstract String getDiagramBody(List<EObject> elements);
+	protected abstract String getDiagramBody(Collection<EObject> elements);
 	
 	/**
 	 * Getter for {@link #allElements}.
 	 * 
 	 * @return All elements that can potentially be visualised.
 	 */
-	protected List<EObject> getAllElements() {
+	protected Collection<EObject> getAllElements() {
 		return allElements;
 	}
 
@@ -147,8 +146,8 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 	 *            direction of a bidirectional association.
 	 * @return The list of edges without any opposing navigation direction.
 	 */
-	protected List<VisualEdge> handleOpposites(List<VisualEdge> edges) {
-		List<VisualEdge> edgesWithoutEOpposite = new ArrayList<>();
+	protected Collection<VisualEdge> handleOpposites(Collection<VisualEdge> edges) {
+		HashSet<VisualEdge> edgesWithoutEOpposite = new HashSet<>();
 		for (VisualEdge edge : edges) {
 			if (!edge.hasEOpposite() || !edgesWithoutEOpposite.contains(edge.findEOpposite(edges).orElse(null)))
 				edgesWithoutEOpposite.add(edge);

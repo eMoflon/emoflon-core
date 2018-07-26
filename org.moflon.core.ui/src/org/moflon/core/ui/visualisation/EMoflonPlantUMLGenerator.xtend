@@ -43,25 +43,33 @@ class EMoflonPlantUMLGenerator {
 		'''
 	}
 
-	def static String visualiseEcoreElements(Collection<EClass> eclasses, Collection<VisualEdge> refs){
+	def static String visualiseEcoreElements(ClassDiagram diagram){
 		'''
-		«FOR c : eclasses»
+		«FOR c : diagram.getSelection»
 			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c)»
 		«ENDFOR»
-		«visualiseEdges(refs)»
+		«FOR c : diagram.getNeighbourhood»
+			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c)»
+		«ENDFOR»
+		«visualiseEdges(diagram.getEdges)»
 		'''
 	}
 	
-	def static String visualiseModelElements(Collection<EObject> objects, Collection<VisualEdge> links){
+	def static String visualiseModelElements(ObjectDiagram diagram){
 		idMap.clear
 		
 		'''
-		«FOR o : objects»
+		«FOR o : diagram.getSelection»
 		object «identifierForObject(o)»{
 			«visualiseAllAttributes(o)»
 		}
 		«ENDFOR»
-		«visualiseEdges(links)»
+		«FOR o : diagram.getNeighbourhood»
+			object «identifierForObject(o)»{
+			«visualiseAllAttributes(o)»
+		}
+		«ENDFOR»
+		«visualiseEdges(diagram.getEdges)»
 		'''
 	}
 	
