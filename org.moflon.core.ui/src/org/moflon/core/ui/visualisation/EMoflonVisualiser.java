@@ -15,6 +15,10 @@ public abstract class EMoflonVisualiser implements DiagramTextProvider {
 	private static final Logger logger = Logger.getLogger(EMoflonVisualiser.class);
 	private static final int MAX_SIZE = 500;
 	
+	public EMoflonVisualiser() {
+		Configurator.getInstance().registerVisualiser(this);
+	}
+	
 	@Override
 	public String getDiagramText(IEditorPart editor, ISelection selection) {
 		Optional<String> diagram = Optional.empty();

@@ -2,7 +2,6 @@ package org.moflon.core.ui.visualisation;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,27 +13,27 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.moflon.core.ui.VisualiserUtilities;
+import org.moflon.core.ui.visualisation.Configurator.StrategyPart;
 import org.moflon.core.ui.visualisation.strategy.ClassDiagramStrategies;
+import org.moflon.core.ui.visualisation.strategy.DiagramStrategy;
 
 /**
  * Visualises UML Class Diagrams for Ecore metamodels.
  *
  */
-public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
+public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser<ClassDiagram> {
 
-	/**
-	 * Allows chained operations on a diagram. Should at least be {@link Function#identity()}.
-	 */
-	private Function<ClassDiagram, ClassDiagram> strategy;
-	
 	public EMoflonMetamodelVisualiser() {
 		super();
-		
+
 		// set default strategy
-		strategy = ClassDiagramStrategies::determineEdgesForSelection;//
-		strategy = strategy.andThen(ClassDiagramStrategies::expandNeighbourhoodBidirectional);
+		strategy = getDefaultStrategy(StrategyPart.INIT)//
+				.andThen(getDefaultStrategy(StrategyPart.NEIGHBOURHOOD));
+
+		@SuppressWarnings("unused")
+		boolean blabla = true;
 	}
-	
+
 	@Override
 	public boolean supportsSelection(Collection<EObject> selection) {
 		// An Ecore metamodel must contain EModelElements only. If it contains other
@@ -43,25 +42,43 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser {
 	}
 
 	@Override
+	public boolean supportsDiagramType(Class<?> diagramClass) {
+		return ClassDiagram.class == diagramClass;
+	}
+
+	@Override
+	public DiagramStrategy<ClassDiagram> getDefaultStrategy(StrategyPart part) {
+		switch (part) {
+		case INIT:
+			return ClassDiagramStrategies::determineEdgesForSelection;
+		case NEIGHBOURHOOD:
+			return DiagramStrategy.identity();
+		default:
+			return super.getDefaultStrategy(part);
+		}
+	}
+
+	@Override
 	protected String getDiagramBody(Collection<EObject> selection) {
 		HashSet<EClass> allClasses = getAllElements().stream()//
 				.filter(EClass.class::isInstance)//
 				.map(EClass.class::cast)//
 				.collect(Collectors.toCollection(HashSet::new));
-		
-		// For every selected EModelElement choose an appropriate EClass to represent it.
+
+		// For every selected EModelElement choose an appropriate EClass to represent
+		// it.
 		Collection<EClass> chosenClasses = resolveSelection(selection);
-		
+
 		// Create diagram and process it using the defined strategy.
 		ClassDiagram diagram = strategy.apply(new ClassDiagram(allClasses, chosenClasses));
 		diagram.setEdges(handleOpposites(diagram.getEdges()));
-		
-		return EMoflonPlantUMLGenerator.visualiseEcoreElements(diagram);
+
+		return EMoflonPlantUMLGenerator.visualiseEcoreElements(diagram, style);
 	}
 
 	private Collection<EClass> resolveSelection(Collection<EObject> selection) {
 		HashSet<EClass> result = new HashSet<>(selection.size());
-		
+
 		// retrieve classes, and enclosing classes of operations, attributes...
 		// TODO: resolve EDataType as well?
 		for (EObject eobject : selection) {

@@ -2,10 +2,13 @@ package org.moflon.core.ui.visualisation;
 
 import java.util.Collection;
 import java.util.HashSet;
+
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jdt.core.dom.PrimitiveType.Code;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.moflon.core.ui.VisualiserUtilities;
+import org.moflon.core.ui.visualisation.strategy.DiagramStrategy;
 
 /**
  * Abstract implementation for the visualisation of Ecore metamodels and models.
@@ -13,7 +16,7 @@ import org.moflon.core.ui.VisualiserUtilities;
  * @author Johannes Brandt (initial contribution)
  *
  */
-public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
+public abstract class EMoflonEcoreVisualiser<T> extends EMoflonVisualiser implements ConfigurableVisualiser<T> {
 
 	/**
 	 * Stores whether or not the superset of Ecore elements can be retrieved from
@@ -32,6 +35,17 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 	 * editor.
 	 */
 	private Collection<EObject> allElements;
+
+	/**
+	 * Diagram style bits - used in PlantUML diagram text generation.
+	 */
+	protected int style = 1;
+
+	/**
+	 * Allows chained operations on a diagram with node type {@link Code T}. Should
+	 * at least be {@link UnaryOperator#identity()}.
+	 */
+	protected DiagramStrategy<T> strategy;
 
 	@Override
 	public boolean supportsEditor(IEditorPart editor) {
@@ -68,13 +82,53 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 			return false;
 		}
 		latestSelection = ecoreSelection;
-		// in case no elements can be extracted from the editor, allElements is set to the selection
-		if(!isEmptySelectionSupported) {
+		// in case no elements can be extracted from the editor, allElements is set to
+		// the selection
+		if (!isEmptySelectionSupported) {
 			allElements = ecoreSelection;
 		}
 
 		boolean isSupported = supportsSelection(latestSelection);
 		return isSupported;
+	}
+
+	@Override
+	public String getDiagramBody(IEditorPart editor, ISelection selection) {
+		// In order to save processing time latestSelection already contains the
+		// best fit for an ecore selection and does not have to be recalculated from
+		// editor and selection. It is determined during the calls of
+		// supportsEdidtor(...) and supportsSelection(...).
+		// Note that if a specific selection is null, empty, or simply not supported,
+		// latestSelection is supposed to contain the whole editor output.
+		// This in turn can be again null, empty or not supported, because the check for
+		// editor support is quite tolerant. This is why this has to be checked here
+		// again.
+		String result = EMoflonPlantUMLGenerator.emptyDiagram();
+		if (latestSelection == null || latestSelection.isEmpty()) {
+			return result;
+		}
+		if (VisualiserUtilities.hasMetamodelElements(latestSelection)
+				&& VisualiserUtilities.hasModelElements(latestSelection)) {
+			return result;
+		}
+
+		synchronized (this) {
+			result = getDiagramBody(latestSelection);
+		}
+		return result;
+	}
+
+	@Override
+	public synchronized void setDiagramStyle(int style) {
+		this.style = style;
+	}
+
+	@Override
+	public synchronized void setDiagramStrategy(DiagramStrategy<T> strategy) {
+		if (strategy == null) {
+			throw new IllegalArgumentException("Strategy cannot be null!");
+		}
+		this.strategy = strategy;
 	}
 
 	/**
@@ -88,27 +142,6 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 	 */
 	protected abstract boolean supportsSelection(Collection<EObject> selection);
 
-	@Override
-	public String getDiagramBody(IEditorPart editor, ISelection selection) {
-		// In order to save processing time latestSelection already contains the
-		// best fit for an ecore selection and does not have to be recalculated from
-		// editor and selection. It is determined during the calls of
-		// supportsEdidtor(...) and supportsSelection(...).
-		// Note that if a specific selection is null, empty, or simply not supported,
-		// latestSelection is supposed to contain the whole editor output.
-		// This in turn can be again null, empty or not supported, because the check for
-		// editor support is quite tolerant. This is why this has to be checked here
-		// again.
-		if (latestSelection == null || latestSelection.isEmpty()) {
-			return EMoflonPlantUMLGenerator.emptyDiagram();
-		}
-		if (VisualiserUtilities.hasMetamodelElements(latestSelection)
-				&& VisualiserUtilities.hasModelElements(latestSelection)) {
-			return EMoflonPlantUMLGenerator.emptyDiagram();
-		}
-		return getDiagramBody(latestSelection);
-	}
-
 	/**
 	 * Calculates the diagram text for the given Ecore elements.
 	 * 
@@ -118,7 +151,7 @@ public abstract class EMoflonEcoreVisualiser extends EMoflonVisualiser {
 	 *         PlantUML DSL.
 	 */
 	protected abstract String getDiagramBody(Collection<EObject> elements);
-	
+
 	/**
 	 * Getter for {@link #allElements}.
 	 * 

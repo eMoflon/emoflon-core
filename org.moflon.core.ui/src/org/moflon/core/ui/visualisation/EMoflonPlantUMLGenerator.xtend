@@ -43,7 +43,7 @@ class EMoflonPlantUMLGenerator {
 		'''
 	}
 
-	def static String visualiseEcoreElements(ClassDiagram diagram){
+	def static String visualiseEcoreElements(ClassDiagram diagram, int diagramStyle){
 		'''
 		«FOR c : diagram.getSelection»
 			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c)»
@@ -55,7 +55,7 @@ class EMoflonPlantUMLGenerator {
 		'''
 	}
 	
-	def static String visualiseModelElements(ObjectDiagram diagram){
+	def static String visualiseModelElements(ObjectDiagram diagram, int diagramStyle){
 		idMap.clear
 		
 		'''
