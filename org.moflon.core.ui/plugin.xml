@@ -96,6 +96,23 @@
     <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.core.ui.commands.admin.ReconfigureLogging" name="Reconfigure logging"/>
     <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.ide.ui.moflon" name="eMoflon popup"></command>
     <command defaultHandler="org.moflon.core.ui.handler.TouchResourceHandler" id="org.moflon.core.ui.commands.TouchResourceCommand" name="Touch Resource"/>
+    <category
+          description="Command contributions for the PlantUML view"
+          id="org.moflon.core.ui.commands.PlantUMLCategory"
+          name="eMoflon Commands PlantUML Category">
+    </category>
+    <command
+          categoryId="org.moflon.core.ui.commands.PlantUMLCategory"
+          description="Toggle for showing or hiding Model details like attributes and operations in a class diagram in the PlantUML view. "
+          id="org.moflon.core.ui.commands.visualisation.ShowModelDetailsCommand"
+          name="Show model details">
+       <state id="org.eclipse.ui.commands.toggleState">
+         <class class="org.eclipse.ui.handlers.RegistryToggleState">
+           <parameter name="default" value="true"></parameter>
+           <parameter name="persisted" value="false"></parameter>
+         </class>
+       </state>
+    </command>
   </extension>
   <extension point="org.eclipse.ui.handlers">
     <handler class="org.moflon.core.ui.handler.BuildHandler" commandId="org.moflon.core.ui.commands.build.BuildCommand">
@@ -137,6 +154,10 @@
     <handler class="org.moflon.core.ui.handler.EditLoggingConfigurationHandler" commandId="org.moflon.core.ui.commands.admin.EditLoggingConfigFile"/>
     <handler class="org.moflon.core.ui.handler.ReconfigureLoggingHandler" commandId="org.moflon.core.ui.commands.admin.ReconfigureLogging"/>
     <handler class="org.moflon.core.ui.handler.EditLoggingConfigurationHandler" commandId="org.moflon.core.ui.commands.admin.ConfigureLogging"/>
+    <handler
+          class="org.moflon.core.ui.handler.ShowModelDetailsHandler"
+          commandId="org.moflon.core.ui.commands.visualisation.ShowModelDetailsCommand">
+    </handler>
   </extension>
   <extension point="org.eclipse.ui.menus">
     <menuContribution allPopups="true" locationURI="popup:#TextEditorContext?after=additions">
@@ -226,6 +247,22 @@
     <menuContribution allPopups="false" locationURI="menu:org.moflon.core.ui.commands.admin.toolbar.ConfigureLogging">
       <command commandId="org.moflon.core.ui.commands.admin.EditLoggingConfigFile" icon="resources/icons/logfile.png" label="Edit config file" style="push" tooltip="Edit configuration file for eMoflon logging. To take effect, 'Reconfigure Logging' has to be executed."/>
       <command commandId="org.moflon.core.ui.commands.admin.ReconfigureLogging" label="Reconfigure logging" style="push" tooltip="Reconfigure logging"/>
+    </menuContribution>
+    <menuContribution
+          allPopups="false"
+          locationURI="menu:net.sourceforge.plantuml.eclipse.views.PlantUmlView">
+       <separator
+             name="moflonSeparatorPlantUMLVisualisation"
+             visible="true">
+       </separator>
+       <command
+             commandId="org.moflon.core.ui.commands.visualisation.ShowModelDetailsCommand"
+             id="org.moflon.core.ui.visualisation.ShowModelDetails"
+             label="Show model details"
+             mnemonic="S"
+             style="toggle"
+             tooltip="Shows or hides additional information of model elements. ">
+       </command>
     </menuContribution>
   </extension>
   <extension point="org.eclipse.ui.bindings">

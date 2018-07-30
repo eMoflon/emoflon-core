@@ -6,8 +6,11 @@ import org.apache.commons.lang3.StringUtils
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.EOperation
 
 class EMoflonPlantUMLGenerator {
+	public final static int SHOW_MODEL_DETAILS = 1<<0;
+	
 	static var idMap = new HashMap<EObject, String>();
 	
 	static def String wrapInTags(String body){
@@ -45,11 +48,16 @@ class EMoflonPlantUMLGenerator {
 
 	def static String visualiseEcoreElements(ClassDiagram diagram, int diagramStyle){
 		'''
+		«plantUMLPreamble(diagramStyle)»
 		«FOR c : diagram.getSelection»
 			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c)»
+			«visualiseEcoreClassAttributes(c)»
+			«visualiseEcoreClassOperations(c)»
 		«ENDFOR»
 		«FOR c : diagram.getNeighbourhood»
 			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c)»
+			«visualiseEcoreClassAttributes(c)»
+			«visualiseEcoreClassOperations(c)»
 		«ENDFOR»
 		«visualiseEdges(diagram.getEdges)»
 		'''
@@ -59,6 +67,7 @@ class EMoflonPlantUMLGenerator {
 		idMap.clear
 		
 		'''
+		«plantUMLPreamble(diagramStyle)»
 		«FOR o : diagram.getSelection»
 		object «identifierForObject(o)»{
 			«visualiseAllAttributes(o)»
@@ -105,6 +114,30 @@ class EMoflonPlantUMLGenerator {
 	
 	private def static String identifierForClass(EClass c)
 		'''"«c.EPackage.name».«c.name»"'''
+	
+	private def static String visualiseEcoreClassAttributes(EClass eclass) {
+		'''
+		«FOR a : eclass.EAllAttributes»
+			«identifierForClass(eclass)» : «a.name» : «a.EType.name»
+		«ENDFOR»
+		'''
+	}
+	
+	private def static String visualiseEcoreClassOperations(EClass eclass) {
+		'''
+		«FOR op : eclass.EAllOperations» 
+			«identifierForClass(eclass)» : «visualiseEcoreOperation(op)»
+		«ENDFOR»
+		'''
+	}
+	
+	private def static String visualiseEcoreOperation(EOperation op) {
+		'''«op.name»«visualiseEcoreOperationParameterList(op)»«IF(op.EType !== null)» : «op.EType.name»«ENDIF»'''
+	}
+	
+	private def static String visualiseEcoreOperationParameterList(EOperation op) {
+		'''«IF op.EParameters.size == 0»()«ENDIF»«FOR param : op.EParameters BEFORE '(' SEPARATOR ', ' AFTER ')'»«param.name» : «param.EType.name»«ENDFOR»'''
+	}
 	
 	def static visualiseAllAttributes(EObject o) {
 		'''
@@ -170,6 +203,12 @@ class EMoflonPlantUMLGenerator {
 				BackgroundColor<<CORR>> LightCyan 
 				ArrowColor Black
 			}	
+		'''
+	}
+	
+	def static CharSequence plantUMLPreamble(int style){
+		'''
+			hide «IF(style.bitwiseAnd(SHOW_MODEL_DETAILS) > 0)»empty «ENDIF»members
 		'''
 	}
 }

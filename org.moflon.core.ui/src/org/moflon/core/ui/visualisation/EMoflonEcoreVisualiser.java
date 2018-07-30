@@ -39,7 +39,7 @@ public abstract class EMoflonEcoreVisualiser<T> extends EMoflonVisualiser implem
 	/**
 	 * Diagram style bits - used in PlantUML diagram text generation.
 	 */
-	protected int style = 1;
+	protected int style = EMoflonPlantUMLGenerator.SHOW_MODEL_DETAILS;
 
 	/**
 	 * Allows chained operations on a diagram with node type {@link Code T}. Should
