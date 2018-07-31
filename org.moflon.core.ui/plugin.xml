@@ -103,12 +103,24 @@
     </category>
     <command
           categoryId="org.moflon.core.ui.commands.PlantUMLCategory"
-          description="Toggle for showing or hiding Model details like attributes and operations in a class diagram in the PlantUML view. "
+          description="Toggle for showing or hiding additional model details, e.g. attributes and operations in a class diagrams, in the PlantUML view. "
           id="org.moflon.core.ui.commands.visualisation.ShowModelDetailsCommand"
           name="Show model details">
        <state id="org.eclipse.ui.commands.toggleState">
          <class class="org.eclipse.ui.handlers.RegistryToggleState">
            <parameter name="default" value="true"></parameter>
+           <parameter name="persisted" value="false"></parameter>
+         </class>
+       </state>
+    </command>
+    <command
+          categoryId="org.moflon.core.ui.commands.PlantUMLCategory"
+          description="Toggle for abbreviating labels in the PlantUML view, which exceed a certain length."
+          id="org.moflon.core.ui.commands.visualisation.AbbreviateLabelsCommand"
+          name="Abbreviate labels">
+       <state id="org.eclipse.ui.commands.toggleState">
+         <class class="org.eclipse.ui.handlers.RegistryToggleState">
+           <parameter name="default" value="false"></parameter>
            <parameter name="persisted" value="false"></parameter>
          </class>
        </state>
@@ -157,6 +169,10 @@
     <handler
           class="org.moflon.core.ui.handler.ShowModelDetailsHandler"
           commandId="org.moflon.core.ui.commands.visualisation.ShowModelDetailsCommand">
+    </handler>
+    <handler
+          class="org.moflon.core.ui.handler.AbbreviateLabelsHandler"
+          commandId="org.moflon.core.ui.commands.visualisation.AbbreviateLabelsCommand">
     </handler>
   </extension>
   <extension point="org.eclipse.ui.menus">
@@ -262,6 +278,14 @@
              mnemonic="S"
              style="toggle"
              tooltip="Shows or hides additional information of model elements. ">
+       </command>
+       <command
+             commandId="org.moflon.core.ui.commands.visualisation.AbbreviateLabelsCommand"
+             id="org.moflon.core.ui.visualisation.AbbreviateLabels"
+             label="Abbreviate labels"
+             mnemonic="A"
+             style="toggle"
+             tooltip="Toggle for abbreviating labels in the PlantUML view, which exceed a certain length.">
        </command>
     </menuContribution>
   </extension>
