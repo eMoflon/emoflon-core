@@ -52,7 +52,7 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser<ClassDiag
 		case INIT:
 			return ClassDiagramStrategies::determineEdgesForSelection;
 		case NEIGHBOURHOOD:
-			return DiagramStrategy.identity();
+			return ClassDiagramStrategies::expandNeighbourhoodBidirectional;
 		default:
 			return super.getDefaultStrategy(part);
 		}

@@ -125,6 +125,18 @@
          </class>
        </state>
     </command>
+    <command
+          categoryId="org.moflon.core.ui.commands.PlantUMLCategory"
+          description="Show 1-neighborhood for selection."
+          id="org.moflon.core.ui.commands.visualisation.ShowNeighbourhoodCommand"
+          name="Show 1-neighborhood">
+       <state id="org.eclipse.ui.commands.toggleState">
+         <class class="org.eclipse.ui.handlers.RegistryToggleState">
+           <parameter name="default" value="true"></parameter>
+           <parameter name="persisted" value="false"></parameter>
+         </class>
+       </state>
+    </command>
   </extension>
   <extension point="org.eclipse.ui.handlers">
     <handler class="org.moflon.core.ui.handler.BuildHandler" commandId="org.moflon.core.ui.commands.build.BuildCommand">
@@ -173,6 +185,10 @@
     <handler
           class="org.moflon.core.ui.handler.AbbreviateLabelsHandler"
           commandId="org.moflon.core.ui.commands.visualisation.AbbreviateLabelsCommand">
+    </handler>
+    <handler
+          class="org.moflon.core.ui.handler.NeighbourhoodStrategyHandler"
+          commandId="org.moflon.core.ui.commands.visualisation.ShowNeighbourhoodCommand">
     </handler>
   </extension>
   <extension point="org.eclipse.ui.menus">
@@ -286,6 +302,14 @@
              mnemonic="A"
              style="toggle"
              tooltip="Toggle for abbreviating labels in the PlantUML view, which exceed a certain length.">
+       </command>
+       <command
+             commandId="org.moflon.core.ui.commands.visualisation.ShowNeighbourhoodCommand"
+             id="org.moflon.core.ui.visualisation.ShowNeighbourhood"
+             label="Show 1-neighborhood"
+             mnemonic="1"
+             style="toggle"
+             tooltip="Shows or hides the 1-neighborhood for the current selection.">
        </command>
     </menuContribution>
   </extension>

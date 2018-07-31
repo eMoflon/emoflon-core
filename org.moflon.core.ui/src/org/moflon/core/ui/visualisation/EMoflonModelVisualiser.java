@@ -43,7 +43,7 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser<ObjectDiagram
 		case INIT:
 			return ObjectDiagramStrategies::determineEdgesForSelection;
 		case NEIGHBOURHOOD:
-			return DiagramStrategy.identity();
+			return ObjectDiagramStrategies::expandNeighbourhoodBidirectional;
 		default:
 			return super.getDefaultStrategy(part);
 		}

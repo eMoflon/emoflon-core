@@ -71,7 +71,7 @@ public interface ConfigurableVisualiser<T> {
 	 * 
 	 * <p>
 	 * <b>Note:</b> The default implementation of this methods returns
-	 * {@link UnaryOperator#identity()} for every {@link StrategyPart}.
+	 * {@link DiagramStrategy#identity()} for every {@link StrategyPart}.
 	 * </p>
 	 * 
 	 * @param part
