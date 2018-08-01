@@ -35,9 +35,6 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser<ClassDiag
 		// set default strategy
 		strategy = getDefaultStrategy(StrategyPart.INIT)//
 				.andThen(getDefaultStrategy(StrategyPart.NEIGHBOURHOOD));
-
-		@SuppressWarnings("unused")
-		boolean blabla = true;
 	}
 
 	@Override

@@ -23,6 +23,7 @@ class EMoflonPlantUMLGenerator {
 	private static final int REPL_LEN = 11;
 	
 	static var idMap = new HashMap<EObject, String>();
+	private static Map<EObject, String> instanceNames;
 	
 	static def String wrapInTags(String body){
 		'''
@@ -103,6 +104,7 @@ class EMoflonPlantUMLGenerator {
 	
 	def static String visualiseModelElements(ObjectDiagram diagram, int diagramStyle){
 		idMap.clear
+		instanceNames = diagram.eObjectsToNames;
 		
 		'''
 		«plantUMLPreamble(diagramStyle)»
@@ -196,17 +198,11 @@ class EMoflonPlantUMLGenerator {
 	}
 	
 	private def static Object identifierForObject(EObject o, int style){
-		if(!idMap.containsKey(o))
-			idMap.put(o, '''o«idMap.keySet.size + 1»''')
-			
-		'''"«idMap.get(o)» : «nameFor(o.eClass, style)»"'''	
+		'''"«IF style.bitwiseAnd(ABBR_LABELS) > 0»«abbr(instanceNames.get(o))»«ELSE»«instanceNames.get(o)»«ENDIF» : «nameFor(o.eClass, style)»"'''	
 	}
 	
 	private def static Object identifierForObject(EObject o){
-		if(!idMap.containsKey(o))
-			idMap.put(o, '''o«idMap.keySet.size + 1»''')
-			
-		'''«idMap.get(o)».«nameFor(o.eClass)»'''	
+		'''«instanceNames.get(o)».«nameFor(o.eClass)»'''	
 	}
 	
 	def static String visualiseCorrModel(Collection<EObject> corrObjects, Collection<EObject> sourceObjects, Collection<EObject> targetObjects, Collection<VisualEdge> links)
@@ -264,6 +260,36 @@ class EMoflonPlantUMLGenerator {
 	def static CharSequence plantUMLPreamble(int style){
 		'''
 			hide «IF(style.bitwiseAnd(SHOW_MODEL_DETAILS) > 0)»empty «ENDIF»members
+			
+			skinparam shadowing false
+			skinparam StereotypeABackgroundColor White
+			skinparam StereotypeCBackgroundColor White
+			
+			skinparam class {
+				BorderColor Black
+				BackgroundColor White
+				ArrowColor Black
+				StereotypeABackgroundColor White
+				StereotypeCBackgroundColor White
+			}
+			
+			skinparam package {
+				BackgroundColor GhostWhite
+				BorderColor LightSlateGray
+				Fontcolor LightSlateGray
+			}
+			
+			skinparam object {
+				BorderColor Black
+				BackgroundColor White
+				ArrowColor Black
+			}
+			
+			skinparam note {
+				BorderColor Black
+				BackgroundColor White
+				ArrowColor Black
+			}
 		'''
 	}
 	
