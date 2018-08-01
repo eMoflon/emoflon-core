@@ -2,12 +2,7 @@ package org.moflon.core.ui.visualisation;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
-
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.moflon.core.ui.VisualiserUtilities;
