@@ -2,17 +2,22 @@ package org.moflon.core.ui.visualisation
 
 import java.util.Collection
 import java.util.HashMap
+import java.util.Map
 import org.apache.commons.lang3.StringUtils
 import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.EReference
-import org.eclipse.emf.ecore.EOperation
 import org.eclipse.emf.ecore.ENamedElement
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EOperation
+import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.EAnnotation
+import org.eclipse.emf.ecore.EPackage
+import java.util.Optional
 
 class EMoflonPlantUMLGenerator {
 	
 	public static final int SHOW_MODEL_DETAILS = 1<<0;
 	public static final int ABBR_LABELS = 1<<1;
+	public static final int SHOW_DOCUMENTATION = 1<<2;
 	
 	private static final String REPL_STR = "…";
 	private static final int REPL_LEN = 11;
@@ -66,7 +71,34 @@ class EMoflonPlantUMLGenerator {
 			«visualiseEcoreClassOperations(c, diagramStyle)»
 		«ENDFOR»
 		«visualiseEdges(diagram.getEdges, diagramStyle)»
+		«IF diagramStyle.bitwiseAnd(SHOW_DOCUMENTATION) > 0»
+			«visualiseDocumentation(diagram.getDoumentation)»
+		«ENDIF»
 		'''
+	}
+	
+	def private static visualiseDocumentation(Map<EAnnotation, Optional<EClass>> map) {
+		'''
+		«FOR a : map.keySet»
+			«var d = a.details.get("documentation")»
+			note "«identifierForAnnotation(d)»" as «aliasForDoc(a, d)»
+		«ENDFOR»
+		«FOR a : map.keySet»
+			«var optC = map.get(a)»
+			«IF optC.isPresent»
+				«var d = a.details.get("documentation")»
+				«aliasForDoc(a, d)» .. «identifierForClass(optC.get)»
+			«ENDIF»
+		«ENDFOR»
+		'''
+	}
+	
+	def private static aliasForDoc(EAnnotation a, String doc) {
+		'''«IF packageNameFor(a) !== ""»«packageNameFor(a)».«ENDIF»«doc.replaceAll("[\\W]", "_")»«a.hashCode()»'''
+	}
+	
+	def private static identifierForAnnotation(String d) {
+		'''«d.replace("\n", "\\n").replace("\r", "\\r").replace("\"", "'")»'''
 	}
 	
 	def static String visualiseModelElements(ObjectDiagram diagram, int diagramStyle){
@@ -241,6 +273,10 @@ class EMoflonPlantUMLGenerator {
 	
 	def private static String nameFor(ENamedElement elem) {
 		'''«elem.name»'''
+	}
+	
+	def private static String packageNameFor(EObject obj) {
+		'''«IF obj instanceof EPackage»«nameFor(obj as EPackage)»«ELSE»«IF obj.eContainer !== null»«packageNameFor(obj.eContainer)»«ENDIF»«ENDIF»'''
 	}
 	
 	def private static String abbr(String longString) {

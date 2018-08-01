@@ -3,6 +3,7 @@ package org.moflon.core.ui;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -231,7 +232,8 @@ public class VisualiserUtilities {
 				.filter(elem -> elem != null)//
 				.filter(elem -> !(elem instanceof EGenericType))//
 				.filter(elem -> !(elem instanceof EEnumLiteral))//
-				.filter(elem -> !(elem instanceof EDataType));
+				.filter(elem -> !(elem instanceof EDataType))//
+				.filter(elem -> !(elem instanceof Map.Entry));
 	}
 
 	/**
