@@ -349,9 +349,9 @@
     </factory>
   </extension>
   <extension point="net.sourceforge.plantuml.eclipse.diagramTextProvider">
-    <diagramTextProvider priority="normal" providerClass="org.moflon.core.ui.visualisation.EMoflonModelVisualiser">
+    <diagramTextProvider priority="custom" providerClass="org.moflon.core.ui.visualisation.EMoflonModelVisualiser">
     </diagramTextProvider>
-    <diagramTextProvider priority="normal" providerClass="org.moflon.core.ui.visualisation.EMoflonMetamodelVisualiser">
+    <diagramTextProvider priority="custom" providerClass="org.moflon.core.ui.visualisation.EMoflonMetamodelVisualiser">
     </diagramTextProvider>
   </extension>
 </plugin>
