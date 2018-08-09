@@ -27,7 +27,7 @@
     </definition>
     <definition id="org.moflon.ide.ui.definitions.isXmiFile">
       <adapt type="org.eclipse.core.resources.IResource">
-        <test property="org.eclipse.core.resources.name" value="*.xmi"/>
+        <test property="org.eclipse.core.resources.name" value="xmi"/>
       </adapt>
     </definition>
     <definition id="org.moflon.ide.ui.definitions.isEcoreFile">
