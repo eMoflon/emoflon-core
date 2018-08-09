@@ -515,6 +515,10 @@ public class WorkspaceHelper {
 	public static boolean isEcoreFile(final IResource resource) {
 		return isFile(resource) && resource.getName().endsWith(".ecore");
 	}
+	
+	public static boolean isXcoreFile(final IResource resource) {
+		return isFile(resource) && resource.getName().endsWith(".xcore");
+	}
 
 	/**
 	 * Returns the {@link IProject} with the given name (if exists)
