@@ -29,7 +29,7 @@ public class ScopeProviderHelper <E extends EObject> {
 
 	public ScopeProviderHelper() {
 		init();
-		resourceSet = MOSLScopeUtil.getInstance().getResourceSet("ecore");
+		resourceSet = MOSLScopeUtil.getResourceSet("ecore");
 	}
 
 	private void init(){

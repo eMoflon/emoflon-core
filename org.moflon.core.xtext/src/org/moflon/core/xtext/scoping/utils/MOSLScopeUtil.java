@@ -17,12 +17,13 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 public class MOSLScopeUtil
 {
+   @Deprecated // Since 2018-08-09
    private static MOSLScopeUtil instance;
 
-   private MOSLScopeUtil()
-   {
-   }
-
+   /**
+    * @deprecated All methods are now static, so we do not need the synthetic singleton
+    */
+   @Deprecated // Since 2018-08-09
    public static MOSLScopeUtil getInstance()
    {
       if (instance == null)
@@ -30,7 +31,7 @@ public class MOSLScopeUtil
       return instance;
    }
 
-   public <R extends EObject> R getRootObject(EObject context, Class<R> clazz)
+   public static <R extends EObject> R getRootObject(EObject context, Class<R> clazz)
    {
       Stack<EObject> stack = new Stack<EObject>();
       stack.push(context);
@@ -47,25 +48,25 @@ public class MOSLScopeUtil
       return null;
    }
 
-   public <E extends EObject> List<E> getObjectsFromResource(Resource resource, Class<E> clazz){
+   public static <E extends EObject> List<E> getObjectsFromResource(Resource resource, Class<E> clazz){
       List<EObject> allContent = new ArrayList<>();
       resource.getAllContents().forEachRemaining(allContent::add);
       return allContent.parallelStream().filter(clazz::isInstance).map(clazz::cast).collect(Collectors.toList());
    }
-   
-   public <E extends EObject> E getObjectFromResourceSet(URI uri, ResourceSet resourceSet, Class<E> clazz)
+
+   public static <E extends EObject> E getObjectFromResourceSet(URI uri, ResourceSet resourceSet, Class<E> clazz)
    {
       Resource res = getResource(uri, resourceSet, true);
       E scopingRoot = clazz.cast(res.getContents().get(0));
       return scopingRoot;
    }
 
-   public ResourceSet getResourceSet()
+   public static ResourceSet getResourceSet()
    {
       return getResourceSet("xmi");
    }
 
-   private Resource getResource(URI uri, ResourceSet resourceSet, boolean load)
+   private static Resource getResource(URI uri, ResourceSet resourceSet, boolean load)
    {
       try
       {
@@ -83,7 +84,7 @@ public class MOSLScopeUtil
       }
    }
 
-   public Resource addToResource(URI uri, ResourceSet resourceSet, EObject obj)
+   public static Resource addToResource(URI uri, ResourceSet resourceSet, EObject obj)
    {
       Resource resource = getResource(uri, resourceSet, false);
       resource.getContents().clear();
@@ -91,7 +92,7 @@ public class MOSLScopeUtil
       return resource;
    }
 
-   public void saveToResource(URI uri, ResourceSet resourceSet, EObject obj)
+   public static void saveToResource(URI uri, ResourceSet resourceSet, EObject obj)
    {
       try
       {
@@ -103,7 +104,7 @@ public class MOSLScopeUtil
       }
    }
 
-   public ResourceSet getResourceSet(String ext)
+   public static ResourceSet getResourceSet(String ext)
    {
       ResourceSet resourceSet = new ResourceSetImpl();
       Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
