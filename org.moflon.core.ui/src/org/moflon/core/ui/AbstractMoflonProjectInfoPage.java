@@ -43,6 +43,8 @@ public abstract class AbstractMoflonProjectInfoPage extends WizardPage {
 
 	private Text projectNameTextfield;
 
+	private boolean generateDefaultXcore = true;
+
 	public AbstractMoflonProjectInfoPage(String name, String title, String desc) {
 		super(name);
 		projectName = "";
@@ -137,6 +139,27 @@ public abstract class AbstractMoflonProjectInfoPage extends WizardPage {
 		});
 		defaultLocationCheckbox.setSelection(useDefaultLocation);
 		defaultLocationSelectionChanged();
+
+		Button generateDefaultXcoreButton = new Button(container, SWT.RADIO);
+		generateDefaultXcoreButton.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				generateDefaultXcore = generateDefaultXcoreButton.getSelection();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				generateDefaultXcore = generateDefaultXcoreButton.getSelection();
+			}
+		});
+		generateDefaultXcoreButton.setText("Generate default .xcore in project");
+		generateDefaultXcoreButton.setSelection(true);
+
+		createDummyLabel(container);
+		createDummyLabel(container);
+
+		Button generateDefaultEcore = new Button(container, SWT.RADIO);
+		generateDefaultEcore.setText("Generate default .ecore in project");
 	}
 
 	public void createControlsForProjectName(final Composite container) {
@@ -209,9 +232,8 @@ public abstract class AbstractMoflonProjectInfoPage extends WizardPage {
 	/**
 	 * Sets the project path to be used
 	 *
-	 * @param projectLocation
-	 *            the desired project location. <code>null</code> indicates the
-	 *            default location
+	 * @param projectLocation the desired project location. <code>null</code>
+	 *                        indicates the default location
 	 */
 	private void setProjectLocation(final String projectLocation) {
 		this.projectLocation = projectLocation;
@@ -220,8 +242,7 @@ public abstract class AbstractMoflonProjectInfoPage extends WizardPage {
 	/**
 	 * Sets the given error message to indicate a validation problem
 	 * 
-	 * @param message
-	 *            the message or <code>null</code> if no problems were detected
+	 * @param message the message or <code>null</code> if no problems were detected
 	 */
 	private final void updateStatus(final String message) {
 		setErrorMessage(message);
@@ -244,10 +265,8 @@ public abstract class AbstractMoflonProjectInfoPage extends WizardPage {
 	 * Checks if given name is a valid name for a new project in the current
 	 * workspace.
 	 *
-	 * @param projectName
-	 *            Name of project to be created in current workspace
-	 * @param pluginId
-	 *            ID of bundle
+	 * @param projectName Name of project to be created in current workspace
+	 * @param pluginId    ID of bundle
 	 * @return A status object indicating success or failure and a relevant message.
 	 */
 	private static IStatus validateProjectName(final String projectName) {
@@ -270,4 +289,7 @@ public abstract class AbstractMoflonProjectInfoPage extends WizardPage {
 		return new Status(IStatus.OK, pluginId, "Project name is valid");
 	}
 
+	public boolean generateDefaultXCoreFile() {
+		return generateDefaultXcore;
+	}
 }

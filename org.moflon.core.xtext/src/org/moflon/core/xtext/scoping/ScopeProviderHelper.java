@@ -15,7 +15,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.scoping.IScope;
 import org.moflon.core.xtext.exceptions.CannotFindScopeException;
-import org.moflon.core.xtext.scoping.utils.MOSLScopeUtil;
+import org.moflon.core.xtext.utils.ResourceUtil;
 
 public class ScopeProviderHelper <E extends EObject> {
 	private Map<URI, E> existingScopingRoots;
@@ -29,7 +29,7 @@ public class ScopeProviderHelper <E extends EObject> {
 
 	public ScopeProviderHelper() {
 		init();
-		resourceSet = MOSLScopeUtil.getInstance().getResourceSet("ecore");
+		resourceSet = ResourceUtil.getResourceSet("ecore");
 	}
 
 	private void init(){

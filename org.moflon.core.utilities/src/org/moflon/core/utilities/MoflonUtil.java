@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EcorePackage;
 
@@ -44,7 +45,12 @@ public class MoflonUtil {
 
 		// Derive the java data type from the Ecore class name
 		try {
-			javaType = EcorePackage.eINSTANCE.getEClassifier(eCoreType).getInstanceClass().getSimpleName();
+			final EClassifier eClassifier = EcorePackage.eINSTANCE.getEClassifier(eCoreType);
+			if (eClassifier != null) {
+				javaType = eClassifier.getInstanceClass().getSimpleName();
+			} else {
+				javaType = eCoreType;
+			}
 		} catch (Exception e) {
 			logger.debug("Cannot derive Java data type from the given Ecore data type = '" + eCoreType
 					+ "'. Using Ecore type instead.");
@@ -86,7 +92,7 @@ public class MoflonUtil {
 	 * Returns the last segment of a fully-qualified name
 	 *
 	 * Example: For the name 'x.y.z.A', the last segment is 'A'
-	 * 
+	 *
 	 * @param name
 	 *            the fully-qualified name
 	 * @return the last segment of the name
@@ -104,7 +110,7 @@ public class MoflonUtil {
 
 	/**
 	 * Returns the capitalized last segment of the given fully-qualified name
-	 * 
+	 *
 	 * @param name
 	 *            the name
 	 * @return the result of capitalizing {@link #lastSegmentOf(String)}
@@ -117,7 +123,7 @@ public class MoflonUtil {
 	 * Returns all segments but the last one of the given fully-qualified name
 	 *
 	 * Example: For the name 'x.y.z.A', the result is 'x.y.z'
-	 * 
+	 *
 	 * @param name
 	 *            the fully-qualified name
 	 * @return all but the last segment
@@ -156,7 +162,7 @@ public class MoflonUtil {
 
 	/**
 	 * Joins the given list of segments using '.', resulting in a qualified name
-	 * 
+	 *
 	 * @param segments
 	 *            the segments
 	 * @return the qualified name

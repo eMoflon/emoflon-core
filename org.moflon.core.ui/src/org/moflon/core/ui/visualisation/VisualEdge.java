@@ -8,17 +8,23 @@ import org.eclipse.emf.ecore.EReference;
 
 public class VisualEdge {
 	private EReference type;
+	private EdgeType edgeType;
 	private EObject src;
 	private EObject trg;
-	
-	public VisualEdge(EReference type, EObject src, EObject trg) {
+
+	public VisualEdge(EReference type, EdgeType edgeType, EObject src, EObject trg) {
 		this.type = type;
+		this.edgeType = edgeType;
 		this.src = src;
 		this.trg = trg;
 	}
 
 	public EReference getType() {
 		return type;
+	}
+
+	public EdgeType getEdgeType() {
+		return edgeType;
 	}
 
 	public EObject getSrc() {
@@ -28,24 +34,30 @@ public class VisualEdge {
 	public EObject getTrg() {
 		return trg;
 	}
-	
+
 	public String getName() {
+		if (edgeType == EdgeType.GENERALISATION || type == null) {
+			return "";
+		}
 		return type.getName();
 	}
-	
+
 	public String getOppositeName() {
-		assert(hasEOpposite());
+		assert (hasEOpposite());
 		return type.getEOpposite().getName();
 	}
 
 	public boolean hasEOpposite() {
+		if (edgeType == EdgeType.GENERALISATION || type == null) {
+			return false;
+		}
 		return type.getEOpposite() != null;
 	}
 
 	public Optional<VisualEdge> findEOpposite(Collection<VisualEdge> links) {
-		assert(hasEOpposite());
-		VisualEdge opposite = new VisualEdge(type.getEOpposite(), trg, src);
-		if(links.contains(opposite))
+		assert (hasEOpposite());
+		VisualEdge opposite = new VisualEdge(type.getEOpposite(), edgeType, trg, src);
+		if (links.contains(opposite))
 			return Optional.of(opposite);
 		else
 			return Optional.empty();
@@ -58,6 +70,7 @@ public class VisualEdge {
 		result = prime * result + ((src == null) ? 0 : src.hashCode());
 		result = prime * result + ((trg == null) ? 0 : trg.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((edgeType == null) ? 0 : edgeType.hashCode());
 		return result;
 	}
 
@@ -65,7 +78,7 @@ public class VisualEdge {
 	public String toString() {
 		return "--" + getName() + "-->";
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -75,6 +88,8 @@ public class VisualEdge {
 		if (getClass() != obj.getClass())
 			return false;
 		VisualEdge other = (VisualEdge) obj;
+		if (edgeType != other.edgeType)
+			return false;
 		if (src == null) {
 			if (other.src != null)
 				return false;
@@ -92,6 +107,4 @@ public class VisualEdge {
 			return false;
 		return true;
 	}
-	
-	
 }

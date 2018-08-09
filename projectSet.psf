@@ -16,6 +16,7 @@
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.ui"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.ui.autosetup"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.ui.autosetup.tests"/>
+<project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.ui.packageregistration"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.utilities"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.utilities.tests"/>
 <project reference="1.0,https://github.com/eMoflon/emoflon-core.git,master,org.moflon.core.xtext"/>
@@ -46,6 +47,7 @@
 <item elementID="=org.moflon.core.ui" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.moflon.core.ui.autosetup.tests" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.moflon.core.ui.autosetup" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=org.moflon.core.ui.packageregistration" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 <item elementID="=org.moflon.git.ui" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
 </workingSets>
 <workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1518877351561_2" label="core-injection" name="injection">

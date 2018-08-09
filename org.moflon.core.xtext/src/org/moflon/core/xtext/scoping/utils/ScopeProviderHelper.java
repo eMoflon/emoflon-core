@@ -17,33 +17,30 @@ import org.eclipse.xtext.scoping.Scopes;
 import org.moflon.core.xtext.exceptions.CannotFindScopeException;
 import org.moflon.core.xtext.utils.ResourceUtil;
 
-
-
-
 public class ScopeProviderHelper <E extends EObject> {
 	private Map<URI, E> existingScopingRoots;
 	private Map<String, List<EObject>> oldCandidates;
 	private ResourceSet resourceSet;
-	
+
 	public ScopeProviderHelper(ResourceSet resSet) {
 		init();
 		resourceSet = resSet;
 	}
-	
+
 	public ScopeProviderHelper() {
 		init();
-		resourceSet = ResourceUtil.getInstance().getResourceSet("ecore");
+		resourceSet = ResourceUtil.getResourceSet("ecore");
 	}
-	
+
 	private void init(){
 		existingScopingRoots = new HashMap<>();
 		oldCandidates = new HashMap<>();
 	}
-	
+
 	public ResourceSet getResourceSet(){
 		return resourceSet;
 	}
-	
+
 	private E getScopingObject(URI uri, Class<E> clazz) throws IOException{
 		if(existingScopingRoots.containsKey(uri)){
 			return existingScopingRoots.get(uri);
@@ -57,21 +54,21 @@ public class ScopeProviderHelper <E extends EObject> {
 			existingScopingRoots.put(uri, scopingRoot);
 			return scopingRoot;
 		}
-	}	
-	
+	}
+
 	public IScope createScope(List<URI> uris, Class<E> clazz, Class<? extends EObject> type) throws CannotFindScopeException{
 	     return createScope(uris, clazz, type, null);
-	}  
-	
+	}
+
 	public <T extends EObject> IScope createScope(List<URI> uris, Class<E> clazz, Class<T> type, List<T> currentFound) throws CannotFindScopeException{
 		try {
 			List<EObject> candidates=null;
 			if(oldCandidates.containsKey(type.toGenericString())){
 				candidates=oldCandidates.get(type.toGenericString());
 			}
-			else {		
+			else {
 				candidates = new ArrayList<>();
-				
+
 				for(URI uri : uris){
 					E scopingObject=getScopingObject(uri, clazz);
 					Iterator<EObject> candidateIterator = scopingObject.eAllContents();
@@ -90,5 +87,5 @@ public class ScopeProviderHelper <E extends EObject> {
 		}catch (Exception ioobe){
 			throw new CannotFindScopeException("Cannot find Resource");
 		}
-	}	
+	}
 }

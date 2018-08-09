@@ -106,8 +106,14 @@ public class NewMoflonEmfProjectWizard extends AbstractMoflonWizard
       final String packageName = MoflonUtil.lastSegmentOf(projectName);
       final URI projectUri = MoflonGenModelBuilder.determineProjectUriBasedOnPreferences(project);
       final URI packageUri = URI.createURI(projectUri.toString() + MoflonConventions.getDefaultPathToEcoreFileInProject(projectName));
-      final String defaultEcoreFile = DefaultEPackageContentGenerator.generateDefaultEPackageForProject(projectName, packageName, packageUri.toString());
-      WorkspaceHelper.addFile(project, MoflonConventions.getDefaultPathToEcoreFileInProject(projectName), defaultEcoreFile, subMon.split(1));
+      
+      if(projectInfo.generateDefaultXCoreFile()) {
+    	  final String defaultXcoreFile = DefaultContentGenerator.generateDefaultXCoreFileForProject(projectName, packageName, packageUri.toString());
+    	  WorkspaceHelper.addFile(project, MoflonConventions.getDefaultPathToFileInProject(projectName, ".xcore"), defaultXcoreFile, subMon.split(1));
+      } else {
+    	  final String defaultEcoreFile = DefaultContentGenerator.generateDefaultEPackageForProject(projectName, packageName, packageUri.toString());
+    	  WorkspaceHelper.addFile(project, MoflonConventions.getDefaultPathToEcoreFileInProject(projectName), defaultEcoreFile, subMon.split(1));
+      }
    }
 
    /**

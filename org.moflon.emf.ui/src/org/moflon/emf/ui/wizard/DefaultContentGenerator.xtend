@@ -3,7 +3,7 @@ package org.moflon.emf.ui.wizard
 /**
  * This class provides the default content of generated Ecore files
  */
-class DefaultEPackageContentGenerator {
+class DefaultContentGenerator {
     
     /**
      * Generates an XMI representation of the EPackage corresponding to the given
@@ -14,7 +14,7 @@ class DefaultEPackageContentGenerator {
      * @param packageUri the NS URI of the EPackage 
      * @return the raw XMI file content
      */
-    public static def String generateDefaultEPackageForProject(String projectName, String packageName, String packageUri) {
+    static def String generateDefaultEPackageForProject(String projectName, String packageName, String packageUri) {
         '''
         <?xml version="1.0" encoding="ASCII"?>
         <ecore:EPackage xmi:version="2.0"
@@ -29,5 +29,22 @@ class DefaultEPackageContentGenerator {
           </eAnnotations>
         </ecore:EPackage>
         '''
+    }
+    
+     /**
+     * Generates a default Xcore file representation of the EPackage corresponding to the given
+     * project name
+     *
+     * @param projectName the name of the containing project
+     * @param packageName the name of the EPackage
+     * @param packageUri the NS URI of the EPackage 
+     * @return the default Xcore file's content as a string
+     */
+    static def String generateDefaultXCoreFileForProject(String projectName, String packageName, String packageUri) {
+    	'''
+    	@xcore.lang.Ecore(nsURI="«packageUri»", nsPrefix="«projectName»")
+    	@xcore.lang.GenModel(modelDirectory="/«projectName»/gen")
+    	package «packageName»
+    	'''
     }
 }
