@@ -105,7 +105,7 @@ public abstract class AbstractCommandHandler extends org.eclipse.core.commands.A
 	protected void openInEditor(final IFile targetFile) throws CoreException, PartInitException {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put(IMarker.LINE_NUMBER, new Integer(1));
+		map.put(IMarker.LINE_NUMBER, Integer.valueOf(1));
 		IMarker marker;
 
 		marker = targetFile.createMarker(IMarker.TEXT);
