@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,6 +19,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.gervarro.eclipse.task.ITask;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
+import org.moflon.core.utilities.ExceptionUtil;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.core.utilities.eMoflonEMFUtil;
 import org.moflon.emf.codegen.MoflonGenModelBuilder;
@@ -80,7 +82,7 @@ public final class MonitoredGenModelBuilder implements ITask {
 		try {
 			this.genModel = genModelBuilder.buildGenModel(genModelURI);
 		} catch (final RuntimeException e) {
-			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), e.getMessage(), e);
+			return handleExceptionDuringGenmodelProcessing(e);
 		}
 
 		subMon.worked(30);
@@ -115,6 +117,25 @@ public final class MonitoredGenModelBuilder implements ITask {
 		}
 		subMon.worked(10);
 		return saveStatus.isOK() ? Status.OK_STATUS : saveStatus;
+	}
+
+	/**
+	 * This method creates an {@link IStatus} from the given {@link Exception}
+	 *
+	 * If the cause of the {@link Exception} is a {@link ResourceException}, an informative message for the user is created.
+	 *
+	 * @param e the {@link Exception} to report
+	 * @return the resulting {@link IStatus}
+	 */
+	@SuppressWarnings("restriction")
+	private IStatus handleExceptionDuringGenmodelProcessing(final Exception e) {
+		final Throwable cause = e.getCause();
+		if (cause != null && cause instanceof ResourceException) {
+			final String message = "A required resource could not be found. This may mean that a required project could not be built. Please fix the required resource first and then rebuild this project. Details: " + cause.getMessage();
+			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), message);
+		} else {
+			return ExceptionUtil.createDefaultErrorStatus(getClass(), e);
+		}
 	}
 
 	/**

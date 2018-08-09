@@ -19,6 +19,16 @@ public final class ExceptionUtil {
 	}
 
 	/**
+	 * Creates an {@link IStatus} that reports the given {@link Throwable}.
+	 * @param reportingClass the class that reports the error (used for determining the plugin id)
+	 * @param t the error to report
+	 * @return the resulting {@link IStatus} having flag {@link IStatus#ERROR} and the message of the {@link Throwable} as status message
+	 */
+	public static IStatus createDefaultErrorStatus(final Class<?> reportingClass, final Throwable t) {
+		return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(reportingClass), t.getMessage(), t);
+	}
+
+	/**
 	 * Formats the given exception for debugging purposes.
 	 *
 	 * If available, the root cause and its stacktrace are formatted. Else, the
@@ -46,7 +56,7 @@ public final class ExceptionUtil {
 	/**
 	 * Throws a {@link CoreException} that contains an {@link IStatus} with the
 	 * given message, plugin ID, and wrapped exception
-	 * 
+	 *
 	 * @param message
 	 *            error message
 	 * @param plugin
