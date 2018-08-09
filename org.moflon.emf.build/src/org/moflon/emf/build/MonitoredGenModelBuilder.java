@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -130,7 +129,7 @@ public final class MonitoredGenModelBuilder implements ITask {
 	@SuppressWarnings("restriction")
 	private IStatus handleExceptionDuringGenmodelProcessing(final Exception e) {
 		final Throwable cause = e.getCause();
-		if (cause != null && cause instanceof ResourceException) {
+		if (cause != null && cause instanceof org.eclipse.core.internal.resources.ResourceException) {
 			final String message = "A required resource could not be found. This may mean that a required project could not be built. Please fix the required resource first and then rebuild this project. Details: " + cause.getMessage();
 			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), message);
 		} else {
