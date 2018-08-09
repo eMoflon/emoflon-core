@@ -64,12 +64,14 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 			if (genModelBuilderStatus.matches(IStatus.ERROR)) {
 				return genModelBuilderStatus;
 			}
-			this.genModel = genModelBuilderJob.getGenModel();
+			this.setGenModel(genModelBuilderJob.getGenModel());
 
 			// Load injections
 			final IProject project = getEcoreFile().getProject();
 
-			final IStatus injectionStatus = createInjections(project, genModel);
+			final InjectionManager injectionManager = createInjectionManager(project);
+			this.setInjectorManager(injectionManager);
+			final IStatus injectionStatus = createInjections(project);
 			if (subMon.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
@@ -105,8 +107,16 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 		}
 	}
 
+	protected final void setGenModel(final GenModel genModel) {
+		this.genModel = genModel;
+	}
+
 	public final GenModel getGenModel() {
 		return genModel;
+	}
+
+	protected void setInjectorManager(final InjectionManager injectionManager) {
+		this.injectionManager = injectionManager;
 	}
 
 	public final InjectionManager getInjectorManager() {
@@ -115,7 +125,7 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 
 	/**
 	 * Returns the project name to be displayed
-	 * 
+	 *
 	 * @param moflonProperties
 	 *            the properties container to consult
 	 * @return the project name
@@ -125,17 +135,30 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 	}
 
 	/**
-	 * Loads the injections from the /injection folder
+	 * Loads the injections from the /injection folder using the injection manager returned from {@link #getInjectorManager()}
 	 */
-	private IStatus createInjections(final IProject project, final GenModel genModel) throws CoreException {
+	protected IStatus createInjections(final IProject project) throws CoreException {
+		final IStatus extractionStatus = getInjectorManager().extractInjections();
+		return extractionStatus;
+	}
+
+	/**
+	 * Creates the injection manager to be used for this build process
+	 *
+	 * The resulting injection manager still needs to be set using {@link #setInjectorManager(InjectionManager)}
+	 * @param project the current project
+	 * @return
+	 * @throws CoreException
+	 */
+	protected InjectionManager createInjectionManager(final IProject project)
+			throws CoreException {
 		final IFolder injectionFolder = WorkspaceHelper.addFolder(project, WorkspaceHelper.INJECTION_FOLDER,
 				new NullProgressMonitor());
 		final CodeInjector injector = new CodeInjectorImpl(project.getLocation().toOSString());
 
-		final InjectionExtractor injectionExtractor = new XTextInjectionExtractor(injectionFolder, genModel);
+		final InjectionExtractor injectionExtractor = new XTextInjectionExtractor(injectionFolder, this.getGenModel());
 
-		injectionManager = new InjectionManager(injectionExtractor, injector);
-		final IStatus extractionStatus = injectionManager.extractInjections();
-		return extractionStatus;
+		InjectionManager injectionManager = new InjectionManager(injectionExtractor, injector);
+		return injectionManager;
 	}
 }
