@@ -96,6 +96,59 @@
     <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.core.ui.commands.admin.ReconfigureLogging" name="Reconfigure logging"/>
     <command categoryId="org.moflon.core.ui.commands.MainCategory" id="org.moflon.ide.ui.moflon" name="eMoflon popup"></command>
     <command defaultHandler="org.moflon.core.ui.handler.TouchResourceHandler" id="org.moflon.core.ui.commands.TouchResourceCommand" name="Touch Resource"/>
+    <category
+          description="Command contributions for the PlantUML view"
+          id="org.moflon.core.ui.commands.PlantUMLCategory"
+          name="eMoflon Commands PlantUML Category">
+    </category>
+    <command
+          categoryId="org.moflon.core.ui.commands.PlantUMLCategory"
+          description="Toggle for showing or hiding additional model details, e.g. attributes and operations in a class diagrams, in the PlantUML view. "
+          id="org.moflon.core.ui.commands.visualisation.ShowModelDetailsCommand"
+          name="Show model details">
+       <state id="org.eclipse.ui.commands.toggleState">
+         <class class="org.eclipse.ui.handlers.RegistryToggleState">
+           <parameter name="default" value="true"></parameter>
+           <parameter name="persisted" value="false"></parameter>
+         </class>
+       </state>
+    </command>
+    <command
+          categoryId="org.moflon.core.ui.commands.PlantUMLCategory"
+          description="Toggle for abbreviating labels in the PlantUML view, which exceed a certain length."
+          id="org.moflon.core.ui.commands.visualisation.AbbreviateLabelsCommand"
+          name="Abbreviate labels">
+       <state id="org.eclipse.ui.commands.toggleState">
+         <class class="org.eclipse.ui.handlers.RegistryToggleState">
+           <parameter name="default" value="false"></parameter>
+           <parameter name="persisted" value="false"></parameter>
+         </class>
+       </state>
+    </command>
+    <command
+          categoryId="org.moflon.core.ui.commands.PlantUMLCategory"
+          description="Show 1-neighborhood for selection."
+          id="org.moflon.core.ui.commands.visualisation.ShowNeighbourhoodCommand"
+          name="Show 1-neighborhood">
+       <state id="org.eclipse.ui.commands.toggleState">
+         <class class="org.eclipse.ui.handlers.RegistryToggleState">
+           <parameter name="default" value="true"></parameter>
+           <parameter name="persisted" value="false"></parameter>
+         </class>
+       </state>
+    </command>
+    <command
+          categoryId="org.moflon.core.ui.commands.PlantUMLCategory"
+          description="Show documentation."
+          id="org.moflon.core.ui.commands.visualisation.ShowDocumentationCommand"
+          name="Show documentation">
+       <state id="org.eclipse.ui.commands.toggleState">
+         <class class="org.eclipse.ui.handlers.RegistryToggleState">
+           <parameter name="default" value="false"></parameter>
+           <parameter name="persisted" value="false"></parameter>
+         </class>
+       </state>
+    </command>
   </extension>
   <extension point="org.eclipse.ui.handlers">
     <handler class="org.moflon.core.ui.handler.BuildHandler" commandId="org.moflon.core.ui.commands.build.BuildCommand">
@@ -137,6 +190,22 @@
     <handler class="org.moflon.core.ui.handler.EditLoggingConfigurationHandler" commandId="org.moflon.core.ui.commands.admin.EditLoggingConfigFile"/>
     <handler class="org.moflon.core.ui.handler.ReconfigureLoggingHandler" commandId="org.moflon.core.ui.commands.admin.ReconfigureLogging"/>
     <handler class="org.moflon.core.ui.handler.EditLoggingConfigurationHandler" commandId="org.moflon.core.ui.commands.admin.ConfigureLogging"/>
+    <handler
+          class="org.moflon.core.ui.handler.ShowModelDetailsHandler"
+          commandId="org.moflon.core.ui.commands.visualisation.ShowModelDetailsCommand">
+    </handler>
+    <handler
+          class="org.moflon.core.ui.handler.AbbreviateLabelsHandler"
+          commandId="org.moflon.core.ui.commands.visualisation.AbbreviateLabelsCommand">
+    </handler>
+    <handler
+          class="org.moflon.core.ui.handler.NeighbourhoodStrategyHandler"
+          commandId="org.moflon.core.ui.commands.visualisation.ShowNeighbourhoodCommand">
+    </handler>
+    <handler
+          class="org.moflon.core.ui.handler.ShowDocumentationHandler"
+          commandId="org.moflon.core.ui.commands.visualisation.ShowDocumentationCommand">
+    </handler>
   </extension>
   <extension point="org.eclipse.ui.menus">
     <menuContribution allPopups="true" locationURI="popup:#TextEditorContext?after=additions">
@@ -227,6 +296,46 @@
       <command commandId="org.moflon.core.ui.commands.admin.EditLoggingConfigFile" icon="resources/icons/logfile.png" label="Edit config file" style="push" tooltip="Edit configuration file for eMoflon logging. To take effect, 'Reconfigure Logging' has to be executed."/>
       <command commandId="org.moflon.core.ui.commands.admin.ReconfigureLogging" label="Reconfigure logging" style="push" tooltip="Reconfigure logging"/>
     </menuContribution>
+    <menuContribution
+          allPopups="false"
+          locationURI="menu:net.sourceforge.plantuml.eclipse.views.PlantUmlView">
+       <separator
+             name="moflonSeparatorPlantUMLVisualisation"
+             visible="true">
+       </separator>
+       <command
+             commandId="org.moflon.core.ui.commands.visualisation.ShowModelDetailsCommand"
+             id="org.moflon.core.ui.visualisation.ShowModelDetails"
+             label="Show model details"
+             mnemonic="S"
+             style="toggle"
+             tooltip="Shows or hides additional information of model elements. ">
+       </command>
+       <command
+             commandId="org.moflon.core.ui.commands.visualisation.AbbreviateLabelsCommand"
+             id="org.moflon.core.ui.visualisation.AbbreviateLabels"
+             label="Abbreviate labels"
+             mnemonic="A"
+             style="toggle"
+             tooltip="Toggle for abbreviating labels in the PlantUML view, which exceed a certain length.">
+       </command>
+       <command
+             commandId="org.moflon.core.ui.commands.visualisation.ShowNeighbourhoodCommand"
+             id="org.moflon.core.ui.visualisation.ShowNeighbourhood"
+             label="Show 1-neighborhood"
+             mnemonic="1"
+             style="toggle"
+             tooltip="Shows or hides the 1-neighborhood for the current selection.">
+       </command>
+       <command
+             commandId="org.moflon.core.ui.commands.visualisation.ShowDocumentationCommand"
+             id="org.moflon.core.ui.visualisation.ShowDocumentation"
+             label="Show documentation"
+             mnemonic="1"
+             style="toggle"
+             tooltip="Shows or hides the documentation for the current selection and neighborhood.">
+       </command>
+    </menuContribution>
   </extension>
   <extension point="org.eclipse.ui.bindings">
     <key commandId="org.moflon.core.ui.commands.build.BuildCommand" contextId="org.eclipse.ui.contexts.window" schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" sequence="M2+M3+E B"/>
@@ -240,7 +349,9 @@
     </factory>
   </extension>
   <extension point="net.sourceforge.plantuml.eclipse.diagramTextProvider">
-    <diagramTextProvider priority="2" providerClass="org.moflon.core.ui.visualisation.EMoflonModelAndMetamodelVisualiser">
-     </diagramTextProvider>
+    <diagramTextProvider priority="custom" providerClass="org.moflon.core.ui.visualisation.EMoflonModelVisualiser">
+    </diagramTextProvider>
+    <diagramTextProvider priority="custom" providerClass="org.moflon.core.ui.visualisation.EMoflonMetamodelVisualiser">
+    </diagramTextProvider>
   </extension>
 </plugin>
