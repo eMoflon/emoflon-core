@@ -1,10 +1,12 @@
 package org.moflon.core.ui.visualisation.strategy;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EContentsEList;
@@ -14,18 +16,18 @@ import org.moflon.core.ui.visualisation.VisualEdge;
 
 /**
  * Contains various methods for manipulating {@link ObjectDiagram} instances.
- * 
+ *
  * @author Johannes Brandt
  *
  */
 public class ObjectDiagramStrategies {
-	
+
 	/**
 	 * Computes all edges between selected objects in the given object diagram.
-	 * 
+	 *
 	 * This method will add each computed edge to the edges stored with the diagram.
 	 * Only edges between selected objects will be computed and added.
-	 * 
+	 *
 	 * @param diagram
 	 *            The object diagram containing the selection, for which the edges
 	 *            are to be computed.
@@ -39,21 +41,21 @@ public class ObjectDiagramStrategies {
 
 		return diagram;
 	}
-	
+
 	/**
 	 * Expands the given {@link ObjectDiagram}'s neighbourhood by one degree,
 	 * bidirectional.
-	 * 
+	 *
 	 * The given diagram's neighbourhood is expanded, by adding all neighbors of the
 	 * current neighbourhood. The direction of the associations between objects is
 	 * irrelevant. If no neighbourhood is defined with the given diagram, then the
 	 * selection's neighbours are added to the neighbourhood.
-	 * 
+	 *
 	 * <p>
 	 * <b>Note:</b> If a neighbourhood expansion of a degree greater than one is
 	 * wished, this method can simple be chained.
 	 * </p>
-	 * 
+	 *
 	 * @param diagram
 	 *            The diagram, of which the neighbourhood is to be increased by a
 	 *            degree of one.
@@ -90,7 +92,7 @@ public class ObjectDiagramStrategies {
 	/**
 	 * Determines all outbound edges from objects in <code>sourceElements</code> to
 	 * objects in <code>targetElements</code>.
-	 * 
+	 *
 	 * @param sourceElements
 	 *            The set of objects for which all outbound edges shall be
 	 *            determined.
@@ -98,26 +100,23 @@ public class ObjectDiagramStrategies {
 	 *            The set of objects which represent targets of all outbound edges
 	 *            from the set of source elements.
 	 * @param edges
-	 *            All edges with an object from <code>sourceElements</code> as source,
-	 *            and an object from <code>targetElements</code> as target.
+	 *            All edges with an object from <code>sourceElements</code> as
+	 *            source, and an object from <code>targetElements</code> as target.
 	 */
-	@SuppressWarnings("rawtypes")
-	private static void determineOutboundEdgesBetween(Collection<EObject> sourceElements, Collection<EObject> targetElements,
-			Collection<VisualEdge> edges) {
+	private static void determineOutboundEdgesBetween(Collection<EObject> sourceElements,
+			Collection<EObject> targetElements, Collection<VisualEdge> edges) {
 		for (EObject obj : sourceElements) {
-			for (EContentsEList.FeatureIterator featureIterator = //
-					(EContentsEList.FeatureIterator) obj.eCrossReferences().iterator(); featureIterator.hasNext();) {
-				EObject trg = (EObject) featureIterator.next();
-				EReference eReference = (EReference) featureIterator.feature();
-				if (targetElements.contains(trg))
-					edges.add(new VisualEdge(eReference, EdgeType.LINK,  obj, trg));
-			}
-			for (EContentsEList.FeatureIterator featureIterator = //
-					(EContentsEList.FeatureIterator) obj.eContents().iterator(); featureIterator.hasNext();) {
-				EObject trg = (EObject) featureIterator.next();
-				EReference eReference = (EReference) featureIterator.feature();
-				if (targetElements.contains(trg))
-					edges.add(new VisualEdge(eReference, EdgeType.LINK,  obj, trg));
+			final EList<EObject> eCrossReferences = obj.eCrossReferences();
+			final EList<EObject> eContents = obj.eContents();
+			for (final EList<EObject> featureList : Arrays.asList(eCrossReferences, eContents)) {
+				for (final EContentsEList.FeatureIterator<?> featureIterator = //
+						(EContentsEList.FeatureIterator<?>) featureList.iterator(); //
+						featureIterator.hasNext();) {
+					EObject trg = (EObject) featureIterator.next();
+					EReference eReference = (EReference) featureIterator.feature();
+					if (targetElements.contains(trg))
+						edges.add(new VisualEdge(eReference, EdgeType.LINK, obj, trg));
+				}
 			}
 		}
 	}
