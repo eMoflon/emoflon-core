@@ -24,13 +24,22 @@ public class MethodVisitor extends ASTVisitor {
 	private final List<MethodDeclaration> methods = new ArrayList<MethodDeclaration>();
 
 	public MethodVisitor(final String codeForProject) {
-		final ASTParser parser = ASTParser.newParser(AST.JLS10);
+		final ASTParser parser = ASTParser.newParser(getJLSLevel());
 		parser.setSource(codeForProject.toCharArray());
 		parser.setIgnoreMethodBodies(true);
 
 		final CompilationUnit node = (CompilationUnit) parser.createAST(null);
 
 		node.accept(this);
+	}
+
+	/**
+	 * Returns the JLS level to be used by the {@link MethodVisitor}
+	 * @return the JLS level
+	 */
+	@SuppressWarnings("deprecation")
+	private int getJLSLevel() {
+		return AST.JLS8;
 	}
 
 	@Override
