@@ -10,3 +10,4 @@ Require-Bundle:
 Export-Package: org.moflon.core.preferences
 Bundle-Activator: org.moflon.core.preferences.EMoflonPreferencesActivator
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.moflon.core.preferences

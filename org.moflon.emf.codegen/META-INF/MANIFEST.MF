@@ -18,3 +18,4 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.0.0",
  org.moflon.emf.injection,
  org.moflon.emf.injection.ide,
  org.moflon.core.preferences
+Automatic-Module-Name: org.moflon.emf.codegen

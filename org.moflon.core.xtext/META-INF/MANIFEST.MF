@@ -10,3 +10,4 @@ Export-Package: org.moflon.core.xtext.exceptions,
  org.moflon.core.xtext.scoping,
  org.moflon.core.xtext.scoping.utils
 Bundle-Vendor: eMoflon Developers
+Automatic-Module-Name: org.moflon.core.xtext

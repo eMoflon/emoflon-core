@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
-import org.moflon.core.utilities.MoflonUtil;
+import org.moflon.core.utilities.EcoreUtils;
 
 /**
  * This component checks whether an EOperation has a given parameter sequence.
@@ -43,7 +43,7 @@ public class MatchingParametersChecker {
 	private boolean checkWhetherParameterMatchesType(EParameter eParameter, String parameterType) {
 		// Precondition: instance type name is fully qualified
 		final String instanceTypeName = eParameter.getEType().getInstanceClassName();
-		final String ecoreTypeName = MoflonUtil.getFQN(eParameter.getEType());
+		final String ecoreTypeName = EcoreUtils.getFQN(eParameter.getEType());
 
 		// instanceTypeName has priority over ecoreTypeName
 		final String metamodelTypeNameForComparison = (instanceTypeName != null) ? instanceTypeName : ecoreTypeName;

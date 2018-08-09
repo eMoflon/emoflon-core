@@ -67,18 +67,10 @@ public class MoflonUtil {
 	 *
 	 * @param ENamedElement
 	 * @return
+	 * @deprecated Use EcoreUtils.getFQN instead.
 	 */
 	public static String getFQN(final ENamedElement element) {
-		String fqn = element.getName();
-
-		ENamedElement e = element;
-
-		while (e.eContainer() != null) {
-			e = (ENamedElement) e.eContainer();
-			fqn = e.getName() + "." + fqn;
-		}
-
-		return fqn;
+		return EcoreUtils.getFQN(element);
 	}
 
 	public static String handlePrefixForBooleanAttributes(final String packageName, final String attribute) {

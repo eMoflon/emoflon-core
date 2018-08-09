@@ -13,13 +13,17 @@ import net.sourceforge.plantuml.eclipse.utils.DiagramTextProvider;
 public abstract class EMoflonVisualiser implements DiagramTextProvider {
 
 	private static final Logger logger = Logger.getLogger(EMoflonVisualiser.class);
+	private static final int MAX_SIZE = 500;
 	
 	@Override
 	public String getDiagramText(IEditorPart editor, ISelection selection) {
 		Optional<String> diagram = Optional.empty();
 		try {
 			String d = getDiagramBody(editor, selection);
-			diagram = Optional.of(d);
+			if(d == null || d.split("\n").length > MAX_SIZE)
+				diagram = Optional.of(EMoflonPlantUMLGenerator.toBigDiagram());
+			else
+				diagram = Optional.of(d);
 		} catch(Exception e) {
 			logger.error(e + ExceptionUtil.displayExceptionAsString(e));
 			e.printStackTrace();

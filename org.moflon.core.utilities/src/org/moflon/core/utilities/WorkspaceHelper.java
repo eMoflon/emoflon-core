@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -428,6 +429,40 @@ public class WorkspaceHelper {
 	}
 
 	/**
+	 * Adds the nature as first one to the given project if the project does not
+	 * have the nature yet.
+	 * 
+	 * @param project
+	 *            the project
+	 * @param natureId
+	 *            the nature ID
+	 * @param monitor
+	 *            the monitor, may be <code>null</code>
+	 * @throws CoreException
+	 *             if an error occurs while reading/writing the project
+	 */
+	public static void addPrimaryNature(final IProject project, final String natureId, final IProgressMonitor monitor)
+			throws CoreException {
+		Objects.requireNonNull(project, "Project must not be null!");
+		Objects.requireNonNull(natureId, "Nature must not be null!");
+
+		if (WorkspaceHelper.hasNature(project, natureId)) {
+			return;
+		}
+
+		final SubMonitor subMon = SubMonitor.convert(monitor,
+				String.format("Add nature %s to project %s", natureId, project.getName()), 2);
+
+		final IProjectDescription description = project.getDescription();
+		final List<String> natures = new ArrayList<>(Arrays.asList(description.getNatureIds()));
+		if (!natures.contains(natureId)) {
+			natures.add(0, natureId);
+			description.setNatureIds(natures.toArray(new String[natures.size()]));
+		}
+		project.setDescription(description, subMon.split(1));
+	}
+
+	/**
 	 * Creates a file at pathToFile with specified contents fileContent. All folders
 	 * in the path are created if necessary.
 	 *
@@ -479,6 +514,10 @@ public class WorkspaceHelper {
 	 */
 	public static boolean isEcoreFile(final IResource resource) {
 		return isFile(resource) && resource.getName().endsWith(".ecore");
+	}
+	
+	public static boolean isXcoreFile(final IResource resource) {
+		return isFile(resource) && resource.getName().endsWith(".xcore");
 	}
 
 	/**

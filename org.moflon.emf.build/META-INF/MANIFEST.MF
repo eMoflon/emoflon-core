@@ -19,3 +19,4 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.0.0",
  org.moflon.emf.codegen,
  org.moflon.emf.injection.ide
 Export-Package: org.moflon.emf.build
+Automatic-Module-Name: org.moflon.emf.build

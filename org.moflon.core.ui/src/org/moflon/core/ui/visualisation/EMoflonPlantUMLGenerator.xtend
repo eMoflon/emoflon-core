@@ -8,10 +8,9 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 
 class EMoflonPlantUMLGenerator {
+	static var idMap = new HashMap<EObject, String>();
 	
-	private static var idMap = new HashMap<EObject, String>();
-	
-	public static def String wrapInTags(String body){
+	static def String wrapInTags(String body){
 		'''
 			@startuml
 			«body»
@@ -26,24 +25,31 @@ class EMoflonPlantUMLGenerator {
 		'''«idMap.get(o)»«separator»«o.eClass.name»'''	
 	}
 	
-	public static def String emptyDiagram(){
+	static def String emptyDiagram(){
 		'''
 			title Choose an element that can be visualised
 		'''
 	}
 	
-	public static def String errorDiagram(){
+	static def String errorDiagram(){
 		'''
 			title I'm having problems visualising the current selection (check your console).
 		'''
 	}
 
-	public def static String visualiseEcoreElements(Collection<EClass> eclasses, Collection<EReference> refs){
+	static def String toBigDiagram(){
+		'''
+			title This diagram would be so big, trying to render it would fry your Eclipse instance
+		'''
+	}
+
+	def static String visualiseEcoreElements(Collection<EClass> eclasses, Collection<EReference> refs){
 		'''
 		«FOR c : eclasses»
-		«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c)»
+			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c)»
 			«FOR s : c.ESuperTypes»
-			«identifierForClass(c)»--|>«identifierForClass(s)»
+			«IF(s.abstract)»abstract «ENDIF»class «identifierForClass(s)»
+			«identifierForClass(s)»<|--«identifierForClass(c)»
 			«ENDFOR»
 		«ENDFOR»
 		«FOR r : refs»
@@ -52,11 +58,12 @@ class EMoflonPlantUMLGenerator {
 			«ELSE»
 				«identifierForClass(r.EContainingClass)»"«r.EOpposite.name» «multiplicityFor(r.EOpposite)»" «IF r.isContainment»*«ELSE»<«ENDIF»--«IF r.EOpposite.isContainment»*«ELSE»>«ENDIF» "«r.name» «multiplicityFor(r)»" «identifierForClass(r.EReferenceType)»
 			«ENDIF»
+			«IF(r.EReferenceType.abstract)»abstract «ENDIF»class «identifierForClass(r.EReferenceType)»
 		«ENDFOR»
 		'''
 	}
 	
-	public def static String visualiseModelElements(Collection<EObject> objects, Collection<VisualEdge> links){
+	def static String visualiseModelElements(Collection<EObject> objects, Collection<VisualEdge> links){
 		idMap.clear
 		
 		'''
@@ -129,7 +136,7 @@ class EMoflonPlantUMLGenerator {
 		'''
 	} 
 	
-	public def static CharSequence plantUMLPreamble(){
+	def static CharSequence plantUMLPreamble(){
 		'''
 			hide empty members
 			hide circle

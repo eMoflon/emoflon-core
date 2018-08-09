@@ -14,11 +14,11 @@ Capabilities of eMoflon Core:
 
 ## How to install
 
-Eclipse update site available at http://emoflon.org/emoflon-core-updatesite/stable/updatesite/
+Eclipse update site available at https://emoflon.org/emoflon-core-updatesite/stable/updatesite/
 
 ## Supplementary information
 
-https://emoflon.github.io/ hosts the eMoflon website with general information.
+https://emoflon.org/ hosts the eMoflon website with general information.
 
 https://github.com/eMoflon/emoflon-docu provides documentation and the Wiki of eMoflon.
 
