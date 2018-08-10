@@ -43,7 +43,7 @@ public abstract class AbstractMoflonProjectInfoPage extends WizardPage {
 
 	private Text projectNameTextfield;
 
-	private boolean generateDefaultXcore = true;
+	private boolean generateDefaultEmfatic = true;
 
 	public AbstractMoflonProjectInfoPage(String name, String title, String desc) {
 		super(name);
@@ -140,26 +140,26 @@ public abstract class AbstractMoflonProjectInfoPage extends WizardPage {
 		defaultLocationCheckbox.setSelection(useDefaultLocation);
 		defaultLocationSelectionChanged();
 
-		Button generateDefaultXcoreButton = new Button(container, SWT.RADIO);
-		generateDefaultXcoreButton.addSelectionListener(new SelectionListener() {
+		Button generateDefaultEmfaticButton = new Button(container, SWT.RADIO);
+		generateDefaultEmfaticButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				generateDefaultXcore = generateDefaultXcoreButton.getSelection();
+				generateDefaultEmfatic = generateDefaultEmfaticButton.getSelection();
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				generateDefaultXcore = generateDefaultXcoreButton.getSelection();
+				generateDefaultEmfatic = generateDefaultEmfaticButton.getSelection();
 			}
 		});
-		generateDefaultXcoreButton.setText("Generate default .xcore in project");
-		generateDefaultXcoreButton.setSelection(true);
+		generateDefaultEmfaticButton.setText("Generate default Emfatic file (.emf) in project");
+		generateDefaultEmfaticButton.setSelection(true);
 
 		createDummyLabel(container);
 		createDummyLabel(container);
 
 		Button generateDefaultEcore = new Button(container, SWT.RADIO);
-		generateDefaultEcore.setText("Generate default .ecore in project");
+		generateDefaultEcore.setText("Generate default Ecore file (.ecore) in project");
 	}
 
 	public void createControlsForProjectName(final Composite container) {
@@ -289,7 +289,7 @@ public abstract class AbstractMoflonProjectInfoPage extends WizardPage {
 		return new Status(IStatus.OK, pluginId, "Project name is valid");
 	}
 
-	public boolean generateDefaultXCoreFile() {
-		return generateDefaultXcore;
+	public boolean generateDefaultEmfaticFile() {
+		return generateDefaultEmfatic;
 	}
 }
