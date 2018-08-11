@@ -32,19 +32,19 @@ class DefaultContentGenerator {
     }
     
      /**
-     * Generates a default Xcore file representation of the EPackage corresponding to the given
+     * Generates a default Emfatic file representation of the EPackage corresponding to the given
      * project name
      *
      * @param projectName the name of the containing project
      * @param packageName the name of the EPackage
      * @param packageUri the NS URI of the EPackage 
-     * @return the default Xcore file's content as a string
+     * @return the default Emfatic file's content as a string
      */
-    static def String generateDefaultXCoreFileForProject(String projectName, String packageName, String packageUri) {
+    static def String generateDefaultEmfaticFileForProject(String projectName, String packageName, String packageUri) {
     	'''
-    	@xcore.lang.Ecore(nsURI="«packageUri»", nsPrefix="«projectName»")
-    	@xcore.lang.GenModel(modelDirectory="/«projectName»/gen")
-    	package «packageName»
+    	@GenModel(documentation="TODO: Add documentation for Blup")
+    	@namespace(uri="«packageUri»", prefix="«projectName»")
+    	package «packageName»;
     	'''
     }
 }

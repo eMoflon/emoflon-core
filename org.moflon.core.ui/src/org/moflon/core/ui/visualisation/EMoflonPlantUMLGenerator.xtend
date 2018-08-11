@@ -19,11 +19,11 @@ class EMoflonPlantUMLGenerator {
 	public static final int ABBR_LABELS = 1<<1;
 	public static final int SHOW_DOCUMENTATION = 1<<2;
 	
-	private static final String REPL_STR = "…";
-	private static final int REPL_LEN = 11;
+	static final String REPL_STR = "…";
+	static final int REPL_LEN = 11;
 	
 	static var idMap = new HashMap<EObject, String>();
-	private static Map<EObject, String> instanceNames;
+	static Map<EObject, String> instanceNames;
 	
 	static def String wrapInTags(String body){
 		'''
