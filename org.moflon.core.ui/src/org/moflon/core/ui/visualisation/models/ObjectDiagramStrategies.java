@@ -1,4 +1,4 @@
-package org.moflon.core.ui.visualisation.strategy;
+package org.moflon.core.ui.visualisation.models;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,9 +10,8 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EContentsEList;
-import org.moflon.core.ui.visualisation.EdgeType;
-import org.moflon.core.ui.visualisation.ObjectDiagram;
-import org.moflon.core.ui.visualisation.VisualEdge;
+import org.moflon.core.ui.visualisation.diagrams.EdgeType;
+import org.moflon.core.ui.visualisation.diagrams.VisualEdge;
 
 /**
  * Contains various methods for manipulating {@link ObjectDiagram} instances.

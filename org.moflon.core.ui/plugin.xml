@@ -191,19 +191,19 @@
     <handler class="org.moflon.core.ui.handler.ReconfigureLoggingHandler" commandId="org.moflon.core.ui.commands.admin.ReconfigureLogging"/>
     <handler class="org.moflon.core.ui.handler.EditLoggingConfigurationHandler" commandId="org.moflon.core.ui.commands.admin.ConfigureLogging"/>
     <handler
-          class="org.moflon.core.ui.handler.ShowModelDetailsHandler"
+          class="org.moflon.core.ui.handler.visualisation.ShowModelDetailsHandler"
           commandId="org.moflon.core.ui.commands.visualisation.ShowModelDetailsCommand">
     </handler>
     <handler
-          class="org.moflon.core.ui.handler.AbbreviateLabelsHandler"
+          class="org.moflon.core.ui.handler.visualisation.AbbreviateLabelsHandler"
           commandId="org.moflon.core.ui.commands.visualisation.AbbreviateLabelsCommand">
     </handler>
     <handler
-          class="org.moflon.core.ui.handler.NeighbourhoodStrategyHandler"
+          class="org.moflon.core.ui.handler.visualisation.NeighbourhoodStrategyHandler"
           commandId="org.moflon.core.ui.commands.visualisation.ShowNeighbourhoodCommand">
     </handler>
     <handler
-          class="org.moflon.core.ui.handler.ShowDocumentationHandler"
+          class="org.moflon.core.ui.handler.visualisation.ShowDocumentationHandler"
           commandId="org.moflon.core.ui.commands.visualisation.ShowDocumentationCommand">
     </handler>
   </extension>
@@ -349,9 +349,9 @@
     </factory>
   </extension>
   <extension point="net.sourceforge.plantuml.eclipse.diagramTextProvider">
-    <diagramTextProvider priority="custom" providerClass="org.moflon.core.ui.visualisation.EMoflonModelVisualiser">
+    <diagramTextProvider priority="custom" providerClass="org.moflon.core.ui.visualisation.models.EMoflonModelVisualiser">
     </diagramTextProvider>
-    <diagramTextProvider priority="custom" providerClass="org.moflon.core.ui.visualisation.EMoflonMetamodelVisualiser">
+    <diagramTextProvider priority="custom" providerClass="org.moflon.core.ui.visualisation.metamodels.EMoflonMetamodelVisualiser">
     </diagramTextProvider>
   </extension>
 </plugin>

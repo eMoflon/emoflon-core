@@ -1,4 +1,4 @@
-package org.moflon.core.ui.visualisation;
+package org.moflon.core.ui.visualisation.common;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -8,7 +8,9 @@ import org.eclipse.jdt.core.dom.PrimitiveType.Code;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.moflon.core.ui.VisualiserUtilities;
-import org.moflon.core.ui.visualisation.strategy.DiagramStrategy;
+import org.moflon.core.ui.visualisation.EMoflonPlantUMLGenerator;
+import org.moflon.core.ui.visualisation.diagrams.DiagramStrategy;
+import org.moflon.core.ui.visualisation.diagrams.VisualEdge;
 
 /**
  * Abstract implementation for the visualisation of Ecore metamodels and models.
@@ -16,7 +18,7 @@ import org.moflon.core.ui.visualisation.strategy.DiagramStrategy;
  * @author Johannes Brandt (initial contribution)
  *
  */
-public abstract class EMoflonEcoreVisualiser<T> extends EMoflonVisualiser implements ConfigurableVisualiser<T> {
+public abstract class EMoflonEcoreVisualiser<T> extends EMoflonVisualiser {
 
 	/**
 	 * Stores whether or not the superset of Ecore elements can be retrieved from
@@ -37,11 +39,6 @@ public abstract class EMoflonEcoreVisualiser<T> extends EMoflonVisualiser implem
 	private Collection<EObject> allElements;
 
 	/**
-	 * Diagram style bits - used in PlantUML diagram text generation.
-	 */
-	protected int style = EMoflonPlantUMLGenerator.SHOW_MODEL_DETAILS;
-
-	/**
 	 * Allows chained operations on a diagram with node type {@link Code T}. Should
 	 * at least be {@link UnaryOperator#identity()}.
 	 */
@@ -52,7 +49,6 @@ public abstract class EMoflonEcoreVisualiser<T> extends EMoflonVisualiser implem
 		// check if editor currently has Ecore related model loaded
 		boolean hasEcoreFileLoaded = VisualiserUtilities.checkFileExtensionSupport(editor, "ecore")
 				|| VisualiserUtilities.checkFileExtensionSupport(editor, "xmi");
-		// || VisualiserUtilities.checkFileExtensionSupport(editor, "genmodel");
 
 		// Check if the editor internally handles Ecore EObjects.
 		// Since some editors allow to load both .ecore and .xmi Resources at the same
@@ -113,30 +109,19 @@ public abstract class EMoflonEcoreVisualiser<T> extends EMoflonVisualiser implem
 		}
 
 		synchronized (this) {
+			chooseStrategy();
 			result = getDiagramBody(latestSelection);
 		}
 		return result;
 	}
 
-	@Override
-	public synchronized void setDiagramStyle(int style) {
-		this.style = style;
-	}
-
-	@Override
-	public synchronized void setDiagramStrategy(DiagramStrategy<T> strategy) {
-		if (strategy == null) {
-			throw new IllegalArgumentException("Strategy cannot be null!");
-		}
-		this.strategy = strategy;
-	}
+	protected abstract void chooseStrategy();
 
 	/**
 	 * Checks whether or not a given Ecore selection is supposed to be supported by
 	 * this Ecore visualiser.
 	 * 
-	 * @param selection
-	 *            All Ecore elements that are supposed to be visualised.
+	 * @param selection All Ecore elements that are supposed to be visualised.
 	 * @return <code>true</code> if the given selection is supported, otherwise
 	 *         <code>false</code>.
 	 */
@@ -145,8 +130,7 @@ public abstract class EMoflonEcoreVisualiser<T> extends EMoflonVisualiser implem
 	/**
 	 * Calculates the diagram text for the given Ecore elements.
 	 * 
-	 * @param elements
-	 *            The Ecore elements that are to be visualised.
+	 * @param elements The Ecore elements that are to be visualised.
 	 * @return The generated diagram text describing the given elements using the
 	 *         PlantUML DSL.
 	 */
@@ -173,10 +157,9 @@ public abstract class EMoflonEcoreVisualiser<T> extends EMoflonVisualiser implem
 	 * returned. If there is a unidirectional {@link VisualEdge}, it will be
 	 * returned.
 	 * 
-	 * @param edges
-	 *            The list of edges, each one representing one navigation direction
-	 *            of an association, which may contain the opposing navigation
-	 *            direction of a bidirectional association.
+	 * @param edges The list of edges, each one representing one navigation
+	 *              direction of an association, which may contain the opposing
+	 *              navigation direction of a bidirectional association.
 	 * @return The list of edges without any opposing navigation direction.
 	 */
 	protected Collection<VisualEdge> handleOpposites(Collection<VisualEdge> edges) {

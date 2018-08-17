@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.moflon.core.ui.visualisation.strategy;
+package org.moflon.core.ui.visualisation.diagrams;
 
 import java.util.Objects;
 import java.util.function.UnaryOperator;

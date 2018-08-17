@@ -1,4 +1,4 @@
-package org.moflon.core.ui.visualisation.strategy;
+package org.moflon.core.ui.visualisation.metamodels;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -6,9 +6,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.emf.ecore.EClass;
-import org.moflon.core.ui.visualisation.ClassDiagram;
-import org.moflon.core.ui.visualisation.EdgeType;
-import org.moflon.core.ui.visualisation.VisualEdge;
+import org.moflon.core.ui.visualisation.diagrams.EdgeType;
+import org.moflon.core.ui.visualisation.diagrams.VisualEdge;
 
 /**
  * Contains various methods for manipulating {@link ClassDiagram} instances.
