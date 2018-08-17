@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.moflon.core.ui.visualisation;
+package org.moflon.core.ui.visualisation.metamodels;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
+import org.moflon.core.ui.visualisation.diagrams.Diagram;
 
 /**
  * Represents a class diagram.
@@ -20,6 +21,7 @@ import org.eclipse.emf.ecore.EClass;
  *
  */
 public class ClassDiagram extends Diagram<EClass> {
+	private boolean showDocumentation = false;
 
 	/**
 	 * Stores the documentation elements an the EClasses they are to be attached to.
@@ -51,11 +53,17 @@ public class ClassDiagram extends Diagram<EClass> {
 	/**
 	 * Setter for {@link #docToEClasses}.
 	 * 
-	 * @param docToEClasses
-	 *            The new mapping of documentation elements to EClasses.
+	 * @param docToEClasses The new mapping of documentation elements to EClasses.
 	 */
 	public void setDocumentation(Map<EAnnotation, Optional<EClass>> docToEClasses) {
 		this.docToEClasses = docToEClasses;
 	}
 
+	public void setShowDocumentation(boolean value) {
+		showDocumentation = value;
+	}
+	
+	public boolean getShowDocumentation() {
+		return showDocumentation;
+	}
 }

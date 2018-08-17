@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.moflon.core.ui.visualisation;
+package org.moflon.core.ui.visualisation.diagrams;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,11 +14,9 @@ import java.util.HashSet;
  * 
  * @author Johannes Brandt
  *
- * @param <T>
- *            The node type.
+ * @param <T> The node type.
  */
 public class Diagram<T> {
-
 	/**
 	 * Stores all elements that may be visualised.
 	 */
@@ -41,11 +39,15 @@ public class Diagram<T> {
 	 */
 	protected Collection<VisualEdge> edges;
 
+	private boolean abbreviateLabels = false;
+
+	private boolean showFullModelDetails = false;
+
 	/**
 	 * Parameterized constructor.
 	 * 
-	 * @param superset
-	 *            All elements of the diagram. Cannot be changed once initialized.
+	 * @param superset All elements of the diagram. Cannot be changed once
+	 *                 initialized.
 	 */
 	public Diagram(Collection<T> superset) {
 		this.superset = superset;
@@ -57,10 +59,9 @@ public class Diagram<T> {
 	/**
 	 * Parameterized constructor.
 	 * 
-	 * @param superset
-	 *            All elements of the diagram. Cannot be changed once initialized.
-	 * @param selection
-	 *            The selected elements of the diagram.
+	 * @param superset  All elements of the diagram. Cannot be changed once
+	 *                  initialized.
+	 * @param selection The selected elements of the diagram.
 	 */
 	public Diagram(Collection<T> superset, Collection<T> selection) {
 		this.superset = superset;
@@ -90,8 +91,7 @@ public class Diagram<T> {
 	/**
 	 * Setter for {@link Diagram#selection}.
 	 * 
-	 * @param selection
-	 *            The new selection of nodes.
+	 * @param selection The new selection of nodes.
 	 */
 	public void setSelection(Collection<T> selection) {
 		this.selection = selection;
@@ -109,8 +109,7 @@ public class Diagram<T> {
 	/**
 	 * Setter for {@link Diagram#neighbourhood}.
 	 * 
-	 * @param neighbourhood
-	 *            The new neighbourhood.
+	 * @param neighbourhood The new neighbourhood.
 	 */
 	public void setNeighbourhood(Collection<T> neighbourhood) {
 		this.neighbourhood = neighbourhood;
@@ -128,10 +127,25 @@ public class Diagram<T> {
 	/**
 	 * Setter for {@link #edges}.
 	 * 
-	 * @param edges
-	 *            The new edges for this diagram.
+	 * @param edges The new edges for this diagram.
 	 */
 	public void setEdges(Collection<VisualEdge> edges) {
 		this.edges = edges;
+	}
+
+	public void setAbbreviateLabels(boolean value) {
+		abbreviateLabels = value;
+	}
+
+	public boolean getAbbreviateLabels() {
+		return abbreviateLabels;
+	}
+
+	public boolean getShowFullModelDetails() {
+		return showFullModelDetails ;
+	}
+	
+	public void setShowFullModelDetails(boolean value) {
+		showFullModelDetails = value;
 	}
 }

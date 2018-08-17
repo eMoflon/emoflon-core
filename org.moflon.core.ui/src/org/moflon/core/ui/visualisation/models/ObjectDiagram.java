@@ -1,13 +1,14 @@
 /**
  * 
  */
-package org.moflon.core.ui.visualisation;
+package org.moflon.core.ui.visualisation.models;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
+import org.moflon.core.ui.visualisation.diagrams.Diagram;
 
 /**
  * Represents an object diagram.
@@ -23,6 +24,10 @@ public class ObjectDiagram extends Diagram<EObject> {
 	 * Provides an instance name for an EObject.
 	 */
 	protected Map<EObject, String> eObjectsToNames;
+
+	public Map<EObject, String> geteObjectsToNames() {
+		return eObjectsToNames;
+	}
 
 	public ObjectDiagram(Collection<EObject> superset) {
 		super(superset);

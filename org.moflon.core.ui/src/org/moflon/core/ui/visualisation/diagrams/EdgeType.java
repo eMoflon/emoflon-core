@@ -1,4 +1,4 @@
-package org.moflon.core.ui.visualisation;
+package org.moflon.core.ui.visualisation.diagrams;
 
 /**
  * Used to distinguish classes of edges.

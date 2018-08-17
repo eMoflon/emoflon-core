@@ -12,13 +12,13 @@ import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EAnnotation
 import org.eclipse.emf.ecore.EPackage
 import java.util.Optional
+import org.moflon.core.ui.visualisation.metamodels.ClassDiagram
+import org.moflon.core.ui.visualisation.models.ObjectDiagram
+import org.moflon.core.ui.visualisation.diagrams.EdgeType
+import org.moflon.core.ui.visualisation.diagrams.VisualEdge
+import org.moflon.core.ui.visualisation.diagrams.Diagram
 
 class EMoflonPlantUMLGenerator {
-	
-	public static final int SHOW_MODEL_DETAILS = 1<<0;
-	public static final int ABBR_LABELS = 1<<1;
-	public static final int SHOW_DOCUMENTATION = 1<<2;
-	
 	static final String REPL_STR = "…";
 	static final int REPL_LEN = 11;
 	
@@ -58,21 +58,21 @@ class EMoflonPlantUMLGenerator {
 		'''
 	}
 
-	def static String visualiseEcoreElements(ClassDiagram diagram, int diagramStyle){
+	def static String visualiseEcoreElements(ClassDiagram diagram){
 		'''
-		«plantUMLPreamble(diagramStyle)»
+		«plantUMLPreamble(diagram)»
 		«FOR c : diagram.getSelection»
-			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c, diagramStyle)» as «identifierForClass(c)»
-			«visualiseEcoreClassAttributes(c, diagramStyle)»
-			«visualiseEcoreClassOperations(c, diagramStyle)»
+			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c, diagram)» as «identifierForClass(c)»
+			«visualiseEcoreClassAttributes(c, diagram)»
+			«visualiseEcoreClassOperations(c, diagram)»
 		«ENDFOR»
 		«FOR c : diagram.getNeighbourhood»
-			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c, diagramStyle)» as «identifierForClass(c)»
-			«visualiseEcoreClassAttributes(c, diagramStyle)»
-			«visualiseEcoreClassOperations(c, diagramStyle)»
+			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c, diagram)» as «identifierForClass(c)»
+			«visualiseEcoreClassAttributes(c, diagram)»
+			«visualiseEcoreClassOperations(c, diagram)»
 		«ENDFOR»
-		«visualiseEdges(diagram.getEdges, diagramStyle)»
-		«IF diagramStyle.bitwiseAnd(SHOW_DOCUMENTATION) > 0»
+		«visualiseEdges(diagram.getEdges, diagram)»
+		«IF diagram.getShowDocumentation()»
 			«visualiseDocumentation(diagram.getDoumentation)»
 		«ENDIF»
 		'''
@@ -82,7 +82,11 @@ class EMoflonPlantUMLGenerator {
 		'''
 		«FOR a : map.keySet»
 			«var d = a.details.get("documentation")»
-			note "«identifierForAnnotation(d)»" as «aliasForDoc(a, d)»
+			«IF map.get(a).isPresent»
+				note "«identifierForAnnotation(d)»" as «aliasForDoc(a, d)»
+			«ELSEIF a.EModelElement instanceof EPackage»
+				center footer «fill(d)»
+			«ENDIF»
 		«ENDFOR»
 		«FOR a : map.keySet»
 			«var optC = map.get(a)»
@@ -94,6 +98,19 @@ class EMoflonPlantUMLGenerator {
 		'''
 	}
 	
+	def static fill(String s) {
+		val words = StringUtils.split(s)
+		var filledString = ""
+		for (var i = 0; i < words.length; i += REPL_LEN) {
+			for(var j = i; j < Math.min(words.length, i + REPL_LEN); j++){
+				filledString = filledString + " " + words.get(j)
+			}
+			filledString += "\\n"
+		}
+		
+		return filledString.trim
+	}
+	
 	def private static aliasForDoc(EAnnotation a, String doc) {
 		'''«IF packageNameFor(a) !== ""»«packageNameFor(a)».«ENDIF»«doc.replaceAll("[\\W]", "_")»«a.hashCode()»'''
 	}
@@ -102,27 +119,27 @@ class EMoflonPlantUMLGenerator {
 		'''«d.replace("\n", "\\n").replace("\r", "\\r").replace("\"", "'")»'''
 	}
 	
-	def static String visualiseModelElements(ObjectDiagram diagram, int diagramStyle){
+	def static String visualiseModelElements(ObjectDiagram diagram){
 		idMap.clear
-		instanceNames = diagram.eObjectsToNames;
+		instanceNames = diagram.geteObjectsToNames;
 		
 		'''
-		«plantUMLPreamble(diagramStyle)»
+		«plantUMLPreamble(diagram)»
 		«FOR o : diagram.getSelection»
-		object «identifierForObject(o, diagramStyle)» as «identifierForObject(o)» {
-			«visualiseAllAttributes(o, diagramStyle)»
+		object «identifierForObject(o, diagram)» as «identifierForObject(o)» {
+			«visualiseAllAttributes(o, diagram)»
 		}
 		«ENDFOR»
 		«FOR o : diagram.getNeighbourhood»
-			object «identifierForObject(o, diagramStyle)» as «identifierForObject(o)» {
-			«visualiseAllAttributes(o, diagramStyle)»
+			object «identifierForObject(o, diagram)» as «identifierForObject(o)» {
+			«visualiseAllAttributes(o, diagram)»
 		}
 		«ENDFOR»
-		«visualiseEdges(diagram.getEdges, diagramStyle)»
+		«visualiseEdges(diagram.getEdges, diagram)»
 		'''
 	}
 	
-	def private static String visualiseEdges(Collection<VisualEdge> edges, int style) {
+	def private static String visualiseEdges(Collection<VisualEdge> edges, Diagram<?> diagram) {
 		'''
 		«FOR edge: edges»
 			«IF(edge.edgeType == EdgeType.REFERENCE)»
@@ -130,17 +147,17 @@ class EMoflonPlantUMLGenerator {
 				«var EClass src = ref.EContainingClass»
 				«var EClass trg = ref.EReferenceType»
 				«IF(!edge.hasEOpposite)»
-					«identifierForClass(src)»«IF ref.isContainment» *«ENDIF»--> "«multiplicityFor(ref)»" «identifierForClass(trg)» : "«nameFor(ref, style)»"
+					«identifierForClass(src)»«IF ref.isContainment» *«ENDIF»--> "«multiplicityFor(ref)»" «identifierForClass(trg)» : "«nameFor(ref, diagram)»"
 				«ELSE»
-					«identifierForClass(src)»"«nameFor(ref.EOpposite, style)» «multiplicityFor(ref.EOpposite)»" «IF ref.isContainment»*«ELSE»<«ENDIF»--«IF ref.EOpposite.isContainment»*«ELSE»>«ENDIF» "«nameFor(ref, style)» «multiplicityFor(ref)»" «identifierForClass(trg)»
+					«identifierForClass(src)»"«nameFor(ref.EOpposite, diagram)» «multiplicityFor(ref.EOpposite)»" «IF ref.isContainment»*«ELSE»<«ENDIF»--«IF ref.EOpposite.isContainment»*«ELSE»>«ENDIF» "«nameFor(ref, diagram)» «multiplicityFor(ref)»" «identifierForClass(trg)»
 				«ENDIF»
 			«ELSEIF(edge.edgeType == EdgeType.GENERALISATION)»
 				«identifierForClass(edge.trg as EClass)»<|--«identifierForClass(edge.src as EClass)»
 			«ELSEIF(edge.edgeType == EdgeType.LINK)»
 				«IF(!edge.hasEOpposite)»
-					«identifierForObject(edge.src)» --> «identifierForObject(edge.trg)» : "«IF style.bitwiseAnd(ABBR_LABELS) > 0»«abbr(edge.name)»«ELSE»«edge.name»«ENDIF»"
+					«identifierForObject(edge.src)» --> «identifierForObject(edge.trg)» : "«IF diagram.abbreviateLabels»«abbr(edge.name)»«ELSE»«edge.name»«ENDIF»"
 				«ELSE»
-					«identifierForObject(edge.src)» "«IF style.bitwiseAnd(ABBR_LABELS) > 0»«abbr(edge.oppositeName)»«ELSE»«edge.oppositeName»«ENDIF»" <--> "«IF style.bitwiseAnd(ABBR_LABELS) > 0»«abbr(edge.name)»«ELSE»«edge.name»«ENDIF»" «identifierForObject(edge.trg)»
+					«identifierForObject(edge.src)» "«IF diagram.abbreviateLabels»«abbr(edge.oppositeName)»«ELSE»«edge.oppositeName»«ENDIF»" <--> "«IF diagram.abbreviateLabels»«abbr(edge.name)»«ELSE»«edge.name»«ENDIF»" «identifierForObject(edge.trg)»
 				«ENDIF»
 			«ENDIF»
 		«ENDFOR»
@@ -151,40 +168,40 @@ class EMoflonPlantUMLGenerator {
 		'''«IF r.lowerBound == -1»*«ELSE»«r.lowerBound»«ENDIF»..«IF r.upperBound == -1»*«ELSE»«r.upperBound»«ENDIF»'''
 	}
 	
-	private def static String identifierForClass(EClass c, int style)
-		'''"«nameFor(c, style)»"'''
+	private def static String identifierForClass(EClass c, ClassDiagram diagram)
+		'''"«nameFor(c, diagram)»"'''
 		
 	private def static String identifierForClass(EClass c)
 		'''«nameFor(c.EPackage)».«nameFor(c)»'''
 	
-	private def static String visualiseEcoreClassAttributes(EClass eclass, int style) {
+	private def static String visualiseEcoreClassAttributes(EClass eclass, ClassDiagram diagram) {
 		'''
 		«FOR a : eclass.EAllAttributes»
-			«identifierForClass(eclass)» : «nameFor(a, style)» : «nameFor(a.EType, style)»
+			«identifierForClass(eclass)» : «nameFor(a, diagram)» : «nameFor(a.EType, diagram)»
 		«ENDFOR»
 		'''
 	}
 	
-	private def static String visualiseEcoreClassOperations(EClass eclass, int style) {
+	private def static String visualiseEcoreClassOperations(EClass eclass, ClassDiagram diagram) {
 		'''
 		«FOR op : eclass.EAllOperations» 
-			«identifierForClass(eclass)» : «visualiseEcoreOperation(op, style)»
+			«identifierForClass(eclass)» : «visualiseEcoreOperation(op, diagram)»
 		«ENDFOR»
 		'''
 	}
 	
-	private def static String visualiseEcoreOperation(EOperation op, int style) {
-		'''«nameFor(op, style)»«visualiseEcoreOperationParameterList(op, style)»«IF(op.EType !== null)» : «nameFor(op.EType, style)»«ENDIF»'''
+	private def static String visualiseEcoreOperation(EOperation op, ClassDiagram diagram) {
+		'''«nameFor(op, diagram)»«visualiseEcoreOperationParameterList(op, diagram)»«IF(op.EType !== null)» : «nameFor(op.EType, diagram)»«ENDIF»'''
 	}
 	
-	private def static String visualiseEcoreOperationParameterList(EOperation op, int style) {
-		'''«IF op.EParameters.size == 0»()«ENDIF»«FOR param : op.EParameters BEFORE '(' SEPARATOR ', ' AFTER ')'»«nameFor(param, style)» : «nameFor(param.EType, style)»«ENDFOR»'''
+	private def static String visualiseEcoreOperationParameterList(EOperation op, ClassDiagram diagram) {
+		'''«IF op.EParameters.size == 0»()«ENDIF»«FOR param : op.EParameters BEFORE '(' SEPARATOR ', ' AFTER ')'»«nameFor(param, diagram)» : «nameFor(param.EType, diagram)»«ENDFOR»'''
 	}
 	
-	def static visualiseAllAttributes(EObject o, int style) {
+	def static visualiseAllAttributes(EObject o, Diagram<?> diagram) {
 		'''
 		«FOR a : o.eClass.EAllAttributes»
-			«nameFor(a, style)» = «IF o.eGet(a) !== null && style.bitwiseAnd(ABBR_LABELS) > 0»«abbr(o.eGet(a).toString)»«ELSE»«o.eGet(a)»«ENDIF»
+			«nameFor(a, diagram)» = «IF o.eGet(a) !== null && diagram.abbreviateLabels»«abbr(o.eGet(a).toString)»«ELSE»«o.eGet(a)»«ENDIF»
 		«ENDFOR»
 		'''
 	}
@@ -197,8 +214,8 @@ class EMoflonPlantUMLGenerator {
 		'''
 	}
 	
-	private def static Object identifierForObject(EObject o, int style){
-		'''"«IF style.bitwiseAnd(ABBR_LABELS) > 0»«abbr(instanceNames.get(o))»«ELSE»«instanceNames.get(o)»«ENDIF» : «nameFor(o.eClass, style)»"'''	
+	private def static Object identifierForObject(EObject o, ObjectDiagram diagram){
+		'''"«IF diagram.abbreviateLabels»«abbr(instanceNames.get(o))»«ELSE»«instanceNames.get(o)»«ENDIF» : «nameFor(o.eClass, diagram)»"'''	
 	}
 	
 	private def static Object identifierForObject(EObject o){
@@ -257,9 +274,9 @@ class EMoflonPlantUMLGenerator {
 		'''
 	}
 	
-	def static CharSequence plantUMLPreamble(int style){
+	def static CharSequence plantUMLPreamble(Diagram<?> diagram){
 		'''
-			hide «IF(style.bitwiseAnd(SHOW_MODEL_DETAILS) > 0)»empty «ENDIF»members
+			hide «IF(diagram.showFullModelDetails)»empty «ENDIF»members
 			
 			skinparam shadowing false
 			skinparam StereotypeABackgroundColor White
@@ -293,8 +310,8 @@ class EMoflonPlantUMLGenerator {
 		'''
 	}
 	
-	def private static String nameFor(ENamedElement elem, int style) {
-		'''«IF style.bitwiseAnd(ABBR_LABELS) > 0»«abbr(elem.name)»«ELSE»«elem.name»«ENDIF»'''
+	def private static String nameFor(ENamedElement elem, Diagram<?> diagram) {
+		'''«IF diagram.abbreviateLabels»«abbr(elem.name)»«ELSE»«elem.name»«ENDIF»'''
 	}
 	
 	def private static String nameFor(ENamedElement elem) {

@@ -1,4 +1,4 @@
-package org.moflon.core.ui.visualisation;
+package org.moflon.core.ui.visualisation.diagrams;
 
 import java.util.Collection;
 import java.util.Optional;

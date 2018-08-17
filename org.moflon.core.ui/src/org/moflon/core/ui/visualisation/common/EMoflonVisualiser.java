@@ -1,4 +1,4 @@
-package org.moflon.core.ui.visualisation;
+package org.moflon.core.ui.visualisation.common;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -6,6 +6,7 @@ import java.util.function.Function;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
+import org.moflon.core.ui.visualisation.EMoflonPlantUMLGenerator;
 import org.moflon.core.utilities.ExceptionUtil;
 
 import net.sourceforge.plantuml.eclipse.utils.DiagramTextProvider;
@@ -14,10 +15,6 @@ public abstract class EMoflonVisualiser implements DiagramTextProvider {
 
 	private static final Logger logger = Logger.getLogger(EMoflonVisualiser.class);
 	private static final int MAX_SIZE = 500;
-	
-	public EMoflonVisualiser() {
-		Configurator.getInstance().registerVisualiser(this);
-	}
 	
 	@Override
 	public String getDiagramText(IEditorPart editor, ISelection selection) {
