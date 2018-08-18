@@ -30,7 +30,8 @@ Export-Package: org.moflon.core.ui,
  org.moflon.core.ui.errorhandling,
  org.moflon.core.ui.handler,
  org.moflon.core.ui.propertytester,
- org.moflon.core.ui.visualisation
+ org.moflon.core.ui.visualisation,
+ org.moflon.core.ui.visualisation.common
 Bundle-Activator: org.moflon.core.ui.MoflonCoreUiActivator
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.moflon.core.ui
