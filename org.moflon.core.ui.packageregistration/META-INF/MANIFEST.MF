@@ -13,3 +13,4 @@ Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.11.0",
  org.eclipse.emf.ecore.xmi,
  org.moflon.core.ui
 Bundle-Vendor: eMoflon Developers
+Automatic-Module-Name: org.moflon.core.ui.packageregistration
