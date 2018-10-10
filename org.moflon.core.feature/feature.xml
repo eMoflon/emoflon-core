@@ -27,7 +27,7 @@ See here for more details on EPL: http://www.eclipse.org/org/documents/epl-v10.p
 
    <url>
       <update label="eMoflon Update Site" url="http://emoflon.org/emoflon-core-updatesite/stable/updatesite"/>
-      <discovery label="PlantUML update site" url="http://files.idi.ntnu.no/publish/plantuml/repository/"/>
+      <discovery label="PlantUML update site" url="http://hallvard.github.io/plantuml"/>
       <discovery label="XText update site (release)" url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
       <discovery label="Emfatic" url="http://download.eclipse.org/emfatic/update"/>
    </url>
