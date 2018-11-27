@@ -152,7 +152,7 @@ class EMoflonPlantUMLGenerator {
 					«identifierForClass(src)»"«nameFor(ref.EOpposite, diagram)» «multiplicityFor(ref.EOpposite)»" «IF ref.isContainment»*«ELSE»<«ENDIF»--«IF ref.EOpposite.isContainment»*«ELSE»>«ENDIF» "«nameFor(ref, diagram)» «multiplicityFor(ref)»" «identifierForClass(trg)»
 				«ENDIF»
 			«ELSEIF(edge.edgeType == EdgeType.GENERALISATION)»
-				«identifierForClass(edge.trg as EClass)»<|--«identifierForClass(edge.src as EClass)»
+				«identifierForClass(edge.trg as EClass)» <|-- «identifierForClass(edge.src as EClass)»
 			«ELSEIF(edge.edgeType == EdgeType.LINK)»
 				«IF(!edge.hasEOpposite)»
 					«identifierForObject(edge.src)» --> «identifierForObject(edge.trg)» : "«IF diagram.abbreviateLabels»«abbr(edge.name)»«ELSE»«edge.name»«ENDIF»"
