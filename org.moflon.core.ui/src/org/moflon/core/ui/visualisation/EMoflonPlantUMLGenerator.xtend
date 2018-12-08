@@ -222,38 +222,6 @@ class EMoflonPlantUMLGenerator {
 		'''«instanceNames.get(o)».«nameFor(o.eClass)»'''	
 	}
 	
-	def static String visualiseCorrModel(Collection<EObject> corrObjects, Collection<EObject> sourceObjects, Collection<EObject> targetObjects, Collection<VisualEdge> links)
-	{	
-		idMap.clear
-		'''
-		«plantUMLPreamble»
-		together {
-		«FOR so : sourceObjects»
-		class «identifierForObject(so,'_')» <<BLACK>> <<SRC>>{
-			«visualiseAllAttributes(so)»
-			}
-		«ENDFOR»	
-		}
-		
-		together {
-		«FOR to : targetObjects»
-		class «identifierForObject(to,'_')» <<BLACK>> <<TRG>>{
-			«visualiseAllAttributes(to)»
-			}
-		«ENDFOR»
-		}
-				
-		«var i = 0»
-		«FOR o : corrObjects»		
-			«identifierForObject(sourceObjects.get(i),'_')» <..> «identifierForObject(targetObjects.get(i++),'_')» : "«StringUtils.abbreviate(":" + o.eClass.name, 11)»"	
-		«ENDFOR»
-		
-		«FOR l : links»
-			«identifierForObject(l.src,'_')» --> «identifierForObject(l.trg,'_')» : "«l.name»"
-		«ENDFOR»
-		'''
-	} 
-	
 	def static CharSequence plantUMLPreamble(){
 		'''
 			hide empty members
