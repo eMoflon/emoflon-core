@@ -1,28 +1,26 @@
 package org.moflon.core.ui.visualisation
 
 import java.util.Collection
-import java.util.HashMap
 import java.util.Map
+import java.util.Optional
 import org.apache.commons.lang3.StringUtils
+import org.eclipse.emf.ecore.EAnnotation
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.ENamedElement
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EOperation
-import org.eclipse.emf.ecore.EReference
-import org.eclipse.emf.ecore.EAnnotation
 import org.eclipse.emf.ecore.EPackage
-import java.util.Optional
-import org.moflon.core.ui.visualisation.metamodels.ClassDiagram
-import org.moflon.core.ui.visualisation.models.ObjectDiagram
+import org.eclipse.emf.ecore.EReference
+import org.moflon.core.ui.visualisation.diagrams.Diagram
 import org.moflon.core.ui.visualisation.diagrams.EdgeType
 import org.moflon.core.ui.visualisation.diagrams.VisualEdge
-import org.moflon.core.ui.visualisation.diagrams.Diagram
+import org.moflon.core.ui.visualisation.metamodels.ClassDiagram
+import org.moflon.core.ui.visualisation.models.ObjectDiagram
 
 class EMoflonPlantUMLGenerator {
 	static final String REPL_STR = "…";
 	static final int REPL_LEN = 11;
 	
-	static var idMap = new HashMap<EObject, String>();
 	static Map<EObject, String> instanceNames;
 	
 	static def String wrapInTags(String body){
@@ -31,13 +29,6 @@ class EMoflonPlantUMLGenerator {
 			«body»
 			@enduml
 		'''
-	}
-	
-	private def static Object identifierForObject(EObject o, char separator){
-		if(!idMap.containsKey(o))
-			idMap.put(o, '''o«idMap.keySet.size + 1»''')
-			
-		'''«idMap.get(o)»«separator»«o.eClass.name»'''	
 	}
 	
 	static def String emptyDiagram(){
@@ -120,7 +111,6 @@ class EMoflonPlantUMLGenerator {
 	}
 	
 	def static String visualiseModelElements(ObjectDiagram diagram){
-		idMap.clear
 		instanceNames = diagram.geteObjectsToNames;
 		
 		'''
