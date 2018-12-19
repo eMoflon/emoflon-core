@@ -26,7 +26,7 @@
 		<eclipse.refreshLocal resource="${emoflonCoreUpdatesiteProject}" depth="infinite" />
 	</target>
 
-	<target name="releaseStable" depends="createArchive" description="Release stable update site">
+	<target name="releaseStable" depends="releaseSnapshot" description="Release stable and snapshot update site">
 		<delete failonerror="false">
 			<fileset dir="${updateSiteLocationStable}">
 				<include name="**/*" />
