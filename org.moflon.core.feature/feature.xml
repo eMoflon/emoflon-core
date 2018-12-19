@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.moflon.core.feature"
-      label="eMoflon Core Components Feature"
+      label="eMoflon::Core feature"
       version="1.3.3.qualifier"
-      provider-name="eMoflon Developers"
+      provider-name="eMoflon developers"
       plugin="org.moflon.core.branding">
 
-   <description url="http://www.emoflon.org/">
-      This plugin provides the core functionality of the eMoflon toolsuite. Visit emoflon.github.io for more information.
+   <description url="https://emoflon.org/">
+      This plugin provides the core functionality of the eMoflon toolsuite.
    </description>
 
    <copyright>
-      Most of our icons are from The Noun Project (http://thenounproject.com/):
+      Most of our icons are from The Noun Project (https://thenounproject.com/):
 Emmanuel Mangatia - Les Lunettes Bleues, from The Noun Project
 Wrench CC-by Josh Dean, from The Noun Project
 Hammer by Wes Breazell from the Noun Project
    </copyright>
 
-   <license url="http://www.gnu.org/licenses/gpl-3.0.html;http://www.eclipse.org/org/documents/epl-v10.php">
+   <license url="https://www.gnu.org/licenses/gpl-3.0.html;https://www.eclipse.org/org/documents/epl-v10.php">
       eMoflon is dual-licensed under the GNU General Public License (GPL), version 3 or later, and the Eclipse Public License (EPL).
 As a recipient of eMoflon, you may choose which license to receive the code under.
 
-See here for more details on GPLv3: http://www.gnu.org/licenses/gpl-3.0.html
-See here for more details on EPL: http://www.eclipse.org/org/documents/epl-v10.php
+See here for more details on GPLv3: https://www.gnu.org/licenses/gpl-3.0.html
+See here for more details on EPL: https://www.eclipse.org/org/documents/epl-v10.php
    </license>
 
    <url>
-      <update label="eMoflon Update Site" url="http://emoflon.org/emoflon-core-updatesite/stable/updatesite"/>
-      <discovery label="PlantUML update site" url="http://hallvard.github.io/plantuml"/>
-      <discovery label="XText update site (release)" url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
-      <discovery label="Emfatic" url="http://download.eclipse.org/emfatic/update"/>
+      <update label="eMoflon::Core update site" url="https://emoflon.org/emoflon-core-updatesite/stable/updatesite"/>
+      <discovery label="PlantUML update site" url="https://hallvard.github.io/plantuml"/>
+      <discovery label="XText update site (release)" url="https://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+      <discovery label="Emfatic" url="https://download.eclipse.org/emfatic/update"/>
    </url>
 
    <requires>

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.moflon.core.ui.packageregistration
+Bundle-Name: eMoflon::Core components for registering Ecore files
 Bundle-SymbolicName: org.moflon.core.ui.packageregistration;singleton:=true
 Bundle-Version: 1.0.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -12,5 +12,5 @@ Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.11.0",
  org.eclipse.ui.workbench,
  org.eclipse.emf.ecore.xmi,
  org.moflon.core.ui
-Bundle-Vendor: eMoflon Developers
+Bundle-Vendor: eMoflon developers
 Automatic-Module-Name: org.moflon.core.ui.packageregistration

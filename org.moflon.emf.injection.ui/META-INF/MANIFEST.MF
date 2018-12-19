@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.moflon.emf.injection.ui
-Bundle-Vendor: eMoflon Developers
+Bundle-Name: eMoflon::Core DSL for injections (UI)
+Bundle-Vendor: eMoflon developers
 Bundle-Version: 1.1.0.qualifier
 Bundle-SymbolicName: org.moflon.emf.injection.ui; singleton:=true
 Bundle-ActivationPolicy: lazy

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Basic EMF build infrastructure
+Bundle-Name: eMoflon::Core EMF build infrastructure
 Bundle-SymbolicName: org.moflon.emf.build;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: eMoflon developers

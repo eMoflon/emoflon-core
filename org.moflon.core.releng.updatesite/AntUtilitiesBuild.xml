@@ -1,4 +1,4 @@
-<project name="org.moflon.deployment.updatesite" default="clean" basedir=".">
+<project name="org.moflon.core.releng.updatesite" default="clean" basedir=".">
 	<description>
     Helper ant file for the update site of eMoflon.
 
@@ -61,7 +61,6 @@
 			<fileset dir="." includes="associateSites.xml" />
 			<fileset dir="." includes="changelog.txt" />
 			<fileset dir="." includes="content.jar" />
-			<fileset dir="." includes="ea-ecore-addin.zip" />
 			<fileset dir="." includes="index.html" />
 			<fileset dir="." includes="site.xml" />
 		</zip>

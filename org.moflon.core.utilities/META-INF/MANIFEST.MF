@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.moflon.core.utilities
+Bundle-Name: eMoflon::Core versatile utilities
 Bundle-SymbolicName: org.moflon.core.utilities;singleton:=true
 Bundle-Version: 3.0.0.qualifier
-Bundle-Vendor: eMoflon Developers
+Bundle-Vendor: eMoflon developers
 Export-Package: antlr,
  antlr.ASdebug,
  antlr.actions.cpp,
