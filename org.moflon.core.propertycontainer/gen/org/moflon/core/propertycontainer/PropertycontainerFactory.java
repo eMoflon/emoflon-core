@@ -67,15 +67,6 @@ public interface PropertycontainerFactory extends EFactory {
 	TGGBuildMode createTGGBuildMode();
 
 	/**
-	 * Returns a new object of class '<em>Sdm Codegenerator Method Body Handler</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Sdm Codegenerator Method Body Handler</em>'.
-	 * @generated
-	 */
-	SdmCodegeneratorMethodBodyHandler createSdmCodegeneratorMethodBodyHandler();
-
-	/**
 	 * Returns a new object of class '<em>Factory Mappings</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

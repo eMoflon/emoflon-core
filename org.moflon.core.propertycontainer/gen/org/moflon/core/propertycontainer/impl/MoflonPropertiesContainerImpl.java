@@ -27,7 +27,6 @@ import org.moflon.core.propertycontainer.MetaModelProject;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.PropertycontainerPackage;
 import org.moflon.core.propertycontainer.ReplaceGenModel;
-import org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler;
 import org.moflon.core.propertycontainer.TGGBuildMode;
 // <-- [user defined imports]
 // [user defined imports] -->
@@ -44,7 +43,6 @@ import org.moflon.core.propertycontainer.TGGBuildMode;
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getAdditionalDependencies <em>Additional Dependencies</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getMetaModelProject <em>Meta Model Project</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getReplaceGenModel <em>Replace Gen Model</em>}</li>
- *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getSdmCodegeneratorHandlerId <em>Sdm Codegenerator Handler Id</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getTGGBuildMode <em>TGG Build Mode</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getImportMappings <em>Import Mappings</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getAdditionalUsedGenPackages <em>Additional Used Gen Packages</em>}</li>
@@ -105,16 +103,6 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	 * @ordered
 	 */
 	protected ReplaceGenModel replaceGenModel;
-
-	/**
-	 * The cached value of the '{@link #getSdmCodegeneratorHandlerId() <em>Sdm Codegenerator Handler Id</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSdmCodegeneratorHandlerId()
-	 * @generated
-	 * @ordered
-	 */
-	protected SdmCodegeneratorMethodBodyHandler sdmCodegeneratorHandlerId;
 
 	/**
 	 * The cached value of the '{@link #getTGGBuildMode() <em>TGG Build Mode</em>}' containment reference.
@@ -353,63 +341,6 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public SdmCodegeneratorMethodBodyHandler getSdmCodegeneratorHandlerId() {
-		return sdmCodegeneratorHandlerId;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetSdmCodegeneratorHandlerId(
-			SdmCodegeneratorMethodBodyHandler newSdmCodegeneratorHandlerId, NotificationChain msgs) {
-		SdmCodegeneratorMethodBodyHandler oldSdmCodegeneratorHandlerId = sdmCodegeneratorHandlerId;
-		sdmCodegeneratorHandlerId = newSdmCodegeneratorHandlerId;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__SDM_CODEGENERATOR_HANDLER_ID,
-					oldSdmCodegeneratorHandlerId, newSdmCodegeneratorHandlerId);
-			if (msgs == null)
-				msgs = notification;
-			else
-				msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setSdmCodegeneratorHandlerId(SdmCodegeneratorMethodBodyHandler newSdmCodegeneratorHandlerId) {
-		if (newSdmCodegeneratorHandlerId != sdmCodegeneratorHandlerId) {
-			NotificationChain msgs = null;
-			if (sdmCodegeneratorHandlerId != null)
-				msgs = ((InternalEObject) sdmCodegeneratorHandlerId).eInverseRemove(this,
-						EOPPOSITE_FEATURE_BASE
-								- PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__SDM_CODEGENERATOR_HANDLER_ID,
-						null, msgs);
-			if (newSdmCodegeneratorHandlerId != null)
-				msgs = ((InternalEObject) newSdmCodegeneratorHandlerId).eInverseAdd(this,
-						EOPPOSITE_FEATURE_BASE
-								- PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__SDM_CODEGENERATOR_HANDLER_ID,
-						null, msgs);
-			msgs = basicSetSdmCodegeneratorHandlerId(newSdmCodegeneratorHandlerId, msgs);
-			if (msgs != null)
-				msgs.dispatch();
-		} else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__SDM_CODEGENERATOR_HANDLER_ID,
-					newSdmCodegeneratorHandlerId, newSdmCodegeneratorHandlerId));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public TGGBuildMode getTGGBuildMode() {
 		return tGGBuildMode;
 	}
@@ -548,8 +479,6 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 			return basicSetMetaModelProject(null, msgs);
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL:
 			return basicSetReplaceGenModel(null, msgs);
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__SDM_CODEGENERATOR_HANDLER_ID:
-			return basicSetSdmCodegeneratorHandlerId(null, msgs);
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE:
 			return basicSetTGGBuildMode(null, msgs);
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS:
@@ -578,8 +507,6 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 			return getMetaModelProject();
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL:
 			return getReplaceGenModel();
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__SDM_CODEGENERATOR_HANDLER_ID:
-			return getSdmCodegeneratorHandlerId();
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE:
 			return getTGGBuildMode();
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS:
@@ -620,9 +547,6 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 			return;
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL:
 			setReplaceGenModel((ReplaceGenModel) newValue);
-			return;
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__SDM_CODEGENERATOR_HANDLER_ID:
-			setSdmCodegeneratorHandlerId((SdmCodegeneratorMethodBodyHandler) newValue);
 			return;
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE:
 			setTGGBuildMode((TGGBuildMode) newValue);
@@ -668,9 +592,6 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL:
 			setReplaceGenModel((ReplaceGenModel) null);
 			return;
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__SDM_CODEGENERATOR_HANDLER_ID:
-			setSdmCodegeneratorHandlerId((SdmCodegeneratorMethodBodyHandler) null);
-			return;
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE:
 			setTGGBuildMode((TGGBuildMode) null);
 			return;
@@ -708,8 +629,6 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 			return metaModelProject != null;
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL:
 			return replaceGenModel != null;
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__SDM_CODEGENERATOR_HANDLER_ID:
-			return sdmCodegeneratorHandlerId != null;
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE:
 			return tGGBuildMode != null;
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS:

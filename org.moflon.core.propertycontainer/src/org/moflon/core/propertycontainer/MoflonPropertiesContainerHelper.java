@@ -58,7 +58,7 @@ public class MoflonPropertiesContainerHelper {
 	 * not exist, the returned Optional will be empty.
 	 * 
 	 * @param project
-	 *            the project
+	 *                    the project
 	 * @return an Optional for the properties
 	 */
 	public static Optional<MoflonPropertiesContainer> loadIfExists(final IProject project) {
@@ -92,7 +92,7 @@ public class MoflonPropertiesContainerHelper {
 	}
 
 	private static MoflonPropertiesContainer loadPropertiesContainer(final IFile propertyFile) {
-		Resource resource = eMoflonEMFUtil.getResourceFromFileIntoDefaultResourceSet(propertyFile);
+		final Resource resource = eMoflonEMFUtil.getResourceFromFileIntoDefaultResourceSet(propertyFile);
 		return (MoflonPropertiesContainer) resource.getContents().get(0);
 	}
 
@@ -109,9 +109,9 @@ public class MoflonPropertiesContainerHelper {
 	 * {@link MoflonConventions#getDefaultMoflonPropertiesFile(IProject)}
 	 * 
 	 * @param properties
-	 *            the properties to save
+	 *                       the properties to save
 	 * @param monitor
-	 *            the progress monitor to report to
+	 *                       the progress monitor to report to
 	 */
 	public static void save(final MoflonPropertiesContainer properties, final IProgressMonitor monitor) {
 		try {
@@ -143,17 +143,17 @@ public class MoflonPropertiesContainerHelper {
 	}
 
 	public static Map<String, String> mappingsToMap(final List<? extends PropertiesMapping> mappings) {
-		Map<String, String> map = new HashMap<String, String>();
+		final Map<String, String> map = new HashMap<String, String>();
 
-		for (PropertiesMapping mapping : mappings)
+		for (final PropertiesMapping mapping : mappings)
 			map.put(mapping.getKey(), mapping.getValue());
 
 		return map;
 	}
 
 	public static Collection<String> mapToValues(final Collection<? extends PropertiesValue> values) {
-		List<String> list = new LinkedList<String>();
-		for (PropertiesValue value : values)
+		final List<String> list = new LinkedList<String>();
+		for (final PropertiesValue value : values)
 			list.add(value.getValue());
 		return list;
 	}
@@ -164,20 +164,12 @@ public class MoflonPropertiesContainerHelper {
 
 	private static EObject normalize(final MoflonPropertiesContainer properties) {
 		// Normalize properties to avoid unnecessary nondeterminism
-		List<Dependencies> sortedDependencies = new ArrayList<>(properties.getDependencies());
+		final List<Dependencies> sortedDependencies = new ArrayList<>(properties.getDependencies());
 		sortedDependencies.sort((d1, d2) -> d1.getValue().compareTo(d2.getValue()));
 		properties.getDependencies().clear();
 		properties.getDependencies().addAll(sortedDependencies);
 
 		return properties;
-	}
-
-	/**
-	 * Returns the code generator configured in moflon.properties.xmi
-	 */
-	public static final String getMethodBodyHandler(final MoflonPropertiesContainer moflonProperties) {
-		SDMCodeGeneratorIds handlerId = moflonProperties.getSdmCodegeneratorHandlerId().getValue();
-		return handlerId.getLiteral();
 	}
 
 }

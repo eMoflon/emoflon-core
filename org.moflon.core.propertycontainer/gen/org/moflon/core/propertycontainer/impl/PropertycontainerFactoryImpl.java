@@ -67,8 +67,6 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 			return createImportMappings();
 		case PropertycontainerPackage.TGG_BUILD_MODE:
 			return createTGGBuildMode();
-		case PropertycontainerPackage.SDM_CODEGENERATOR_METHOD_BODY_HANDLER:
-			return createSdmCodegeneratorMethodBodyHandler();
 		case PropertycontainerPackage.FACTORY_MAPPINGS:
 			return createFactoryMappings();
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER:
@@ -96,8 +94,6 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 		switch (eDataType.getClassifierID()) {
 		case PropertycontainerPackage.BUILD_MODE:
 			return createBuildModeFromString(eDataType, initialValue);
-		case PropertycontainerPackage.SDM_CODE_GENERATOR_IDS:
-			return createSDMCodeGeneratorIdsFromString(eDataType, initialValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -113,8 +109,6 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 		switch (eDataType.getClassifierID()) {
 		case PropertycontainerPackage.BUILD_MODE:
 			return convertBuildModeToString(eDataType, instanceValue);
-		case PropertycontainerPackage.SDM_CODE_GENERATOR_IDS:
-			return convertSDMCodeGeneratorIdsToString(eDataType, instanceValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -168,16 +162,6 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	public TGGBuildMode createTGGBuildMode() {
 		TGGBuildModeImpl tggBuildMode = new TGGBuildModeImpl();
 		return tggBuildMode;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public SdmCodegeneratorMethodBodyHandler createSdmCodegeneratorMethodBodyHandler() {
-		SdmCodegeneratorMethodBodyHandlerImpl sdmCodegeneratorMethodBodyHandler = new SdmCodegeneratorMethodBodyHandlerImpl();
-		return sdmCodegeneratorMethodBodyHandler;
 	}
 
 	/**
@@ -259,28 +243,6 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * @generated
 	 */
 	public String convertBuildModeToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public SDMCodeGeneratorIds createSDMCodeGeneratorIdsFromString(EDataType eDataType, String initialValue) {
-		SDMCodeGeneratorIds result = SDMCodeGeneratorIds.get(initialValue);
-		if (result == null)
-			throw new IllegalArgumentException(
-					"The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		return result;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertSDMCodeGeneratorIdsToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

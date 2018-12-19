@@ -35,7 +35,6 @@ import org.moflon.core.plugins.manifest.ManifestFileUpdater.AttributeUpdatePolic
 import org.moflon.core.plugins.manifest.PluginManifestConstants;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
-import org.moflon.core.propertycontainer.SDMCodeGeneratorIds;
 import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 
@@ -51,17 +50,6 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 		this.project = project;
 		this.pluginProperties = projectProperties;
 		this.projectConfigurator = projectConfigurator;
-	}
-
-	/**
-	 * Returns the method body code generator to use.
-	 *
-	 * @return the code generator ID to use. May be <code>null</code>.
-	 */
-	@Deprecated // marked on 2018-12-19. This method was necessary in the legacy tool
-				// eMoflon::TIE-SDM
-	protected SDMCodeGeneratorIds getCodeGeneratorHandler() {
-		return null;
 	}
 
 	/**
