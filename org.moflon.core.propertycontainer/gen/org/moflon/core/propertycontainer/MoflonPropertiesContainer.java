@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getAdditionalDependencies <em>Additional Dependencies</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getMetaModelProject <em>Meta Model Project</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getReplaceGenModel <em>Replace Gen Model</em>}</li>
- *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getSdmCodegeneratorHandlerId <em>Sdm Codegenerator Handler Id</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getTGGBuildMode <em>TGG Build Mode</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getImportMappings <em>Import Mappings</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getAdditionalUsedGenPackages <em>Additional Used Gen Packages</em>}</li>
@@ -134,32 +133,6 @@ public interface MoflonPropertiesContainer extends EObject {
 	 * @generated
 	 */
 	void setReplaceGenModel(ReplaceGenModel value);
-
-	/**
-	 * Returns the value of the '<em><b>Sdm Codegenerator Handler Id</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Sdm Codegenerator Handler Id</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Sdm Codegenerator Handler Id</em>' containment reference.
-	 * @see #setSdmCodegeneratorHandlerId(SdmCodegeneratorMethodBodyHandler)
-	 * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer_SdmCodegeneratorHandlerId()
-	 * @model containment="true" required="true"
-	 * @generated
-	 */
-	SdmCodegeneratorMethodBodyHandler getSdmCodegeneratorHandlerId();
-
-	/**
-	 * Sets the value of the '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getSdmCodegeneratorHandlerId <em>Sdm Codegenerator Handler Id</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Sdm Codegenerator Handler Id</em>' containment reference.
-	 * @see #getSdmCodegeneratorHandlerId()
-	 * @generated
-	 */
-	void setSdmCodegeneratorHandlerId(SdmCodegeneratorMethodBodyHandler value);
 
 	/**
 	 * Returns the value of the '<em><b>TGG Build Mode</b></em>' containment reference.

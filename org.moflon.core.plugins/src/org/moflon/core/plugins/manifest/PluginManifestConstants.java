@@ -15,6 +15,8 @@ public final class PluginManifestConstants extends Manifest {
 
 	public static final Name BUNDLE_SYMBOLIC_NAME = new Attributes.Name("Bundle-SymbolicName");
 
+	public static final Name AUTOMATIC_MODULE_NAME = new Attributes.Name("Automatic-Module-Name");
+
 	public static final Name BUNDLE_VERSION = new Attributes.Name("Bundle-Version");
 
 	public static final Name BUNDLE_VENDOR = new Attributes.Name("Bundle-Vendor");

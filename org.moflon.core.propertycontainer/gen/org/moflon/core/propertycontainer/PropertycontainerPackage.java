@@ -195,7 +195,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getPropertiesMapping()
 	 * @generated
 	 */
-	int PROPERTIES_MAPPING = 9;
+	int PROPERTIES_MAPPING = 8;
 
 	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -335,52 +335,6 @@ public interface PropertycontainerPackage extends EPackage {
 	int TGG_BUILD_MODE_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.moflon.core.propertycontainer.impl.SdmCodegeneratorMethodBodyHandlerImpl <em>Sdm Codegenerator Method Body Handler</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.moflon.core.propertycontainer.impl.SdmCodegeneratorMethodBodyHandlerImpl
-	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getSdmCodegeneratorMethodBodyHandler()
-	 * @generated
-	 */
-	int SDM_CODEGENERATOR_METHOD_BODY_HANDLER = 5;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SDM_CODEGENERATOR_METHOD_BODY_HANDLER__DESCRIPTION = 0;
-
-	/**
-	 * The feature id for the '<em><b>Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SDM_CODEGENERATOR_METHOD_BODY_HANDLER__VALUE = 1;
-
-	/**
-	 * The number of structural features of the '<em>Sdm Codegenerator Method Body Handler</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SDM_CODEGENERATOR_METHOD_BODY_HANDLER_FEATURE_COUNT = 2;
-
-	/**
-	 * The number of operations of the '<em>Sdm Codegenerator Method Body Handler</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SDM_CODEGENERATOR_METHOD_BODY_HANDLER_OPERATION_COUNT = 0;
-
-	/**
 	 * The meta object id for the '{@link org.moflon.core.propertycontainer.impl.FactoryMappingsImpl <em>Factory Mappings</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -388,7 +342,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getFactoryMappings()
 	 * @generated
 	 */
-	int FACTORY_MAPPINGS = 6;
+	int FACTORY_MAPPINGS = 5;
 
 	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -443,7 +397,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getMoflonPropertiesContainer()
 	 * @generated
 	 */
-	int MOFLON_PROPERTIES_CONTAINER = 7;
+	int MOFLON_PROPERTIES_CONTAINER = 6;
 
 	/**
 	 * The feature id for the '<em><b>Dependencies</b></em>' containment reference list.
@@ -491,22 +445,13 @@ public interface PropertycontainerPackage extends EPackage {
 	int MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL = 4;
 
 	/**
-	 * The feature id for the '<em><b>Sdm Codegenerator Handler Id</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MOFLON_PROPERTIES_CONTAINER__SDM_CODEGENERATOR_HANDLER_ID = 5;
-
-	/**
 	 * The feature id for the '<em><b>TGG Build Mode</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE = 6;
+	int MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE = 5;
 
 	/**
 	 * The feature id for the '<em><b>Import Mappings</b></em>' containment reference list.
@@ -515,7 +460,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS = 7;
+	int MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS = 6;
 
 	/**
 	 * The feature id for the '<em><b>Additional Used Gen Packages</b></em>' containment reference list.
@@ -524,7 +469,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES = 8;
+	int MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES = 7;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -533,7 +478,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER__DESCRIPTION = 9;
+	int MOFLON_PROPERTIES_CONTAINER__DESCRIPTION = 8;
 
 	/**
 	 * The feature id for the '<em><b>Project Name</b></em>' attribute.
@@ -542,7 +487,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME = 10;
+	int MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME = 9;
 
 	/**
 	 * The number of structural features of the '<em>Moflon Properties Container</em>' class.
@@ -551,7 +496,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER_FEATURE_COUNT = 11;
+	int MOFLON_PROPERTIES_CONTAINER_FEATURE_COUNT = 10;
 
 	/**
 	 * The number of operations of the '<em>Moflon Properties Container</em>' class.
@@ -570,7 +515,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getReplaceGenModel()
 	 * @generated
 	 */
-	int REPLACE_GEN_MODEL = 8;
+	int REPLACE_GEN_MODEL = 7;
 
 	/**
 	 * The feature id for the '<em><b>Bool</b></em>' attribute.
@@ -616,7 +561,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getAdditionalDependencies()
 	 * @generated
 	 */
-	int ADDITIONAL_DEPENDENCIES = 10;
+	int ADDITIONAL_DEPENDENCIES = 9;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -662,7 +607,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getMetaModelProject()
 	 * @generated
 	 */
-	int META_MODEL_PROJECT = 11;
+	int META_MODEL_PROJECT = 10;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -708,17 +653,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getBuildMode()
 	 * @generated
 	 */
-	int BUILD_MODE = 12;
-
-	/**
-	 * The meta object id for the '{@link org.moflon.core.propertycontainer.SDMCodeGeneratorIds <em>SDM Code Generator Ids</em>}' enum.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.moflon.core.propertycontainer.SDMCodeGeneratorIds
-	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getSDMCodeGeneratorIds()
-	 * @generated
-	 */
-	int SDM_CODE_GENERATOR_IDS = 13;
+	int BUILD_MODE = 11;
 
 	/**
 	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.Dependencies <em>Dependencies</em>}'.
@@ -837,38 +772,6 @@ public interface PropertycontainerPackage extends EPackage {
 	EAttribute getTGGBuildMode_Description();
 
 	/**
-	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler <em>Sdm Codegenerator Method Body Handler</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Sdm Codegenerator Method Body Handler</em>'.
-	 * @see org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler
-	 * @generated
-	 */
-	EClass getSdmCodegeneratorMethodBodyHandler();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler#getDescription <em>Description</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Description</em>'.
-	 * @see org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler#getDescription()
-	 * @see #getSdmCodegeneratorMethodBodyHandler()
-	 * @generated
-	 */
-	EAttribute getSdmCodegeneratorMethodBodyHandler_Description();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler#getValue <em>Value</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Value</em>'.
-	 * @see org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler#getValue()
-	 * @see #getSdmCodegeneratorMethodBodyHandler()
-	 * @generated
-	 */
-	EAttribute getSdmCodegeneratorMethodBodyHandler_Value();
-
-	/**
 	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.FactoryMappings <em>Factory Mappings</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -953,17 +856,6 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getMoflonPropertiesContainer_ReplaceGenModel();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getSdmCodegeneratorHandlerId <em>Sdm Codegenerator Handler Id</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Sdm Codegenerator Handler Id</em>'.
-	 * @see org.moflon.core.propertycontainer.MoflonPropertiesContainer#getSdmCodegeneratorHandlerId()
-	 * @see #getMoflonPropertiesContainer()
-	 * @generated
-	 */
-	EReference getMoflonPropertiesContainer_SdmCodegeneratorHandlerId();
 
 	/**
 	 * Returns the meta object for the containment reference '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getTGGBuildMode <em>TGG Build Mode</em>}'.
@@ -1148,16 +1040,6 @@ public interface PropertycontainerPackage extends EPackage {
 	EEnum getBuildMode();
 
 	/**
-	 * Returns the meta object for enum '{@link org.moflon.core.propertycontainer.SDMCodeGeneratorIds <em>SDM Code Generator Ids</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for enum '<em>SDM Code Generator Ids</em>'.
-	 * @see org.moflon.core.propertycontainer.SDMCodeGeneratorIds
-	 * @generated
-	 */
-	EEnum getSDMCodeGeneratorIds();
-
-	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1279,34 +1161,6 @@ public interface PropertycontainerPackage extends EPackage {
 		EAttribute TGG_BUILD_MODE__DESCRIPTION = eINSTANCE.getTGGBuildMode_Description();
 
 		/**
-		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.impl.SdmCodegeneratorMethodBodyHandlerImpl <em>Sdm Codegenerator Method Body Handler</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.moflon.core.propertycontainer.impl.SdmCodegeneratorMethodBodyHandlerImpl
-		 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getSdmCodegeneratorMethodBodyHandler()
-		 * @generated
-		 */
-		EClass SDM_CODEGENERATOR_METHOD_BODY_HANDLER = eINSTANCE.getSdmCodegeneratorMethodBodyHandler();
-
-		/**
-		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute SDM_CODEGENERATOR_METHOD_BODY_HANDLER__DESCRIPTION = eINSTANCE
-				.getSdmCodegeneratorMethodBodyHandler_Description();
-
-		/**
-		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute SDM_CODEGENERATOR_METHOD_BODY_HANDLER__VALUE = eINSTANCE
-				.getSdmCodegeneratorMethodBodyHandler_Value();
-
-		/**
 		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.impl.FactoryMappingsImpl <em>Factory Mappings</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1377,15 +1231,6 @@ public interface PropertycontainerPackage extends EPackage {
 		 */
 		EReference MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL = eINSTANCE
 				.getMoflonPropertiesContainer_ReplaceGenModel();
-
-		/**
-		 * The meta object literal for the '<em><b>Sdm Codegenerator Handler Id</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference MOFLON_PROPERTIES_CONTAINER__SDM_CODEGENERATOR_HANDLER_ID = eINSTANCE
-				.getMoflonPropertiesContainer_SdmCodegeneratorHandlerId();
 
 		/**
 		 * The meta object literal for the '<em><b>TGG Build Mode</b></em>' containment reference feature.
@@ -1534,16 +1379,6 @@ public interface PropertycontainerPackage extends EPackage {
 		 * @generated
 		 */
 		EEnum BUILD_MODE = eINSTANCE.getBuildMode();
-
-		/**
-		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.SDMCodeGeneratorIds <em>SDM Code Generator Ids</em>}' enum.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.moflon.core.propertycontainer.SDMCodeGeneratorIds
-		 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getSDMCodeGeneratorIds()
-		 * @generated
-		 */
-		EEnum SDM_CODE_GENERATOR_IDS = eINSTANCE.getSDMCodeGeneratorIds();
 
 	}
 

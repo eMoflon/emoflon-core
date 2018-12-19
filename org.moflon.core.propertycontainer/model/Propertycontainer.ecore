@@ -1,82 +1,79 @@
 <?xml version="1.0" encoding="ASCII"?>
-<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activities="platform:/plugin/SDMLanguage/model/SDMLanguage.ecore#//activities" xmlns:callExpressions="platform:/plugin/SDMLanguage/model/SDMLanguage.ecore#//calls/callExpressions" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:expressions="platform:/plugin/SDMLanguage/model/SDMLanguage.ecore#//expressions" name="propertycontainer" nsURI="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore" nsPrefix="org.moflon.core.propertycontainer">
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="propertycontainer" nsURI="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore"
+    nsPrefix="org.moflon.core.propertycontainer">
   <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
     <details key="basePackage" value="org.moflon.core"/>
   </eAnnotations>
-  <eClassifiers xsi:type="ecore:EClass" name="Dependencies" eSuperTypes="//PropertiesValue">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" defaultValueLiteral="[Automatically derived dependencies of this project]">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
+  <eClassifiers xsi:type="ecore:EClass" name="Dependencies" eSuperTypes="#//PropertiesValue">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="[Automatically derived dependencies of this project]"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertiesValue">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" ordered="false" lowerBound="1">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" ordered="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="AdditionalUsedGenPackages" eSuperTypes="//PropertiesValue">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Used to add additional GenPackages for code generation]">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
+  <eClassifiers xsi:type="ecore:EClass" name="AdditionalUsedGenPackages" eSuperTypes="#//PropertiesValue">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="[Used to add additional GenPackages for code generation]"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ImportMappings" eSuperTypes="//PropertiesMapping">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Used to correct prefixes in imports for code generation]">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
+  <eClassifiers xsi:type="ecore:EClass" name="ImportMappings" eSuperTypes="#//PropertiesMapping">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="[Used to correct prefixes in imports for code generation]"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TGGBuildMode">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="buildMode" ordered="false" lowerBound="1" eType="//BuildMode" defaultValueLiteral="BuildMode.ALL"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" defaultValueLiteral="[Controls which TGG operationalizations are generated]">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="buildMode" ordered="false"
+        lowerBound="1" eType="#//BuildMode" defaultValueLiteral="BuildMode.ALL"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="[Controls which TGG operationalizations are generated]"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SdmCodegeneratorMethodBodyHandler">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Value determines the MethodBodyHandler that invokes the code generator for SDMs.]">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" ordered="false" lowerBound="1" eType="//SDMCodeGeneratorIds" defaultValueLiteral="1"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="FactoryMappings" eSuperTypes="//PropertiesMapping">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Used to correct the name of a Factory if it does not comply with our normal naming conventions]">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
+  <eClassifiers xsi:type="ecore:EClass" name="FactoryMappings" eSuperTypes="#//PropertiesMapping">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="[Used to correct the name of a Factory if it does not comply with our normal naming conventions]"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MoflonPropertiesContainer">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="dependencies" upperBound="-1" eType="//Dependencies" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="factoryMappings" upperBound="-1" eType="//FactoryMappings" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="additionalDependencies" upperBound="-1" eType="//AdditionalDependencies" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="metaModelProject" lowerBound="1" eType="//MetaModelProject" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="replaceGenModel" lowerBound="1" eType="//ReplaceGenModel" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="sdmCodegeneratorHandlerId" lowerBound="1" eType="//SdmCodegeneratorMethodBodyHandler" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="tGGBuildMode" lowerBound="1" eType="//TGGBuildMode" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="importMappings" upperBound="-1" eType="//ImportMappings" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="additionalUsedGenPackages" upperBound="-1" eType="//AdditionalUsedGenPackages" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Properties to configure code generation]">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="projectName" ordered="false" lowerBound="1">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dependencies" upperBound="-1"
+        eType="#//Dependencies" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="factoryMappings" upperBound="-1"
+        eType="#//FactoryMappings" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="additionalDependencies"
+        upperBound="-1" eType="#//AdditionalDependencies" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="metaModelProject" lowerBound="1"
+        eType="#//MetaModelProject" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="replaceGenModel" lowerBound="1"
+        eType="#//ReplaceGenModel" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tGGBuildMode" lowerBound="1"
+        eType="#//TGGBuildMode" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="importMappings" upperBound="-1"
+        eType="#//ImportMappings" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="additionalUsedGenPackages"
+        upperBound="-1" eType="#//AdditionalUsedGenPackages" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="[Properties to configure code generation]"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="projectName" ordered="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ReplaceGenModel">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bool" ordered="false" lowerBound="1" defaultValueLiteral="true">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Set to false if you wish to maintain the GenModel in the project yourself]">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bool" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="[Set to false if you wish to maintain the GenModel in the project yourself]"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertiesMapping">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" ordered="false" lowerBound="1">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" ordered="false" lowerBound="1">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" ordered="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" ordered="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="AdditionalDependencies" eSuperTypes="//PropertiesValue">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Used to add additional dependencies required for code generation]">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
+  <eClassifiers xsi:type="ecore:EClass" name="AdditionalDependencies" eSuperTypes="#//PropertiesValue">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="[Used to add additional dependencies required for code generation]"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="BuildMode">
     <eLiterals name="ALL" value="4" literal="ALL"/>
@@ -85,17 +82,11 @@
     <eLiterals name="FORWARD" value="1" literal="FORWARD"/>
     <eLiterals name="FORWARD_AND_BACKWARD" literal="FORWARD_AND_BACKWARD"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="SDMCodeGeneratorIds">
-    <eLiterals name="DEMOCLES" value="1" literal="org.moflon.compiler.sdm.democles.DemoclesMethodBodyHandler"/>
-    <eLiterals name="DEMOCLES_ATTRIBUTES" value="2" literal="org.moflon.compiler.sdm.democles.attributes.AttributeConstraintCodeGeneratorConfig"/>
-    <eLiterals name="DEMOCLES_REVERSE_NAVI" value="3" literal="org.moflon.compiler.sdm.democles.reversenavigation.ReverseNavigationCodeGeneratorConfig"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MetaModelProject">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false" lowerBound="1" defaultValueLiteral="[Name of the corresponding metamodel project in the current workspace]">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="MetaModelProjectName" ordered="false" lowerBound="1">
-      <eType xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="[Name of the corresponding metamodel project in the current workspace]"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="MetaModelProjectName" ordered="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 </ecore:EPackage>

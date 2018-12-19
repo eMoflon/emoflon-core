@@ -35,18 +35,15 @@ import org.moflon.core.plugins.manifest.ManifestFileUpdater.AttributeUpdatePolic
 import org.moflon.core.plugins.manifest.PluginManifestConstants;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
-import org.moflon.core.propertycontainer.PropertycontainerFactory;
-import org.moflon.core.propertycontainer.SDMCodeGeneratorIds;
-import org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler;
 import org.moflon.core.utilities.MoflonConventions;
 import org.moflon.core.utilities.WorkspaceHelper;
 
 public abstract class MoflonProjectCreator extends WorkspaceTask implements ProjectConfigurator {
-	private IProject project;
+	private final IProject project;
 
-	private PluginProperties pluginProperties;
+	private final PluginProperties pluginProperties;
 
-	private MoflonProjectConfigurator projectConfigurator;
+	private final MoflonProjectConfigurator projectConfigurator;
 
 	public MoflonProjectCreator(final IProject project, final PluginProperties projectProperties,
 			final MoflonProjectConfigurator projectConfigurator) {
@@ -54,13 +51,6 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 		this.pluginProperties = projectProperties;
 		this.projectConfigurator = projectConfigurator;
 	}
-
-	/**
-	 * Returns the method body code generator to use.
-	 *
-	 * @return the code generator ID to use. May be <code>null</code>.
-	 */
-	protected abstract SDMCodeGeneratorIds getCodeGeneratorHandler();
 
 	/**
 	 * Returns the list of lines for the .gitignore file to be created in the
@@ -75,7 +65,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 	 *
 	 * @return the nature ID
 	 * @throws CoreException
-	 *             if determining the nature ID fails
+	 *                           if determining the nature ID fails
 	 */
 	protected abstract String getNatureId() throws CoreException;
 
@@ -84,7 +74,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 	 *
 	 * @return the builder ID
 	 * @throws CoreException
-	 *             if determining the builder ID fails
+	 *                           if determining the builder ID fails
 	 */
 	protected abstract String getBuilderId() throws CoreException;
 
@@ -94,32 +84,6 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 	 */
 	protected boolean shallIgnoreGenWarnings() {
 		return false;
-	}
-
-	/**
-	 * Initializes the contents of the file
-	 * {@link MoflonConventions#MOFLON_CONFIG_FILE}.
-	 *
-	 * The file will be saved after calling this method.
-	 *
-	 * This method initializes
-	 * {@link MoflonPropertiesContainer#getSdmCodegeneratorHandlerId()} based on
-	 * {@link #getCodeGeneratorHandler()}
-	 *
-	 * When overriding this method, subclasses should invoke the parent class's
-	 * {@link #initializeMoflonProperties(MoflonPropertiesContainer)} in any case!
-	 *
-	 * @param moflonProperties
-	 *            the properties container
-	 */
-	protected void initializeMoflonProperties(final MoflonPropertiesContainer moflonProperties) {
-		final SDMCodeGeneratorIds codeGeneratorHandler = getCodeGeneratorHandler();
-		if (codeGeneratorHandler != null) {
-			final SdmCodegeneratorMethodBodyHandler methodBodyHandlerId = PropertycontainerFactory.eINSTANCE
-					.createSdmCodegeneratorMethodBodyHandler();
-			moflonProperties.setSdmCodegeneratorHandlerId(methodBodyHandlerId);
-			methodBodyHandlerId.setValue(codeGeneratorHandler);
-		}
 	}
 
 	@Override
@@ -154,28 +118,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 			addGitKeepFiles(project, subMon.split(2));
 
 			// (4) Create MANIFEST.MF file
-			validatePluginProperties();
-			new ManifestFileUpdater().processManifest(project, manifest -> {
-				boolean changed = false;
-				changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.MANIFEST_VERSION,
-						"1.0", AttributeUpdatePolicy.KEEP);
-				changed |= ManifestFileUpdater.updateAttribute(manifest,
-						PluginManifestConstants.BUNDLE_MANIFEST_VERSION, "2", AttributeUpdatePolicy.KEEP);
-				changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_NAME,
-						pluginProperties.get(PluginProperties.NAME_KEY), AttributeUpdatePolicy.KEEP);
-				changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_SYMBOLIC_NAME,
-						pluginProperties.get(PluginProperties.PLUGIN_ID_KEY) + ";singleton:=true",
-						AttributeUpdatePolicy.KEEP);
-				changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_VERSION,
-						"0.0.1.qualifier", AttributeUpdatePolicy.KEEP);
-				changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_VENDOR, "",
-						AttributeUpdatePolicy.KEEP);
-				changed |= ManifestFileUpdater.updateAttribute(manifest,
-						PluginManifestConstants.BUNDLE_ACTIVATION_POLICY, "lazy", AttributeUpdatePolicy.KEEP);
-				changed |= ManifestFileUpdater.updateAttribute(manifest,
-						PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT, "JavaSE-1.8", AttributeUpdatePolicy.KEEP);
-				return changed;
-			});
+			createManifestFile();
 
 			// (5) Create build.properties file
 			new BuildPropertiesFileBuilder().createBuildProperties(project, subMon.split(1));
@@ -210,9 +153,43 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 			final MoflonPropertiesContainer moflonProperties = MoflonPropertiesContainerHelper
 					.loadOrCreatePropertiesContainer(getProject(),
 							MoflonConventions.getDefaultMoflonPropertiesFile(getProject()));
-			initializeMoflonProperties(moflonProperties);
 			MoflonPropertiesContainerHelper.save(moflonProperties, subMon.split(1));
 		}
+	}
+
+	/**
+	 * Initializes the Manifest.MF file
+	 * 
+	 * @throws CoreException
+	 *                           if an error occurs
+	 */
+	private void createManifestFile() throws CoreException {
+		validatePluginProperties();
+
+		new ManifestFileUpdater().processManifest(project, manifest -> {
+			boolean changed = false;
+			final String name = pluginProperties.get(PluginProperties.NAME_KEY);
+			final String pluginId = pluginProperties.get(PluginProperties.PLUGIN_ID_KEY);
+			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.MANIFEST_VERSION, "1.0",
+					AttributeUpdatePolicy.KEEP);
+			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_MANIFEST_VERSION,
+					"2", AttributeUpdatePolicy.KEEP);
+			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_NAME, name,
+					AttributeUpdatePolicy.KEEP);
+			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_SYMBOLIC_NAME,
+					pluginId + ";singleton:=true", AttributeUpdatePolicy.KEEP);
+			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_VERSION,
+					"0.0.1.qualifier", AttributeUpdatePolicy.KEEP);
+			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_VENDOR, "",
+					AttributeUpdatePolicy.KEEP);
+			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_ACTIVATION_POLICY,
+					"lazy", AttributeUpdatePolicy.KEEP);
+			changed |= ManifestFileUpdater.updateAttribute(manifest,
+					PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT, "JavaSE-1.8", AttributeUpdatePolicy.KEEP);
+			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.AUTOMATIC_MODULE_NAME,
+					pluginId, AttributeUpdatePolicy.KEEP);
+			return changed;
+		});
 	}
 
 	/**
@@ -238,7 +215,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 	 * Validates the presence of the necessary keys for this builder
 	 *
 	 * @throws CoreException
-	 *             if a required key-value mapping is missing
+	 *                           if a required key-value mapping is missing
 	 */
 	private void validatePluginProperties() throws CoreException {
 		validateNotNull(getPluginProperties(), PluginProperties.NAME_KEY);
@@ -249,11 +226,12 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 	 * Validates that the given key is present in the given properties
 	 *
 	 * @param pluginProperties
-	 *            the properties to check
+	 *                             the properties to check
 	 * @param key
-	 *            the key to check
+	 *                             the key to check
 	 * @throws CoreException
-	 *             if there is no mapping for the given key in the given properties
+	 *                           if there is no mapping for the given key in the
+	 *                           given properties
 	 */
 	private void validateNotNull(final PluginProperties pluginProperties, final String key) throws CoreException {
 		if (!pluginProperties.containsKey(key))
@@ -269,9 +247,9 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 	 * {@link #getGitignoreLines()}
 	 *
 	 * @param project
-	 *            the project for which to generate the .gitignore file
+	 *                    the project for which to generate the .gitignore file
 	 * @param monitor
-	 *            the progress monitor
+	 *                    the progress monitor
 	 */
 	public void addGitignoreFile(final IProject project, final IProgressMonitor monitor) throws CoreException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, "Creating .gitignore file for " + project, 1);
@@ -300,12 +278,12 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 	 * folders (unlike SVN).
 	 *
 	 * @param project
-	 *            the project for which .keep files shall be produced
+	 *                    the project for which .keep files shall be produced
 	 * @param monitor
-	 *            the progress monitor
+	 *                    the progress monitor
 	 */
 	protected void addGitKeepFiles(final IProject project, final IProgressMonitor monitor) {
-	   // Nothing to do in this class
+		// Nothing to do in this class
 	}
 
 	@Override
@@ -327,7 +305,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 				natureIDs[natureIDs.length - 1] = natureId;
 			}
 		} else {
-			int naturePosition = ProjectUtil.indexOf(natureIDs, natureId);
+			final int naturePosition = ProjectUtil.indexOf(natureIDs, natureId);
 			if (naturePosition >= 0) {
 				natureIDs = WorkspaceAutoSetupModule.remove(natureIDs, naturePosition);
 			}
@@ -358,9 +336,9 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 				buildSpecs[moflonBuilderPosition] = moflonBuilder;
 			}
 		} else {
-			int moflonBuilderPosition = ProjectUtil.indexOf(buildSpecs, builderId);
+			final int moflonBuilderPosition = ProjectUtil.indexOf(buildSpecs, builderId);
 			if (moflonBuilderPosition >= 0) {
-				ICommand[] oldBuilderSpecs = buildSpecs;
+				final ICommand[] oldBuilderSpecs = buildSpecs;
 				buildSpecs = new ICommand[oldBuilderSpecs.length - 1];
 				if (moflonBuilderPosition > 0) {
 					System.arraycopy(oldBuilderSpecs, 0, buildSpecs, 0, moflonBuilderPosition);

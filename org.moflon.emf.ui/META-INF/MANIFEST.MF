@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: IDE/UI components for EMF code generation
+Bundle-Name: eMoflon::Core UI components for EMF code generation
 Bundle-SymbolicName: org.moflon.emf.ui;singleton:=true
 Bundle-Version: 1.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -24,4 +24,5 @@ Require-Bundle: org.eclipse.ui.workbench;bundle-version="3.0.0",
  org.moflon.emf.codegen
 Export-Package: org.moflon.emf.ui.wizard
 Automatic-Module-Name: org.moflon.emf.ui
+Bundle-Vendor: eMoflon developers
 

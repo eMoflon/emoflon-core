@@ -92,11 +92,6 @@ public class PropertycontainerAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
-		public Adapter caseSdmCodegeneratorMethodBodyHandler(SdmCodegeneratorMethodBodyHandler object) {
-			return createSdmCodegeneratorMethodBodyHandlerAdapter();
-		}
-
-		@Override
 		public Adapter caseFactoryMappings(FactoryMappings object) {
 			return createFactoryMappingsAdapter();
 		}
@@ -212,20 +207,6 @@ public class PropertycontainerAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createTGGBuildModeAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler <em>Sdm Codegenerator Method Body Handler</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler
-	 * @generated
-	 */
-	public Adapter createSdmCodegeneratorMethodBodyHandlerAdapter() {
 		return null;
 	}
 

@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.moflon.core.build.MoflonProjectCreator;
 import org.moflon.core.build.nature.MoflonProjectConfigurator;
 import org.moflon.core.plugins.PluginProperties;
-import org.moflon.core.propertycontainer.SDMCodeGeneratorIds;
 import org.moflon.emf.build.MoflonEmfBuilder;
 import org.moflon.emf.build.MoflonEmfNature;
 
@@ -27,14 +26,14 @@ public class MoflonEmfProjectCreator extends MoflonProjectCreator {
 	 * Pass-through constructor to {@link MoflonProjectCreator}
 	 * 
 	 * @param project
-	 *            the project to create
+	 *                                the project to create
 	 * @param projectProperties
-	 *            the metadata to use
+	 *                                the metadata to use
 	 * @param projectConfigurator
-	 *            the project configurator
+	 *                                the project configurator
 	 */
-	public MoflonEmfProjectCreator(IProject project, PluginProperties projectProperties,
-			MoflonProjectConfigurator projectConfigurator) {
+	public MoflonEmfProjectCreator(final IProject project, final PluginProperties projectProperties,
+			final MoflonProjectConfigurator projectConfigurator) {
 		super(project, projectProperties, projectConfigurator);
 	}
 
@@ -51,11 +50,6 @@ public class MoflonEmfProjectCreator extends MoflonProjectCreator {
 	@Override
 	protected String getBuilderId() throws CoreException {
 		return MoflonEmfBuilder.getId();
-	}
-
-	@Override
-	protected SDMCodeGeneratorIds getCodeGeneratorHandler() {
-		return null;
 	}
 
 }

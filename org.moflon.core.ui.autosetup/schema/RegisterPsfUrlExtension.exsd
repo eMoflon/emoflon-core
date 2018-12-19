@@ -6,7 +6,7 @@
          <meta.schema plugin="org.moflon.core.ui.autosetup" id="RegisterPsfUrlExtension" name="RegisterPsfUrlExtension"/>
       </appinfo>
       <documentation>
-         Use this to register extensions that can contribute URL entries for built-in PSFs in the eMoflon core &quot;cloud&quot; menu. 
+         Use this to register extensions that can contribute URL entries for built-in PSFs in the eMoflon::Core 'cloud' menu. 
       </documentation>
    </annotation>
 

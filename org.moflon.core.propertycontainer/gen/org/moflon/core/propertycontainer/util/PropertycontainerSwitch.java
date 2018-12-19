@@ -107,13 +107,6 @@ public class PropertycontainerSwitch<T> extends Switch<T> {
 				result = defaultCase(theEObject);
 			return result;
 		}
-		case PropertycontainerPackage.SDM_CODEGENERATOR_METHOD_BODY_HANDLER: {
-			SdmCodegeneratorMethodBodyHandler sdmCodegeneratorMethodBodyHandler = (SdmCodegeneratorMethodBodyHandler) theEObject;
-			T result = caseSdmCodegeneratorMethodBodyHandler(sdmCodegeneratorMethodBodyHandler);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
 		case PropertycontainerPackage.FACTORY_MAPPINGS: {
 			FactoryMappings factoryMappings = (FactoryMappings) theEObject;
 			T result = caseFactoryMappings(factoryMappings);
@@ -237,21 +230,6 @@ public class PropertycontainerSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseTGGBuildMode(TGGBuildMode object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Sdm Codegenerator Method Body Handler</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Sdm Codegenerator Method Body Handler</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseSdmCodegeneratorMethodBodyHandler(SdmCodegeneratorMethodBodyHandler object) {
 		return null;
 	}
 

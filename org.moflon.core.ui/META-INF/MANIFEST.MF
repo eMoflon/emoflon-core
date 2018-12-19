@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: eMoflon Core UI components
+Bundle-Name: eMoflon::Core UI components
 Bundle-SymbolicName: org.moflon.core.ui;singleton:=true
 Bundle-Version: 1.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -36,4 +36,5 @@ Bundle-Activator: org.moflon.core.ui.MoflonCoreUiActivator
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.moflon.core.ui
 Import-Package: org.eclipse.emf.edit.domain
+Bundle-Vendor: eMoflon developers
 

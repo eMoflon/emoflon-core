@@ -23,8 +23,6 @@ import org.moflon.core.propertycontainer.PropertiesValue;
 import org.moflon.core.propertycontainer.PropertycontainerFactory;
 import org.moflon.core.propertycontainer.PropertycontainerPackage;
 import org.moflon.core.propertycontainer.ReplaceGenModel;
-import org.moflon.core.propertycontainer.SDMCodeGeneratorIds;
-import org.moflon.core.propertycontainer.SdmCodegeneratorMethodBodyHandler;
 import org.moflon.core.propertycontainer.TGGBuildMode;
 
 /**
@@ -68,13 +66,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	private EClass tggBuildModeEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass sdmCodegeneratorMethodBodyHandlerEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -126,13 +117,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	private EEnum buildModeEEnum = null;
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EEnum sdmCodeGeneratorIdsEEnum = null;
-
-	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
 	 * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
 	 * package URI value.
@@ -160,7 +144,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 * 
+	 *
 	 * <p>This method is used to initialize {@link PropertycontainerPackage#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
@@ -175,9 +159,10 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 			return (PropertycontainerPackage) EPackage.Registry.INSTANCE.getEPackage(PropertycontainerPackage.eNS_URI);
 
 		// Obtain or create and register package
-		PropertycontainerPackageImpl thePropertycontainerPackage = (PropertycontainerPackageImpl) (EPackage.Registry.INSTANCE
-				.get(eNS_URI) instanceof PropertycontainerPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI)
-						: new PropertycontainerPackageImpl());
+		Object registeredPropertycontainerPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		PropertycontainerPackageImpl thePropertycontainerPackage = registeredPropertycontainerPackage instanceof PropertycontainerPackageImpl
+				? (PropertycontainerPackageImpl) registeredPropertycontainerPackage
+				: new PropertycontainerPackageImpl();
 
 		isInited = true;
 
@@ -299,33 +284,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getSdmCodegeneratorMethodBodyHandler() {
-		return sdmCodegeneratorMethodBodyHandlerEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getSdmCodegeneratorMethodBodyHandler_Description() {
-		return (EAttribute) sdmCodegeneratorMethodBodyHandlerEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getSdmCodegeneratorMethodBodyHandler_Value() {
-		return (EAttribute) sdmCodegeneratorMethodBodyHandlerEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getFactoryMappings() {
 		return factoryMappingsEClass;
 	}
@@ -398,7 +356,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getMoflonPropertiesContainer_SdmCodegeneratorHandlerId() {
+	public EReference getMoflonPropertiesContainer_TGGBuildMode() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(5);
 	}
 
@@ -407,7 +365,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getMoflonPropertiesContainer_TGGBuildMode() {
+	public EReference getMoflonPropertiesContainer_ImportMappings() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(6);
 	}
 
@@ -416,7 +374,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getMoflonPropertiesContainer_ImportMappings() {
+	public EReference getMoflonPropertiesContainer_AdditionalUsedGenPackages() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(7);
 	}
 
@@ -425,17 +383,8 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getMoflonPropertiesContainer_AdditionalUsedGenPackages() {
-		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(8);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getMoflonPropertiesContainer_Description() {
-		return (EAttribute) moflonPropertiesContainerEClass.getEStructuralFeatures().get(9);
+		return (EAttribute) moflonPropertiesContainerEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -444,7 +393,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	public EAttribute getMoflonPropertiesContainer_ProjectName() {
-		return (EAttribute) moflonPropertiesContainerEClass.getEStructuralFeatures().get(10);
+		return (EAttribute) moflonPropertiesContainerEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -560,15 +509,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EEnum getSDMCodeGeneratorIds() {
-		return sdmCodeGeneratorIdsEEnum;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public PropertycontainerFactory getPropertycontainerFactory() {
 		return (PropertycontainerFactory) getEFactoryInstance();
 	}
@@ -609,10 +549,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 		createEAttribute(tggBuildModeEClass, TGG_BUILD_MODE__BUILD_MODE);
 		createEAttribute(tggBuildModeEClass, TGG_BUILD_MODE__DESCRIPTION);
 
-		sdmCodegeneratorMethodBodyHandlerEClass = createEClass(SDM_CODEGENERATOR_METHOD_BODY_HANDLER);
-		createEAttribute(sdmCodegeneratorMethodBodyHandlerEClass, SDM_CODEGENERATOR_METHOD_BODY_HANDLER__DESCRIPTION);
-		createEAttribute(sdmCodegeneratorMethodBodyHandlerEClass, SDM_CODEGENERATOR_METHOD_BODY_HANDLER__VALUE);
-
 		factoryMappingsEClass = createEClass(FACTORY_MAPPINGS);
 		createEAttribute(factoryMappingsEClass, FACTORY_MAPPINGS__DESCRIPTION);
 
@@ -622,7 +558,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_DEPENDENCIES);
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT);
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL);
-		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__SDM_CODEGENERATOR_HANDLER_ID);
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE);
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS);
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES);
@@ -646,7 +581,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 
 		// Create enums
 		buildModeEEnum = createEEnum(BUILD_MODE);
-		sdmCodeGeneratorIdsEEnum = createEEnum(SDM_CODE_GENERATOR_IDS);
 	}
 
 	/**
@@ -719,16 +653,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 				"[Controls which TGG operationalizations are generated]", 0, 1, TGGBuildMode.class, !IS_TRANSIENT,
 				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
-		initEClass(sdmCodegeneratorMethodBodyHandlerEClass, SdmCodegeneratorMethodBodyHandler.class,
-				"SdmCodegeneratorMethodBodyHandler", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getSdmCodegeneratorMethodBodyHandler_Description(), ecorePackage.getEString(), "description",
-				"[Value determines the MethodBodyHandler that invokes the code generator for SDMs.]", 1, 1,
-				SdmCodegeneratorMethodBodyHandler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
-				!IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
-		initEAttribute(getSdmCodegeneratorMethodBodyHandler_Value(), this.getSDMCodeGeneratorIds(), "value", "1", 1, 1,
-				SdmCodegeneratorMethodBodyHandler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
-				!IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
-
 		initEClass(factoryMappingsEClass, FactoryMappings.class, "FactoryMappings", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getFactoryMappings_Description(), ecorePackage.getEString(), "description",
@@ -753,10 +677,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 		initEReference(getMoflonPropertiesContainer_ReplaceGenModel(), this.getReplaceGenModel(), null,
 				"replaceGenModel", null, 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE,
 				IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getMoflonPropertiesContainer_SdmCodegeneratorHandlerId(),
-				this.getSdmCodegeneratorMethodBodyHandler(), null, "sdmCodegeneratorHandlerId", null, 1, 1,
-				MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
-				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getMoflonPropertiesContainer_TGGBuildMode(), this.getTGGBuildMode(), null, "tGGBuildMode", null,
 				1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
 				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -817,11 +737,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 		addEEnumLiteral(buildModeEEnum, BuildMode.BACKWARD);
 		addEEnumLiteral(buildModeEEnum, BuildMode.FORWARD);
 		addEEnumLiteral(buildModeEEnum, BuildMode.FORWARD_AND_BACKWARD);
-
-		initEEnum(sdmCodeGeneratorIdsEEnum, SDMCodeGeneratorIds.class, "SDMCodeGeneratorIds");
-		addEEnumLiteral(sdmCodeGeneratorIdsEEnum, SDMCodeGeneratorIds.DEMOCLES);
-		addEEnumLiteral(sdmCodeGeneratorIdsEEnum, SDMCodeGeneratorIds.DEMOCLES_ATTRIBUTES);
-		addEEnumLiteral(sdmCodeGeneratorIdsEEnum, SDMCodeGeneratorIds.DEMOCLES_REVERSE_NAVI);
 
 		// Create resource
 		createResource(eNS_URI);

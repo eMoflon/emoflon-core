@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Workspace auto-setup components
+Bundle-Name: eMoflon::Core Workspace auto-setup components
 Bundle-SymbolicName: org.moflon.core.ui.autosetup;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -21,3 +21,4 @@ Require-Bundle: org.eclipse.equinox.registry;bundle-version="[3.0.0,4.0.0)",
 Export-Package: org.moflon.core.ui.autosetup,
  org.moflon.core.ui.autosetup.handler
 Automatic-Module-Name: org.moflon.core.ui.autosetup
+Bundle-Vendor: eMoflon developers
