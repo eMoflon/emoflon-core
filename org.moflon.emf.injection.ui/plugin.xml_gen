@@ -204,6 +204,15 @@
 			</activeWhen>
 		</handler>
 	</extension>
+	<extension point="org.eclipse.core.contenttype.contentTypes">
+		<content-type
+			base-type="org.eclipse.core.runtime.text"
+			file-extensions="inject"
+			id="org.moflon.emf.injection.InjectionLanguage.contenttype"
+			name="InjectionLanguage File"
+			priority="normal">
+		</content-type>
+	</extension>
 	<!-- adding resource factories -->
 	<extension
 		point="org.eclipse.emf.ecore.extension_parser">
@@ -388,12 +397,18 @@
 			class="org.moflon.emf.injection.ui.InjectionLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
 			extensions="inject">
 		</viewer>
+		<contentTypeBinding
+			contentTypeId="org.moflon.emf.injection.InjectionLanguage.contenttype"
+			contentViewerId="org.moflon.emf.injection.InjectionLanguage.compare.contentViewers" />
 	</extension>
 	<extension point="org.eclipse.compare.contentMergeViewers">
 		<viewer id="org.moflon.emf.injection.InjectionLanguage.compare.contentMergeViewers"
 			class="org.moflon.emf.injection.ui.InjectionLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
 			extensions="inject" label="InjectionLanguage Compare">
 		</viewer>
+		<contentTypeBinding
+			contentTypeId="org.moflon.emf.injection.InjectionLanguage.contenttype"
+			contentMergeViewerId="org.moflon.emf.injection.InjectionLanguage.compare.contentMergeViewers" />
 	</extension>
 	<extension point="org.eclipse.ui.editors.documentProviders">
 		<provider id="org.moflon.emf.injection.InjectionLanguage.editors.documentProviders"
