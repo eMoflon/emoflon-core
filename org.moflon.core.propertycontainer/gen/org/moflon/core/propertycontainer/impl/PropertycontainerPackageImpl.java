@@ -160,7 +160,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-	 * 
+	 *
 	 * <p>This method is used to initialize {@link PropertycontainerPackage#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
@@ -175,9 +175,10 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 			return (PropertycontainerPackage) EPackage.Registry.INSTANCE.getEPackage(PropertycontainerPackage.eNS_URI);
 
 		// Obtain or create and register package
-		PropertycontainerPackageImpl thePropertycontainerPackage = (PropertycontainerPackageImpl) (EPackage.Registry.INSTANCE
-				.get(eNS_URI) instanceof PropertycontainerPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI)
-						: new PropertycontainerPackageImpl());
+		Object registeredPropertycontainerPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		PropertycontainerPackageImpl thePropertycontainerPackage = registeredPropertycontainerPackage instanceof PropertycontainerPackageImpl
+				? (PropertycontainerPackageImpl) registeredPropertycontainerPackage
+				: new PropertycontainerPackageImpl();
 
 		isInited = true;
 
