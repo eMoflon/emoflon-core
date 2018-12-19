@@ -54,7 +54,7 @@
     <repository>
       <id>plantuml</id>
       <layout>p2</layout>
-      <url>http://files.idi.ntnu.no/publish/plantuml/repository/</url>
+      <url>http://hallvard.github.io/plantuml/</url>
     </repository>
   </repositories>
   <pluginRepositories>
