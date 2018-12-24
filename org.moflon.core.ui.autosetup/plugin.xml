@@ -36,6 +36,6 @@
     <extension
          point="org.moflon.core.ui.autosetup.RegisterPsfUrlExtension">
         <register_psf_uri_extension
-            class="org.moflon.core.ui.autosetup.handbook.RegisterPsfUrlForSokobanGui"></register_psf_uri_extension>
+            class="org.moflon.core.ui.autosetup.handbook.RegisterPsfUrlForHandbookPart1"></register_psf_uri_extension>
     </extension>
 </plugin>

@@ -25,23 +25,25 @@ public class PopulatePsfUrlMenu extends ExtensionContributionFactory {
 
 	@Override
 	public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
-		registerPsfUrlExtensions.forEach(ext -> {
-			additions.addContributionItem(new ContributionItem() {
-				@Override
-				public void fill(Menu menu, int index) {
-					logger.debug("Inserting " + ext.getLabel() + " at " + index);
-					MenuItem mi = new MenuItem(menu, SWT.DEFAULT, menu.getItemCount());
-					mi.setText(ext.getLabel());
-					mi.addSelectionListener(new SelectionAdapter() {
+		registerPsfUrlExtensions.stream()//
+				.sorted((r1, r2) -> r1.getLabel().compareTo(r2.getLabel()))//
+				.forEach(ext -> {
+					additions.addContributionItem(new ContributionItem() {
 						@Override
-						public void widgetSelected(SelectionEvent e) {
-							logger.info(ext.getLabel() + " selected!");
-							logger.info(ext.getUrl() + " is going to be imported.");
-							new WorkspaceInstaller().installPsfFile(ext.getUrl(), ext.getLabel());
+						public void fill(Menu menu, int index) {
+							logger.debug("Inserting " + ext.getLabel() + " at " + index);
+							MenuItem mi = new MenuItem(menu, SWT.DEFAULT, menu.getItemCount());
+							mi.setText(ext.getLabel());
+							mi.addSelectionListener(new SelectionAdapter() {
+								@Override
+								public void widgetSelected(SelectionEvent e) {
+									logger.info(ext.getLabel() + " selected!");
+									logger.info(ext.getUrl() + " is going to be imported.");
+									new WorkspaceInstaller().installPsfFile(ext.getUrl(), ext.getLabel());
+								}
+							});
 						}
-					});
-				}
-			}, null);
-		});
+					}, null);
+				});
 	}
 }
