@@ -249,6 +249,15 @@
 		<super type="org.eclipse.xtext.ui.check.expensive"/>
 		<persistent value="true"/>
 	</extension>
+	<extension point="org.eclipse.ui.preferencePages">
+		<page
+			category="org.moflon.emf.injection.InjectionLanguage"
+			class="org.moflon.emf.injection.ui.InjectionLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.validation.ValidatorPreferencePage"
+			id="org.moflon.emf.injection.InjectionLanguage.validator.preferencePage"
+			name="Errors/Warnings">
+			<keywordReference id="org.moflon.emf.injection.ui.keyword_InjectionLanguage"/>
+		</page>
+	</extension>
 	<extension point="org.eclipse.xtext.builder.participant">
 		<participant
 			class="org.moflon.emf.injection.ui.InjectionLanguageExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
