@@ -1,11 +1,13 @@
 package org.moflon.core.ui.visualisation.models;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.moflon.core.ui.VisualiserUtilities;
 import org.moflon.core.ui.handler.visualisation.AbbreviateLabelsHandler;
 import org.moflon.core.ui.handler.visualisation.NeighbourhoodStrategyHandler;
@@ -36,7 +38,7 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser<ObjectDiagram
 		diagram = determineObjectNames(diagram);
 		diagram.setAbbreviateLabels(AbbreviateLabelsHandler.getVisPreference());
 		diagram.setShowFullModelDetails(ShowModelDetailsHandler.getVisPreference());
-		
+
 		return EMoflonPlantUMLGenerator.visualiseModelElements(diagram);
 	}
 
@@ -49,45 +51,52 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser<ObjectDiagram
 	 * @return The diagram with the EObject instance names.
 	 */
 	private ObjectDiagram determineObjectNames(ObjectDiagram diagram) {
-		int noEClassCount = 1;
-		Map<EObject, String> instanceNames = diagram.getInstanceNames();
-		Map<EClass, Integer> instanceCounts = new HashMap<>();
+		Map<EObject, String> labels = diagram.getInstanceNames();
 
-		determineObjectNames(diagram.getSelection(), instanceNames, instanceCounts, noEClassCount);
-		determineObjectNames(diagram.getNeighbourhood(), instanceNames, instanceCounts, noEClassCount);
+		Collection<EObject> allObjects = new ArrayList<>();
+		allObjects.addAll(diagram.getSelection());
+		allObjects.addAll(diagram.getNeighbourhood());
+
+		determineObjectNames(allObjects, labels);
 
 		return diagram;
 	}
 
-	private void determineObjectNames(Collection<EObject> elements, Map<EObject, String> instanceNames,
-			Map<EClass, Integer> instanceCounts, int noEClassCount) {
+	private void determineObjectNames(Collection<EObject> elements, Map<EObject, String> labels) {
 		for (EObject current : elements) {
-			// use EClass name with lower case first letter, if no EClass: "o"
-			String name = (current.eClass() != null) ? current.eClass().getName() : "o";
-			name = (name == null || name.length() == 0) ? "o" : name;
-			name = name.substring(0, 1).toLowerCase() + name.substring(1);
+			labels.put(current, getLabel(current) + "_" + getIndex(current));
+		}
+	}
 
-			// no EClass -> use global object counter
-			if (current.eClass() == null) {
-				instanceNames.put(current, name + noEClassCount);
-				noEClassCount++;
-				continue;
-			}
+	private String getLabel(EObject current) {
+		if(current.eContainingFeature() != null) {
+			return current.eContainingFeature().getName();
+		} else {
+			return "root";
+		}
+	}
 
-			// determine and update instance count
-			int instanceCount = 1;
-			if (instanceCounts.containsKey(current.eClass())) {
-				instanceCount = instanceCounts.get(current.eClass()) + 1;
+	private String getIndex(EObject current) {
+		if (current.eContainer() == null) {
+			Resource r = current.eResource();
+			ResourceSet rs = r.getResourceSet();
+			return rs.getResources().indexOf(r) + "_" + r.getContents().indexOf(current);
+		} else {
+			EObject container = current.eContainer();
+			String baseIndex = getIndex(container);
+			Object col = container.eGet(current.eContainingFeature());
+			if(col instanceof EList<?>) {
+				return baseIndex + "_" + ((EList<?>) col).indexOf(current);
+			} else {
+				return baseIndex + "_" + 0;
 			}
-			instanceNames.put(current, name + instanceCount);
-			instanceCounts.put(current.eClass(), instanceCount);
 		}
 	}
 
 	@Override
 	protected void chooseStrategy() {
 		strategy = ObjectDiagramStrategies::determineEdgesForSelection;
-		if(NeighbourhoodStrategyHandler.getVisPreference()) {
+		if (NeighbourhoodStrategyHandler.getVisPreference()) {
 			strategy = strategy.andThen(ObjectDiagramStrategies::expandNeighbourhoodBidirectional);
 		}
 	}
