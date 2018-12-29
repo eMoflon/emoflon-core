@@ -4,7 +4,7 @@
 package org.moflon.core.ui.handler.visualisation;
 
 /**
- * Allows to enable the visualisation of the 1-neighbouhood of a selection for
+ * Allows to enable the visualisation of the 1-neighbourhood of a selection for
  * metamodel and model visualiser.
  * 
  * @author Johannes Brandt
