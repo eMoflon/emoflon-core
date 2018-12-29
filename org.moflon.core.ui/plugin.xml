@@ -108,7 +108,7 @@
           name="Show model details">
        <state id="org.eclipse.ui.commands.toggleState">
          <class class="org.eclipse.ui.handlers.RegistryToggleState">
-           <parameter name="default" value="true"></parameter>
+           <parameter name="default" value="false"></parameter>
            <parameter name="persisted" value="false"></parameter>
          </class>
        </state>
@@ -132,7 +132,7 @@
           name="Show 1-neighborhood">
        <state id="org.eclipse.ui.commands.toggleState">
          <class class="org.eclipse.ui.handlers.RegistryToggleState">
-           <parameter name="default" value="true"></parameter>
+           <parameter name="default" value="false"></parameter>
            <parameter name="persisted" value="false"></parameter>
          </class>
        </state>
