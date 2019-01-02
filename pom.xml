@@ -13,7 +13,7 @@
     <module>org.moflon.core.plugins</module>
     <module>org.moflon.core.plugins.tests</module>
     <module>org.moflon.core.preferences</module>
-    <module>org.moflon.core.preferences.test</module>
+    <module>org.moflon.core.preferences.tests</module>
     <module>org.moflon.core.propertycontainer</module>
     <module>org.moflon.core.ui</module>
     <module>org.moflon.core.ui.autosetup</module>
