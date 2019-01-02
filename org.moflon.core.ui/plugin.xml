@@ -354,4 +354,14 @@
     <diagramTextProvider priority="15" providerClass="org.moflon.core.ui.visualisation.metamodels.EMoflonMetamodelVisualiser">
     </diagramTextProvider>
   </extension>
+  <!--
+  Property dialog contributsion
+  -->
+  <extension point="org.eclipse.ui.propertyPages">
+    <page class="org.moflon.core.ui.propertypage.EMoflonPropertyPage" id="org.moflon.ide.ui.errorspropertypage" name="Marker (eMoflon View)">
+      <enabledWhen>
+        <adapt type="org.eclipse.core.resources.IMarker"></adapt>
+      </enabledWhen>
+    </page>
+  </extension>
 </plugin>

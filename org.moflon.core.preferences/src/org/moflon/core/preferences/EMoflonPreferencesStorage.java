@@ -1,101 +1,124 @@
 package org.moflon.core.preferences;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Platform-independent preferences storage for eMoflon
+ * UI-independent key-value preferences storage for eMoflon
  * 
  * @author Roland Kluge - Initial implementation
  */
 public class EMoflonPreferencesStorage {
 
-	/**
-	 * Indicates unbounded adornment size for {@link #getMaximumAdornmentSize()}
-	 */
-	public static final int REACHABILITY_MAX_ADORNMENT_SIZE_INFINITY = 0;
+	private final Map<String, Object> data = new HashMap<>();
 
 	/**
-	 * Default value for {@link #getMaximumAdornmentSize()}
-	 */
-	public static final int DEFAULT_REACHABILITY_MAX_ADORNMENT_SIZE = REACHABILITY_MAX_ADORNMENT_SIZE_INFINITY;
-
-	/**
-	 * Default value for {@link #getValidationTimeout()}
-	 */
-	public static final int DEFAULT_VALIDATION_TIMEOUT_MILLIS = 30000;
-
-	/**
-	 * Default value for {@link #getReachabilityEnabled()}
-	 */
-	public static final boolean DEFAULT_REACHABILITIY_IS_ENABLED = true;
-
-	/**
-	 * Stores the configured validation timeout in milliseconds. 'null' if not set.
-	 */
-	private int validationTimeout;
-
-	/**
-	 * Stores the configured maximum adornment size. 'null' if not set
-	 */
-	private int maximumAdornmentSize;
-
-	/**
-	 * Stores whether reachability analysis is active. 'null' if not set
-	 */
-	private boolean reachabilityEnabled;
-
-	/**
-	 * Sets the validation timeout in milliseconds
+	 * Stores a key-value pair
 	 * 
-	 * @param validationTimeout
-	 *            the new validation timeout
+	 * @param key
+	 *                  the key
+	 * @param value
+	 *                  the value
 	 */
-	public void setValidationTimeout(final int validationTimeout) {
-		this.validationTimeout = validationTimeout;
+	public void put(final String key, final Object value) {
+		data.put(key, value);
 	}
 
 	/**
-	 * Returns the timeout for the reachability validation (in milliseconds)
+	 * Returns the value for a given key
 	 * 
-	 * @return the validation timeout
+	 * @param key
+	 *                the key
+	 * @return the value if exists, otherwise <code>null</code>
 	 */
-	public int getValidationTimeout() {
-		return this.validationTimeout;
+	public Object get(final String key) {
+		return data.get(key);
 	}
 
 	/**
-	 * Sets the maximum size of adornments that should be analyzed using the
-	 * reachability analysis
+	 * Returns the {@link Integer} value for a given key
 	 * 
-	 * @param maximumAdornmentSize
-	 *            the maximum adornment size
+	 * @param key
+	 *                the key
+	 * @return the value if exists, otherwise <code>null</code>
+	 * @throws RuntimeException
+	 *                              if the value exists but has the wrong type.
 	 */
-	public void setReachabilityMaximumAdornmentSize(final int maximumAdornmentSize) {
-		this.maximumAdornmentSize = maximumAdornmentSize;
+	public Integer getInt(final String key) {
+		return getWithCast(key, Integer.class);
 	}
 
 	/**
-	 * @return the maximum size of adornments to analyze using reachability analysis
-	 * @see #setReachabilityMaximumAdornmentSize(int)
-	 */
-	public int getMaximumAdornmentSize() {
-		return this.maximumAdornmentSize;
-	}
-
-	/**
-	 * Enables or disables the reachability analysis
+	 * Returns the {@link Double} value for a given key
 	 * 
-	 * @param reachabilityEnabled
-	 *            true if the reachability analysis shall be enabled, false
-	 *            otherwise
+	 * @param key
+	 *                the key
+	 * @return the value if exists, otherwise <code>null</code>
+	 * @throws RuntimeException
+	 *                              if the value exists but has the wrong type.
 	 */
-	public void setReachabilityEnabled(final boolean reachabilityEnabled) {
-		this.reachabilityEnabled = reachabilityEnabled;
+	public Double getDouble(final String key) {
+		return getWithCast(key, Double.class);
 	}
 
 	/**
-	 * @return true if the reachability analysis shall be enabled, false otherwise
-	 * @see #setReachabilityEnabled(boolean)
+	 * Returns the {@link Boolean} value for a given key
+	 * 
+	 * @param key
+	 *                the key
+	 * @return the value if exists, otherwise <code>null</code>
+	 * @throws RuntimeException
+	 *                              if the value exists but has the wrong type.
 	 */
-	public boolean getReachabilityEnabled() {
-		return reachabilityEnabled;
+	public Boolean getBoolean(final String key) {
+		return getWithCast(key, Boolean.class);
 	}
+
+	/**
+	 * Returns the {@link String} value for a given key
+	 * 
+	 * @param key
+	 *                the key
+	 * @return the value if exists, otherwise <code>null</code>
+	 * @throws RuntimeException
+	 *                              if the value exists but has the wrong type.
+	 */
+	public String getString(final String key) {
+		return getWithCast(key, String.class);
+	}
+
+	/**
+	 * Retrieves the value for the given key and casts it if necessary to the given
+	 * type
+	 * 
+	 * @param key
+	 *                 the key
+	 * @param type
+	 *                 the desired type
+	 * @return the value if exists, otherwise <code>null</code>
+	 * @throws RuntimeException
+	 *                              if the value exists but has the wrong type.
+	 */
+	private <T> T getWithCast(final String key, final Class<T> type) {
+		final Object value = get(key);
+		if (value == null) {
+			return null;
+		} else {
+			try {
+				return type.cast(value);
+			} catch (final ClassCastException e) {
+				reportUnsuitableType(value, type);
+				return null;
+			}
+		}
+	}
+
+	/**
+	 * Throws an exception that records that the given value is not of the expected
+	 * type
+	 */
+	private void reportUnsuitableType(final Object value, final Class<?> type) {
+		throw new IllegalArgumentException(String.format("Retrieved object %s is not of type %s", value, type));
+	}
+
 }
