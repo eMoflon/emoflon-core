@@ -84,12 +84,7 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser<ObjectDiagram
 		} else {
 			EObject container = current.eContainer();
 			String baseIndex = getIndex(container);
-			Object col = container.eGet(current.eContainingFeature());
-			if(col instanceof EList<?>) {
-				return baseIndex + "_" + ((EList<?>) col).indexOf(current);
-			} else {
-				return baseIndex + "_" + 0;
-			}
+			return baseIndex + "_" + container.eContents().indexOf(current);
 		}
 	}
 
