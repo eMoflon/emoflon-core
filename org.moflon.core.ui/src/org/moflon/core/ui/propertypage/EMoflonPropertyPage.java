@@ -315,7 +315,7 @@ public class EMoflonPropertyPage extends MarkersPropertyPage {
 				priority = IMarker.PRIORITY_LOW;
 			}
 
-			attrs.put(IMarker.PRIORITY, new Integer(priority));
+			attrs.put(IMarker.PRIORITY, Integer.valueOf(priority));
 		}
 
 		if (completedCheckbox != null) {
