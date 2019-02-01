@@ -97,8 +97,9 @@ public class GenericMonitoredResourceLoader implements ITask {
 
 			return eMoflonEMFUtil.validateResourceSet(resourceSet, getTaskName(), subMon.split(5));
 		} else {
-			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()),
-					String.format("Project %s is not accessible", project.getName()));
+			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), String.format(
+					"Project %s cannot be handled. Please ensure that the project is accessible and contains an Ecore file according to the eMoflon naming conventions (e.g., project: my.great.model -> Ecore location: /model/Model.ecore)",
+					project.getName()));
 		}
 	}
 
