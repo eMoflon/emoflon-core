@@ -9,10 +9,7 @@
        * SHOULD look like this: "org.moflon.core.feature (2.32.0.qualifier)"
        * SHOULD NOT look like this: "features/org.moflon.core.feature_2.32.0.201702211758.jar"
     * If this rule is not obeyed to, the generated features are not moved into the appropriate categories.
-3. (Optional) Sign the created JAR files. For this step, you need
-    * org.moflon.releng.signing from https://github.com/eMoflon/emoflon-releng.
-    * the eMoflon keystore.
-4. For releasing a snapshot
+3. For releasing a snapshot
     * Make sure that you have checked out the following repo as project into your workspace (this should be the case if you used our PSF file to checkout your workspace):
     https://github.com/eMoflon/emoflon-core-updatesite/
     * Invoke the launcher *.launch/ant releaseSnapshot(emoflon-core).launch*
