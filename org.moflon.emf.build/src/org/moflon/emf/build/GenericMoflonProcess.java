@@ -97,8 +97,7 @@ public abstract class GenericMoflonProcess implements ITask {
 		}
 
 		// (2) Load metamodel
-		final MonitoredMetamodelLoader metamodelLoader = new MonitoredMetamodelLoader(getResourceSet(), getEcoreFile(),
-				getMoflonProperties());
+		final MonitoredMetamodelLoader metamodelLoader = new MonitoredMetamodelLoader(getResourceSet(), getEcoreFile());
 		final IStatus metamodelLoaderStatus = metamodelLoader.run(subMon.split(2));
 		if (subMon.isCanceled()) {
 			return Status.CANCEL_STATUS;
