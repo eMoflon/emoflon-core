@@ -58,7 +58,7 @@
       <url>http://hallvard.github.io/plantuml/</url>
     </repository>
      <repository>
-      <id>eMoflon::Core 1.3.3</id>
+      <id>emoflon-core 1.3.3</id>
       <layout>p2</layout>
       <url>https://raw.githubusercontent.com/eMoflon/emoflon-core-updatesite/emoflon-core_1.3.3/stable/updatesite</url>
     </repository>
