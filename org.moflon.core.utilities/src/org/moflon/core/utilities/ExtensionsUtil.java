@@ -1,5 +1,6 @@
 package org.moflon.core.utilities;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -25,14 +26,19 @@ public class ExtensionsUtil {
 	 */
 	public static <T> Collection<T> collectExtensions(final String extensionID, final String property,
 			final Class<T> extensionType) {
-		Collection<T> extensions = new ArrayList<T>();
+		ArrayDeque<T> extensions = new ArrayDeque<T>();
 		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(extensionID);
 		try {
 			for (IConfigurationElement e : config) {
 				logger.debug("Evaluating extension");
 				final Object o = e.createExecutableExtension(property);
 				if (extensionType.isInstance(o)) {
-					extensions.add(extensionType.cast(o));
+					String priority_attribute = e.getAttribute("build_before_all");
+					if(priority_attribute != null && priority_attribute.equalsIgnoreCase("true")) {
+						extensions.push(extensionType.cast(o));
+					}else {
+						extensions.add(extensionType.cast(o));
+					}
 				}
 			}
 		} catch (CoreException ex) {
