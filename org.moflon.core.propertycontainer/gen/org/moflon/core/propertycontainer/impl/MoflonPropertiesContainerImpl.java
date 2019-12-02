@@ -200,8 +200,7 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	 */
 	public EList<Dependencies> getDependencies() {
 		if (dependencies == null) {
-			dependencies = new EObjectContainmentEList<Dependencies>(Dependencies.class, this,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__DEPENDENCIES);
+			dependencies = new EObjectContainmentEList<Dependencies>(Dependencies.class, this, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__DEPENDENCIES);
 		}
 		return dependencies;
 	}
@@ -213,8 +212,7 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	 */
 	public EList<FactoryMappings> getFactoryMappings() {
 		if (factoryMappings == null) {
-			factoryMappings = new EObjectContainmentEList<FactoryMappings>(FactoryMappings.class, this,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__FACTORY_MAPPINGS);
+			factoryMappings = new EObjectContainmentEList<FactoryMappings>(FactoryMappings.class, this, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__FACTORY_MAPPINGS);
 		}
 		return factoryMappings;
 	}
@@ -226,8 +224,7 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	 */
 	public EList<AdditionalDependencies> getAdditionalDependencies() {
 		if (additionalDependencies == null) {
-			additionalDependencies = new EObjectContainmentEList<AdditionalDependencies>(AdditionalDependencies.class,
-					this, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_DEPENDENCIES);
+			additionalDependencies = new EObjectContainmentEList<AdditionalDependencies>(AdditionalDependencies.class, this, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_DEPENDENCIES);
 		}
 		return additionalDependencies;
 	}
@@ -250,9 +247,7 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		MetaModelProject oldMetaModelProject = metaModelProject;
 		metaModelProject = newMetaModelProject;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT, oldMetaModelProject,
-					newMetaModelProject);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT, oldMetaModelProject, newMetaModelProject);
 			if (msgs == null)
 				msgs = notification;
 			else
@@ -270,18 +265,14 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		if (newMetaModelProject != metaModelProject) {
 			NotificationChain msgs = null;
 			if (metaModelProject != null)
-				msgs = ((InternalEObject) metaModelProject).eInverseRemove(this, EOPPOSITE_FEATURE_BASE
-						- PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT, null, msgs);
+				msgs = ((InternalEObject) metaModelProject).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT, null, msgs);
 			if (newMetaModelProject != null)
-				msgs = ((InternalEObject) newMetaModelProject).eInverseAdd(this, EOPPOSITE_FEATURE_BASE
-						- PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT, null, msgs);
+				msgs = ((InternalEObject) newMetaModelProject).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT, null, msgs);
 			msgs = basicSetMetaModelProject(newMetaModelProject, msgs);
 			if (msgs != null)
 				msgs.dispatch();
 		} else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT, newMetaModelProject,
-					newMetaModelProject));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT, newMetaModelProject, newMetaModelProject));
 	}
 
 	/**
@@ -302,9 +293,7 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		ReplaceGenModel oldReplaceGenModel = replaceGenModel;
 		replaceGenModel = newReplaceGenModel;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL, oldReplaceGenModel,
-					newReplaceGenModel);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL, oldReplaceGenModel, newReplaceGenModel);
 			if (msgs == null)
 				msgs = notification;
 			else
@@ -322,18 +311,14 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		if (newReplaceGenModel != replaceGenModel) {
 			NotificationChain msgs = null;
 			if (replaceGenModel != null)
-				msgs = ((InternalEObject) replaceGenModel).eInverseRemove(this, EOPPOSITE_FEATURE_BASE
-						- PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL, null, msgs);
+				msgs = ((InternalEObject) replaceGenModel).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL, null, msgs);
 			if (newReplaceGenModel != null)
-				msgs = ((InternalEObject) newReplaceGenModel).eInverseAdd(this, EOPPOSITE_FEATURE_BASE
-						- PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL, null, msgs);
+				msgs = ((InternalEObject) newReplaceGenModel).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL, null, msgs);
 			msgs = basicSetReplaceGenModel(newReplaceGenModel, msgs);
 			if (msgs != null)
 				msgs.dispatch();
 		} else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL, newReplaceGenModel,
-					newReplaceGenModel));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL, newReplaceGenModel, newReplaceGenModel));
 	}
 
 	/**
@@ -354,9 +339,7 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		TGGBuildMode oldTGGBuildMode = tGGBuildMode;
 		tGGBuildMode = newTGGBuildMode;
 		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE, oldTGGBuildMode,
-					newTGGBuildMode);
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE, oldTGGBuildMode, newTGGBuildMode);
 			if (msgs == null)
 				msgs = notification;
 			else
@@ -374,20 +357,14 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		if (newTGGBuildMode != tGGBuildMode) {
 			NotificationChain msgs = null;
 			if (tGGBuildMode != null)
-				msgs = ((InternalEObject) tGGBuildMode).eInverseRemove(this,
-						EOPPOSITE_FEATURE_BASE - PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE,
-						null, msgs);
+				msgs = ((InternalEObject) tGGBuildMode).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE, null, msgs);
 			if (newTGGBuildMode != null)
-				msgs = ((InternalEObject) newTGGBuildMode).eInverseAdd(this,
-						EOPPOSITE_FEATURE_BASE - PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE,
-						null, msgs);
+				msgs = ((InternalEObject) newTGGBuildMode).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE, null, msgs);
 			msgs = basicSetTGGBuildMode(newTGGBuildMode, msgs);
 			if (msgs != null)
 				msgs.dispatch();
 		} else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE, newTGGBuildMode,
-					newTGGBuildMode));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE, newTGGBuildMode, newTGGBuildMode));
 	}
 
 	/**
@@ -397,8 +374,7 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	 */
 	public EList<ImportMappings> getImportMappings() {
 		if (importMappings == null) {
-			importMappings = new EObjectContainmentEList<ImportMappings>(ImportMappings.class, this,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS);
+			importMappings = new EObjectContainmentEList<ImportMappings>(ImportMappings.class, this, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS);
 		}
 		return importMappings;
 	}
@@ -410,9 +386,7 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	 */
 	public EList<AdditionalUsedGenPackages> getAdditionalUsedGenPackages() {
 		if (additionalUsedGenPackages == null) {
-			additionalUsedGenPackages = new EObjectContainmentEList<AdditionalUsedGenPackages>(
-					AdditionalUsedGenPackages.class, this,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES);
+			additionalUsedGenPackages = new EObjectContainmentEList<AdditionalUsedGenPackages>(AdditionalUsedGenPackages.class, this, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES);
 		}
 		return additionalUsedGenPackages;
 	}
@@ -435,8 +409,7 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		String oldDescription = description;
 		description = newDescription;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__DESCRIPTION, oldDescription, description));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__DESCRIPTION, oldDescription, description));
 	}
 
 	/**
@@ -457,8 +430,7 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		String oldProjectName = projectName;
 		projectName = newProjectName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME, oldProjectName, projectName));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME, oldProjectName, projectName));
 	}
 
 	/**

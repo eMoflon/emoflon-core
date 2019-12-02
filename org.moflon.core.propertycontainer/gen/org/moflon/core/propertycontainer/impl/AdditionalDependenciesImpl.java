@@ -84,8 +84,7 @@ public class AdditionalDependenciesImpl extends PropertiesValueImpl implements A
 		String oldDescription = description;
 		description = newDescription;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.ADDITIONAL_DEPENDENCIES__DESCRIPTION, oldDescription, description));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.ADDITIONAL_DEPENDENCIES__DESCRIPTION, oldDescription, description));
 	}
 
 	/**

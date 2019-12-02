@@ -106,8 +106,7 @@ public class ReplaceGenModelImpl extends EObjectImpl implements ReplaceGenModel 
 		boolean oldBool = bool;
 		bool = newBool;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.REPLACE_GEN_MODEL__BOOL,
-					oldBool, bool));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.REPLACE_GEN_MODEL__BOOL, oldBool, bool));
 	}
 
 	/**
@@ -128,8 +127,7 @@ public class ReplaceGenModelImpl extends EObjectImpl implements ReplaceGenModel 
 		String oldDescription = description;
 		description = newDescription;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.REPLACE_GEN_MODEL__DESCRIPTION, oldDescription, description));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.REPLACE_GEN_MODEL__DESCRIPTION, oldDescription, description));
 	}
 
 	/**

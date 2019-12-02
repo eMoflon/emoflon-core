@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.EReference;
  * <!-- end-user-doc -->
  * @see org.moflon.core.propertycontainer.PropertycontainerFactory
  * @model kind="package"
- *        annotation="http://www.eclipse.org/emf/2002/GenModel basePackage='org.moflon.core'"
  * @generated
  */
 public interface PropertycontainerPackage extends EPackage {
@@ -1202,8 +1201,7 @@ public interface PropertycontainerPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MOFLON_PROPERTIES_CONTAINER__FACTORY_MAPPINGS = eINSTANCE
-				.getMoflonPropertiesContainer_FactoryMappings();
+		EReference MOFLON_PROPERTIES_CONTAINER__FACTORY_MAPPINGS = eINSTANCE.getMoflonPropertiesContainer_FactoryMappings();
 
 		/**
 		 * The meta object literal for the '<em><b>Additional Dependencies</b></em>' containment reference list feature.
@@ -1211,8 +1209,7 @@ public interface PropertycontainerPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_DEPENDENCIES = eINSTANCE
-				.getMoflonPropertiesContainer_AdditionalDependencies();
+		EReference MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_DEPENDENCIES = eINSTANCE.getMoflonPropertiesContainer_AdditionalDependencies();
 
 		/**
 		 * The meta object literal for the '<em><b>Meta Model Project</b></em>' containment reference feature.
@@ -1220,8 +1217,7 @@ public interface PropertycontainerPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT = eINSTANCE
-				.getMoflonPropertiesContainer_MetaModelProject();
+		EReference MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT = eINSTANCE.getMoflonPropertiesContainer_MetaModelProject();
 
 		/**
 		 * The meta object literal for the '<em><b>Replace Gen Model</b></em>' containment reference feature.
@@ -1229,8 +1225,7 @@ public interface PropertycontainerPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL = eINSTANCE
-				.getMoflonPropertiesContainer_ReplaceGenModel();
+		EReference MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL = eINSTANCE.getMoflonPropertiesContainer_ReplaceGenModel();
 
 		/**
 		 * The meta object literal for the '<em><b>TGG Build Mode</b></em>' containment reference feature.
@@ -1246,8 +1241,7 @@ public interface PropertycontainerPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS = eINSTANCE
-				.getMoflonPropertiesContainer_ImportMappings();
+		EReference MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS = eINSTANCE.getMoflonPropertiesContainer_ImportMappings();
 
 		/**
 		 * The meta object literal for the '<em><b>Additional Used Gen Packages</b></em>' containment reference list feature.
@@ -1255,8 +1249,7 @@ public interface PropertycontainerPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES = eINSTANCE
-				.getMoflonPropertiesContainer_AdditionalUsedGenPackages();
+		EReference MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES = eINSTANCE.getMoflonPropertiesContainer_AdditionalUsedGenPackages();
 
 		/**
 		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.

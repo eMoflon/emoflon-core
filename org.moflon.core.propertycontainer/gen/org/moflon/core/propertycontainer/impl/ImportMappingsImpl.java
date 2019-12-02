@@ -84,8 +84,7 @@ public class ImportMappingsImpl extends PropertiesMappingImpl implements ImportM
 		String oldDescription = description;
 		description = newDescription;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.IMPORT_MAPPINGS__DESCRIPTION,
-					oldDescription, description));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.IMPORT_MAPPINGS__DESCRIPTION, oldDescription, description));
 	}
 
 	/**

@@ -106,8 +106,7 @@ public class MetaModelProjectImpl extends EObjectImpl implements MetaModelProjec
 		String oldDescription = description;
 		description = newDescription;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.META_MODEL_PROJECT__DESCRIPTION, oldDescription, description));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.META_MODEL_PROJECT__DESCRIPTION, oldDescription, description));
 	}
 
 	/**
@@ -128,9 +127,7 @@ public class MetaModelProjectImpl extends EObjectImpl implements MetaModelProjec
 		String oldMetaModelProjectName = metaModelProjectName;
 		metaModelProjectName = newMetaModelProjectName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.META_MODEL_PROJECT__META_MODEL_PROJECT_NAME, oldMetaModelProjectName,
-					metaModelProjectName));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.META_MODEL_PROJECT__META_MODEL_PROJECT_NAME, oldMetaModelProjectName, metaModelProjectName));
 	}
 
 	/**
@@ -196,8 +193,7 @@ public class MetaModelProjectImpl extends EObjectImpl implements MetaModelProjec
 		case PropertycontainerPackage.META_MODEL_PROJECT__DESCRIPTION:
 			return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
 		case PropertycontainerPackage.META_MODEL_PROJECT__META_MODEL_PROJECT_NAME:
-			return META_MODEL_PROJECT_NAME_EDEFAULT == null ? metaModelProjectName != null
-					: !META_MODEL_PROJECT_NAME_EDEFAULT.equals(metaModelProjectName);
+			return META_MODEL_PROJECT_NAME_EDEFAULT == null ? metaModelProjectName != null : !META_MODEL_PROJECT_NAME_EDEFAULT.equals(metaModelProjectName);
 		}
 		return super.eIsSet(featureID);
 	}

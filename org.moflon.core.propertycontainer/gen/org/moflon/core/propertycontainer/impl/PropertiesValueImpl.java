@@ -85,8 +85,7 @@ public class PropertiesValueImpl extends EObjectImpl implements PropertiesValue 
 		String oldValue = value;
 		value = newValue;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.PROPERTIES_VALUE__VALUE,
-					oldValue, value));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.PROPERTIES_VALUE__VALUE, oldValue, value));
 	}
 
 	/**

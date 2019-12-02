@@ -84,8 +84,7 @@ public class AdditionalUsedGenPackagesImpl extends PropertiesValueImpl implement
 		String oldDescription = description;
 		description = newDescription;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.ADDITIONAL_USED_GEN_PACKAGES__DESCRIPTION, oldDescription, description));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.ADDITIONAL_USED_GEN_PACKAGES__DESCRIPTION, oldDescription, description));
 	}
 
 	/**

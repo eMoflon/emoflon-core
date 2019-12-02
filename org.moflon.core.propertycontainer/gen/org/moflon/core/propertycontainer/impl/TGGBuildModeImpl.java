@@ -107,8 +107,7 @@ public class TGGBuildModeImpl extends EObjectImpl implements TGGBuildMode {
 		BuildMode oldBuildMode = buildMode;
 		buildMode = newBuildMode == null ? BUILD_MODE_EDEFAULT : newBuildMode;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.TGG_BUILD_MODE__BUILD_MODE,
-					oldBuildMode, buildMode));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.TGG_BUILD_MODE__BUILD_MODE, oldBuildMode, buildMode));
 	}
 
 	/**
@@ -129,8 +128,7 @@ public class TGGBuildModeImpl extends EObjectImpl implements TGGBuildMode {
 		String oldDescription = description;
 		description = newDescription;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.TGG_BUILD_MODE__DESCRIPTION,
-					oldDescription, description));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.TGG_BUILD_MODE__DESCRIPTION, oldDescription, description));
 	}
 
 	/**

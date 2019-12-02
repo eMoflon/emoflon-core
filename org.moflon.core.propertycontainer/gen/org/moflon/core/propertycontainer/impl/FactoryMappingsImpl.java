@@ -84,8 +84,7 @@ public class FactoryMappingsImpl extends PropertiesMappingImpl implements Factor
 		String oldDescription = description;
 		description = newDescription;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.FACTORY_MAPPINGS__DESCRIPTION, oldDescription, description));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.FACTORY_MAPPINGS__DESCRIPTION, oldDescription, description));
 	}
 
 	/**

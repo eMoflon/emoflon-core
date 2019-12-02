@@ -160,8 +160,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 
 		// Obtain or create and register package
 		Object registeredPropertycontainerPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		PropertycontainerPackageImpl thePropertycontainerPackage = registeredPropertycontainerPackage instanceof PropertycontainerPackageImpl
-				? (PropertycontainerPackageImpl) registeredPropertycontainerPackage
+		PropertycontainerPackageImpl thePropertycontainerPackage = registeredPropertycontainerPackage instanceof PropertycontainerPackageImpl ? (PropertycontainerPackageImpl) registeredPropertycontainerPackage
 				: new PropertycontainerPackageImpl();
 
 		isInited = true;
@@ -185,6 +184,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getDependencies() {
 		return dependenciesEClass;
 	}
@@ -194,6 +194,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getDependencies_Description() {
 		return (EAttribute) dependenciesEClass.getEStructuralFeatures().get(0);
 	}
@@ -203,6 +204,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getPropertiesValue() {
 		return propertiesValueEClass;
 	}
@@ -212,6 +214,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getPropertiesValue_Value() {
 		return (EAttribute) propertiesValueEClass.getEStructuralFeatures().get(0);
 	}
@@ -221,6 +224,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getAdditionalUsedGenPackages() {
 		return additionalUsedGenPackagesEClass;
 	}
@@ -230,6 +234,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getAdditionalUsedGenPackages_Description() {
 		return (EAttribute) additionalUsedGenPackagesEClass.getEStructuralFeatures().get(0);
 	}
@@ -239,6 +244,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getImportMappings() {
 		return importMappingsEClass;
 	}
@@ -248,6 +254,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getImportMappings_Description() {
 		return (EAttribute) importMappingsEClass.getEStructuralFeatures().get(0);
 	}
@@ -257,6 +264,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getTGGBuildMode() {
 		return tggBuildModeEClass;
 	}
@@ -266,6 +274,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getTGGBuildMode_BuildMode() {
 		return (EAttribute) tggBuildModeEClass.getEStructuralFeatures().get(0);
 	}
@@ -275,6 +284,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getTGGBuildMode_Description() {
 		return (EAttribute) tggBuildModeEClass.getEStructuralFeatures().get(1);
 	}
@@ -284,6 +294,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getFactoryMappings() {
 		return factoryMappingsEClass;
 	}
@@ -293,6 +304,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getFactoryMappings_Description() {
 		return (EAttribute) factoryMappingsEClass.getEStructuralFeatures().get(0);
 	}
@@ -302,6 +314,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getMoflonPropertiesContainer() {
 		return moflonPropertiesContainerEClass;
 	}
@@ -311,6 +324,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getMoflonPropertiesContainer_Dependencies() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(0);
 	}
@@ -320,6 +334,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getMoflonPropertiesContainer_FactoryMappings() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(1);
 	}
@@ -329,6 +344,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getMoflonPropertiesContainer_AdditionalDependencies() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(2);
 	}
@@ -338,6 +354,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getMoflonPropertiesContainer_MetaModelProject() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(3);
 	}
@@ -347,6 +364,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getMoflonPropertiesContainer_ReplaceGenModel() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(4);
 	}
@@ -356,6 +374,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getMoflonPropertiesContainer_TGGBuildMode() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(5);
 	}
@@ -365,6 +384,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getMoflonPropertiesContainer_ImportMappings() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(6);
 	}
@@ -374,6 +394,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getMoflonPropertiesContainer_AdditionalUsedGenPackages() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(7);
 	}
@@ -383,6 +404,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getMoflonPropertiesContainer_Description() {
 		return (EAttribute) moflonPropertiesContainerEClass.getEStructuralFeatures().get(8);
 	}
@@ -392,6 +414,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getMoflonPropertiesContainer_ProjectName() {
 		return (EAttribute) moflonPropertiesContainerEClass.getEStructuralFeatures().get(9);
 	}
@@ -401,6 +424,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getReplaceGenModel() {
 		return replaceGenModelEClass;
 	}
@@ -410,6 +434,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getReplaceGenModel_Bool() {
 		return (EAttribute) replaceGenModelEClass.getEStructuralFeatures().get(0);
 	}
@@ -419,6 +444,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getReplaceGenModel_Description() {
 		return (EAttribute) replaceGenModelEClass.getEStructuralFeatures().get(1);
 	}
@@ -428,6 +454,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getPropertiesMapping() {
 		return propertiesMappingEClass;
 	}
@@ -437,6 +464,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getPropertiesMapping_Key() {
 		return (EAttribute) propertiesMappingEClass.getEStructuralFeatures().get(0);
 	}
@@ -446,6 +474,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getPropertiesMapping_Value() {
 		return (EAttribute) propertiesMappingEClass.getEStructuralFeatures().get(1);
 	}
@@ -455,6 +484,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getAdditionalDependencies() {
 		return additionalDependenciesEClass;
 	}
@@ -464,6 +494,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getAdditionalDependencies_Description() {
 		return (EAttribute) additionalDependenciesEClass.getEStructuralFeatures().get(0);
 	}
@@ -473,6 +504,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getMetaModelProject() {
 		return metaModelProjectEClass;
 	}
@@ -482,6 +514,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getMetaModelProject_Description() {
 		return (EAttribute) metaModelProjectEClass.getEStructuralFeatures().get(0);
 	}
@@ -491,6 +524,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getMetaModelProject_MetaModelProjectName() {
 		return (EAttribute) metaModelProjectEClass.getEStructuralFeatures().get(1);
 	}
@@ -500,6 +534,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EEnum getBuildMode() {
 		return buildModeEEnum;
 	}
@@ -509,6 +544,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PropertycontainerFactory getPropertycontainerFactory() {
 		return (PropertycontainerFactory) getEFactoryInstance();
 	}
@@ -619,116 +655,75 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 		additionalDependenciesEClass.getESuperTypes().add(this.getPropertiesValue());
 
 		// Initialize classes, features, and operations; add parameters
-		initEClass(dependenciesEClass, Dependencies.class, "Dependencies", !IS_ABSTRACT, !IS_INTERFACE,
-				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getDependencies_Description(), ecorePackage.getEString(), "description",
-				"[Automatically derived dependencies of this project]", 0, 1, Dependencies.class, !IS_TRANSIENT,
-				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEClass(dependenciesEClass, Dependencies.class, "Dependencies", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getDependencies_Description(), ecorePackage.getEString(), "description", "[Automatically derived dependencies of this project]", 0, 1, Dependencies.class, !IS_TRANSIENT, !IS_VOLATILE,
+				IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
-		initEClass(propertiesValueEClass, PropertiesValue.class, "PropertiesValue", !IS_ABSTRACT, !IS_INTERFACE,
-				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getPropertiesValue_Value(), ecorePackage.getEString(), "value", null, 1, 1,
-				PropertiesValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-				!IS_DERIVED, !IS_ORDERED);
-
-		initEClass(additionalUsedGenPackagesEClass, AdditionalUsedGenPackages.class, "AdditionalUsedGenPackages",
-				!IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getAdditionalUsedGenPackages_Description(), ecorePackage.getEString(), "description",
-				"[Used to add additional GenPackages for code generation]", 1, 1, AdditionalUsedGenPackages.class,
-				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+		initEClass(propertiesValueEClass, PropertiesValue.class, "PropertiesValue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getPropertiesValue_Value(), ecorePackage.getEString(), "value", null, 1, 1, PropertiesValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
 				!IS_ORDERED);
 
-		initEClass(importMappingsEClass, ImportMappings.class, "ImportMappings", !IS_ABSTRACT, !IS_INTERFACE,
-				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getImportMappings_Description(), ecorePackage.getEString(), "description",
-				"[Used to correct prefixes in imports for code generation]", 1, 1, ImportMappings.class, !IS_TRANSIENT,
-				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEClass(additionalUsedGenPackagesEClass, AdditionalUsedGenPackages.class, "AdditionalUsedGenPackages", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getAdditionalUsedGenPackages_Description(), ecorePackage.getEString(), "description", "[Used to add additional GenPackages for code generation]", 1, 1, AdditionalUsedGenPackages.class,
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
-		initEClass(tggBuildModeEClass, TGGBuildMode.class, "TGGBuildMode", !IS_ABSTRACT, !IS_INTERFACE,
-				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getTGGBuildMode_BuildMode(), this.getBuildMode(), "buildMode", "BuildMode.ALL", 1, 1,
-				TGGBuildMode.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-				!IS_DERIVED, !IS_ORDERED);
-		initEAttribute(getTGGBuildMode_Description(), ecorePackage.getEString(), "description",
-				"[Controls which TGG operationalizations are generated]", 0, 1, TGGBuildMode.class, !IS_TRANSIENT,
-				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEClass(importMappingsEClass, ImportMappings.class, "ImportMappings", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getImportMappings_Description(), ecorePackage.getEString(), "description", "[Used to correct prefixes in imports for code generation]", 1, 1, ImportMappings.class, !IS_TRANSIENT, !IS_VOLATILE,
+				IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
-		initEClass(factoryMappingsEClass, FactoryMappings.class, "FactoryMappings", !IS_ABSTRACT, !IS_INTERFACE,
-				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getFactoryMappings_Description(), ecorePackage.getEString(), "description",
-				"[Used to correct the name of a Factory if it does not comply with our normal naming conventions]", 1,
-				1, FactoryMappings.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-				!IS_DERIVED, !IS_ORDERED);
-
-		initEClass(moflonPropertiesContainerEClass, MoflonPropertiesContainer.class, "MoflonPropertiesContainer",
-				!IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getMoflonPropertiesContainer_Dependencies(), this.getDependencies(), null, "dependencies", null,
-				0, -1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
-				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getMoflonPropertiesContainer_FactoryMappings(), this.getFactoryMappings(), null,
-				"factoryMappings", null, 0, -1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE,
-				IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getMoflonPropertiesContainer_AdditionalDependencies(), this.getAdditionalDependencies(), null,
-				"additionalDependencies", null, 0, -1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE,
-				IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getMoflonPropertiesContainer_MetaModelProject(), this.getMetaModelProject(), null,
-				"metaModelProject", null, 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE,
-				IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getMoflonPropertiesContainer_ReplaceGenModel(), this.getReplaceGenModel(), null,
-				"replaceGenModel", null, 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE,
-				IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getMoflonPropertiesContainer_TGGBuildMode(), this.getTGGBuildMode(), null, "tGGBuildMode", null,
-				1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
-				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getMoflonPropertiesContainer_ImportMappings(), this.getImportMappings(), null, "importMappings",
-				null, 0, -1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
-				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getMoflonPropertiesContainer_AdditionalUsedGenPackages(), this.getAdditionalUsedGenPackages(),
-				null, "additionalUsedGenPackages", null, 0, -1, MoflonPropertiesContainer.class, !IS_TRANSIENT,
-				!IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED,
-				IS_ORDERED);
-		initEAttribute(getMoflonPropertiesContainer_Description(), ecorePackage.getEString(), "description",
-				"[Properties to configure code generation]", 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT,
-				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
-		initEAttribute(getMoflonPropertiesContainer_ProjectName(), ecorePackage.getEString(), "projectName", null, 1, 1,
-				MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
-				IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
-
-		initEClass(replaceGenModelEClass, ReplaceGenModel.class, "ReplaceGenModel", !IS_ABSTRACT, !IS_INTERFACE,
-				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getReplaceGenModel_Bool(), ecorePackage.getEBoolean(), "bool", "true", 1, 1,
-				ReplaceGenModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-				!IS_DERIVED, !IS_ORDERED);
-		initEAttribute(getReplaceGenModel_Description(), ecorePackage.getEString(), "description",
-				"[Set to false if you wish to maintain the GenModel in the project yourself]", 1, 1,
-				ReplaceGenModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-				!IS_DERIVED, !IS_ORDERED);
-
-		initEClass(propertiesMappingEClass, PropertiesMapping.class, "PropertiesMapping", !IS_ABSTRACT, !IS_INTERFACE,
-				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getPropertiesMapping_Key(), ecorePackage.getEString(), "key", null, 1, 1,
-				PropertiesMapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-				!IS_DERIVED, !IS_ORDERED);
-		initEAttribute(getPropertiesMapping_Value(), ecorePackage.getEString(), "value", null, 1, 1,
-				PropertiesMapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-				!IS_DERIVED, !IS_ORDERED);
-
-		initEClass(additionalDependenciesEClass, AdditionalDependencies.class, "AdditionalDependencies", !IS_ABSTRACT,
-				!IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getAdditionalDependencies_Description(), ecorePackage.getEString(), "description",
-				"[Used to add additional dependencies required for code generation]", 1, 1,
-				AdditionalDependencies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
-				IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
-
-		initEClass(metaModelProjectEClass, MetaModelProject.class, "MetaModelProject", !IS_ABSTRACT, !IS_INTERFACE,
-				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getMetaModelProject_Description(), ecorePackage.getEString(), "description",
-				"[Name of the corresponding metamodel project in the current workspace]", 1, 1, MetaModelProject.class,
-				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+		initEClass(tggBuildModeEClass, TGGBuildMode.class, "TGGBuildMode", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getTGGBuildMode_BuildMode(), this.getBuildMode(), "buildMode", "BuildMode.ALL", 1, 1, TGGBuildMode.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
 				!IS_ORDERED);
-		initEAttribute(getMetaModelProject_MetaModelProjectName(), ecorePackage.getEString(), "MetaModelProjectName",
-				null, 1, 1, MetaModelProject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
-				IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEAttribute(getTGGBuildMode_Description(), ecorePackage.getEString(), "description", "[Controls which TGG operationalizations are generated]", 0, 1, TGGBuildMode.class, !IS_TRANSIENT, !IS_VOLATILE,
+				IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+
+		initEClass(factoryMappingsEClass, FactoryMappings.class, "FactoryMappings", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getFactoryMappings_Description(), ecorePackage.getEString(), "description", "[Used to correct the name of a Factory if it does not comply with our normal naming conventions]", 1, 1,
+				FactoryMappings.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+
+		initEClass(moflonPropertiesContainerEClass, MoflonPropertiesContainer.class, "MoflonPropertiesContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getMoflonPropertiesContainer_Dependencies(), this.getDependencies(), null, "dependencies", null, 0, -1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getMoflonPropertiesContainer_FactoryMappings(), this.getFactoryMappings(), null, "factoryMappings", null, 0, -1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+				IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getMoflonPropertiesContainer_AdditionalDependencies(), this.getAdditionalDependencies(), null, "additionalDependencies", null, 0, -1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE,
+				IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getMoflonPropertiesContainer_MetaModelProject(), this.getMetaModelProject(), null, "metaModelProject", null, 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+				IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getMoflonPropertiesContainer_ReplaceGenModel(), this.getReplaceGenModel(), null, "replaceGenModel", null, 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+				IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getMoflonPropertiesContainer_TGGBuildMode(), this.getTGGBuildMode(), null, "tGGBuildMode", null, 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getMoflonPropertiesContainer_ImportMappings(), this.getImportMappings(), null, "importMappings", null, 0, -1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+				IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getMoflonPropertiesContainer_AdditionalUsedGenPackages(), this.getAdditionalUsedGenPackages(), null, "additionalUsedGenPackages", null, 0, -1, MoflonPropertiesContainer.class, !IS_TRANSIENT,
+				!IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMoflonPropertiesContainer_Description(), ecorePackage.getEString(), "description", "[Properties to configure code generation]", 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT,
+				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEAttribute(getMoflonPropertiesContainer_ProjectName(), ecorePackage.getEString(), "projectName", null, 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
+				!IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+
+		initEClass(replaceGenModelEClass, ReplaceGenModel.class, "ReplaceGenModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getReplaceGenModel_Bool(), ecorePackage.getEBoolean(), "bool", "true", 1, 1, ReplaceGenModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+				!IS_ORDERED);
+		initEAttribute(getReplaceGenModel_Description(), ecorePackage.getEString(), "description", "[Set to false if you wish to maintain the GenModel in the project yourself]", 1, 1, ReplaceGenModel.class,
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+
+		initEClass(propertiesMappingEClass, PropertiesMapping.class, "PropertiesMapping", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getPropertiesMapping_Key(), ecorePackage.getEString(), "key", null, 1, 1, PropertiesMapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+				!IS_ORDERED);
+		initEAttribute(getPropertiesMapping_Value(), ecorePackage.getEString(), "value", null, 1, 1, PropertiesMapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
+				!IS_ORDERED);
+
+		initEClass(additionalDependenciesEClass, AdditionalDependencies.class, "AdditionalDependencies", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getAdditionalDependencies_Description(), ecorePackage.getEString(), "description", "[Used to add additional dependencies required for code generation]", 1, 1, AdditionalDependencies.class,
+				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+
+		initEClass(metaModelProjectEClass, MetaModelProject.class, "MetaModelProject", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getMetaModelProject_Description(), ecorePackage.getEString(), "description", "[Name of the corresponding metamodel project in the current workspace]", 1, 1, MetaModelProject.class, !IS_TRANSIENT,
+				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEAttribute(getMetaModelProject_MetaModelProjectName(), ecorePackage.getEString(), "MetaModelProjectName", null, 1, 1, MetaModelProject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
+				!IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(buildModeEEnum, BuildMode.class, "BuildMode");

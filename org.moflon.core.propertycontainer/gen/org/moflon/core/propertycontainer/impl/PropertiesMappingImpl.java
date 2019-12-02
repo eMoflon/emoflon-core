@@ -106,8 +106,7 @@ public class PropertiesMappingImpl extends EObjectImpl implements PropertiesMapp
 		String oldKey = key;
 		key = newKey;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.PROPERTIES_MAPPING__KEY,
-					oldKey, key));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.PROPERTIES_MAPPING__KEY, oldKey, key));
 	}
 
 	/**
@@ -128,8 +127,7 @@ public class PropertiesMappingImpl extends EObjectImpl implements PropertiesMapp
 		String oldValue = value;
 		value = newValue;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.PROPERTIES_MAPPING__VALUE,
-					oldValue, value));
+			eNotify(new ENotificationImpl(this, Notification.SET, PropertycontainerPackage.PROPERTIES_MAPPING__VALUE, oldValue, value));
 	}
 
 	/**

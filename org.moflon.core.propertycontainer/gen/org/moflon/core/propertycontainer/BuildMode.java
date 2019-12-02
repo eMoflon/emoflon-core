@@ -71,10 +71,6 @@ public enum BuildMode implements Enumerator {
 	/**
 	 * The '<em><b>ALL</b></em>' literal value.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>ALL</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @see #ALL
 	 * @model
@@ -86,10 +82,6 @@ public enum BuildMode implements Enumerator {
 	/**
 	 * The '<em><b>SIMULTANEOUS</b></em>' literal value.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>SIMULTANEOUS</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @see #SIMULTANEOUS
 	 * @model
@@ -101,10 +93,6 @@ public enum BuildMode implements Enumerator {
 	/**
 	 * The '<em><b>BACKWARD</b></em>' literal value.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>BACKWARD</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @see #BACKWARD
 	 * @model
@@ -116,10 +104,6 @@ public enum BuildMode implements Enumerator {
 	/**
 	 * The '<em><b>FORWARD</b></em>' literal value.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>FORWARD</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @see #FORWARD
 	 * @model
@@ -131,10 +115,6 @@ public enum BuildMode implements Enumerator {
 	/**
 	 * The '<em><b>FORWARD AND BACKWARD</b></em>' literal value.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>FORWARD AND BACKWARD</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @see #FORWARD_AND_BACKWARD
 	 * @model
@@ -149,8 +129,7 @@ public enum BuildMode implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final BuildMode[] VALUES_ARRAY = new BuildMode[] { ALL, SIMULTANEOUS, BACKWARD, FORWARD,
-			FORWARD_AND_BACKWARD, };
+	private static final BuildMode[] VALUES_ARRAY = new BuildMode[] { ALL, SIMULTANEOUS, BACKWARD, FORWARD, FORWARD_AND_BACKWARD, };
 
 	/**
 	 * A public read-only list of all the '<em><b>Build Mode</b></em>' enumerators.
@@ -258,6 +237,7 @@ public enum BuildMode implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getValue() {
 		return value;
 	}
@@ -267,6 +247,7 @@ public enum BuildMode implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -276,6 +257,7 @@ public enum BuildMode implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getLiteral() {
 		return literal;
 	}

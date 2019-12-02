@@ -28,8 +28,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 */
 	public static PropertycontainerFactory init() {
 		try {
-			PropertycontainerFactory thePropertycontainerFactory = (PropertycontainerFactory) EPackage.Registry.INSTANCE
-					.getEFactory(PropertycontainerPackage.eNS_URI);
+			PropertycontainerFactory thePropertycontainerFactory = (PropertycontainerFactory) EPackage.Registry.INSTANCE.getEFactory(PropertycontainerPackage.eNS_URI);
 			if (thePropertycontainerFactory != null) {
 				return thePropertycontainerFactory;
 			}
@@ -119,6 +118,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Dependencies createDependencies() {
 		DependenciesImpl dependencies = new DependenciesImpl();
 		return dependencies;
@@ -129,6 +129,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PropertiesValue createPropertiesValue() {
 		PropertiesValueImpl propertiesValue = new PropertiesValueImpl();
 		return propertiesValue;
@@ -139,6 +140,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public AdditionalUsedGenPackages createAdditionalUsedGenPackages() {
 		AdditionalUsedGenPackagesImpl additionalUsedGenPackages = new AdditionalUsedGenPackagesImpl();
 		return additionalUsedGenPackages;
@@ -149,6 +151,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ImportMappings createImportMappings() {
 		ImportMappingsImpl importMappings = new ImportMappingsImpl();
 		return importMappings;
@@ -159,6 +162,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public TGGBuildMode createTGGBuildMode() {
 		TGGBuildModeImpl tggBuildMode = new TGGBuildModeImpl();
 		return tggBuildMode;
@@ -169,6 +173,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public FactoryMappings createFactoryMappings() {
 		FactoryMappingsImpl factoryMappings = new FactoryMappingsImpl();
 		return factoryMappings;
@@ -179,6 +184,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MoflonPropertiesContainer createMoflonPropertiesContainer() {
 		MoflonPropertiesContainerImpl moflonPropertiesContainer = new MoflonPropertiesContainerImpl();
 		return moflonPropertiesContainer;
@@ -189,6 +195,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ReplaceGenModel createReplaceGenModel() {
 		ReplaceGenModelImpl replaceGenModel = new ReplaceGenModelImpl();
 		return replaceGenModel;
@@ -199,6 +206,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PropertiesMapping createPropertiesMapping() {
 		PropertiesMappingImpl propertiesMapping = new PropertiesMappingImpl();
 		return propertiesMapping;
@@ -209,6 +217,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public AdditionalDependencies createAdditionalDependencies() {
 		AdditionalDependenciesImpl additionalDependencies = new AdditionalDependenciesImpl();
 		return additionalDependencies;
@@ -219,6 +228,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public MetaModelProject createMetaModelProject() {
 		MetaModelProjectImpl metaModelProject = new MetaModelProjectImpl();
 		return metaModelProject;
@@ -232,8 +242,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	public BuildMode createBuildModeFromString(EDataType eDataType, String initialValue) {
 		BuildMode result = BuildMode.get(initialValue);
 		if (result == null)
-			throw new IllegalArgumentException(
-					"The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+			throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
 		return result;
 	}
 
@@ -251,6 +260,7 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public PropertycontainerPackage getPropertycontainerPackage() {
 		return (PropertycontainerPackage) getEPackage();
 	}
