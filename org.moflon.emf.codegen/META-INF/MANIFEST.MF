@@ -16,5 +16,6 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.0.0",
  org.moflon.core.utilities;bundle-version="2.0.0",
  org.moflon.emf.injection;bundle-version="1.0.0",
  org.moflon.emf.injection.ide;bundle-version="1.0.0",
- org.moflon.core.preferences;bundle-version="2.0.0"
+ org.moflon.core.preferences;bundle-version="2.0.0",
+ org.eclipse.jdt.core
 Automatic-Module-Name: org.moflon.emf.codegen
