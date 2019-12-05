@@ -2,3 +2,4 @@
 /model/*.genmodel
 /model/*.xmi
 !/**/.keep*
+/gen/**
