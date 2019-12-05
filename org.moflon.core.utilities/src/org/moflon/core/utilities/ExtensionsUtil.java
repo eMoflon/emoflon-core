@@ -1,7 +1,6 @@
 package org.moflon.core.utilities;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;

@@ -12,3 +12,4 @@ Require-Bundle: org.moflon.core.utilities;bundle-version="2.0.0",
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Automatic-Module-Name: org.moflon.core.utilities.tests
+Export-Package: org.moflon.core.utilities.tests

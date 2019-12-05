@@ -25,9 +25,14 @@ Require-Bundle: org.eclipse.ui.workbench;bundle-version="3.0.0",
 Export-Package: org.moflon.core.ui,
  org.moflon.core.ui.errorhandling,
  org.moflon.core.ui.handler,
+ org.moflon.core.ui.handler.visualisation,
+ org.moflon.core.ui.propertypage,
  org.moflon.core.ui.propertytester,
  org.moflon.core.ui.visualisation,
- org.moflon.core.ui.visualisation.common
+ org.moflon.core.ui.visualisation.common,
+ org.moflon.core.ui.visualisation.diagrams,
+ org.moflon.core.ui.visualisation.metamodels,
+ org.moflon.core.ui.visualisation.models
 Bundle-Activator: org.moflon.core.ui.MoflonCoreUiActivator
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.moflon.core.ui

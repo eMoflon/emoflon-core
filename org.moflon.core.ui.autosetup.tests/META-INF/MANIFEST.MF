@@ -10,3 +10,4 @@ Require-Bundle: org.junit;bundle-version="4.10.0",
  org.moflon.core.ui.autosetup;bundle-version="1.0.0",
  org.apache.commons.io
 Automatic-Module-Name: org.moflon.core.ui.autosetup.tests
+Export-Package: org.moflon.core.ui.autosetup.tests
