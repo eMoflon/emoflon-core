@@ -14,9 +14,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.0.0",
  org.moflon.core.propertycontainer,
  org.gervarro.eclipse.task,
  org.gervarro.eclipse.workspace.autosetup,
- org.moflon.emf.injection.ui,
  org.moflon.core.preferences,
- org.moflon.emf.codegen,
- org.moflon.emf.injection.ide
+ org.moflon.emf.codegen
 Export-Package: org.moflon.emf.build
 Automatic-Module-Name: org.moflon.emf.build

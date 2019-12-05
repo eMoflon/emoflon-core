@@ -43,13 +43,12 @@ public class CodeGenerator extends Generator {
 
 	public static final boolean SYSOUT_BEGIN_END = false;
 	
-	private final GeneratorAdapterFactory.Descriptor descriptor;
+//	private final GeneratorAdapterFactory.Descriptor descriptor;
 	private String taskName = "eMoflon Code Generator";
 
-	public CodeGenerator(final Descriptor descriptor) {
-		this.descriptor = descriptor;
-	}
-
+//	public CodeGenerator(final Descriptor descriptor) {
+//		this.descriptor = descriptor;
+//	}
 	/**
 	 * Assigns a descriptive name to this code generator. If this method is not
 	 * called, a default name is used.
@@ -62,7 +61,7 @@ public class CodeGenerator extends Generator {
 	}
 
 	public final IStatus generateCode(final GenModel genModel, final Monitor monitor) {
-		getAdapterFactoryDescriptorRegistry().addDescriptor(GenModelPackage.eNS_URI, descriptor);
+		//getAdapterFactoryDescriptorRegistry().addDescriptor(GenModelPackage.eNS_URI, descriptor);
 		setInput(genModel);
 		genModel.setCanGenerate(true);
 

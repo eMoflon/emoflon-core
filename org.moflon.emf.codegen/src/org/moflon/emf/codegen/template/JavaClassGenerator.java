@@ -15,7 +15,6 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.codegen.ecore.genmodel.GenParameter;
 import org.eclipse.emf.codegen.ecore.genmodel.GenRuntimePlatform;
 import org.eclipse.emf.codegen.util.CodeGenUtil;
-import org.moflon.emf.codegen.AbstractMoflonClassGeneratorAdapter;
 
 public class JavaClassGenerator {
 	protected static String nl;
@@ -3730,8 +3729,6 @@ public class JavaClassGenerator {
 		final String positiveOperationOffsetCorrection = genClass.hasOffsetCorrection()
 				? " + EOPERATION_OFFSET_CORRECTION"
 				: "";
-		AbstractMoflonClassGeneratorAdapter generatorAdapter = (AbstractMoflonClassGeneratorAdapter) ((Object[]) argument)[((Object[]) argument).length
-				- 1];
 		stringBuffer.append(TEXT_1);
 		{
 			GenBase copyrightHolder = argument instanceof GenBase ? (GenBase) argument
@@ -6889,12 +6886,7 @@ public class JavaClassGenerator {
 					stringBuffer.append(TEXT_1259);
 				} else {
 					// SDM based method implementation
-					String methodBody = generatorAdapter.getGeneratedMethodBody(genOperation.getEcoreOperation());
-					if (methodBody != null) {
-						stringBuffer.append(methodBody);
-					} else {
-						stringBuffer.append(TEXT_1260);
-					}
+					stringBuffer.append(TEXT_1260);
 					// Class/implementedGenOperation.todo.override.javajetinc
 				}
 				stringBuffer.append(TEXT_1261);
@@ -8154,13 +8146,6 @@ public class JavaClassGenerator {
 			stringBuffer.append(eMapType);
 			stringBuffer.append(TEXT_1756);
 		}
-		String injectedCode = generatorAdapter.getInjectedCode(isImplementation);
-		if (injectedCode != null) {
-			stringBuffer.append(injectedCode);
-		} else {
-			// Do nothing
-		}
-		generatorAdapter.handleImports(isImplementation);
 		stringBuffer.append(TEXT_1757);
 		stringBuffer.append(isInterface ? " " + genClass.getInterfaceName() : genClass.getClassName());
 		genModel.emitSortedImports();

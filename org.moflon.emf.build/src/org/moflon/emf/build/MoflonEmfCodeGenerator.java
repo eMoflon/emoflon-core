@@ -7,15 +7,10 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.emf.codegen.ecore.generator.GeneratorAdapterFactory.Descriptor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.BasicMonitor;
@@ -28,17 +23,9 @@ import org.moflon.core.preferences.EMoflonPreferencesStorage;
 import org.moflon.core.utilities.LogUtils;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.emf.codegen.CodeGenerator;
-import org.moflon.emf.codegen.InjectionAwareGeneratorAdapterFactory;
-import org.moflon.emf.injection.build.CodeInjectorImpl;
-import org.moflon.emf.injection.build.XTextInjectionExtractor;
-import org.moflon.emf.injection.ide.CodeInjector;
-import org.moflon.emf.injection.ide.InjectionExtractor;
-import org.moflon.emf.injection.ide.InjectionManager;
 
 public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 	private static final Logger logger = Logger.getLogger(MoflonEmfCodeGenerator.class);
-
-	private InjectionManager injectionManager;
 
 	private GenModel genModel;
 
@@ -71,12 +58,8 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 			if (genModelBuilderStatus.matches(IStatus.ERROR))
 				return genModelBuilderStatus;
 			this.setGenModel(genModelBuilderJob.getGenModel());
-
-			final IStatus injectionStatus = loadInjections();
 			if (subMon.isCanceled())
 				return Status.CANCEL_STATUS;
-			if (injectionStatus.matches(IStatus.ERROR))
-				return injectionStatus;
 			subMon.worked(5);
 
 			final IStatus inheritanceCheckStatus = checkForCyclicInheritance();
@@ -87,9 +70,7 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 
 			// Generate code
 			subMon.subTask("Generating code for project " + getProjectName());
-			final Descriptor codeGenerationEngine = new InjectionAwareGeneratorAdapterFactory(
-					this.getInjectorManager());
-			final CodeGenerator codeGenerator = new CodeGenerator(codeGenerationEngine);
+			final CodeGenerator codeGenerator = new CodeGenerator();
 			final IStatus codeGenerationStatus = codeGenerator.generateCode(genModel,
 					new BasicMonitor.EclipseSubProgress(subMon, 30));
 			if (subMon.isCanceled()) {
@@ -104,18 +85,10 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 			final double durationInSeconds = (tic - toc) / 1e9;
 			logger.info(String.format(Locale.US, "Completed in %.3fs", durationInSeconds));
 
-			return injectionStatus.isOK() ? Status.OK_STATUS : injectionStatus;
+			return Status.OK_STATUS;
 		} catch (final Exception e) {
 			return reportExceptionDuringCodeGeneration(e);
 		}
-	}
-
-	private IStatus loadInjections() throws CoreException {
-		final IProject project = getProject();
-		final InjectionManager injectionManager = createInjectionManager(project);
-		this.setInjectorManager(injectionManager);
-		final IStatus injectionStatus = createInjections(project);
-		return injectionStatus;
 	}
 
 	/**
@@ -166,59 +139,6 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 	 */
 	public final GenModel getGenModel() {
 		return genModel;
-	}
-
-	/**
-	 * Set the {@link InjectionManager} to use
-	 * 
-	 * @param injectionManager
-	 *                             the injection manager
-	 */
-	protected void setInjectorManager(final InjectionManager injectionManager) {
-		this.injectionManager = injectionManager;
-	}
-
-	/**
-	 * Returns the {@link InjectionManager} of this code generator.
-	 * 
-	 * The injection manager is initialized during the code generation.
-	 * 
-	 * @return the injection manager or <code>null</code> if it has not been
-	 *         initialized yet
-	 */
-	public final InjectionManager getInjectorManager() {
-		return injectionManager;
-	}
-
-	/**
-	 * Loads the injections from the /injection folder using the injection manager
-	 * returned from {@link #getInjectorManager()}
-	 */
-	protected IStatus createInjections(final IProject project) throws CoreException {
-		final IStatus extractionStatus = getInjectorManager().extractInjections();
-		return extractionStatus;
-	}
-
-	/**
-	 * Creates the injection manager to be used for this build process
-	 *
-	 * The resulting injection manager still needs to be set using
-	 * {@link #setInjectorManager(InjectionManager)}
-	 * 
-	 * @param project
-	 *                    the current project
-	 * @return
-	 * @throws CoreException
-	 */
-	protected InjectionManager createInjectionManager(final IProject project) throws CoreException {
-		final IFolder injectionFolder = WorkspaceHelper.addFolder(project, WorkspaceHelper.INJECTION_FOLDER,
-				new NullProgressMonitor());
-		final CodeInjector injector = new CodeInjectorImpl(project.getLocation().toOSString());
-
-		final InjectionExtractor injectionExtractor = new XTextInjectionExtractor(injectionFolder, this.getGenModel());
-
-		final InjectionManager injectionManager = new InjectionManager(injectionExtractor, injector);
-		return injectionManager;
 	}
 
 	/**

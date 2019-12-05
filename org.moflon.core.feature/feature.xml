@@ -45,27 +45,6 @@ See here for more details on EPL: https://www.eclipse.org/org/documents/epl-v10.
          unpack="false"/>
 
    <plugin
-         id="org.moflon.emf.injection"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.moflon.emf.injection.ide"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.moflon.emf.injection.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.moflon.core.build"
          download-size="0"
          install-size="0"
