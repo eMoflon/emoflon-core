@@ -3,8 +3,6 @@
 package org.moflon.core.propertycontainer;
 
 import org.eclipse.emf.ecore.EObject;
-// <-- [user defined imports]
-// [user defined imports] -->
 
 /**
  * <!-- begin-user-doc -->
@@ -13,11 +11,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.moflon.core.propertycontainer.MetaModelProject#getDescription <em>Description</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MetaModelProject#getMetaModelProjectName <em>Meta Model Project Name</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMetaModelProject()
  * @model
@@ -28,10 +26,6 @@ public interface MetaModelProject extends EObject {
 	 * Returns the value of the '<em><b>Description</b></em>' attribute.
 	 * The default value is <code>"[Name of the corresponding metamodel project in the current workspace]"</code>.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Description</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Description</em>' attribute.
 	 * @see #setDescription(String)
@@ -54,10 +48,6 @@ public interface MetaModelProject extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Meta Model Project Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Meta Model Project Name</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Meta Model Project Name</em>' attribute.
 	 * @see #setMetaModelProjectName(String)
@@ -76,7 +66,5 @@ public interface MetaModelProject extends EObject {
 	 * @generated
 	 */
 	void setMetaModelProjectName(String value);
-	// <-- [user code injected with eMoflon]
 
-	// [user code injected with eMoflon] -->
 } // MetaModelProject

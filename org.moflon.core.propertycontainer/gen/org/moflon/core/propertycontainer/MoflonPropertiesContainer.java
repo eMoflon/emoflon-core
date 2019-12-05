@@ -5,8 +5,6 @@ package org.moflon.core.propertycontainer;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
-// <-- [user defined imports]
-// [user defined imports] -->
 
 /**
  * <!-- begin-user-doc -->
@@ -15,6 +13,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getDependencies <em>Dependencies</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getFactoryMappings <em>Factory Mappings</em>}</li>
@@ -27,7 +26,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getDescription <em>Description</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getProjectName <em>Project Name</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer()
  * @model
@@ -38,10 +36,6 @@ public interface MoflonPropertiesContainer extends EObject {
 	 * Returns the value of the '<em><b>Dependencies</b></em>' containment reference list.
 	 * The list contents are of type {@link org.moflon.core.propertycontainer.Dependencies}.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Dependencies</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Dependencies</em>' containment reference list.
 	 * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer_Dependencies()
@@ -54,10 +48,6 @@ public interface MoflonPropertiesContainer extends EObject {
 	 * Returns the value of the '<em><b>Factory Mappings</b></em>' containment reference list.
 	 * The list contents are of type {@link org.moflon.core.propertycontainer.FactoryMappings}.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Factory Mappings</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Factory Mappings</em>' containment reference list.
 	 * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer_FactoryMappings()
@@ -70,10 +60,6 @@ public interface MoflonPropertiesContainer extends EObject {
 	 * Returns the value of the '<em><b>Additional Dependencies</b></em>' containment reference list.
 	 * The list contents are of type {@link org.moflon.core.propertycontainer.AdditionalDependencies}.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Additional Dependencies</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Additional Dependencies</em>' containment reference list.
 	 * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer_AdditionalDependencies()
@@ -85,10 +71,6 @@ public interface MoflonPropertiesContainer extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Meta Model Project</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Meta Model Project</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Meta Model Project</em>' containment reference.
 	 * @see #setMetaModelProject(MetaModelProject)
@@ -111,10 +93,6 @@ public interface MoflonPropertiesContainer extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Replace Gen Model</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Replace Gen Model</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Replace Gen Model</em>' containment reference.
 	 * @see #setReplaceGenModel(ReplaceGenModel)
@@ -137,10 +115,6 @@ public interface MoflonPropertiesContainer extends EObject {
 	/**
 	 * Returns the value of the '<em><b>TGG Build Mode</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>TGG Build Mode</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>TGG Build Mode</em>' containment reference.
 	 * @see #setTGGBuildMode(TGGBuildMode)
@@ -164,10 +138,6 @@ public interface MoflonPropertiesContainer extends EObject {
 	 * Returns the value of the '<em><b>Import Mappings</b></em>' containment reference list.
 	 * The list contents are of type {@link org.moflon.core.propertycontainer.ImportMappings}.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Import Mappings</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Import Mappings</em>' containment reference list.
 	 * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer_ImportMappings()
@@ -180,10 +150,6 @@ public interface MoflonPropertiesContainer extends EObject {
 	 * Returns the value of the '<em><b>Additional Used Gen Packages</b></em>' containment reference list.
 	 * The list contents are of type {@link org.moflon.core.propertycontainer.AdditionalUsedGenPackages}.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Additional Used Gen Packages</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Additional Used Gen Packages</em>' containment reference list.
 	 * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer_AdditionalUsedGenPackages()
@@ -196,10 +162,6 @@ public interface MoflonPropertiesContainer extends EObject {
 	 * Returns the value of the '<em><b>Description</b></em>' attribute.
 	 * The default value is <code>"[Properties to configure code generation]"</code>.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Description</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Description</em>' attribute.
 	 * @see #setDescription(String)
@@ -222,10 +184,6 @@ public interface MoflonPropertiesContainer extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Project Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Project Name</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Project Name</em>' attribute.
 	 * @see #setProjectName(String)
@@ -244,7 +202,5 @@ public interface MoflonPropertiesContainer extends EObject {
 	 * @generated
 	 */
 	void setProjectName(String value);
-	// <-- [user code injected with eMoflon]
 
-	// [user code injected with eMoflon] -->
 } // MoflonPropertiesContainer

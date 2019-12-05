@@ -2,8 +2,7 @@
  */
 package org.moflon.core.propertycontainer;
 
-// <-- [user defined imports]
-// [user defined imports] -->
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -12,24 +11,20 @@ package org.moflon.core.propertycontainer;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.moflon.core.propertycontainer.Dependencies#getDescription <em>Description</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getDependencies()
  * @model
  * @generated
  */
-public interface Dependencies extends PropertiesValue {
+public interface Dependencies extends EObject, PropertiesValue {
 	/**
 	 * Returns the value of the '<em><b>Description</b></em>' attribute.
 	 * The default value is <code>"[Automatically derived dependencies of this project]"</code>.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Description</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Description</em>' attribute.
 	 * @see #setDescription(String)
@@ -48,7 +43,5 @@ public interface Dependencies extends PropertiesValue {
 	 * @generated
 	 */
 	void setDescription(String value);
-	// <-- [user code injected with eMoflon]
 
-	// [user code injected with eMoflon] -->
 } // Dependencies

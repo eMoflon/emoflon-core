@@ -3,8 +3,6 @@
 package org.moflon.core.propertycontainer;
 
 import org.eclipse.emf.ecore.EObject;
-// <-- [user defined imports]
-// [user defined imports] -->
 
 /**
  * <!-- begin-user-doc -->
@@ -13,10 +11,10 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.moflon.core.propertycontainer.PropertiesValue#getValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getPropertiesValue()
  * @model
@@ -26,10 +24,6 @@ public interface PropertiesValue extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Value</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Value</em>' attribute.
 	 * @see #setValue(String)
@@ -48,7 +42,5 @@ public interface PropertiesValue extends EObject {
 	 * @generated
 	 */
 	void setValue(String value);
-	// <-- [user code injected with eMoflon]
 
-	// [user code injected with eMoflon] -->
 } // PropertiesValue

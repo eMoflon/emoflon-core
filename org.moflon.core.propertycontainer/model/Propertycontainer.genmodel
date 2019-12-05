@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.moflon.core.propertycontainer/gen" modelPluginID="org.moflon.core.propertycontainer"
+    modelName="Propertycontainer" updateClasspath="false" codeFormatting="true" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="8.0" copyrightFields="false" operationReflection="true">
+  <foreignModel>Propertycontainer.ecore</foreignModel>
+  <genPackages prefix="Propertycontainer" basePackage="org.moflon.core" disposableProviderFactory="true"
+      ecorePackage="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//BuildMode">
+      <genEnumLiterals ecoreEnumLiteral="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//BuildMode/ALL"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//BuildMode/SIMULTANEOUS"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//BuildMode/BACKWARD"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//BuildMode/FORWARD"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//BuildMode/FORWARD_AND_BACKWARD"/>
+    </genEnums>
+    <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//Dependencies">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//Dependencies/description"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//PropertiesValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//PropertiesValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//AdditionalUsedGenPackages">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//AdditionalUsedGenPackages/description"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//ImportMappings">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//ImportMappings/description"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//TGGBuildMode">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//TGGBuildMode/buildMode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//TGGBuildMode/description"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//FactoryMappings">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//FactoryMappings/description"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/dependencies"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/factoryMappings"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/additionalDependencies"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/metaModelProject"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/replaceGenModel"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/tGGBuildMode"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/importMappings"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/additionalUsedGenPackages"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/projectName"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//ReplaceGenModel">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//ReplaceGenModel/bool"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//ReplaceGenModel/description"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//PropertiesMapping">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//PropertiesMapping/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//PropertiesMapping/value"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//AdditionalDependencies">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//AdditionalDependencies/description"/>
+    </genClasses>
+    <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MetaModelProject">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MetaModelProject/description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MetaModelProject/MetaModelProjectName"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

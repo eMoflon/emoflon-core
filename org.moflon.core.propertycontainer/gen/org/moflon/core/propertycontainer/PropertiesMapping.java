@@ -3,8 +3,6 @@
 package org.moflon.core.propertycontainer;
 
 import org.eclipse.emf.ecore.EObject;
-// <-- [user defined imports]
-// [user defined imports] -->
 
 /**
  * <!-- begin-user-doc -->
@@ -13,11 +11,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.moflon.core.propertycontainer.PropertiesMapping#getKey <em>Key</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.PropertiesMapping#getValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getPropertiesMapping()
  * @model
@@ -27,10 +25,6 @@ public interface PropertiesMapping extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Key</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Key</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Key</em>' attribute.
 	 * @see #setKey(String)
@@ -53,10 +47,6 @@ public interface PropertiesMapping extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Value</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Value</em>' attribute.
 	 * @see #setValue(String)
@@ -75,7 +65,5 @@ public interface PropertiesMapping extends EObject {
 	 * @generated
 	 */
 	void setValue(String value);
-	// <-- [user code injected with eMoflon]
 
-	// [user code injected with eMoflon] -->
 } // PropertiesMapping
