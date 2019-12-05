@@ -1,6 +1,0 @@
-partial class PatternVariableHandlerImpl {
-
-@model concat(String first, String second) <--
-	return first + second;
--->
-}

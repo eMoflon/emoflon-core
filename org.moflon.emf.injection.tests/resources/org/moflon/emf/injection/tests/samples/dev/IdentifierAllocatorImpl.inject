@@ -1,6 +1,0 @@
-partial class IdentifierAllocatorImpl {
-
-@model incrementIdentifier() <--
-	return getId()+1;
--->
-}

@@ -1,6 +1,0 @@
-partial class AttributeVariableImpl
-{
-@model getName() <--
-      return getObjectVariable() + "." + getAttribute();
--->
-}
