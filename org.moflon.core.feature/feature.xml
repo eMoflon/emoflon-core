@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.moflon.core.feature"
-      label="eMoflon::Core feature"
+      label="eMoflon::Core"
       version="1.7.0.qualifier"
       provider-name="eMoflon developers"
       plugin="org.moflon.core.branding">
@@ -26,7 +26,7 @@ See here for more details on EPL: https://www.eclipse.org/org/documents/epl-v10.
    </license>
 
    <url>
-      <update label="eMoflon::Core update site" url="https://emoflon.org/emoflon-core-updatesite/stable/updatesite"/>
+      <update label="eMoflon::Core" url="https://emoflon.org/emoflon-core-updatesite/stable/updatesite"/>
       <discovery label="PlantUML update site" url="https://hallvard.github.io/plantuml"/>
       <discovery label="XText update site (release)" url="https://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
       <discovery label="Emfatic" url="https://download.eclipse.org/emfatic/update"/>
