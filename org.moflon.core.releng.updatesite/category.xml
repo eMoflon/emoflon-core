@@ -9,7 +9,5 @@
       </description>
    </category-def>
    <repository-reference location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/" enabled="true" />
-   <repository-reference location="http://gervarro.org/eclipse-utils/" enabled="true" />
-   <repository-reference location="http://gervarro.org/external" enabled="true" />
    <repository-reference location="http://hallvard.github.io/plantuml/" enabled="true" />
 </site>
