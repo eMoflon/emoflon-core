@@ -66,8 +66,21 @@ Export-Package: org.gervarro.collection,
  org.gervarro.util.index
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: org.emoflon.core.dependencies
-Require-Bundle: org.eclipse.core.resources;bundle-version="3.13.500";visibility:=reexport,
- org.eclipse.core.runtime;bundle-version="3.16.0";visibility:=reexport,
+Require-Bundle: com.google.guava;visibility:=reexport,
  org.apache.ant;bundle-version="1.10.5";visibility:=reexport,
+ org.eclipse.core.commands;bundle-version="3.9.500";visibility:=reexport,
+ org.eclipse.core.expressions;bundle-version="3.6.500";visibility:=reexport,
+ org.eclipse.core.filesystem;bundle-version="1.7.500";visibility:=reexport,
+ org.eclipse.core.jobs;visibility:=reexport,
+ org.eclipse.core.resources;bundle-version="3.13.500";visibility:=reexport,
+ org.eclipse.core.runtime;bundle-version="3.16.0";visibility:=reexport,
+ org.eclipse.jdt.core;bundle-version="3.19.0";visibility:=reexport,
+ org.eclipse.emf.codegen.ecore;bundle-version="2.19.0";visibility:=reexport,
+ org.eclipse.emf.common;visibility:=reexport,
+ org.eclipse.emf.compare;bundle-version="3.5.3";visibility:=reexport,
  org.eclipse.emf.ecore;bundle-version="2.19.0";visibility:=reexport,
- org.eclipse.emf.ecore.xmi;bundle-version="2.16.0";visibility:=reexport
+ org.eclipse.emf.ecore.editor;bundle-version="2.17.0";visibility:=reexport,
+ org.eclipse.emf.ecore.xmi;bundle-version="2.16.0";visibility:=reexport,
+ org.eclipse.xtend;bundle-version="2.2.0";visibility:=reexport,
+ org.eclipse.xtend.lib;bundle-version="2.19.0";visibility:=reexport,
+ org.eclipse.xtend.lib.macro;visibility:=reexport

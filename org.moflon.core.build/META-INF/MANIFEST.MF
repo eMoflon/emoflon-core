@@ -5,12 +5,7 @@ Bundle-SymbolicName: org.moflon.core.build
 Bundle-Version: 1.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: eMoflon developers
-Require-Bundle: org.eclipse.core.resources;bundle-version="3.0.0",
- org.eclipse.core.runtime;bundle-version="3.0.0",
- org.eclipse.jdt.core;bundle-version="3.0.0",
- org.eclipse.emf.ecore.xmi;bundle-version="2.0.0",
- org.eclipse.emf.codegen.ecore;bundle-version="2.0.0",
- org.emoflon.core.dependencies;bundle-version="1.0.0";visibility:=reexport,
+Require-Bundle: org.emoflon.core.dependencies;bundle-version="1.0.0",
  org.moflon.core.utilities;bundle-version="2.0.0",
  org.moflon.core.propertycontainer;bundle-version="2.1.0",
  org.moflon.core.plugins;bundle-version="2.2.0"
