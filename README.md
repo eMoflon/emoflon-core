@@ -1,10 +1,5 @@
 # eMoflon Core
 
-[![Coverage Badge](https://api.shippable.com/projects/5975e2f66b05110700b064c3/coverageBadge?branch=master)](https://app.shippable.com/github/eMoflon/emoflon-core)
-[![codebeat badge](https://codebeat.co/badges/44f66b11-d661-4b6a-8d29-5a056976bba2)](https://codebeat.co/projects/github-com-emoflon-emoflon-core-master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d862d48e76774bc7911d57a3cb1326bc)](https://www.codacy.com/app/RolandKluge/emoflon-core?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=eMoflon/emoflon-core&amp;utm_campaign=Badge_Grade)
-[![Project Stats](https://www.openhub.net/p/emoflon-core/widgets/project_thin_badge.gif)](https://www.openhub.net/p/emoflon-core)
-
 This repository holds core components of the model-driven engineering tool eMoflon.
 
 Capabilities of eMoflon Core:
