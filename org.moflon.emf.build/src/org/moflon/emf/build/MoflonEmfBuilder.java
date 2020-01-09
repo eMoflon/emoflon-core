@@ -124,7 +124,6 @@ public class MoflonEmfBuilder extends AbstractVisitorBuilder {
 			final IProject project = getProject();
 			createFoldersIfNecessary(project, subMon.split(1));
 			ClasspathUtil.makeSourceFolderIfNecessary(WorkspaceHelper.getGenFolder(getProject()));
-			ClasspathUtil.makeSourceFolderIfNecessary(WorkspaceHelper.getInjectionFolder(getProject()));
 
 			// Compute project dependencies
 			final IBuildConfiguration[] referencedBuildConfigs = project
@@ -221,9 +220,6 @@ public class MoflonEmfBuilder extends AbstractVisitorBuilder {
 		if (status.matches(IStatus.ERROR)) {
 			handleErrorsInEclipse(status, ecoreFile);
 		}
-		if (status.matches(IStatus.WARNING)) {
-			handleInjectionWarningsAndErrors(status);
-		}
 	}
 
 	/**
@@ -239,17 +235,6 @@ public class MoflonEmfBuilder extends AbstractVisitorBuilder {
 		project.accept(cleanVisitor, IResource.DEPTH_INFINITE, IResource.NONE);
 	}
 
-	private void handleInjectionWarningsAndErrors(final IStatus status) {
-		final String reporterClass = "org.moflon.emf.injection.validation.InjectionErrorReporter";
-		final ErrorReporter errorReporter = (ErrorReporter) Platform.getAdapterManager().loadAdapter(getProject(),
-				reporterClass);
-		if (errorReporter != null) {
-			errorReporter.report(status);
-		} else {
-			logger.debug("Could not load error reporter '" + reporterClass + "'");
-		}
-	}
-
 	private static void createFoldersIfNecessary(final IProject project, final IProgressMonitor monitor)
 			throws CoreException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, "Creating folders within project " + project, 4);
@@ -257,7 +242,6 @@ public class MoflonEmfBuilder extends AbstractVisitorBuilder {
 		WorkspaceHelper.createFolderIfNotExists(WorkspaceHelper.getSourceFolder(project), subMon.split(1));
 		WorkspaceHelper.createFolderIfNotExists(WorkspaceHelper.getBinFolder(project), subMon.split(1));
 		WorkspaceHelper.createFolderIfNotExists(WorkspaceHelper.getGenFolder(project), subMon.split(1));
-		WorkspaceHelper.createFolderIfNotExists(WorkspaceHelper.getInjectionFolder(project), subMon.split(1));
 	}
 
 }
