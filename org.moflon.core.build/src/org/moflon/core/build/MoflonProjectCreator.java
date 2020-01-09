@@ -267,7 +267,6 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 		WorkspaceHelper.createFolderIfNotExists(WorkspaceHelper.getLibFolder(project), subMon.split(1));
 		WorkspaceHelper.createFolderIfNotExists(WorkspaceHelper.getModelFolder(project), subMon.split(1));
 		WorkspaceHelper.createFolderIfNotExists(WorkspaceHelper.getInstancesFolder(project), subMon.split(1));
-		WorkspaceHelper.createFolderIfNotExists(WorkspaceHelper.getInjectionFolder(project), subMon.split(1));
 	}
 
 	/**
