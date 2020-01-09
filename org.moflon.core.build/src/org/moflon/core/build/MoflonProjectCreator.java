@@ -137,15 +137,12 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 			final IClasspathEntry genFolderEntry = JavaCore.newSourceEntry(
 					WorkspaceHelper.getGenFolder(project).getFullPath(), new IPath[0], new IPath[0], null,
 					genFolderClasspathAttributes);
-			final IClasspathEntry injectionFolderEntry = JavaCore.newSourceEntry(
-					WorkspaceHelper.getInjectionFolder(project).getFullPath(), new IPath[0], new IPath[0], null,
-					genFolderClasspathAttributes);
 			final IClasspathEntry jreContainerEntry = JavaCore
 					.newContainerEntry(new Path("org.eclipse.jdt.launching.JRE_CONTAINER"));
 			final IClasspathEntry pdeContainerEntry = JavaCore
 					.newContainerEntry(new Path("org.eclipse.pde.core.requiredPlugins"));
 			javaProject.setRawClasspath(
-					new IClasspathEntry[] { srcFolderEntry, genFolderEntry, injectionFolderEntry, jreContainerEntry,
+					new IClasspathEntry[] { srcFolderEntry, genFolderEntry, jreContainerEntry,
 							pdeContainerEntry },
 					WorkspaceHelper.getBinFolder(project).getFullPath(), true, subMon.split(1));
 
