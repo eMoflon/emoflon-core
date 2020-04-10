@@ -11,12 +11,20 @@ public class VisualEdge {
 	private EdgeType edgeType;
 	private EObject src;
 	private EObject trg;
-
+	private String name;
+	
 	public VisualEdge(EReference type, EdgeType edgeType, EObject src, EObject trg) {
 		this.type = type;
 		this.edgeType = edgeType;
 		this.src = src;
 		this.trg = trg;
+	}
+	
+	public VisualEdge(EdgeType edgeType, EObject src, EObject trg, String name) {
+		this.edgeType = edgeType;
+		this.src = src;
+		this.trg = trg;
+		this.name = name;
 	}
 
 	public EReference getType() {
@@ -36,6 +44,9 @@ public class VisualEdge {
 	}
 
 	public String getName() {
+		if(name != null)
+			return name;
+					
 		if (edgeType == EdgeType.GENERALISATION || type == null) {
 			return "";
 		}
