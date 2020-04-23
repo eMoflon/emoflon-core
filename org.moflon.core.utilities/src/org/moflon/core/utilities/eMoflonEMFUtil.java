@@ -1054,7 +1054,8 @@ public class eMoflonEMFUtil {
 	 */
 	private static String extractSymbolicName(final IPluginModelBase pluginModel) {
 		if (pluginModel == null || pluginModel.getBundleDescription() == null) {
-			throw new IllegalArgumentException("Cannot extract symbolic name from bundle.");
+//			throw new IllegalArgumentException("Cannot extract symbolic name from bundle.");
+			return pluginModel.toString();
 		}
 
 		return pluginModel.getBundleDescription().getSymbolicName();
