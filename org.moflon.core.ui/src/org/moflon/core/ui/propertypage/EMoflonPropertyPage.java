@@ -253,7 +253,8 @@ public class EMoflonPropertyPage extends MarkersPropertyPage {
 		Text resourceText = new Text(parent, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		resourceText.setLayoutData(gridData);
-		resourceText.setText(Util.getResourceName(marker));
+//		resourceText.setText(Util.getResourceName(marker));
+		resourceText.setText(marker.getResource().getName());
 
 		Label folderLabel = new Label(parent, SWT.NONE);
 		folderLabel.setText(MarkerMessages.propertiesDialog_folder_text);
@@ -322,9 +323,14 @@ public class EMoflonPropertyPage extends MarkersPropertyPage {
 			attrs.put(IMarker.DONE, completedCheckbox.getSelection() ? Boolean.TRUE : Boolean.FALSE);
 		}
 
+//		IUndoableOperation op = new UpdateMarkersOperation(marker, attrs,
+//				NLS.bind(MarkerMessages.qualifiedMarkerCommand_title,
+//						new Object[] { MarkerMessages.DialogMarkerProperties_Modify, Util.getResourceName(marker) }),
+//				true);
+		
 		IUndoableOperation op = new UpdateMarkersOperation(marker, attrs,
 				NLS.bind(MarkerMessages.qualifiedMarkerCommand_title,
-						new Object[] { MarkerMessages.DialogMarkerProperties_Modify, Util.getResourceName(marker) }),
+						new Object[] { MarkerMessages.DialogMarkerProperties_Modify, marker.getResource().getName() }),
 				true);
 
 		try {
