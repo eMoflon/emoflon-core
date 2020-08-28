@@ -204,6 +204,7 @@ public class GenericMonitoredResourceLoader implements ITask {
 	 * @return true iff the project can be handled
 	 */
 	protected boolean isValidProject(final IProject project) {
-		return project.isAccessible() && MoflonConventions.getDefaultEcoreFile(project).exists();
+		// TODO lfritsche, sehmes: removed naming conventions for ecore
+		return project.isAccessible() /*&& MoflonConventions.getDefaultEcoreFile(project).exists()*/;
 	}
 }
