@@ -269,7 +269,12 @@ class EMoflonPlantUMLGenerator {
 	}
 	
 	def private static String nameFor(ENamedElement elem, Diagram<?> diagram) {
-		'''«IF diagram.abbreviateLabels»«abbr(elem.name)»«ELSE»«elem.name»«ENDIF»'''
+		if(elem === null)
+			return "null"
+			
+		val name = (elem.name!==null)?elem.name:"null"
+		val abbrName = (elem.name!==null)?abbr(elem.name):"null"
+		return '''«IF diagram.abbreviateLabels»«abbrName»«ELSE»«name»«ENDIF»'''
 	}
 	
 	def private static String nameFor(ENamedElement elem) {
