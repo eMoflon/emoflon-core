@@ -52,6 +52,9 @@ class EMoflonPlantUMLGenerator {
 	def static String visualiseEcoreElements(ClassDiagram diagram){
 		'''
 		«plantUMLPreamble(diagram)»
+		«IF diagram.getSelection.isEmpty && diagram.getNeighbourhood.isEmpty && diagram.getEdges.isEmpty»
+		title There is nothing to visualize yet.
+		«ENDIF»
 		«FOR c : diagram.getSelection»
 			«IF(c.abstract)»abstract «ENDIF»class «identifierForClass(c, diagram)» as «identifierForClass(c)»
 			«visualiseEcoreClassAttributes(c, diagram)»

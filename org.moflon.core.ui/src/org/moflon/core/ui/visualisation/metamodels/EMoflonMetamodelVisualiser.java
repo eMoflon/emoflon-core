@@ -38,9 +38,18 @@ public class EMoflonMetamodelVisualiser extends EMoflonEcoreVisualiser<ClassDiag
 		// elements, the selection is not supported by this visualiser.
 		return !VisualiserUtilities.hasModelElements(selection);
 	}
-
+	
 	@Override
 	protected String getDiagramBody(Collection<EObject> selection) {
+		// Wraps the actual visualization algorithm in a try catch block to handle NPEs gracefully.
+		try {
+			return createDiagramBody(selection);
+		} catch (Exception e) {
+			return "title There is nothing to visualize yet.";
+		}
+	}
+	
+	private String createDiagramBody(Collection<EObject> selection) {
 		HashSet<EClass> allClasses = getAllElements().stream()//
 				.filter(EClass.class::isInstance)//
 				.map(EClass.class::cast)//
