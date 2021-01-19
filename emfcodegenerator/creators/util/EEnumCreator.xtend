@@ -28,7 +28,7 @@ class EEnumCreator extends EMFCodeGenerationClass implements FileCreator {
 		var literals_block = new ArrayList<String>()
 		var values_block = new ArrayList<String>()
 		var values_array =
-'''«IDENTION»private static final «this.e_enum.name»[] VALUES_ARRAY = new Myenum[] { '''
+'''«IDENTION»private static final «this.e_enum.name»[] VALUES_ARRAY = new «this.e_enum.name»[] { '''
 		
 		var get_by_int_method =
 '''

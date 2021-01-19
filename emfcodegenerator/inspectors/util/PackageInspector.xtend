@@ -345,7 +345,6 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 			'''registered_«package_name» : «package_name».eINSTANCE);'''.toString
 		)
 		this.init_snippet.put('''the_«package_name»'''.toString(), snippets)
-		
 	}
 
 	/**
@@ -678,7 +677,7 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 */
 	def HashMap<String,ArrayList<String>> get_init_code_snippet(){
 		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
-		return this.init_snippet
+		return new HashMap<String,ArrayList<String>>(this.init_snippet)
 	}
 
 	/**

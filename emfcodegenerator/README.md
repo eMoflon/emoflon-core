@@ -1,9 +1,8 @@
-# SmartEMF - emfcodegenerator v0.8
+# SmartEMF - emfcodegenerator v0.81
 
 This package provides the capability to generate [EMF-similar](https://www.eclipse.org/modeling/emf/)
 code given an Ecore and Genmodel file.
-The generated code has not been tested and verified yet. This is just the first more or less working
-version of the generator.
+The generated code has not been properly tested and verified yet. Code can be generated and eINSTANCES of packages can be used. Same goes for Factories. Creation of classes seems to work too. Further functionality has not been tested yet.
 
 ## Provided functionality
 The generator is capable of generating code for following EObject types:
@@ -54,9 +53,6 @@ code.
 * complete documentation
 * complete JavaDoc
 * test functionality of code
-* generate emfcodegenerator.util classes instead of leaving them in generator package,
-  as the generated code needs it and not the generator itself
-* discern when EDataTypes are flagged as "IS_GENERATED_INSTANCE_CLASS" as I have not yet
-  been able to produce a test meta-model where the flag is set to true
-* the initEReference()-method uses an "IS_COMPOSITE" for the "isContainment"-parameter - verify
-  if the EReference.isContainment() gives the correct info or not.
+* generate emfcodegenerator.util classes instead of leaving them in generator package, as the generated code needs it and not the generator itself
+* discern when EDataTypes are flagged as "IS_GENERATED_INSTANCE_CLASS" as I have not yet been able to produce a test meta-model where the flag is set to true
+* the initEReference()-method uses an "IS_COMPOSITE" for the "isContainment"-parameter - verify if the EReference.isContainment() gives the correct info or not.

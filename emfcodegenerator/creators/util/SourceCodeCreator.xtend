@@ -205,10 +205,14 @@ class SourceCodeCreator extends InterfaceCreator {
 		   this.the_super_class !== null &&
 		   this.generic_super_types_map.containsKey(this.the_super_class)
 	   	){
-			declaration += 
-				this.etype_param_declarationgetter(
+			super_class_name = this.etype_param_declarationgetter(
 					this.generic_super_types_map.get(this.the_super_class), ""
 				)
+			if(SourceCodeCreator.emf_model.get_class_name_to_object_map.values.contains(the_super_class)){
+				super_class_name = super_class_name.replaceFirst(the_super_class.name, the_super_class.name + "Impl")
+			}
+			declaration += super_class_name
+				
 		} else {
 			declaration += super_class_name
 		}

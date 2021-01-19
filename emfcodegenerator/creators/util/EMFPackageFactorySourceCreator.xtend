@@ -22,12 +22,13 @@ class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 		super(gen_model, package_inspector)
 		this.class_name = this.interface_name + "Impl"
 		//add the interface as an import
-		this.add_import_as_String(this.package_declaration + this.interface_name)
+		this.add_import_as_String(this.package_declaration + "." + this.interface_name)
 		this.add_import_as_String(this.package_declaration + ".*")
 		this.add_import_as_String("org.eclipse.emf.ecore.EClass")
 		this.add_import_as_String("org.eclipse.emf.ecore.EObject")
 		this.add_import_as_String("org.eclipse.emf.ecore.EPackage")
 		this.add_import_as_String("org.eclipse.emf.ecore.impl.EFactoryImpl")
+		this.add_import_as_String("org.eclipse.emf.ecore.plugin.EcorePlugin")
 
 		//change the package declaration to the proper one
 		this.package_declaration += ".impl"
@@ -38,7 +39,7 @@ class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 	override String get_getter_method_declaration_for_e_class(EClass e_class){
 		if(!this.is_initialized)
 			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
-		return "public " + super.get_getter_method_declaration_for_e_class(e_class)
+		return "public" + super.get_getter_method_declaration_for_e_class(e_class)
 	}
 
 	def private String create_getter_body_for_eclass(EClass e_class, String IDENTION){
@@ -56,7 +57,7 @@ class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 		var body =
 '''
 «IDENTION»«IDENTION»try {
-«IDENTION»«IDENTION»«IDENTION»«this.interface_name» the«this.interface_name» = («this.interface_name») EPackage.Registry.INSTANCE.getEFactory(«this.interface_name».eNS_URI);
+«IDENTION»«IDENTION»«IDENTION»«this.interface_name» the«this.interface_name» = («this.interface_name») EPackage.Registry.INSTANCE.getEFactory(«this.e_pak.get_emf_package_class_name».eNS_URI);
 «IDENTION»«IDENTION»«IDENTION»if (the«this.interface_name» != null) {
 «IDENTION»«IDENTION»«IDENTION»«IDENTION»return the«this.interface_name»;
 «IDENTION»«IDENTION»«IDENTION»}
@@ -75,10 +76,10 @@ class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 '''.toString
 		//create case for all classes
 		for(e_class : this.e_pak.get_all_eclasses_in_package()){
-			body +=
+			if(!e_class.isInterface && !e_class.isAbstract) body +=
 '''
 «IDENTION»«IDENTION»case «this.e_pak.get_emf_package_class_name».«emf_to_uppercase(e_class.name)»:
-«IDENTION»«IDENTION»«IDENTION»return «this.e_pak.get_emf_package_class_name».get«e_class.name»();
+«IDENTION»«IDENTION»«IDENTION»return create«e_class.name»();
 '''.toString
 		}
 
@@ -100,33 +101,44 @@ class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 		this.IDENTION = IDENTION
 		
 		//create the constructor
-		var declaration = '''public «this.class_name»()'''.toString
-		var String body = '''«IDENTION»«IDENTION»super();'''.toString
+		var declaration = '''«IDENTION»public «this.class_name»()'''.toString
+		var String body = '''«IDENTION»«IDENTION»super();«System.lineSeparator»'''.toString
 		this.method_declaration_to_body_map.put(declaration, body)
 
 		//create the init method
-		declaration = '''public static «this.interface_name» init()'''.toString
+		declaration = '''«IDENTION»public static «this.interface_name» init()'''.toString
 		body = this.create_factory_init_command(IDENTION)
 		this.method_declaration_to_body_map.put(declaration, body)
 
 		//create Package getters
-		declaration = '''public «this.e_pak.get_emf_package_class_name» get«this.e_pak.get_emf_package_class_name»()'''.toString
-		body = '''«IDENTION»«IDENTION»return («this.e_pak.get_emf_package_class_name») getEPackage();«System.lineSeparator»'''.toString
+		declaration =
+'''«IDENTION»public «this.e_pak.get_emf_package_class_name» get«this.e_pak.get_emf_package_class_name»()'''.toString
+		body =
+'''«IDENTION»«IDENTION»return («this.e_pak.get_emf_package_class_name») getEPackage();«System.lineSeparator»'''.toString
 		this.method_declaration_to_body_map.put(declaration, body)
-		declaration = '''@Deprecated public static «this.e_pak.get_emf_package_class_name» getPackage()'''.toString
-		body = '''«IDENTION»«IDENTION»return «this.e_pak.get_emf_package_class_name».eINSTANCE;«System.lineSeparator»'''.toString
+
+		declaration = 
+'''
+«IDENTION»@Deprecated
+«IDENTION»public static «this.e_pak.get_emf_package_class_name» getPackage()'''.toString
+
+		body = 
+'''«IDENTION»«IDENTION»return «this.e_pak.get_emf_package_class_name».eINSTANCE;«System.lineSeparator»'''.toString
+
 		this.method_declaration_to_body_map.put(declaration, body)
 
 		//create create(EClass eClass)
-		declaration = '''@Override public EObject create(EClass eClass)'''
+		declaration = '''«IDENTION»@Override public EObject create(EClass eClass)'''
 		body = this.create_eobject_create_method(IDENTION)
 		this.method_declaration_to_body_map.put(declaration, body)
 		
 		//generate all getters for contained classes
 		for(e_class : this.e_pak.get_all_eclasses_in_package){
-			declaration = this.get_getter_method_declaration_for_e_class(e_class)
-			body = this.create_getter_body_for_eclass(e_class, IDENTION)
-			this.method_declaration_to_body_map.put(declaration, body)
+			if(!e_class.isInterface && !e_class.isAbstract){
+				declaration = IDENTION + this.get_getter_method_declaration_for_e_class(e_class)
+				body = this.create_getter_body_for_eclass(e_class, IDENTION)
+				this.method_declaration_to_body_map.put(declaration, body)
+			}
 		}
 		
 		

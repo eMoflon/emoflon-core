@@ -83,8 +83,7 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 
 		var the_containing_eclass = this.e_ref.eContainer as EClassImpl
 		var eclass_name = the_containing_eclass.name
-		entry.append("get" + eclass_name.substring(0,1).toUpperCase +
-					 eclass_name.substring(1) + "_")
+		entry.append("get" + eclass_name + "_")
 		entry.append(this.get_name.substring(0,1).toUpperCase)
 		entry.append(this.get_name.substring(1))
 		entry.append("(), ")

@@ -36,11 +36,14 @@ class EMFPackageFactoryInterfaceCreator extends EMFCodeGenerationClass implement
 		this.package_declaration = this.e_pak.get_package_declaration_name()
 		this.add_import_as_String(this.e_pak.get_needed_imports_for_package_factory())
 		for(e_class : this.e_pak.get_all_eclasses_in_package){
-			e_class_to_getter_declaration_map.put(
-				e_class,
-				this.create_getter_declaration_for_e_class(e_class)
-			)
+			if(!e_class.isInterface && !e_class.isAbstract){
+				e_class_to_getter_declaration_map.put(
+					e_class,
+					this.create_getter_declaration_for_e_class(e_class)
+				)
+			}
 		}
+		this.add_import_as_String("org.eclipse.emf.ecore.EFactory")
 	}
 
 	/**########################Methods########################*/
@@ -72,7 +75,7 @@ class EMFPackageFactoryInterfaceCreator extends EMFCodeGenerationClass implement
 		//add the needed imports
 		for(needed_import : this.needed_imports){
 			this.interface_body.add(
-				"import " + needed_import + ";"
+				"import " + needed_import + ";" + System.lineSeparator
 			)
 		}
 		this.interface_body.add(System.lineSeparator)
@@ -89,9 +92,9 @@ class EMFPackageFactoryInterfaceCreator extends EMFCodeGenerationClass implement
 		)
 		this.interface_body.add(System.lineSeparator)
 		
-		//add the getter method for the PackageFactory
+		//add the getter method for the PackageClass
 		this.interface_body.add(
-			'''«IDENTION»«this.interface_name» get«this.interface_name»();'''.toString
+			'''«IDENTION»«this.e_pak.get_emf_package_class_name» get«this.e_pak.get_emf_package_class_name»();'''.toString
 		)
 		this.interface_body.add(System.lineSeparator)
 		

@@ -362,13 +362,13 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 
 		for(EDataType e_type : this.e_pak.get_all_edata_types_in_package()){
 			declarations.add(
-				'''EDataType «emf_to_uppercase(e_type.name)» =  = eINSTANCE.get«e_type.name»();'''.toString
+				'''EDataType «emf_to_uppercase(e_type.name)» = eINSTANCE.get«e_type.name»();'''.toString
 			)
 		}
 		
 		for(EEnum e_type : this.e_pak.get_all_eenums_in_package()){
 			declarations.add(
-				'''EEnum «emf_to_uppercase(e_type.name)» =  = eINSTANCE.get«e_type.name»();'''.toString
+				'''EEnum «emf_to_uppercase(e_type.name)» = eINSTANCE.get«e_type.name»();'''.toString
 			)
 		}
 

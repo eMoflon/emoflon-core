@@ -79,7 +79,7 @@ class EMFCodeGenerator extends EMFCodeGenerationClass{
 	def void generate_interfaces(){
 		for(InterfaceCreator new_interface : interfaces){
 			//initialise a file-writer
-			var path = packages.get(new_interface.get_package) .get_path_to_folder + "/" +
+			var path = packages.get(new_interface.get_package).get_path_to_folder + "/" +
 					   new_interface.get_name + ".java"
 			new_interface.initialize_creator(path, IDENTION)
 			new_interface.write_to_file()

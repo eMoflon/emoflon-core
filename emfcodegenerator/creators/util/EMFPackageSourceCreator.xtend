@@ -111,18 +111,19 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		this.add_import_as_String("org.eclipse.emf.ecore.EDataType")
 		this.add_import_as_String("org.eclipse.emf.ecore.EClassifier")
 		this.add_import_as_String("org.eclipse.emf.common.util.EList")
+		this.add_import_as_String("org.eclipse.emf.ecore.ETypeParameter")
+		this.add_import_as_String("org.eclipse.emf.ecore.EGenericType")
+		this.add_import_as_String("org.eclipse.emf.ecore.EOperation")
 		//this.add_import_as_String("emfgenerator.util.SmartPackage")
 		this.add_import_as_String("org.eclipse.emf.ecore.impl.EPackageImpl")
+		this.add_import_as_String(this.e_pak.get_package_declaration_name + "." + this.e_pak.get_emf_package_factory_class_name)
 		//this.add_import_as_String("emfgenerator.util.DefaultEList")
 		this.add_import_as_String("java.util.HashMap")
 		this.add_import_as_String(
 			this.e_pak.get_package_declaration_name +
 			"." + this.e_pak.get_emf_package_class_name()
 		)
-		
-		/*this.object_fields.add(
-			"private static HashMap<String,EClassifier> eCLASSIFIERMAP = new HashMap<String,EClassifier>();"
-		)*/
+
 		this.object_fields.add("private static boolean isInited = false;")
 		this.object_fields.add("private boolean isCreated = false;")
 		this.object_fields.add("private boolean isInitialized = false;")
@@ -239,6 +240,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	 * which is to be created
 	 */
 	def private void register_methods_and_data_fields_for_eenums(EEnum data_type){
+		this.add_import_as_String("org.eclipse.emf.ecore.EEnum")
 		var variable_name = data_type.name + "EEnum"
 		this.object_fields.add("private EEnum " + variable_name + " = null;")
 		var declaration = "public EEnum get" + data_type.name + "()"
@@ -272,16 +274,30 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		e_packages.remove(this.e_pak.get_emf_e_package)
 
 		//get the init snippet from this EPackage and register its variable
-		var init_snippets = this.e_pak.get_init_code_snippet()
-		var this_package_var_name = init_snippets.keySet.get(0)
+		var init_snippets = new HashMap<String,ArrayList<String>>()
+		
+		var snippets = new ArrayList<String>()
+		var package_name = this.e_pak.get_emf_package_class_name()
+		var this_package_var_name = "the_" + package_name
+		snippets.add(
+			'''Object registered_«package_name» = EPackage.Registry.INSTANCE.getEPackage('''.toString
+			 + package_name + ".eNS_URI);"
+		)
+		snippets.add(
+			'''«package_name»Impl the_«package_name» = («package_name»Impl)'''.toString + 
+			''' ((registered_«package_name» instanceof «package_name»Impl) ? '''.toString +
+			'''registered_«package_name» : new «package_name»Impl());'''.toString
+		)
+		init_snippets.put('''the_«package_name»'''.toString(), snippets)
 
 		//get or create and register all the EPackages
-		body.addAll(init_snippets.values.get(0))
+		body.addAll(snippets)
 		//after the EPackage is inited, set the boolean to true
 		body.add("isInited = true;")
 
 		//create/register all the other EPackages
 		for(epak : e_packages){
+			
 			var inspector = this.packages.get(epak)
 			this.add_import_as_String(
 				inspector.get_package_declaration_name + "." +
@@ -296,13 +312,17 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 			body.addAll(buffer.values.get(0))
 		}
 
+		var init_package_contents = new ArrayList<String>()
 		//register all contents for all Packages
 		for(variable : init_snippets.keySet){
 			// Create package meta-data objects
 			body.add(variable + ".createPackageContents();")
 			// Initialise created meta-data
-			body.add(variable + ".initializePackageContents();")
+			init_package_contents.add(variable + ".initializePackageContents();")
 		}
+		//if not all packages are called with ".createPackageContents();" before initilaizing a single one
+		//packages will be registered and stored as NullPointer somehow.............
+		body.addAll(init_package_contents)
 		
 		body.add('''EPackage.Registry.INSTANCE.put(«p_name».eNS_URI, «this_package_var_name»);''')
 
@@ -494,7 +514,6 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 							//create the EGenericType
 							var entry = new StringBuilder("EGenericType ")
 							entry.append(
-								this.generic_bound_var_name +
 								this.generic_bound_to_var_name_map.get(generic_type)
 							)
 							entry.append(" = createEGenericType(")
@@ -713,9 +732,14 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		return body
 	}
 
+	/**
+	 * generates a part of the EClass init-block. It generates the EEnums
+	 * is called by this.generate_e_package_init_package_contents
+	 */
 	def private ArrayList<String> generate_e_package_init_package_contents__init_eenums(){
 		var body = new ArrayList<String>()
 		for(EEnum eenum : this.e_pak.get_all_eenums_in_package){
+			this.add_import_as_String(this.e_pak.get_package_declaration_name + "." + eenum.name)
 			body.add(
 				'''initEEnum(«eenum.name»EEnum, «eenum.name».class, "«eenum.name»");'''.toString
 			)
@@ -725,7 +749,6 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		}
 		return body
 	}
-	
 
 	/**
 	 * main method which generates the "public void initializePackageContents()" method
@@ -755,6 +778,9 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		body.addAll(this.generate_e_package_init_package_contents__init_edata_types())
 		
 		body.addAll(this.generate_e_package_init_package_contents__init_eenums())
+		
+		if(this.e_pak.get_emf_e_package.ESuperPackage === null)
+			body.add("createResource(this.eNS_URI);")
 		
 		//TODO EAnnotations?
 		method_declarations.add(declaration)
@@ -835,7 +861,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		
 		//create EEnums
 		for(eenum : this.e_pak.get_all_eenums_in_package){
-			body.add('''this.«eenum.name»EENum = createEEnum(«emf_to_uppercase(eenum.name)»);)'''.toString)
+			body.add('''this.«eenum.name»EEnum = createEEnum(«emf_to_uppercase(eenum.name)»);'''.toString)
 		}
 
 		this.method_declarations.add(declaration)
@@ -851,7 +877,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	 *	<li>generates package and class declarations</li>
 	 *	<li>generates all members and methods for all EClasses in the package</li>
 	 *	<li>generates all members and methods for all EDataTypes in the package</li>
-	 *	<li>TODO generates all members and methods for all EEnums in the package</li>
+	 *	<li>generates all members and methods for all EEnums in the package</li>
 	 *	<li>generates the "init()"-method</li>
 	 *	<li>generates the "createPackageContents()"-method</li>
 	 *	<li>generates the "initializePackageContents()"-method</li>

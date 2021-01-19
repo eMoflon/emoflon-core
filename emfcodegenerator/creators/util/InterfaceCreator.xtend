@@ -56,7 +56,7 @@ class InterfaceCreator extends ModelFileCreator {
 		super(eclass, gen_model, e_data_fields, e_operations, e_pak)
 
 		this.generic_type_declaration_string = this.e_pak.get_type_arguments_declaration_for_eclass(e_class)
-
+		this.add_import_as_String(this.e_pak.get_eclass_to_needed_imports_for_type_arguments_map.get(this.e_class))
 		for(generic_super_type : this.e_class.EGenericSuperTypes){
 			generic_super_types_map.put(generic_super_type.EClassifier as EClass, generic_super_type)
 		}

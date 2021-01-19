@@ -87,11 +87,9 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 		//the eclass in which this attribute which is inspected is contained
 		var the_containing_eclass = this.e_attr.eContainer as EClassImpl
 		var eclass_name = the_containing_eclass.name
-		entry.append("get" + eclass_name.substring(0,1).toUpperCase +
-					 eclass_name.substring(1) + "_")
+		entry.append("get" + eclass_name + "_")
 
-		entry.append(this.get_name.substring(0,1).toUpperCase)
-		entry.append(this.get_name.substring(1))
+		entry.append(this.get_name_with_first_letter_capitalized)
 		entry.append("(), ")
 		
 		//add EClassifier

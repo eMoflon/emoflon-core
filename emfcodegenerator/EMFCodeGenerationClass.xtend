@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.ETypeParameter
 import java.util.Arrays
 import java.util.Collection
 import org.eclipse.emf.ecore.EEnum
+import org.eclipse.emf.ecore.EcorePackage
 
 /**
  * class containing useful methods which all inheriting classes can have in common
@@ -264,7 +265,12 @@ class EMFCodeGenerationClass {
 			}
 		else if(e_obj instanceof EClassifier){
 			// same for EClasses
-			fqdn = (e_obj as EClassifier).EPackage.name + "." + (e_obj as EClassifier).name
+			var classifier = e_obj as EClassifier
+			if(classifier.EPackage.equals(EcorePackage.eINSTANCE)){
+				if(!classifier.instanceTypeName.nullOrEmpty) return classifier.instanceTypeName
+				else throw new RuntimeException("unsupported EMF-classifier. please add support")
+			}
+			fqdn = classifier.EPackage.name + "." + (e_obj as EClassifier).name
 			super_package = (e_obj as EClassifier).EPackage.ESuperPackage
 		} else {
 			throw new IllegalArgumentException("expected EReference or EClass. Got: " + e_obj.class)
