@@ -40,8 +40,9 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 			throw new IllegalArgumentException(
 				"Expected an EReference, but got a " + e_feature.class.name
 				)
-		this.e_ref = e_feature as EReferenceImpl
 		
+		this.e_ref = e_feature as EReferenceImpl
+
 		//get import String for this Reference
 		this.fq_import_name = this.create_import_name_for_ereference_or_eclass(this.e_ref)
 		
@@ -49,6 +50,7 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		if(e_ref.defaultValue !== null){
 			this.default_value = this.e_ref.defaultValue.toString
 		}
+
 		else if(this.is_a_tuple()){
 			this.default_value = "new " +
 				EMFCodeGenerationClass.get_elist_type_name(this.get_needed_elist_type_enum) +
@@ -232,12 +234,23 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 
 	override get_literals_entry_for_package_classes() {
 		var entry = new StringBuilder("EReference ")
-		entry.append(emf_to_uppercase((this.e_ref.eContainer as EClass).name))
-		entry.append("_")
-		entry.append(emf_to_uppercase(this.get_name))
+		entry.append(this.get_emf_package_literals_interface_var_name())
 		entry.append(" = eINSTANCE.")
 		entry.append(this.get_getter_method_declaration_for_the_package_classes__stump_only())
 		entry.append(";")
 		return entry.toString()
+	}
+
+	def boolean is_contained(){
+		return this.e_ref.isContainment()
+	}
+	
+	def String get_default_value_if_contained_reference(String ereference_instance){
+		if(!this.is_contained || !this.is_a_tuple) return this.get_default_value
+		this.default_value =
+			"new " +
+			EMFCodeGenerationClass.get_elist_type_name(this.get_needed_elist_type_enum) +
+			'''<«this.get_object_field_type_name»>(this, «ereference_instance»)'''
+		return this.default_value
 	}
 }

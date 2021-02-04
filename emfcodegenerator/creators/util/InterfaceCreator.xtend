@@ -66,12 +66,14 @@ class InterfaceCreator extends ModelFileCreator {
 
 	/**
 	 * creates the generic parameter declaration for a given EGenericType. Example: the described
-	 * EGenericType is an ArrayList<b extends ClassA<?>>,
-	 * the output would be: "ArrayList<b extends ClassA<?>>" if called with empty String.
+	 * EGenericType is an {@literal ArrayList<b extends ClassA<?>>},
+	 * the output would be: "{@literal ArrayList<b extends ClassA<?>>}" if called with empty String.
 	 * Method is recursive
-	 * @param EGenericType generic for which this method is called
-	 * @param String declaration saves the recursion state up until then. on first call pass empty String
+	 * @param generic EGenericType generic for which this method is called
+	 * @param declaration String declaration saves the recursion state up until then.
+	 * 		  expects empty String on first call
 	 * @return String
+	 * @author Adrian Zwenger
 	 */
 	def protected String etype_param_declarationgetter(EGenericType generic, String declaration){
 		var new_declaration = declaration
@@ -113,8 +115,11 @@ class InterfaceCreator extends ModelFileCreator {
 		if(e_class.ESuperTypes.isEmpty()){
 			// EMF interfaces extend the EObject class if it does not extend
 			// other classes or implements other interfaces
-			declaration = declaration + " extends EObject"
+			declaration = declaration + " extends EObject, MinimalSObjectContainer"
+			//implement EObject interface to keep basic EMF compatibility
 			add_import_as_String("org.eclipse.emf.ecore.EObject")
+			//implement MinimalSObjectContainer for access to containment features for EReferences
+			add_import_as_String("emfcodegenerator.util.MinimalSObjectContainer")
 		}
 		else if (!e_class.ESuperTypes.isEmpty()){
 			// if the interface does extend class(es), they need to be declared

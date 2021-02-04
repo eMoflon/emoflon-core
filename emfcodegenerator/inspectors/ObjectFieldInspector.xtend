@@ -63,4 +63,8 @@ interface ObjectFieldInspector extends FeatureInspector{
 	def boolean type_init_commands_are_generated()
 
 	def HashSet<EPackageImpl> get_meta_model_package_dependencies()
+
+	/**
+	 * stuff */
+	def String get_emf_package_literals_interface_var_name()
 }

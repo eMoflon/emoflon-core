@@ -7,7 +7,6 @@ import java.util.TreeMap
 import java.io.File
 import java.io.FileWriter
 
-//TODO continue here
 class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 	
 	/**########################Attributes########################*/

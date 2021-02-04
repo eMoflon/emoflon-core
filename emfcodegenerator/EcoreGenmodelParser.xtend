@@ -44,6 +44,7 @@ import emfcodegenerator.inspectors.util.AbstractObjectFieldInspector
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.ETypeParameter
 import org.eclipse.emf.ecore.EEnum
+import org.eclipse.emf.ecore.EcorePackage
 
 class EcoreGenmodelParser {
 	
@@ -149,6 +150,7 @@ class EcoreGenmodelParser {
 		//register "ecore" as valid file extension
 		var epak = (new ResourceSetImpl()).getResource(URI.createFileURI(ecore_path), true)
 										  .getContents().get(0) as EPackageImpl
+		this.super_package = epak
 	  	//get super EPackage from ecore-xmi
 	  	var proxy_uri_extension = "/"
 	  	// + ".ecore#//")//exchange if the full ProxyUri is used with genmodel
@@ -185,6 +187,7 @@ class EcoreGenmodelParser {
 		for(EObject e_obj: epak.eContents()){
 			if(e_obj instanceof EClassImpl){
 				var e_class = e_obj as EClassImpl
+				//println(e_class.eContainer)
 				//register all classes in package
 				e_classes.put(package_path + (e_class).getName(),
 							  e_obj as EClassImpl)
@@ -197,6 +200,47 @@ class EcoreGenmodelParser {
 								new AttributeInspector(feature as EAttribute, this.super_package_name)
 							)
 						} else if(feature instanceof EReference){
+							/**
+							 * EReferences to non SmartEMF class is not permitted.
+							 * Thus validity of the EReference has to be checked
+							 */
+							var reference = feature as EReference
+							if(reference.EGenericType === null)
+								throw new IllegalArgumentException('''
+ERROR! The target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»" has not been specified.'''
+								)
+							
+							if(
+								reference.EGenericType.EClassifier === null &&
+								reference.EGenericType.ETypeParameter !== null
+							){
+								//generics are permitted. However, the user must make sure that all
+								//runtime instances inherit from the SmartObject class.
+								//In other words it needs to be a SmartEMF object
+
+								println(
+'''Warning!! Target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»" is a generic type-parameter.
+«"\t"»Please do take care, that the runtime instance inherits from emfcodegenerator.util.SmartObject.'''
+								)
+
+							} else if(reference.EGenericType.EClassifier !== null) {
+								var the_classifier = reference.EGenericType.EClassifier
+								if(the_classifier.EPackage.equals(EcorePackage.eINSTANCE)){
+									//the reference type is an EMF-class which are not supported
+									throw new IllegalArgumentException('''
+ERROR! The target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»"is not supported as it is en Eclipse-EMF class.'''
+								)
+								} else if(
+									!the_classifier.EPackage.equals(EcorePackage.eINSTANCE) &&
+									!this.super_package.eAllContents.contains(the_classifier)
+								){
+									//the classifier is not contained in Eclipse-EMF or the given XMI-s
+									println('''
+Warning!! Target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»" is not an Eclipse-EMF and was not registered in the given XMI-files.
+«"\t"»Please do take care, that the runtime instances inherit from emfcodegenerator.util.SmartObject.
+''')
+								}
+							}
 							struct_features_to_inspector_map.put(
 								feature as EReference,
 								new ReferenceInspector(feature as EReference, this.super_package_name)

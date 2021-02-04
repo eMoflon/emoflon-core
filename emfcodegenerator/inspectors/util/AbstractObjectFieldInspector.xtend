@@ -373,6 +373,20 @@ abstract class AbstractObjectFieldInspector extends EMFCodeGenerationClass imple
 		return body
 	}
 
+	//def String
+	/**
+	 * All EStructuralFeatures have an entry in the Literals interface in their respective
+	 * package class. This method returns the designated variable name which is used in said
+	 * interface.<br>
+	 * example: <em>CLASS_A_MY_FEATURE</em> is the entry for a feature called myFeature contained in ClassA
+	 * @return String
+	 * @author Adrian Zwenger
+	 */
+	override get_emf_package_literals_interface_var_name(){
+	return
+'''«emf_to_uppercase((this.e_feature.eContainer as EClass).name)»_«emf_to_uppercase(this.get_name)»'''
+	}
+
 	/**########################Abstract Methods########################*/
 
 	/** returns the fully qualified name for imports. example: java.util.HashMap */
