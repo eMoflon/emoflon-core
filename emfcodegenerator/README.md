@@ -14,7 +14,7 @@ The generator is capable of generating code for following EObject types:
 		3. EGenericType (generic super types)
 	* EAttribute
 	* EReference
-		* Containment relationships are now supported if target implements [MinimalSObjectContainer](./util/MinimalSObjectContainer).
+		* Containment relationships are now supported if target implements [MinimalSObjectContainer](./util/MinimalSObjectContainer.xtend).
 	* EOperation
 		* following is supported:
 			1. EGeneric Return Type
