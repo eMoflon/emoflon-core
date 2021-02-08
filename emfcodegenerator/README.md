@@ -1,4 +1,4 @@
-# SmartEMF - emfcodegenerator v0.8
+# SmartEMF - emfcodegenerator v0.9
 
 This package provides the capability to generate [EMF-similar](https://www.eclipse.org/modeling/emf/)
 code given an Ecore and Genmodel file.
@@ -14,6 +14,7 @@ The generator is capable of generating code for following EObject types:
 		3. EGenericType (generic super types)
 	* EAttribute
 	* EReference
+		* Containment relationships are now supported if target implements [MinimalSObjectContainer](./util/MinimalSObjectContainer).
 	* EOperation
 		* following is supported:
 			1. EGeneric Return Type
@@ -27,7 +28,6 @@ The generator is capable of generating code for following EObject types:
 	* EDataType
 
 ## Functionality in future releases
-* Containment of EReference and EAttribute is not provided yet
 * Replacements for EList and similar sub-types
 * proper interfacing to call generator
 * TBA
