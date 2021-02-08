@@ -15,8 +15,6 @@ import org.eclipse.emf.ecore.EOperation
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.ETypeParameter
-import org.eclipse.emf.ecore.impl.EClassImpl
-import org.eclipse.emf.ecore.impl.EPackageImpl
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EGenericType
 import org.eclipse.emf.ecore.EEnum
@@ -38,12 +36,12 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	/**
 	 * the EPackage to be inspected
 	 */
-	var EPackageImpl e_pak
+	var EPackage e_pak
 
 	/**
 	 * HashSet storing the EClasses contained in the package
 	 */
-	var HashSet<EClassImpl> e_classes = new HashSet<EClassImpl>()
+	var HashSet<EClass> e_classes = new HashSet<EClass>()
 
 	/**
 	 * HashSet storing the EDataTypes contained in the package
@@ -64,29 +62,29 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 * HashMap mapping EClass to a Set of ObjectFieldInspectors
 	 * does not contain inherited object fields
 	 */
-	var HashMap<EClassImpl,HashSet<AbstractObjectFieldInspector>> eclass_to_object_field_map =
-		new HashMap<EClassImpl,HashSet<AbstractObjectFieldInspector>>()
+	var HashMap<EClass,HashSet<AbstractObjectFieldInspector>> eclass_to_object_field_map =
+		new HashMap<EClass,HashSet<AbstractObjectFieldInspector>>()
 
 	/**
 	 * HashMap mapping EClass to a Set of ObjectFieldInspectors
 	 * does contain inherited object fields
 	 */
-	var HashMap<EClassImpl,HashSet<AbstractObjectFieldInspector>> eclass_to_even_inherited_object_fields_map =
-		new HashMap<EClassImpl,HashSet<AbstractObjectFieldInspector>>()
+	var HashMap<EClass,HashSet<AbstractObjectFieldInspector>> eclass_to_even_inherited_object_fields_map =
+		new HashMap<EClass,HashSet<AbstractObjectFieldInspector>>()
 
 	/**
 	 * HashMap mapping EClass to a Set of EOperationInspectors
 	 * does not contain inherited EOperations
 	 */
-	var HashMap<EClassImpl,HashSet<EOperationInspector>> eclass_to_eoperation_map =
-		new HashMap<EClassImpl,HashSet<EOperationInspector>>()
+	var HashMap<EClass,HashSet<EOperationInspector>> eclass_to_eoperation_map =
+		new HashMap<EClass,HashSet<EOperationInspector>>()
 
 	/**
 	 * HashMap mapping EClass to a Set of EOperationInspectors
 	 * does contain inherited EOperations
 	 */
-	var HashMap<EClassImpl,HashSet<EOperationInspector>> eclass_to_even_inherited_eoperation_map =
-		new HashMap<EClassImpl,HashSet<EOperationInspector>>()
+	var HashMap<EClass,HashSet<EOperationInspector>> eclass_to_even_inherited_eoperation_map =
+		new HashMap<EClass,HashSet<EOperationInspector>>()
 
 	/**
 	 * if a class inherits from another, that classes package is needed to create its contents
@@ -163,13 +161,13 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	
 	/**
 	 * construct a new PackagInspector
-	 * @param EPackageImpl e_package
+	 * @param EPackage e_package
 	 * @param EcoreGenmodelParser gen_model
 	 */
-	new(EPackageImpl e_package, EcoreGenmodelParser gen_model) {
+	new(EPackage e_package, EcoreGenmodelParser gen_model) {
 		super(gen_model)
 		this.e_pak = e_package
-		this.e_classes = new HashSet<EClassImpl>()//emf_model.get_epackage_and_contained_classes_map.get(e_pak)
+		this.e_classes = new HashSet<EClass>()//emf_model.get_epackage_and_contained_classes_map.get(e_pak)
 		this.has_sub_package = !e_pak.ESubpackages.isEmpty()
 		
 	}
@@ -186,7 +184,7 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	def void initialize(){
 		this.isInited = true
 		//register attributes, references, EOperations for the EClasses
-		for(EClassImpl e_class : emf_model.get_epackage_and_contained_classes_map.get(e_pak)){
+		for(EClass e_class : emf_model.get_epackage_and_contained_classes_map.get(e_pak)){
 			this.e_classes.add(e_class)
 
 			//register the type-parameter declaration strings
@@ -279,9 +277,9 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 			even_inherited_object_fields.addAll(object_fields)
 
 			//register all classes and their attributes/references contained in package
-			eclass_to_object_field_map.put(e_class as EClassImpl, object_fields)
+			eclass_to_object_field_map.put(e_class, object_fields)
 			eclass_to_even_inherited_object_fields_map.put(
-				e_class as EClassImpl, even_inherited_object_fields
+				e_class, even_inherited_object_fields
 			)
 
 			//register Packages on which the EClass depends
@@ -308,7 +306,7 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 				this.eoperation_to_inspector_map.put(e_op, inspector)
 				this.package_dependency_set.addAll(inspector.get_meta_model_package_dependencies)
 			}
-			eclass_to_eoperation_map.put(e_class as EClassImpl, e_operations)
+			eclass_to_eoperation_map.put(e_class, e_operations)
 			
 			//register inherited EOperations
 			var even_inherited_e_operations = new HashSet<EOperationInspector>()
@@ -322,7 +320,7 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 				}
 			}
 			even_inherited_e_operations.addAll(e_operations)
-			eclass_to_even_inherited_eoperation_map.put(e_class as EClassImpl, even_inherited_e_operations)
+			eclass_to_even_inherited_eoperation_map.put(e_class, even_inherited_e_operations)
 		}
 
 		this.package_dependency_set.addAll(this.e_pak.ESubpackages)
@@ -474,9 +472,9 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	def private void set_path_to_folder_and_package_declaration(){
 		var path = e_pak.name
 		var declaration = e_pak.name
-		var e_package = e_pak as EPackageImpl
+		var e_package = e_pak
 		while(e_package.ESuperPackage !== null){
-			e_package = e_package.ESuperPackage  as EPackageImpl
+			e_package = e_package.ESuperPackage
 			path = e_package.name + "/" + path
 			declaration = e_package.name + "." + declaration
 		}
@@ -508,7 +506,7 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 */
 	def HashSet<AbstractObjectFieldInspector> get_object_field_inspectors_for_class(EClass e_cl){
 		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
-		return eclass_to_object_field_map.get(e_cl as EClassImpl)
+		return eclass_to_object_field_map.get(e_cl)
 	}
 
 	/**
@@ -518,7 +516,7 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 */
 	def HashSet<AbstractObjectFieldInspector> get_all_object_field_inspectors_for_class(EClass e_cl){
 		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
-		return eclass_to_even_inherited_object_fields_map.get(e_cl as EClassImpl)
+		return eclass_to_even_inherited_object_fields_map.get(e_cl)
 	}
 
 	/**
@@ -528,7 +526,7 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 */
 	def HashSet<EOperationInspector> get_eoperation_inspector_for_class(EClass e_cl){
 		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
-		return eclass_to_eoperation_map.get(e_cl as EClassImpl)
+		return eclass_to_eoperation_map.get(e_cl)
 	}
 
 	/**
@@ -538,14 +536,14 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 */
 	def HashSet<EOperationInspector> get_all_eoperation_inspector_for_class(EClass e_cl){
 		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
-		return eclass_to_even_inherited_eoperation_map.get(e_cl as EClassImpl)
+		return eclass_to_even_inherited_eoperation_map.get(e_cl)
 	}
 
 	/**
 	 * Returns a HashSet containing all EClasses in this package
-	 * @return HashSet<EClassImpl>
+	 * @return HashSet<EClass>
 	 */
-	def HashSet<EClassImpl> get_all_eclasses_in_package(){
+	def HashSet<EClass> get_all_eclasses_in_package(){
 		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
 		return e_classes
 	}

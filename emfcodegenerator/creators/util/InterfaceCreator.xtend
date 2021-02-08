@@ -12,7 +12,6 @@ import java.util.HashMap
 import java.util.HashSet
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EGenericType
-import org.eclipse.emf.ecore.impl.EClassImpl
 import emfcodegenerator.inspectors.util.AbstractObjectFieldInspector
 
 /**
@@ -48,8 +47,10 @@ class InterfaceCreator extends ModelFileCreator {
 	 * @param gen_model EcoreGenmodelParser the wrapper for the ecore-xmi and genmodel-xmi files
 	 * @param e_data_fields HashSet<ObjectFieldInspector> the ObjectFieldInspector's for the contained Attributes/References
 	 * @param e_operations HashSet<EOperationInspector> the EOperationInspector's for all the EOperations
+	 * @param e_pak PackageInspector the Inspector for the package which contains the EClass
+	 * @author Adrian Zwenger
 	 */
-	new(EClassImpl eclass, EcoreGenmodelParser gen_model,
+	new(EClass eclass, EcoreGenmodelParser gen_model,
 		HashSet<AbstractObjectFieldInspector> e_data_fields,
 		HashSet<EOperationInspector> e_operations,
 		PackageInspector e_pak){
@@ -70,8 +71,8 @@ class InterfaceCreator extends ModelFileCreator {
 	 * the output would be: "{@literal ArrayList<b extends ClassA<?>>}" if called with empty String.
 	 * Method is recursive
 	 * @param generic EGenericType generic for which this method is called
-	 * @param declaration String declaration saves the recursion state up until then.
-	 * 		  expects empty String on first call
+	 * @param declaration String declaration saves the recursion state up until then. Pass empty
+	 * String on first call of recursion.	
 	 * @return String
 	 * @author Adrian Zwenger
 	 */

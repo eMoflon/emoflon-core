@@ -320,7 +320,6 @@ class LinkedEList<E> extends LinkedList<E> implements EList<E>, MinimalSObjectCo
 	
 	override removeIf(Predicate<? super E> filter){
 		var int old = this.size()
-		//TODO check if correct
 		for(E obj : this){
 			if(filter.test(obj))
 				this.remove(obj)
@@ -329,9 +328,8 @@ class LinkedEList<E> extends LinkedList<E> implements EList<E>, MinimalSObjectCo
 	}
 	
 	override replaceAll(UnaryOperator<E> operator){
-		println("Warning! replaceAll(UnaryOperator<E> operator) does not support Containment management")
-		//TODO add Containment management
-		super.replaceAll(operator)
+		throw new UnsupportedOperationException("Warning! replaceAll(UnaryOperator<E> operator) does not support Containment management")
+		//super.replaceAll(operator)
 	}
 	override iterator(){
 		return new SmartEMFCollectionIterator(super.iterator)

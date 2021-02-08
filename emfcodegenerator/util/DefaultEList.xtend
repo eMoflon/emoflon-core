@@ -169,8 +169,7 @@ class DefaultEList<E> extends ArrayList<E> implements EList<E>, MinimalSObjectCo
 		}
 		return obj
 	}
-	
-	
+
 	/**
 	 * if this list is a containment list, the containment will be removed from the passed object and it will be returned
 	 * if it is not, the object will be returned unchanged

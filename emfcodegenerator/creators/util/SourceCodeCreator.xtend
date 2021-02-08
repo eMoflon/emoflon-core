@@ -92,7 +92,7 @@ class SourceCodeCreator extends InterfaceCreator {
 	 * @author Adrian Zwenger
 	 */
 	new(
-		EClassImpl eclass, 
+		EClass eclass, 
 		EcoreGenmodelParser gen_model,
 		HashSet<AbstractObjectFieldInspector> e_data_fields,
 		HashSet<EOperationInspector> e_operations,
@@ -127,9 +127,7 @@ class SourceCodeCreator extends InterfaceCreator {
 			this.the_super_class = this.other_super_classes.get(0) as EClassImpl
 
 			if(
-				EMFPackageSourceCreator.emf_model
-									   .get_object_to_class_name_map
-									   .keySet.contains(this.the_super_class) &&
+				EMFPackageSourceCreator.emf_model.eclass_is_registered(this.the_super_class) &&
 				!this.the_super_class.isInterface
 			){
 				//The direct super-class was registered when parsing the Ecore and Genmodel xmi
@@ -163,9 +161,7 @@ class SourceCodeCreator extends InterfaceCreator {
 			//process all the class from which this EClass inherits indirectly
 			for(super_ecl : this.other_super_classes){
 				if(
-					EMFPackageSourceCreator.emf_model
-										   .get_object_to_class_name_map
-										   .keySet.contains(super_ecl)
+					EMFPackageSourceCreator.emf_model.eclass_is_registered(super_ecl)
 				){
 					//if the class is already registered, it does not need to be re-registered
 					var the_package = this.e_pak_map.get(super_ecl.EPackage)
@@ -255,6 +251,7 @@ class SourceCodeCreator extends InterfaceCreator {
 			this.e_data_fields.removeAll(
 				the_package.get_all_object_field_inspectors_for_class(this.the_super_class)
 			)
+			//EOperations are inherited. Thus they need to be removed from the to-be-processed pool
 			this.e_operations.removeAll(
 				the_package.get_all_eoperation_inspector_for_class(this.the_super_class)
 			)
@@ -328,11 +325,7 @@ class SourceCodeCreator extends InterfaceCreator {
 			super_class_name = this.etype_param_declarationgetter(
 					this.generic_super_types_map.get(this.the_super_class), ""
 				)
-			if(
-				SourceCodeCreator.emf_model
-								 .get_class_name_to_object_map
-								 .values.contains(the_super_class)
-			){
+			if(SourceCodeCreator.emf_model.eclass_is_registered(the_super_class)){
 				//if an implementation is generated change the name to Implementation type name
 				//MyClass<Z> --> MyClassImpl<Z>
 				super_class_name = 
@@ -365,7 +358,7 @@ class SourceCodeCreator extends InterfaceCreator {
 	def private HashMap<String,String> create_constructor(){
 		if(!this.is_initialized)
 			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
-		/**
+		/*
 		 * Two constructors are needed. One regular one and one which passes an EClass bottom-up
 		 * through the inheritance hierarchy.<br>
 		 * The regular one is needed in the EMF-Package-Factories, where the runtime-classes
@@ -549,7 +542,7 @@ class SourceCodeCreator extends InterfaceCreator {
 	 * @param obj_field ObjectFieldInspector
 	 * @return HashMap<String,String>
 	 * @author Adrian Zwenger
-	 * TODO: when an EStructuralFeature is unset, a new notifications needs to be sent
+	 * TODO: eNotification support
 	 */
 	def protected HashMap<String,String> create_unset_for_object_field(ObjectFieldInspector obj_field){
 		var declaration = IDENTION + "public " + create_unset_method_stump(obj_field)
@@ -777,6 +770,11 @@ class SourceCodeCreator extends InterfaceCreator {
 					method_declarations.add(key)
 					methods.put(key, method.get(key))
 				}
+			} else {
+				//add "basic-setter" needed. All unchangeable data-fields need a basic-setter
+				//which the user can use the set the value initially
+				//this method needs to support eNotification support as well
+				//TODO: Absprache NotificationChain Design und eNotifications Integration
 			}
 			//add isSet methods for unsettable data fields
 			if(obj_field.is_unsettable){
@@ -810,7 +808,6 @@ class SourceCodeCreator extends InterfaceCreator {
 		method_declarations.addAll(inherited_methods.keySet)
 		methods.putAll(inherited_methods)
 	}
-
 
 	/**
 	 * maps an ObjecFieldInspector to the getter command which gets the EStructuralFeature from the
@@ -868,9 +865,11 @@ class SourceCodeCreator extends InterfaceCreator {
 	/**########################Control Flow########################*/
 
 	/**
-	 * prepares the Creator for parsing and assembling
-	 * @param String fq_file_path fully qualified path to the file which shall be written to
-	 * @param String IDENTION represents the String which shall be used to indent code
+	 * Initializes this creator and prepares and processes all needed information to generate
+	 * a class and write it to a file. This method should always be called first.<br>
+	 * @param fq_file_path String fully qualified path to the file which shall be written to
+	 * @param IDENTION String represents the String which shall be used to indent code
+	 * @author Adrian Zwenger
 	 */
 	override initialize_creator(String fq_file_path, String IDENTION){
 		this.is_initialized = true
@@ -886,7 +885,9 @@ class SourceCodeCreator extends InterfaceCreator {
 
 	/**
 	 * starts the writing process writes the interface/class source-code contents to a file and
-	 * resets the Creators status back to uninitialised
+	 * resets the Creators status back to uninitialised.<br>
+	 * Call {@link #initialize_creator(String, String) initialize_creator} first.
+	 * @Author Adrian Zwenger
 	 */
 	override write_to_file(){
 		if(!this.is_initialized)

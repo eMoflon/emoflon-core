@@ -49,7 +49,6 @@ class EMFCodeGenerationClass {
 	 * @param  EcoreGenmodelParser gen_model
 	 */
 	new(EcoreGenmodelParser gen_model){
-		//if(emf_model !== null) println(gen_model.equals(emf_model))
 		if(gen_model !== null && !gen_model.equals(EMFCodeGenerationClass.emf_model))
 			EMFCodeGenerationClass.emf_model = gen_model
 		else if(gen_model === null && EMFCodeGenerationClass.emf_model === null)

@@ -8,10 +8,10 @@ import emfcodegenerator.inspectors.util.PackageInspector
 import java.util.HashMap
 import java.util.HashSet
 import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.impl.EClassImpl
 import emfcodegenerator.creators.util.EMFPackageFactoryInterfaceCreator
 import emfcodegenerator.creators.util.EMFPackageFactorySourceCreator
 import emfcodegenerator.creators.util.EEnumCreator
+import org.eclipse.emf.ecore.EClass
 
 class EMFCodeGenerator extends EMFCodeGenerationClass{
 
@@ -56,7 +56,7 @@ class EMFCodeGenerator extends EMFCodeGenerationClass{
 			}
 
 			//create the FileCreators for the EClasses
-			for(EClassImpl e_cl : e_pak_inspector.get_all_eclasses_in_package){
+			for(EClass e_cl : e_pak_inspector.get_all_eclasses_in_package){
 				var i_creator = new InterfaceCreator(e_cl, emf_model,
 										e_pak_inspector.get_object_field_inspectors_for_class(e_cl),
 										e_pak_inspector.get_eoperation_inspector_for_class(e_cl),

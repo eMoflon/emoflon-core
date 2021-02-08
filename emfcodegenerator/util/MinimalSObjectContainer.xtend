@@ -3,18 +3,10 @@ package emfcodegenerator.util
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
 
+/**
+ * Interface which all SmartEMF classes which need to support the containment-feature must implement
+ */
 abstract interface MinimalSObjectContainer {
-
-	/**
-	 * the container of this class or null. needed when inspecting references which
-	 * have the containment flag set to true
-	 */
-	//var EObject the_eContainer = null
-
-	/**
-	 * the EStructuralFeature which contains this class as an target or null if Containment is false
-	 */
-	//var EStructuralFeature the_econtaining_feature = null
 
 	/**
 	 * Returns the containing object, or null.

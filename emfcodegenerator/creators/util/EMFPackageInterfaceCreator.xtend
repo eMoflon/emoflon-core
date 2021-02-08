@@ -131,7 +131,7 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 		var String feature_id_offset = ""
 		var String operation_id_offset = ""
 		the_super_class = all_super_types.get(0) as EClassImpl
-		if(EMFPackageInterfaceCreator.emf_model.get_object_to_class_name_map.keySet.contains(the_super_class)){
+		if(EMFPackageInterfaceCreator.emf_model.eclass_is_registered(the_super_class)){
 			all_super_types.remove(0)
 			e_pak_of_super_class = 
 					this.packages_to_inspector_map.get(the_super_class.EPackage)
@@ -155,7 +155,7 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 		all_e_operations.addAll(this.e_pak.get_eoperation_inspector_for_class(e_class))
 		for(ecl : all_super_types){
 			var ecl_impl = ecl as EClassImpl
-			if(EMFPackageInterfaceCreator.emf_model.get_object_to_class_name_map.keySet.contains(ecl_impl)){
+			if(EMFPackageInterfaceCreator.emf_model.eclass_is_registered(ecl_impl)){
 				var containing_package = this.packages_to_inspector_map.get(ecl_impl.EPackage)
 				all_structural_features.addAll(
 					containing_package.get_all_object_field_inspectors_for_class(ecl_impl)

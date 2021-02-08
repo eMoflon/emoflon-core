@@ -110,7 +110,7 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 		if(generic_type.EClassifier !== null){
 			var String package_var_name
 			//type might be an EClass specified in genmodel/ecore
-			if(EGenericTypeProcessor.emf_model.get_object_to_class_name_map.containsKey(generic_type.EClassifier)){
+			if(EGenericTypeProcessor.emf_model.eclass_is_registered(generic_type.EClassifier)){
 				//it is a user specified class
 				var package_dependency = generic_type.EClassifier.EPackage
 				package_var_name = "this"
@@ -452,28 +452,7 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 			entry.append(this.generic_bound_to_var_name_map.get(generic_type))
 			entry.append(");")
 			return entry.toString
-		} /*else if(
-			EGenericTypeProcessor.emf_model.get_packages_to_package_inspector_map
-				.containsKey(generic_type.EClassifier.EPackage)
-		){
-			//The package of the generic_type is user-specified, however it was not a class
-			var package_inspector = 
-				EGenericTypeProcessor.emf_model.get_packages_to_package_inspector_map
-					.get(generic_type.EClassifier.EPackage)
-			//make sure the package was used before
-			if(!package_inspector.is_initialized){
-				package_inspector.initialize()
-				this.packages = EGenericTypeProcessor.emf_model.update_package_inspector(
-					generic_type.EClassifier.EPackage, package_inspector
-				)
-			}
-			if(package_inspector.get_all_edata_types_in_package.contains(generic_type.EClassifier)){
-				//the generic-type is actually an EDataType
-				entry = new StringBuilder("shit")
-				return entry.toString
-			}
-			else throw new UnsupportedOperationException()
-		}*/
+		}
 
 		var error_message = new StringBuilder("Unable to process following object:")
 		error_message.append(System.lineSeparator)

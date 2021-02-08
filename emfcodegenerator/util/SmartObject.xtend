@@ -12,30 +12,9 @@ import org.eclipse.emf.common.notify.Notification
 import org.eclipse.emf.ecore.resource.Resource
 
 /**
- * kind of wrapper. TODO: check if this works
+ * SmartEMF base-class for all generated objects.
  */
 class SmartObject implements MinimalSObjectContainer, EObject {
-
-	/**
-	 * EMF EClass model instance
-	 */
-	var EClass e_static_class
-
-	/**
-	 * the container of this class or null. needed when inspecting references which
-	 * have the containment flag set to true
-	 */
-	var EObject the_eContainer = null
-
-	/**
-	 * the EStructuralFeature which contains this class as an target or null if Containment is false
-	 */
-	var EStructuralFeature the_econtaining_feature = null
-
-	/**
-	 * stores true if this object is part of a containment relationship
-	 */
-	var boolean is_containment_object = false
 
 	/**
 	 * constructs a new MinimalSObjectContainer. Expects the EMF runtime model as param
@@ -63,29 +42,6 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	 */
 	override EStructuralFeature eContainingFeature(){
 		return this.the_econtaining_feature
-	}
-
-	/**
-	 * sets the eContainer and eContainingFeature back to null. Call this method if the object is
-	 * in a containment relationship anymore
-	 */
-	override void reset_containment(){
-		this.is_containment_object = false
-		if(!this.the_econtaining_feature.isMany){
-			this.the_eContainer.eSet(this.the_econtaining_feature, null)
-		} else {
-			var EList the_list = (this.the_eContainer.eGet(this.the_econtaining_feature) as EList)
-			while(the_list.contains(this)) the_list.remove(this)
-		}
-		this.the_eContainer = null
-		this.the_econtaining_feature = null
-	}
-
-	override void set_containment(EObject container, EStructuralFeature feature){
-		this.is_containment_object = true
-		if(this.the_eContainer !== null) this.reset_containment()
-		this.the_eContainer = container
-		this.the_econtaining_feature = feature
 	}
 
 	/**
@@ -214,10 +170,60 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	override eSetDeliver(boolean deliver) {
 		this.e_static_class.eSetDeliver(deliver)
 	}
+
+	/**########################MinimalSObjectContainer########################*/
 	
+	
+	/**
+	 * EMF EClass model instance
+	 */
+	var EClass e_static_class
+
+	/**
+	 * the container of this class or null. needed when inspecting references which
+	 * have the containment flag set to true
+	 */
+	var EObject the_eContainer = null
+
+	/**
+	 * the EStructuralFeature which contains this class as an target or null if Containment is false
+	 */
+	var EStructuralFeature the_econtaining_feature = null
+
+	/**
+	 * stores true if this object is part of a containment relationship
+	 */
+	var boolean is_containment_object = false
+
 	override is_containment_object() {
 		this.is_containment_object
 	}
-	
+
+	/**
+	 * sets the eContainer and eContainingFeature back to null. Call this method if the object is
+	 * in a containment relationship anymore
+	 * TODO: eNotifictaion support ?
+	 */
+	override void reset_containment(){
+		this.is_containment_object = false
+		if(!this.the_econtaining_feature.isMany){
+			this.the_eContainer.eSet(this.the_econtaining_feature, null)
+		} else {
+			var EList the_list = (this.the_eContainer.eGet(this.the_econtaining_feature) as EList)
+			while(the_list.contains(this)) the_list.remove(this)
+		}
+		this.the_eContainer = null
+		this.the_econtaining_feature = null
+	}
+
+	/**
+	 * TODO: eNotifictaion support ?
+	 */
+	override void set_containment(EObject container, EStructuralFeature feature){
+		if(this.the_eContainer !== null) this.reset_containment()
+		this.is_containment_object = true
+		this.the_eContainer = container
+		this.the_econtaining_feature = feature
+	}
 	
 }

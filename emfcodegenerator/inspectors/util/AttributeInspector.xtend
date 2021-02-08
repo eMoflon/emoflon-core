@@ -6,10 +6,10 @@ import emfcodegenerator.inspectors.InspectedObjectType
 import java.util.ArrayList
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EcorePackage
-import org.eclipse.emf.ecore.impl.EAttributeImpl
 import org.eclipse.emf.ecore.impl.EClassImpl
 import org.eclipse.emf.ecore.impl.EClassifierImpl
 import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EAttribute
 
 class AttributeInspector extends AbstractObjectFieldInspector{
 	
@@ -18,7 +18,7 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 	/**
 	 * the EAttribute which shall be inspected
 	 */
-	var EAttributeImpl e_attr
+	var EAttribute e_attr
 
 	var String getter_method_declaration_for_the_package_classes
 	var boolean getter_method_declaration_for_the_package_classes_is_generated = false
@@ -35,9 +35,9 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 	}
 	
 	def private void init(EStructuralFeature e_feature){
-		if(!(e_feature instanceof EAttributeImpl))
+		if(!(e_feature instanceof EAttribute))
 			throw new IllegalArgumentException("Expected EAttribute, got " + e_feature.class.name)
-		this.e_attr = e_feature as EAttributeImpl
+		this.e_attr = e_feature as EAttribute
 		
 		//get import String for this Attribute
 		var fq_module_name = e_attr.EAttributeType.instanceTypeName

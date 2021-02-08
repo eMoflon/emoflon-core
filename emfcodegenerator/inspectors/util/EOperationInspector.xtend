@@ -842,8 +842,7 @@ class EOperationInspector extends EMFCodeGenerationClass implements FeatureInspe
 	def private String get_eclassifier_getter_method_for_eclass(EClassifier the_classifier){
 		var String classifier_getter_method
 		if(
-			EOperationInspector.emf_model.get_class_name_to_object_map
-									     .containsValue(the_classifier) ||
+			EOperationInspector.emf_model.eclass_is_registered(the_classifier) ||
 	     	(
 	     		the_classifier instanceof EEnum &&
 	     		EOperationInspector.emf_model.get_packages_to_package_inspector_map

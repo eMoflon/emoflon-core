@@ -9,14 +9,14 @@ import java.util.ArrayList
 import java.util.Arrays
 import java.util.HashSet
 import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.impl.EClassImpl
+import org.eclipse.emf.ecore.EClass
 
 abstract class ModelFileCreator extends EMFCodeGenerationClass implements FileCreator{
 	
 	/**
 	 * The EClass for which an interface or an implementation shall be created
 	 */
-	var protected EClassImpl e_class
+	var protected EClass e_class
 
 	/**
 	 * a HashSet containing ObjectFieldInspector-objects for all Attributes and References the
@@ -64,7 +64,7 @@ abstract class ModelFileCreator extends EMFCodeGenerationClass implements FileCr
 	 * @param e_data_fields HashSet<ObjectFieldInspector> the ObjectFieldInspector's for the contained Attributes/References
 	 * @param e_operations HashSet<EOperationInspector> the EOperationInspector's for all the EOperations
 	 */
-	new(EClassImpl eclass, EcoreGenmodelParser gen_model,
+	new(EClass eclass, EcoreGenmodelParser gen_model,
 		HashSet<AbstractObjectFieldInspector> e_data_fields,
 		HashSet<EOperationInspector> e_operations,
 		PackageInspector e_pak){
