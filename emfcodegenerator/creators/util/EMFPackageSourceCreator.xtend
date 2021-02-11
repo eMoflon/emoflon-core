@@ -90,6 +90,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	 * stores the EPackages on which this.e_pak is dependent as key and their Inspector as Value
 	 */
 	var package_dependency_map = new HashMap<EPackage,PackageInspector>()
+
 	/**########################Constructors########################*/
 	
 	/**
@@ -337,12 +338,10 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 			
 			var inspector = this.packages.get(epak)
 			this.add_import_as_String(
-				inspector.get_package_declaration_name + "." +
-				inspector.get_emf_package_class_name
+'''«inspector.get_package_declaration_name».«inspector.get_emf_package_class_name»'''
 			)
 			this.add_import_as_String(
-				inspector.get_package_declaration_name + ".impl." +
-				inspector.get_emf_package_class_name + "Impl"
+'''«inspector.get_package_declaration_name».impl.«inspector.get_emf_package_class_name»Impl'''
 			)
 			var buffer = inspector.get_init_code_snippet()
 			init_snippets.putAll(buffer)
@@ -374,6 +373,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	 * It is the first section of the "void initializePackageContents()"-method.<br>
 	 * Called by
 	 * {@link #generate_e_package_init_package_contents() generate_e_package_init_package_contents()}.
+	 * @return ArrayList<String>
 	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> generate_e_package_init_package_contents__package_init(){
@@ -389,6 +389,8 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	/**
 	 * generates the parts dependent packages are obtained and set for use.
 	 * is the second section of void initializePackageContents()
+	 * @return ArrayList<String>
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> generate_e_package_init_package_contents__add_package_dependencies(){
 		var body = new ArrayList<String>()
@@ -406,12 +408,10 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 					)
 				} finally {
 					var inspector = packages.get(dependent_pak)
+					var p_class_name = inspector.get_emf_package_class_name
+
 					body.add(
-						inspector.get_emf_package_class_name + " the" +
-						inspector.get_emf_package_class_name +
-						" = (" + inspector.get_emf_package_class_name +
-						") EPackage.Registry.INSTANCE.getEPackage(" +
-						inspector.get_emf_package_class_name + ".eNS_URI);"
+'''«p_class_name» the«p_class_name» = («p_class_name») EPackage.Registry.INSTANCE.getEPackage(«p_class_name».eNS_URI);'''
 					)
 				}
 			}
@@ -510,9 +510,10 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	}
 
 	/**
-	 * generates the parts where generic types are created and their bounds are set
-	 * is the third section of void initializePackageContents()
+	 * generates the parts where generic types are created and their bounds are set.
+	 * It is the third section of void initializePackageContents()
 	 * @return ArrayList<String> where each entry is one line of code
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> generate_e_package_init_package_contents__create_type_params___for_edatatypes(){
 		var type_parameter_body = new ArrayList<String>()
@@ -567,7 +568,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 							entry.append(");")
 							type_parameter_creation_block.add(entry.toString)
 							type_parameter_set_up_block.add(
-								create_egeneric_type_bound_set_up_command(
+								this.create_egeneric_type_bound_set_up_command(
 									generic_type, etype_to_var_name_map, type_param
 								)
 							)
@@ -585,6 +586,8 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	/**
 	 * generates the parts which init the EClasses of the Package
 	 * is the fourth section of void initializePackageContents()
+	 * @return ArrayList<String> where each entry is one line of code
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> generate_e_package_init_package_contents__init_eclasses(){
 		//generate init code for the EClasses, their Attributes, References and Type params
@@ -645,8 +648,10 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	 * generates a part of the EClass init-block. It generates the super types and adds them to the
 	 * Eclass.
 	 * is called by this.generate_e_package_init_package_contents__init_eclasses
-	 * @param EClassImpl for which the supers shall be created 
-	 * @param String var name of the EClass
+	 * @param e_class EClass for which the supers shall be created 
+	 * @param e_class_name String var name of the EClass
+	 * @return ArrayList<String>
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> generate_e_package_init_package_contents__init_eclasses___add_super_classes(EClass e_class, String e_class_name){
 		var body = new ArrayList<String>()
@@ -682,6 +687,9 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	/**
 	 * generates a part of the EClass init-block. It generates the structural features
 	 * is called by this.generate_e_package_init_package_contents__init_eclasses
+	 * @param e_class EClass
+	 * @return ArrayList<String>
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> generate_e_package_init_package_contents__init_eclasses___structural_features(EClass e_class){
 		var init_block = new ArrayList<String>()
@@ -704,6 +712,9 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	/**
 	 * generates a part of the EClass init-block. It generates the EOperations
 	 * is called by this.generate_e_package_init_package_contents__init_eclasses
+	 * @param e_class EClass
+	 * @return ArrayList<String>
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> generate_e_package_init_package_contents__init_eclasses___eoperations(EClass e_class){
 		var ArrayList<String> init_block = new ArrayList<String>()
@@ -718,6 +729,8 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	/**
 	 * generates a part of the EClass init-block. It generates the EDataTypes
 	 * is called by this.generate_e_package_init_package_contents
+	 * @return ArrayList<String>
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> generate_e_package_init_package_contents__init_edata_types(){
 		var body = new ArrayList<String>()
@@ -779,6 +792,8 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	/**
 	 * generates a part of the EClass init-block. It generates the EEnums
 	 * is called by this.generate_e_package_init_package_contents
+	 * @return ArrayList<String>
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> generate_e_package_init_package_contents__init_eenums(){
 		var body = new ArrayList<String>()
@@ -949,6 +964,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	 *	<li>generates the "initializePackageContents()"-method</li>
 	 *	<li>flags this Creator as initialized</li>
 	 * </ol>
+	 * @author Adrian Zwenger
 	 */
 	override initialize_creator(String fq_file_path, String IDENTION) {
 		this.class_declaration = "public class " +
@@ -975,6 +991,9 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		this.is_initialized = true
 	}
 	
+	/**
+	 * @inheritDoc
+	 */
 	override write_to_file() {
 		if(!this.is_initialized)
 			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)

@@ -108,10 +108,10 @@ class InterfaceCreator extends ModelFileCreator {
 	 * implementation flags
 	 * Example: public interface MyInterface extends SomeObject implements Stuff, OtherStuff
 	 * @returns String
+	 * @author Adrian Zwenger
 	 */
 	def private String create_interface_declaration(){
-		var declaration = "public interface " + e_class.name
-		declaration += this.generic_type_declaration_string
+		var declaration = "public interface " + e_class.name + this.generic_type_declaration_string
 
 		if(e_class.ESuperTypes.isEmpty()){
 			// EMF interfaces extend the EObject class if it does not extend
@@ -147,6 +147,7 @@ class InterfaceCreator extends ModelFileCreator {
 	 * Takes an ObjectFieldInspector and generates a getter method-declaration for it
 	 * @param ObjectFieldInspector inspecting the object-field
 	 * @return String containing the method-declaration
+	 * @author Adrian Zwenger
 	 */
 	def protected static String create_getter_method_stump(ObjectFieldInspector e_attr){
 		var String var_type = e_attr.get_object_field_type_name()
@@ -158,6 +159,7 @@ class InterfaceCreator extends ModelFileCreator {
 	 * Takes an ObjectFieldInspector and generates a setter method-declaration for it
 	 * @param ObjectFieldInspector inspecting the object-field
 	 * @return String containing the method-declaration
+	 * @author Adrian Zwenger
 	 */
 	def protected static String create_setter_method_stump(ObjectFieldInspector e_attr){
 		var String var_type = e_attr.get_object_field_type_name()
@@ -169,6 +171,7 @@ class InterfaceCreator extends ModelFileCreator {
 	 * Takes an ObjectFieldInspector and generates an unset method-declaration for it
 	 * @param ObjectFieldInspector inspecting the object-field
 	 * @return String containing the method-declaration
+	 * @author Adrian Zwenger
 	 */
 	def protected static String create_unset_method_stump(ObjectFieldInspector e_attr){
 		return '''void unset«e_attr.get_name_with_first_letter_capitalized»()'''.toString()
@@ -178,6 +181,7 @@ class InterfaceCreator extends ModelFileCreator {
 	 * Takes an ObjectFieldInspector and generates an isset method-declaration for it
 	 * @param ObjectFieldInspector inspecting the object-field
 	 * @return String containing the method-declaration
+	 * @author Adrian Zwenger
 	 */
 	def protected static String create_isset_method_stump(ObjectFieldInspector e_attr){
 		return '''boolean isSet«e_attr.get_name_with_first_letter_capitalized»()'''.toString()
@@ -186,7 +190,7 @@ class InterfaceCreator extends ModelFileCreator {
 	/**########################Getters########################*/
 
 	/**
-	 * returns all method declarations
+	 * @inheritDoc
 	 */
 	override get_method_declarations(){
 		if(!this.is_initialized)
@@ -195,7 +199,7 @@ class InterfaceCreator extends ModelFileCreator {
 	}
 
 	/**
-	 * Returns the interface declaration
+	 * @inheritDoc
 	 */
 	override get_declaration(){
 		if(!this.is_initialized)
@@ -204,22 +208,22 @@ class InterfaceCreator extends ModelFileCreator {
 	}
 
 	/**
-	 * returns the EPackage in which the interface is. Can be run if the Creator is not initialised yet
+	 * @inheritDoc
 	 */
 	override get_package(){
 		return e_class.EPackage
 	}
 	
 	/**
-	 * returns the name of the interface
+	 * @inheritDoc
 	 */
 	override get_name() {
 		return e_class.name
 	}
 	
 	/**
-	 * returns the String which is needed to declare to package an interface belongs to
-	 */	
+	 * @inheritDoc
+	 */
 	override get_package_declaration(){
 		if(!this.is_initialized)
 			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
@@ -230,6 +234,7 @@ class InterfaceCreator extends ModelFileCreator {
 
 	/**
 	 * generates the declarations needed for the methods and stores them in a HashSet
+	 * @author Adrian Zwenger
 	 */
 	def private void generate_method_declarations(){
 		for(data_field : e_data_fields){
@@ -251,6 +256,7 @@ class InterfaceCreator extends ModelFileCreator {
 
 	/**
 	 * prepares the Creator for parsing and assembling
+	 * @author Adrian Zwenger
 	 */
 	override initialize_creator(String fq_file_path, String IDENTION){
 		this.fq_file_path = fq_file_path
@@ -263,6 +269,7 @@ class InterfaceCreator extends ModelFileCreator {
 
 	/**
 	 * starts the writing process writes the interface/class source-code contents to a file
+	 * @author Adrian Zwenger
 	 */
 	override write_to_file(){
 		if(!this.is_initialized)

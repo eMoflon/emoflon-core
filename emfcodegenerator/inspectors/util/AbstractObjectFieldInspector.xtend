@@ -4,19 +4,23 @@ import emfcodegenerator.EMFCodeGenerationClass
 import org.eclipse.emf.ecore.EStructuralFeature
 import emfcodegenerator.EcoreGenmodelParser
 import java.util.ArrayList
-import emfcodegenerator.EListTypeEnum
 import java.util.LinkedList
 import org.eclipse.emf.ecore.EGenericType
 import java.util.HashSet
-import org.eclipse.emf.ecore.impl.EPackageImpl
 import emfcodegenerator.MultiplicityEnum
 import org.eclipse.emf.ecore.ETypeParameter
-import java.util.HashMap
 import emfcodegenerator.EGenericTypeProcessor
 import org.eclipse.emf.ecore.EClass
 import emfcodegenerator.inspectors.ObjectFieldInspector
+import emfcodegenerator.util.collections.EListTypeEnum
+import emfcodegenerator.util.collections.SmartCollectionFactory
+import org.eclipse.emf.ecore.EPackage
 
-abstract class AbstractObjectFieldInspector extends EMFCodeGenerationClass implements ObjectFieldInspector{
+/**
+ * This class represent the shared functionality of AttributeInspectors and ReferenceInspectors
+ */
+abstract
+class AbstractObjectFieldInspector extends EMFCodeGenerationClass implements ObjectFieldInspector{
 
 	/**########################Attributes########################*/
 
@@ -65,31 +69,53 @@ abstract class AbstractObjectFieldInspector extends EMFCodeGenerationClass imple
 	/**
 	 * stores the EPackages on which this Attribute depends.
 	 */
-	protected var HashSet<EPackageImpl> meta_model_package_dependencies = new HashSet<EPackageImpl>()
+	protected var HashSet<EPackage> meta_model_package_dependencies = new HashSet<EPackage>()
 
 	/**
 	 * stores the needed import string for this EReference if it is to be used
 	 */
 	protected var String fq_import_name
 
+	/**
+	 * stores the object-fields type-name.
+	 */
 	protected var String object_field_type_name
-	
+
+	/**
+	 * EAttributes can have a default value if they are primitive. It is stored as a String here.
+	 * The default for all fields is always null.
+	 */
 	protected var String default_value = "null"
 
+	/**
+	 * is true, if the type has got type parameters
+	 */
 	protected var boolean this_feautures_datatype_is_composed_of_multiple_generic_sub_types = false
-	
-	protected var HashMap<EGenericType,String> generictype_to_var_name_for_init_code_map =
-		new HashMap<EGenericType,String>()
 
+	/**
+	 * The variable of the EGenericType which needs to be added to the EStructuralFeature in the
+	 * Package-init()-method is stored here or null
+	 */
 	protected var String generic_feauturetype_classifier_var_name = null
 
 	/**########################Constructor########################*/
 	
+	/**
+	 * Constructs a new AbstractObjectInspector
+	 * @param e_feature EStructuralFeature
+	 * @param gen_model EcoreGenmodelParser
+	 */
 	new(EStructuralFeature e_feature, EcoreGenmodelParser gen_model){
 		super(gen_model)
 		this.init(e_feature)
 	}
-	
+
+	/**
+	 * Constructs a new AbstractObjectInspector
+	 * @param e_feature EStructuralFeature
+	 * @param super_package_name String representing the super-package specified by GenModel-XMI
+	 * @author Adrian Zwenger
+	 */
 	new(EStructuralFeature e_feature, String super_package_name){
 		super(super_package_name)
 		this.init(e_feature)
@@ -97,10 +123,14 @@ abstract class AbstractObjectFieldInspector extends EMFCodeGenerationClass imple
 	
 	/**
 	 * sets following class attributes according to the EStruicturalFeature's qualities
-	 * object_field_type_name, needs_setter_method, needed_elist_type*/
+	 * object_field_type_name, needs_setter_method, needed_elist_type
+	 * @param e_feature EStructuralFeature
+	 * @author Adrian Zwenger
+	 */
 	private def void init(EStructuralFeature e_feature){
 		this.e_feature = e_feature
-		this.needed_elist_type = get_needed_elist_type(this.is_ordered(), this.is_unique())
+		this.needed_elist_type =
+			SmartCollectionFactory.get_needed_elist_type(this.is_ordered(), this.is_unique())
 		
 		switch(e_feature.upperBound){
 			case MultiplicityEnum.SINGLE_ELEMENT: {
@@ -132,10 +162,15 @@ abstract class AbstractObjectFieldInspector extends EMFCodeGenerationClass imple
 	/**########################Shared Methods########################*/
 
 	/**
-	 * does the same as the overriden method, however it parses EUpperBound and ELowerBound and registers needed 
-	 * objects for generation
+	 * registers the full object field type by traversing the EGenericType while adding all needed
+	 * sub-types as an import. Returns a String representation of the type. <br>
+	 * Example: "myclass<E extends String>"
+	 * @param e_type EGenericType
+	 * @param declaration String
+	 * @return String
+	 * @author Adrian Zwenger
 	 */
-	override register_full_object_field_type(EGenericType e_type, String declaration){
+	def String register_full_object_field_type(EGenericType e_type, String declaration){
 		//get generictype import string
 		var String new_declaration = declaration
 		//check if it is a generic type
@@ -198,118 +233,118 @@ abstract class AbstractObjectFieldInspector extends EMFCodeGenerationClass imple
 	}
 
 	/**
-	 * returns the name of the EStructuralFeature type
-	 * example:  ArrayList<MyAttribute<?>>
+	 * @inheritDoc
 	 */
-	//def String
 	override get_object_field_type_name() {
 		return object_field_type_name
 	}
 
-	/** returns if field is a tuple and thus needs to be stored in an EList*/
-	//def boolean
+	/**
+	 * @inheritDoc
+	 */
 	override is_a_tuple(){
 		return this.e_feature.isMany
 	}
 	
-	/** returns if the contained element/elements is/are unique */
-	//def boolean
+	/**
+	 * @inheritDoc
+	 */
 	override is_unique(){
 		return this.e_feature.isUnique
 	}
 	
-	/** returns if the contained element/elements is/are ordered */
-	//def boolean
+	/**
+	 * @inheritDoc
+	 */
 	override is_ordered(){
 		return this.e_feature.isOrdered
 	}
 	
-	/** returns if the contained element/elements is/are unsettable */
-	//def boolean
+	/**
+	 * @inheritDoc
+	 */
 	override is_unsettable(){
 		return this.e_feature.isUnsettable
 	}
 	
-	/** returns true if a setter method needs to be generated*/
-	//def boolean
+	/**
+	 * @inheritDoc
+	 */
 	override needs_setter_method(){
 		return this.needs_setter_method
 	}
 
 	/**
-	 * returns if the object field is changeable
+	 * @inheritDoc
 	 */
-	//def boolean
 	override is_changeable(){
 		return this.e_feature.isChangeable
 	}
 	
 	/**
-	 * returns the EStructuralFeature which is being inspected
-	 * @return EStructuralFeature
+	 * @inheritDoc
 	 */
-	//def EStructuralFeature 
 	override get_inspected_object(){
 		return this.e_feature
 	}
 
 	/**
-	 * returns an ArrayList where each entry represents a line of code needed to initialize
-	 * the EAttribute in the Package-class
-	 * @return ArrayList<String>
+	 * @inheritDoc
 	 */
-	//def ArrayList<String> 
 	override get_type_init_commands(){
 		if(this.type_init_commands_are_generated) return this.type_init_commands
 		return null
 	}
 
 	/**
-	 * returns if the init-commands have been generated
-	 * @return boolean
+	 * @inheritDoc
 	 */
-	//def boolean
 	override type_init_commands_are_generated(){
 		return this.type_init_commands_are_generated
 	}
 	
 	/**
-	 * returns a HashSet filled with EPackages on which this Feature depends during initialization 
-	 * in the package class 
-	 * @return HashSet<EPackageImpl>
-	 */
-	//def HashSet<EPackageImpl> 
+	 * @inheritDoc
+	 */ 
 	override get_meta_model_package_dependencies(){
 		return this.meta_model_package_dependencies
 	}
 
-	/** returns the needed EList-type for implementation*/
-	//def EListTypeEnum 
+	/**
+	 * @inheritDoc
+	 */
 	override get_needed_elist_type_enum(){
 		return this.needed_elist_type
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	override get_name(){
 		return this.e_feature.name
 	}
 
 	/**
-	 * returns the attributes name where the first letter us capitalised
-	 * @return String
+	 * @inheritDoc
 	 */
 	override get_name_with_first_letter_capitalized(){
 		return this.e_feature.name.substring(0, 1).toUpperCase() + this.e_feature.name.substring(1)
 	}
 
 	/**
-	 * returns the EMF specified default value of the object-field
-	 * @return String
+	 * @inheritDoc
 	 */
-	//def String 
 	override get_default_value(){
 		return this.default_value
 	}
 
+	/**
+	 * generates the code needed to initialize EStructuralFeatures in the Package-init()-method.<br>
+	 * ETypeParameters, EBounds generation code is determined here and returned in order as an
+	 * ArrayList.
+	 * @return ArrayList<String>
+	 * @author Adrian Zwenger
+	 */
 	protected def ArrayList<String> generate_needed_generic_types_for_init_code(){
 		if(AbstractObjectFieldInspector.emf_model === null)
 			throw new IllegalAccessException(
@@ -320,7 +355,11 @@ abstract class AbstractObjectFieldInspector extends EMFCodeGenerationClass imple
 		if(!generic_type_declarations.isEmpty){
 			this.this_feautures_datatype_is_composed_of_multiple_generic_sub_types = true
 			var the_container_eclass = this.e_feature.eContainer as EClass
-			var type_params_to_var_name = AbstractObjectFieldInspector.emf_model.get_generic_type_to_var_name_map_for_eclass(the_container_eclass)
+			var type_params_to_var_name =
+				AbstractObjectFieldInspector.emf_model
+											.get_generic_type_to_var_name_map_for_eclass(
+												the_container_eclass
+											)
 			
 			var generic_type_processor = new EGenericTypeProcessor(
 				AbstractObjectFieldInspector.emf_model, 
@@ -373,7 +412,6 @@ abstract class AbstractObjectFieldInspector extends EMFCodeGenerationClass imple
 		return body
 	}
 
-	//def String
 	/**
 	 * All EStructuralFeatures have an entry in the Literals interface in their respective
 	 * package class. This method returns the designated variable name which is used in said
@@ -389,8 +427,9 @@ abstract class AbstractObjectFieldInspector extends EMFCodeGenerationClass imple
 
 	/**########################Abstract Methods########################*/
 
-	/** returns the fully qualified name for imports. example: java.util.HashMap */
-	//abstract def String
+	/**
+	 * @inheritDoc
+	 */
 	override get_fq_import_name(){
 		return this.fq_import_name
 	}

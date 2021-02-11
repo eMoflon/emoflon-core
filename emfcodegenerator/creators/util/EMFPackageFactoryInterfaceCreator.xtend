@@ -11,24 +11,61 @@ import java.io.File
 import java.io.FileWriter
 
 /**
- * creates the interface for the EMFPackageFactory
+ * creates the interface for the package factory
  */
 class EMFPackageFactoryInterfaceCreator extends EMFCodeGenerationClass implements FileCreator{
 	
 	/**########################Attributes########################*/
 	
+	/**
+	 * The EPackages Inspector for which this factory-interface shall be created
+	 */
 	var protected PackageInspector e_pak
+
+	/**
+	 * The name which this interface will have
+	 */
 	var protected String interface_name
+
+	/**
+	 * stores the package declaration for the interface
+	 */
 	var protected String package_declaration
+
+	/**
+	 * Stores if this Creator was properly initialized.
+	 */
 	var protected boolean is_initialized = false
+
+	/**
+	 * Stores the path to the interface-file which will be created
+	 */
 	var protected String file_path
+
+	/**
+	 * String with which code shall be indented
+	 */
 	var protected String IDENTION
+
+	/**
+	 * Maps the contained EClasses to their getter-method declaration
+	 */
 	var HashMap<EClass,String> e_class_to_getter_declaration_map =
 		new HashMap<EClass,String>()
+
+	/**
+	 * Each entry of this ArrayList contains one LOC of the interface
+	 */
 	var ArrayList<String> interface_body = new ArrayList<String>()
 
 	/**########################Constructors########################*/
 
+	/**
+	 * Constructs a new EMFPackageFactoryInterfaceCreator.
+	 * @param gen_model EcoreGenmodelParser
+	 * @param package_inspector PackageInspector
+	 * @author Adrian Zwenger
+	 */
 	new(EcoreGenmodelParser gen_model, PackageInspector package_inspector){
 		super(gen_model)
 		this.e_pak = package_inspector
@@ -48,12 +85,26 @@ class EMFPackageFactoryInterfaceCreator extends EMFCodeGenerationClass implement
 
 	/**########################Methods########################*/
 
+	/**
+	 * returns the getter method for a given EClass if it is registered in
+	 * {@link #e_class_to_getter_declaration_map e_class_to_getter_declaration_map}.
+	 * @param e_class EClass
+	 * @return String
+	 * @author Adrian Zwenger
+	 */
 	def protected String get_getter_method_declaration_for_e_class(EClass e_class){
 		if(!this.is_initialized)
 			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
 		return this.e_class_to_getter_declaration_map.get(e_class)
 	}
 
+	/**
+	 * Creates a getter-declaration for a given EClass and registers it to
+	 * {@link #e_class_to_getter_declaration_map e_class_to_getter_declaration_map}.
+	 * @param e_class EClass
+	 * @return String
+	 * @author Adrian Zwenger
+	 */
 	def private String create_getter_declaration_for_e_class(EClass e_class){
 		var type_decl = this.e_pak.get_type_arguments_declaration_for_eclass(e_class)
 		var reduced_type_decl =
@@ -63,6 +114,9 @@ class EMFPackageFactoryInterfaceCreator extends EMFCodeGenerationClass implement
 
 	/**########################Public Methods########################*/
 
+	/**
+	 * @inheritDoc
+	 */
 	override initialize_creator(String fq_file_path, String IDENTION) {
 		this.is_initialized = true
 		this.file_path = fq_file_path
@@ -108,7 +162,10 @@ class EMFPackageFactoryInterfaceCreator extends EMFCodeGenerationClass implement
 		this.interface_body.add("}")
 		this.interface_body.add(System.lineSeparator)
 	}
-	
+
+	/**
+	 * @inheritDoc
+	 */
 	override write_to_file() {
 		if(!this.is_initialized)
 			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)

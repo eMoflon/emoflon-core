@@ -19,6 +19,9 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EGenericType
 import org.eclipse.emf.ecore.EEnum
 
+/**
+ * Inspects EPackages
+ */
 class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	
 	/**########################Attributes########################*/
@@ -97,9 +100,12 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 * the key represents a variables name and the key is a ordered list of code concerning the
 	 * variable.<br>
 	 * example:<br>
-	 * key =  the_SubPackage<br>
-     * value = [Object registered_SubPackage = EPackage.Registry.INSTANCE.getEPackage(SubPackage.eNS_URI);
-     * SubPackageImpl the_SubPackage = (SubPackageImpl) ((registered_SubPackage instanceof SubPackageImpl) ? registered_SubPackage : SubPackage.eINSTANCE);]
+	 * <b>key</b> =  <em>the_SubPackage</em><br>
+     * <b>value</b> = <em>
+     ["Object registered_SubPackage = EPackage.Registry.INSTANCE.getEPackage(SubPackage.eNS_URI);",
+     "SubPackageImpl the_SubPackage = (SubPackageImpl)
+     ((registered_SubPackage instanceof SubPackageImpl) ?
+     registered_SubPackage : SubPackage.eINSTANCE);"]</em><br>
 	 */
 	var HashMap<String,ArrayList<String>> init_snippet =
 		new HashMap<String,ArrayList<String>>()
@@ -117,8 +123,8 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 		new HashMap<EStructuralFeature, AbstractObjectFieldInspector>()
 
 	/**
-	 * stores all EClasses as key and a HashMap as well which stores all the EClasses ETypeParameters
-	 * and their designated variable name
+	 * stores all EClasses as key and a HashMap as well which stores all the EClasses
+	 *ETypeParameters and their designated variable name
 	 */
 	var HashMap<EClass,HashMap<ETypeParameter,String>> eclass_to_etypeparam_to_var_name_map = 
 		new HashMap<EClass,HashMap<ETypeParameter,String>>()
@@ -136,7 +142,8 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 
 	/**
 	 * stores the String which is used to declare the type-parameters for a class.<br>
-	 * Example: TestClassImpl<a extends classB, b> --> stored String = "<a extends classB, b>"
+	 * <b>Example:</b>
+	 <xmp>TestClassImpl<a extends classB, b> --> stored String = "<a extends classB, b>"</xmp>
 	 */
 	var HashMap<EClass,String> eclass_to_type_arguments_declaration =
 		new HashMap<EClass,String>()
@@ -149,11 +156,16 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 
 	/**
 	 * stores a reduced String which is used to declare the type-parameters for a class.<br>
-	 * Example: TestClassImpl<a extends classB, b> --> stored String = "<a, b>"
+	 * <b>Example:</b>
+	 <xmp>TestClassImpl<a extends classB, b> --> stored String = "<a, b>"<xmp>
 	 */
 	var HashMap<EClass,String> eclass_to_type_to_reduced_arguments_declaration =
 		new HashMap<EClass,String>()
 
+	/**
+	 * stores the specific imports the EMF-package-factory needs as well, which however,
+	 * the EMF-package-class does not.
+	 */
 	var HashSet<String> needed_imports_for_package_factory =
 		new HashSet<String>()
 
@@ -161,8 +173,9 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	
 	/**
 	 * construct a new PackagInspector
-	 * @param EPackage e_package
-	 * @param EcoreGenmodelParser gen_model
+	 * @param e_package EPackag 
+	 * @param gen_model EcoreGenmodelParser
+	 * @author Adrian Zwenger
 	 */
 	new(EPackage e_package, EcoreGenmodelParser gen_model) {
 		super(gen_model)
@@ -180,7 +193,9 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 *	<li>EOperations</li>
 	 *	<li>inherited things</li>
 	 *	<li>EDataTypes</li>
-	 * </ol>*/
+	 * </ol>
+	 * @author Adrian Zwenger
+	 */
 	def void initialize(){
 		this.isInited = true
 		//register attributes, references, EOperations for the EClasses
@@ -201,56 +216,88 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 			//register EAttributes
 			for(EAttribute attr : attributes_lookup){
 				var AttributeInspector new_inspector
-				if(PackageInspector.emf_model.get_struct_features_to_inspector_map.containsKey(attr)){
+				if(
+					PackageInspector.emf_model.get_struct_features_to_inspector_map.containsKey(
+						attr
+					)
+				){
 					new_inspector = 
-						PackageInspector.emf_model.get_struct_features_to_inspector_map.get(attr) as AttributeInspector
+						PackageInspector.emf_model
+										.get_struct_features_to_inspector_map
+										.get(attr) as AttributeInspector
 				} else {
 					new_inspector = new AttributeInspector(attr, PackageInspector.emf_model)
 				}
+
+				//generate the init commands if they were not beforehand
 				if(!new_inspector.type_init_commands_are_generated)
-						new_inspector.generate_init_code_for_package_class(PackageInspector.emf_model)
-				this.package_dependency_set.addAll(new_inspector.get_meta_model_package_dependencies())
+					new_inspector.generate_init_code_for_package_class(PackageInspector.emf_model)
+
+				//register all cross-dependencies
+				this.package_dependency_set.addAll(
+					new_inspector.get_meta_model_package_dependencies()
+				)
+
+				//store the Inspector
 				object_fields.add(new_inspector)
 				this.efeature_to_inspector_map.put(attr, new_inspector)
-				this.package_dependency_set.addAll(new_inspector.get_meta_model_package_dependencies)
 			}
 			
 			//register EReferences
 			for(EReference e_ref : references_lookup){
 				var ReferenceInspector new_inspector
-				if(PackageInspector.emf_model.get_struct_features_to_inspector_map.containsKey(e_ref)){
+				if(
+					PackageInspector.emf_model.get_struct_features_to_inspector_map.containsKey(
+						e_ref
+					)
+				){
 					new_inspector =
-						PackageInspector.emf_model.get_struct_features_to_inspector_map
-								      .get(e_ref) as ReferenceInspector
+						PackageInspector.emf_model
+										.get_struct_features_to_inspector_map
+								        .get(e_ref) as ReferenceInspector
 				} else {
 					new_inspector = new ReferenceInspector(e_ref, PackageInspector.emf_model)
 				}
+
 				if(!new_inspector.type_init_commands_are_generated)
-						new_inspector.generate_init_code_for_package_class(PackageInspector.emf_model)
-				this.package_dependency_set.addAll(new_inspector.get_meta_model_package_dependencies())
+						new_inspector.generate_init_code_for_package_class(
+							PackageInspector.emf_model
+						)
+				this.package_dependency_set.addAll(
+					new_inspector.get_meta_model_package_dependencies()
+				)
 				object_fields.add(new_inspector)
 				this.efeature_to_inspector_map.put(e_ref, new_inspector)
-				this.package_dependency_set.addAll(new_inspector.get_meta_model_package_dependencies)
 			}
 
 			//register inherited Attributes
 			for(EAttribute attr : e_class.EAllAttributes){
 				if(!attributes_lookup.contains(attr)){
 					var AttributeInspector new_inspector
-					if(PackageInspector.emf_model.get_struct_features_to_inspector_map.containsKey(attr)){
+					if(
+						PackageInspector.emf_model.get_struct_features_to_inspector_map.containsKey(
+							attr
+						)
+					){
 						new_inspector = 
-							PackageInspector.emf_model.get_struct_features_to_inspector_map
-										  .get(attr) as AttributeInspector
+							PackageInspector.emf_model
+											.get_struct_features_to_inspector_map
+											.get(attr) as AttributeInspector
 					} else {
 						new_inspector = new AttributeInspector(attr, PackageInspector.emf_model)
 					}
+
 					if(!new_inspector.type_init_commands_are_generated)
-						new_inspector.generate_init_code_for_package_class(PackageInspector.emf_model)
-					this.package_dependency_set
-						.addAll(new_inspector.get_meta_model_package_dependencies())
+						new_inspector.generate_init_code_for_package_class(
+							PackageInspector.emf_model
+						)
+
+					this.package_dependency_set.addAll(
+						new_inspector.get_meta_model_package_dependencies()
+					)
+
 					even_inherited_object_fields.add(new_inspector)
 					this.efeature_to_inspector_map.put(attr, new_inspector)
-					this.package_dependency_set.addAll(new_inspector.get_meta_model_package_dependencies)
 				}
 			}
 
@@ -258,19 +305,29 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 			for(EReference e_ref : e_class.EAllReferences){
 				if(!references_lookup.contains(e_ref)){
 					var ReferenceInspector new_inspector
-					if(PackageInspector.emf_model.get_struct_features_to_inspector_map.containsKey(e_ref)){
-						new_inspector = PackageInspector.emf_model.get_struct_features_to_inspector_map
-													  .get(e_ref) as ReferenceInspector
+					if(
+						PackageInspector.emf_model.get_struct_features_to_inspector_map.containsKey(
+							e_ref
+						)
+					){
+						new_inspector = PackageInspector.emf_model
+														.get_struct_features_to_inspector_map
+														.get(e_ref) as ReferenceInspector
 					} else {
 						new_inspector = new ReferenceInspector(e_ref, PackageInspector.emf_model)
 					}
+
 					if(!new_inspector.type_init_commands_are_generated)
-						new_inspector.generate_init_code_for_package_class(PackageInspector.emf_model)
-					this.package_dependency_set
-						.addAll(new_inspector.get_meta_model_package_dependencies())
+						new_inspector.generate_init_code_for_package_class(
+							PackageInspector.emf_model
+						)
+
+					this.package_dependency_set.addAll(
+						new_inspector.get_meta_model_package_dependencies()
+					)
+
 					even_inherited_object_fields.add(new_inspector)
 					this.efeature_to_inspector_map.put(e_ref, new_inspector)
-					this.package_dependency_set.addAll(new_inspector.get_meta_model_package_dependencies)
 				}
 			}
 
@@ -291,7 +348,8 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 			this.package_dependency_set.addAll(dependant_packages)
 
 			//register generic type parameters for class
-			var generic_type_params_map = PackageInspector.emf_model.get_generic_type_to_var_name_map_for_eclass(e_class)
+			var generic_type_params_map = 
+				PackageInspector.emf_model.get_generic_type_to_var_name_map_for_eclass(e_class)
 			this.eclass_to_etypeparam_to_var_name_map.put(e_class, generic_type_params_map)
 			if(!generic_type_params_map.keySet.isEmpty)
 				this.eclasses_which_have_etypeparameters.add(e_class)
@@ -316,7 +374,9 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 					new_inspector.generate_init_code_for_package_class(PackageInspector.emf_model)
 					even_inherited_e_operations.add(new_inspector)
 					this.eoperation_to_inspector_map.put(e_op, new_inspector)
-					this.package_dependency_set.addAll(new_inspector.get_meta_model_package_dependencies)
+					this.package_dependency_set.addAll(
+						new_inspector.get_meta_model_package_dependencies
+					)
 				}
 			}
 			even_inherited_e_operations.addAll(e_operations)
@@ -326,22 +386,23 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 		this.package_dependency_set.addAll(this.e_pak.ESubpackages)
 		set_path_to_folder_and_package_declaration()
 		
-		this.e_data_types = PackageInspector.emf_model.get_epackage_and_contained_e_data_types_map.get(e_pak)
+		this.e_data_types =
+			PackageInspector.emf_model.get_epackage_and_contained_e_data_types_map.get(e_pak)
 
 		this.e_enums = PackageInspector.emf_model.get_epackage_and_contained_eenums_map.get(e_pak)
 
 		//generate init for given this package snippet
 		var snippets = new ArrayList<String>()
 		var package_name = this.get_emf_package_class_name()
+
 		snippets.add(
-			'''Object registered_«package_name» = EPackage.Registry.INSTANCE.getEPackage('''.toString
-			 + package_name + ".eNS_URI);"
+'''Object registered_«package_name» = EPackage.Registry.INSTANCE.getEPackage(«package_name».eNS_URI);'''
 		)
+
 		snippets.add(
-			'''«package_name»Impl the_«package_name» = («package_name»Impl)'''.toString + 
-			''' ((registered_«package_name» instanceof «package_name»Impl) ? '''.toString +
-			'''registered_«package_name» : «package_name».eINSTANCE);'''.toString
+'''«package_name»Impl the_«package_name» = («package_name»Impl) ((registered_«package_name» instanceof «package_name»Impl) ? registered_«package_name» : «package_name».eINSTANCE);'''.toString
 		)
+
 		this.init_snippet.put('''the_«package_name»'''.toString(), snippets)
 	}
 
@@ -351,19 +412,26 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 * the output would be: "ArrayList<b extends ClassA<?>>" if called with empty String.
 	 * registers needed imports too and registers them for the PackageFactory creators as well.
 	 * Method is recursive
-	 * @param EGenericType generic for which this method is called
-	 * @param String declaration saves the recursion state up until then. on first call pass empty String
+	 * @param generic EGenericType for which this method is called
+	 * @param declaration String saves the recursion state up until then.
+	 * Pass empty String on first call.
+	 * @param container_eclass EClass which needs to be passed to check if a type parameter is an
+	 * existing parameter established by the class by which the passed EGenericType is contained.
 	 * @return String
+	 * @author Adrian Zwenger
 	 */
-	//override
-	def String etype_param_declarationgetter(EGenericType generic, String declaration, EClass container_eclass){
+	def String etype_param_declarationgetter(
+		EGenericType generic, String declaration, EClass container_eclass
+	){
 		var new_declaration = declaration
 		//get name of dependency and import them if needed
 		if(generic.EClassifier !== null){
 			new_declaration += generic.EClassifier.name
 			var imports = this.add_import(generic.EClassifier)
 			this.needed_imports_for_package_factory.addAll(imports)
-			this.eclass_to_needed_imports_for_type_arguments_map.get(container_eclass).addAll(imports)
+			this.eclass_to_needed_imports_for_type_arguments_map.get(container_eclass)
+																.addAll(imports)
+
 		} else if (generic.ETypeParameter !== null) new_declaration += generic.ETypeParameter.name
 		else new_declaration += "?"
 
@@ -371,7 +439,9 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 			new_declaration += "<"
 			var generics_iterator = generic.ETypeArguments.iterator
 			while(generics_iterator.hasNext){
-				new_declaration += this.etype_param_declarationgetter(generics_iterator.next, "", container_eclass)
+				new_declaration += this.etype_param_declarationgetter(
+					generics_iterator.next, "", container_eclass
+				)
 				if(generics_iterator.hasNext) new_declaration += ","
 			}
 			new_declaration += ">"
@@ -379,17 +449,23 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 
 		if(generic.EUpperBound !== null){
 			new_declaration += " extends "
-			new_declaration += this.etype_param_declarationgetter(generic.EUpperBound, "", container_eclass)
+			new_declaration += this.etype_param_declarationgetter(
+				generic.EUpperBound, "", container_eclass
+			)
 		} else if (generic.ELowerBound !== null) {
 			new_declaration += " super "
-			new_declaration += this.etype_param_declarationgetter(generic.EUpperBound, "", container_eclass)
+			new_declaration += this.etype_param_declarationgetter(
+				generic.EUpperBound, "", container_eclass
+			)
 		}
 		return new_declaration
 	}
 
 	/**
 	 * creates the generic parameters declaration for a class. Example: "<a,b>"
+	 * @param e_class EClass
 	 * @return String
+	 * @author Adrian Zwenger
 	 */
 	def private void create_arguments_declaration_for_eclass(EClass e_class){
 		this.eclass_to_needed_imports_for_type_arguments_map.put(e_class, new HashSet<String>())
@@ -436,6 +512,8 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 
 	/**
 	 * returns true if this inspector has been initialized
+	 * @return boolean
+	 * @author Adrian Zwenger
 	 */
 	def boolean is_initialized(){
 		return this.isInited
@@ -443,7 +521,11 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 
 	/**
 	 * returns the String which is used to declare the type-parameters for a class.<br>
-	 * Example: TestClassImpl<a extends classB, b> --> stored String = "<a extends classB, b>"
+	 * <b>Example:</b>
+	 <xmp>TestClassImpl<a extends classB, b> --> stored String = "<a extends classB, b>"</xmp>
+	 * @param e_class EClass
+	 * @return String
+	 * @author Adrian Zwenger
 	 */
 	def String get_type_arguments_declaration_for_eclass(EClass e_class){
 		return this.eclass_to_type_arguments_declaration.get(e_class)
@@ -451,13 +533,24 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 
 	/**
 	 * returns the reduced String which is used to declare the type-parameters for a class.<br>
-	 * Example: TestClassImpl<a extends classB, b> --> stored String = "<a, b>"
+	 * <b>Example:</b>
+	 <xmp>TestClassImpl<a extends classB, b> --> stored String = "<a, b>"</xmp>
+	 * @param e_class EClass
+	 * @return String
+	 * @author Adrian Zwenger
 	 */
 	def String get_reduced_type_arguments_declaration_for_eclass(EClass e_class){
 		return this.eclass_to_type_to_reduced_arguments_declaration.get(e_class)
 	}
-	
-	def get_eclass_to_needed_imports_for_type_arguments_map(){
+
+	/**
+	 * returns a HashMap where the key is an EClass of this package and the key its generic
+	 * type-arguments. Take a look at {@link #eclass_to_needed_imports_for_type_arguments_map
+	 eclass_to_needed_imports_for_type_arguments_map } 
+	 * @return HashMap<EClass, HashSet<String>>
+	 * @author Adrian Zwenger
+	 */
+	def HashMap<EClass, HashSet<String>> get_eclass_to_needed_imports_for_type_arguments_map(){
 		return eclass_to_needed_imports_for_type_arguments_map
 	}
 
@@ -465,9 +558,8 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	
 	/**
 	 * traverses package hierarchy to set the folder path and the equivalent java representation
-	 * example:
-	 * ./src-gen/org/util/mypackage
-	 * org.util.mypackage
+	 * <b>example:</b> <xmp>"./src-gen/org/util/mypackage" and "org.util.mypackage"</xmp>
+	 * @author Adrian Zwenger
 	 */
 	def private void set_path_to_folder_and_package_declaration(){
 		var path = e_pak.name
@@ -492,104 +584,132 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	/**########################Getters########################*/
 
 	/**
-	 * returns the path top the folder where all Classes in package are located
+	 * returns the path to the folder where all Classes in package are located
 	 * @return String
+	 * @author Adrian Zwenger
 	 */
 	def String get_path_to_folder(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return path_to_folder
 	}
 
 	/**
 	 * Returns a HashSet containing ObjectFieldInspectors for a given class
-	 * @param EClass e_cl
+	 * @param e_cl EClass
+	 * @return HashSet<AbstractObjectFieldInspector>
+	 * @author Adrian Zwenger
 	 */
 	def HashSet<AbstractObjectFieldInspector> get_object_field_inspectors_for_class(EClass e_cl){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return eclass_to_object_field_map.get(e_cl)
 	}
 
 	/**
 	 * Returns a HashSet containing absolutely all ObjectFieldInspectors for even inherited features
 	 * a given class
-	 * @param EClass e_cl
+	 * @param e_cl EClass
+	 * @return HashSet<AbstractObjectFieldInspector>
+	 * @author Adrian Zwenger
 	 */
-	def HashSet<AbstractObjectFieldInspector> get_all_object_field_inspectors_for_class(EClass e_cl){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+	def HashSet<AbstractObjectFieldInspector> get_all_object_field_inspectors_for_class(
+		EClass e_cl
+	){
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return eclass_to_even_inherited_object_fields_map.get(e_cl)
 	}
 
 	/**
 	 * Returns a HashSet containing EOperationInspectors for a given class
-	 * @param EClass e_cl
+	 * @param e_cl EClass
 	 * @return HashSet<EOperationInspector>
+	 * @author Adrian Zwenger
 	 */
 	def HashSet<EOperationInspector> get_eoperation_inspector_for_class(EClass e_cl){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return eclass_to_eoperation_map.get(e_cl)
 	}
 
 	/**
 	 * Returns a HashSet containing all EOperationInspectors (even inherited ones) for a given class
-	 * @param EClass e_cl
+	 * @param e_cl EClass
 	 * @return HashSet<EOperationInspector>
+	 * @author Adrian Zwenger
 	 */
 	def HashSet<EOperationInspector> get_all_eoperation_inspector_for_class(EClass e_cl){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return eclass_to_even_inherited_eoperation_map.get(e_cl)
 	}
 
 	/**
 	 * Returns a HashSet containing all EClasses in this package
 	 * @return HashSet<EClass>
+	 * @author Adrian Zwenger
 	 */
 	def HashSet<EClass> get_all_eclasses_in_package(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return e_classes
 	}
 
 	/**
 	 * Returns all custom EMF datatypes contained in this package in an HashSet
+	 * @return HashSet<EDataType>
+	 * @author Adrian Zwenger
 	 */
 	def HashSet<EDataType> get_all_edata_types_in_package(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return this.e_data_types
 	}
 	
 	/**
 	 * Returns all custom EMF datatypes contained in this package in an HashSet
+	 * @return HashSet<EEnum>
+	 * @author Adrian Zwenger
 	 */
 	def HashSet<EEnum> get_all_eenums_in_package(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return this.e_enums
 	}
 
 	/**
 	 * returns true if this package contains sub-packages
 	 * @return boolean
+	 * @author Adrian Zwenger
 	 */
 	def boolean has_sub_packages(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return has_sub_package
 	}
 
 	/**
-	 * Returns the package declaration as String
-	 * example: or.util.fake.package
+	 * Returns the package declaration as String.<br>
+	 * <b>example:</b> <xmp>or.util.fake.package</xmp>
 	 * @return String
+	 * @author Adrian Zwenger
 	 */
 	def String get_package_declaration_name(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return package_declaration
 	}
 
 	/**
 	 * Returns the package declaration for the implementations as String
-	 * example: or.util.fake.package.impl
+	 * <b>example:</b> <xmp>or.util.fake.package.impl</xmp>
 	 * @return String
+	 * @author Adrian Zwenger
 	 */
 	def String get_package_declaration_name_for_implementations(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return package_declaration + ".impl"
 	}
 
@@ -597,9 +717,11 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 * All EMF generated packages have a class which is used to initialise the model. The name of
 	 * said class is returned here
 	 * @return String
+	 * @author Adrian Zwenger
 	 */
 	def String get_emf_package_class_name(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return this.get_name_with_first_letter_capitalized + "Package"
 	}
 	
@@ -607,63 +729,86 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 * All EMF generated packages have a class which is used to create parts of the model.
 	 * The name of said class is returned here
 	 * @return String
+	 * @author Adrian Zwenger
 	 */
 	def String get_emf_package_factory_class_name(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return this.get_name_with_first_letter_capitalized + "Factory"
 	}
 
 	/**
 	 * returns the regular name of this package
 	 * @return String
+	 * @author Adrian Zwenger
 	 */
 	override String get_name(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return e_pak.name
 	}
 
 	/**
 	 * returns the NS-URI of the inspected EPackage
-	 */
+	 * @return String
+	 * @author Adrian Zwenger
+ 	 */
 	def String get_ens_uri(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return e_pak.nsURI
 	}
 
 	/**
 	 * returns the NS-prefix of the inspected EPackage
-	 */
+	 * @return String
+	 * @author Adrian Zwenger
+ 	 */
 	def String get_ens_prefix(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return e_pak.nsPrefix
 	}
 	
 	/**
 	 * returns the packages name with a capitalised first letter
 	 * @return String
-	 */
+	 * @author Adrian Zwenger
+ 	 */
 	override get_name_with_first_letter_capitalized() {
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return this.e_pak.name.substring(0, 1).toUpperCase() + this.e_pak.name.substring(1);
 	}
 
 	/**
 	 * returns Enum identifying this Inspector as a PackageInspector
-	 */
+	 * @return InspectedObjectType
+	 * @author Adrian Zwenger
+ 	 */
 	override get_inspected_object_type() {
 		return InspectedObjectType.EPACKAGE
 	}
-	
+
+	/**
+	 * Returns the ESuperPackage of the EPackage which is being inspected.
+	 * @return EPackage
+	 * @author Adrian Zwenger
+	 */
 	def EPackage get_super_epackage(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return this.e_pak.ESuperPackage
 	}
 
 	/**
 	 * returns a HashSet<Epackage> with all sub-packages of zhe inspected Package
+	 * @return HashSet<Epackage>
+	 * @author Adrian Zwenger
 	 */
 	def HashSet<EPackage> get_sub_packages(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return new HashSet<EPackage>(this.e_pak.ESubpackages)
 	}
 	
@@ -672,17 +817,22 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 * EPackage as an HashMap. the key is the variables name in the snippet and the ArrayList
 	 * contains the needed code-lines as entry
 	 * @return HashMap<String,ArrayList<String>>
+ 	 * @author Adrian Zwenger
 	 */
 	def HashMap<String,ArrayList<String>> get_init_code_snippet(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return new HashMap<String,ArrayList<String>>(this.init_snippet)
 	}
 
 	/**
 	 * returns the EPackage which this PackageInspector is inspecting
+	 * @return EPackage
+	 * @author Adrian Zwenger
 	 */
 	def EPackage get_emf_e_package(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return this.e_pak
 	}
 	
@@ -712,9 +862,12 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 * returns a HashSet<EPackage> on which the inspected Package depends. Does not contain all
 	 * dependencies contained in EGenericTypes or similar, but takes super-packages and class
 	 * inheritance related dependencies into account
+ 	 * @return HashSet<EPackage>
+	 * @author Adrian Zwenger
 	 */
 	def HashSet<EPackage> get_e_package_dependencies(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return this.package_dependency_set
 	}
 	
@@ -724,9 +877,11 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 * registered.
 	 * @param EClass e_class
 	 * @return HashMap<ETypeParameter,String>
+	 * @author Adrian Zwenger
 	 */
 	def get_generic_type_to_var_name_map_for_eclass(EClass e_class){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return this.eclass_to_etypeparam_to_var_name_map.get(e_class)
 	}
 
@@ -737,26 +892,39 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 	 * @return AbstractObjectFieldInspector
 	 */
 	def get_inspector_for_structural_feature(EStructuralFeature e_feature){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return this.efeature_to_inspector_map.get(e_feature)
 	}
 
 	/**
-	 * Returns an EOperationInspector for given EOperation if contained in Package
+	 * Returns an EOperationInspector for given EOperation if contained in the Package.
+	 * @param e_op EOperation
+	 * @return EOperationInspector
+	 * @author Adrian Zwenger
 	 */
-	def get_inspector_for_eoperation(EOperation e_op){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+	def EOperationInspector get_inspector_for_eoperation(EOperation e_op){
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return this.eoperation_to_inspector_map.get(e_op)
 	}
 
 	/**
 	 * returns a HashSet with all EClasses contained in the Package
+	 * @return HashSet<EClass>
+	 * @author Adrian Zwenger
 	 */
 	def HashSet<EClass> get_eclasses_which_have_etypeparameters(){
-		if(!this.isInited) throw new RuntimeException("PackageInspector has not been inited before use")
+		if(!this.isInited)
+			throw new RuntimeException("PackageInspector has not been inited before use")
 		return this.eclasses_which_have_etypeparameters
 	}
 
+	/**
+	 * Returns the needed imports for the EMF-package-factory class.
+	 * @return HashSet<String>
+	 * @author Adrian Zwenger
+	 */
 	def HashSet<String> get_needed_imports_for_package_factory(){
 		return this.needed_imports_for_package_factory
 	}

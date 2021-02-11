@@ -7,16 +7,32 @@ import java.util.TreeMap
 import java.io.File
 import java.io.FileWriter
 
+/**
+ * creates the implementation for the package factory
+ */
 class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 	
 	/**########################Attributes########################*/
 
+	/**
+	 * stores the name for the package-factory class
+	 */
 	var String class_name
+	
+	/**
+	 * stores precedence of method declaration and the method body as the value.
+	 */
 	var TreeMap<String,String> method_declaration_to_body_map =
 		new TreeMap<String,String>()
 
 	/**########################Constructors########################*/
 
+	/**
+	 * Creates a new EMFPackageFactorySourceCreator
+	 * @param gen_model EcoreGenmodelParser
+	 * @param package_inspector PackageInspector
+	 * @author Adrian Zwenger
+	 */
 	new(EcoreGenmodelParser gen_model, PackageInspector package_inspector){
 		super(gen_model, package_inspector)
 		this.class_name = this.interface_name + "Impl"
@@ -35,12 +51,22 @@ class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 
 	/**########################Getter Methods########################*/
 
+	/**
+	 * @inheritDoc
+	 */
 	override String get_getter_method_declaration_for_e_class(EClass e_class){
 		if(!this.is_initialized)
 			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
 		return "public" + super.get_getter_method_declaration_for_e_class(e_class)
 	}
 
+	/**
+	 * Creates a getter-method body for a given EClass and returns it
+	 * @param e_class EClass
+	 * @param IDENTION String
+	 * @return String
+	 * @author Adrian Zwenger
+	 */
 	def private String create_getter_body_for_eclass(EClass e_class, String IDENTION){
 		var reduced_type_decl =
 			this.e_pak.get_reduced_type_arguments_declaration_for_eclass(e_class)
@@ -52,6 +78,13 @@ class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 		return body
 	}
 
+	/**
+	 * Package-factories do not have a public constructor. Instead they have an init()-command
+	 * which is generated here.
+	 * @param IDENTION String
+	 * @return String
+	 * @author Adrian Zwenger
+	 */
 	def private String create_factory_init_command(String IDENTION){
 		var body =
 '''
@@ -68,6 +101,11 @@ class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 		return body
 	}
 
+	/**
+	 * All EObjects contained in the package need a method which assembles them. This is done here.
+	 * @param IDENTION String
+	 * @return String
+	 */
 	def private String create_eobject_create_method(String IDENTION){
 		var body =
 '''
@@ -94,6 +132,9 @@ class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 
 	/**########################Public Methods########################*/
 
+	/**
+	 * @inheritDoc
+	 */
 	override initialize_creator(String fq_file_path, String IDENTION) {
 		this.is_initialized = true
 		this.file_path = fq_file_path
@@ -139,10 +180,11 @@ class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 				this.method_declaration_to_body_map.put(declaration, body)
 			}
 		}
-		
-		
 	}
 	
+	/**
+	 * @inheritDoc
+	 */
 	override write_to_file() {
 		if(!this.is_initialized)
 			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)

@@ -1,6 +1,5 @@
 package emfcodegenerator.inspectors.util
 
-import emfcodegenerator.EMFCodeGenerationClass
 import emfcodegenerator.EcoreGenmodelParser
 import emfcodegenerator.inspectors.InspectedObjectType
 import java.util.ArrayList
@@ -10,6 +9,7 @@ import org.eclipse.emf.ecore.impl.EClassImpl
 import org.eclipse.emf.ecore.impl.EClassifierImpl
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EAttribute
+import emfcodegenerator.util.collections.SmartCollectionFactory
 
 class AttributeInspector extends AbstractObjectFieldInspector{
 	
@@ -52,7 +52,7 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 		//set the default value for this EAttribute
 		if(this.is_a_tuple()){
 			this.default_value =  "new " +
-				EMFCodeGenerationClass.get_elist_type_name(this.get_needed_elist_type_enum) +
+				SmartCollectionFactory.get_elist_type_name(this.get_needed_elist_type_enum) +
 				'''<«this.get_object_field_type_name»>()'''
 		}
 		else if(e_attr.defaultValue !== null){

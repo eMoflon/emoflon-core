@@ -5,10 +5,7 @@ import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.impl.EClassImpl
 import org.eclipse.emf.ecore.EDataType
-import org.eclipse.emf.ecore.EGenericType
 import java.util.HashSet
-import org.eclipse.emf.ecore.ETypeParameter
-import java.util.Arrays
 import java.util.Collection
 import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EcorePackage
@@ -37,16 +34,24 @@ class EMFCodeGenerationClass {
 	 */
 	var protected HashSet<String> needed_imports = new HashSet<String>()
 
+	/**
+	 * stores the GenModel-XMI specified super package for the EMF code.
+	 */
 	var String super_package_name = null
-	
+
+	/**
+	 * stores if this object was created with an String or an EcoreGenmodelParser instance and is
+	 * used to determine if the String is used as the name for the super-package, or if it should be
+	 * inquired from the parser.
+	 */
 	var boolean initialised_with_emf_model = true
 
 	/**########################Constructors########################*/
 
 	/**
-	 * Constructs a new GenerationClass. Most need access to functionality provided by the
-	 * EcoreGenmodelParser, thus a valid instance is needed to construct a new instance
-	 * @param  EcoreGenmodelParser gen_model
+	 * Constructs a new EMFCodeGenerationClass.
+	 * @param gen_model EcoreGenmodelParser
+	 * @author Adrian Zwenger
 	 */
 	new(EcoreGenmodelParser gen_model){
 		if(gen_model !== null && !gen_model.equals(EMFCodeGenerationClass.emf_model))
@@ -56,14 +61,12 @@ class EMFCodeGenerationClass {
 	}
 
 	/**
-	 * Constructs a new GenerationClass. Only use this constructor if you do not need any
-	 * functionality provided by EcoreGenmodelParser
+	 * Constructs an EMFCodeGenerationClass with a given GenModel-XMI specified super-package name 
+	 * String.<br> Take note, that all functionality which depends on an
+	 * {@link #emf_model EcoreGenmodelParser} cannot be used until it is set.
+	 * @param super_package_name String
+	 * @author Adrian Zwenger
 	 */
-	new(){
-		println("Warning: a EMFCodeGenerationClass instance was created without an EcoreGenmodelParser")
-		this.initialised_with_emf_model = false
-	}
-
 	new(String super_package_name){
 		this.initialised_with_emf_model = false
 		this.super_package_name = super_package_name
@@ -73,9 +76,12 @@ class EMFCodeGenerationClass {
 
 
 	/**
-	 * adds an Entry to the needed_imports data-field containing Strings which point to needed
-	 * imports.
-	 * returns a HashSet with the import strings which have been added.
+	 * Takes an EClassifier and adds its import Strings (multiple possible) to the needed
+	 * {@link #needed_imports needed imports}. Finally it returns all the imports which are needed
+	 * for the given classifier contained in an HashSet.
+	 * @param e_cl EClassifier
+	 * @return HashSet<String>
+	 * @author Adrian Zwenger
 	 */
 	def protected HashSet<String> add_import(EClassifier e_cl){
 		var HashSet<String> import_strings = new HashSet<String>();
@@ -104,8 +110,10 @@ class EMFCodeGenerationClass {
 				import_strings.add(import_string)
 			}
 		} else {
-			if(e_cl.instanceClass.isPrimitive ||
-			   e_cl.instanceTypeName.equals("org.eclipse.emf.common.util.EList")) return import_strings;
+			if(
+				e_cl.instanceClass.isPrimitive ||
+				e_cl.instanceTypeName.equals("org.eclipse.emf.common.util.EList")
+			  ) return import_strings;
 			if(e_cl.instanceTypeName.equals("java.util.Map")){
 				this.add_import_as_String(e_cl.instanceTypeName)
 				import_strings.add(e_cl.instanceTypeName)
@@ -117,139 +125,38 @@ class EMFCodeGenerationClass {
 	}
 	
 	/**
-	 * adds an import as String to the needed_imports Set. Entry is only added, if it is not null or
-	 * empty
-	 * @param String import_string
+	 * Adds an import as String to the {@link #needed_imports needed imports}. Entry is only added,
+	 * if it is not null or empty.
+	 * @param import_string String
+	 * @param Adrian Zwenger
 	 */
 	def protected void add_import_as_String(String import_string){
 		if(!import_string.nullOrEmpty) this.needed_imports.add(import_string)
 	}
 
 	/**
-	 * adds a whole collection containing strings to the needed_imports Set by calling 
-	 * add_import_as_String(String import_string)
-	 * @param Collection<String> import_strings
+	 * adds a whole collection containing strings to the {@link #needed_imports needed imports} 
+	 * by calling 
+	 * {@link #add_import_as_String(String) add_import_as_String(String)}.
+	 * @param import_strings Collection<String>
+	 * @author Adrian Zwenger
 	 */
 	def protected void add_import_as_String(Collection<String> import_strings){
 		for(String import_string : import_strings){
 			add_import_as_String(import_string)
 		}
 	}
-	
-	/**
-	 * returns the data type of an EAttribute by recursively traversing the EGenericType's and
-	 * registers the the needed imports. If run as top level give empty string input. <br>
-	 * It does not search EBounds
-	 * @param e_type EGenericType
-	 * @param declaration String describing the declaration. on first call pass empty String
-	 * @return complete type declaration as String
-	 */
-	def protected String register_full_object_field_type(EGenericType e_type, String declaration){
-		//get generictype import string
-		var String new_declaration = declaration
-		//check if it is a generic type
-		if(e_type.ETypeParameter !== null){
-			var ETypeParameter generic_parameter = e_type.ETypeParameter
-			new_declaration = declaration + generic_parameter.name
-		} else if (e_type.EClassifier === null && e_type.ETypeParameter === null){
-			//a proper type was not specified
-			new_declaration += "?"
-		} else if(e_type.ERawType.instanceTypeName !== null){
-			var fq_import_string = e_type.ERawType.instanceTypeName
-			//the EMF EList is to be replaced
-			var buffer = fq_import_string.split("\\.")
-			new_declaration = new_declaration + buffer.get(buffer.length -1)
-			add_import(e_type.ERawType)
-		} else {
-			new_declaration = new_declaration + e_type.ERawType.name
-			add_import(e_type.ERawType)
-		}
-		//return if current etype does not contain more generictypes
-		if(e_type.ETypeArguments.isEmpty()) return new_declaration
-		//object_field_is_nested_type = true
-		//if it does recursively iterate over all register them too
-		var sub_e_type_iterator = e_type.ETypeArguments.iterator
-		new_declaration += "<"
-		while(sub_e_type_iterator.hasNext){
-			var sub_e_type = sub_e_type_iterator.next()
-			new_declaration = register_full_object_field_type(sub_e_type, new_declaration)
-			if(sub_e_type_iterator.hasNext) new_declaration += ","
-		}
-		new_declaration += ">"
-		return new_declaration
-	}
-
-	/**########################EList logic########################*/
-
-	def static String get_elist_type_name(EListTypeEnum e_list_type){
-		switch(e_list_type){
-			case EListTypeEnum.NONE: return "NO_E_LIST"
-			case EListTypeEnum.SET: return "HashESet"
-			case EListTypeEnum.LINKED_LIST: return "LinkedEList"
-			case EListTypeEnum.LINKED_SET: return "LinkedESet"
-			default: return "DefaultEList"
-		}
-	}
-	
-	/**
-	 * returns the needed String to import a specific custom EList implementation
-	 * @param EListTypeEnum e_list_type
-	 */
-	def static String get_elist_import_String(EListTypeEnum e_list_type){
-		switch(e_list_type){
-			case EListTypeEnum.NONE: return null
-			case EListTypeEnum.SET: return "emfcodegenerator.util.HashESet"
-			case EListTypeEnum.LINKED_LIST: return "emfcodegenerator.util.LinkedEList"
-			case EListTypeEnum.LINKED_SET: return "emfcodegenerator.util.LinkedESet"
-			default: return "emfcodegenerator.util.DefaultEList"
-		}
-	}
-
-	/**
-	 * discerns which type of EList is needed by given two booleans representing if the EList
-	 * is supposed to be ordered and the entries unique
-	 * @param boolean is_ordered true=entries are ordered
-	 * @param boolean is_unique true=entries are unique
-	 * @return EListTypeEnum
-	 */
-	def static EListTypeEnum get_needed_elist_type(boolean is_ordered, boolean is_unique){
-		if(!is_ordered && !is_unique){
-			return EListTypeEnum.DEFAULT
-		} else if(!is_ordered && is_unique){
-			return EListTypeEnum.SET
-		} else if(is_ordered && !is_unique){
-			return EListTypeEnum.LINKED_LIST
-		} else if(is_ordered && is_unique){
-			return EListTypeEnum.LINKED_SET
-		} else {
-			return EListTypeEnum.NONE
-		}
-	}
 
 	/**########################Helper Methods########################*/
 
 	/**
-	 * Helper Method. converts a normal interface path into an implementation file path
-	 * Example: org/my_emf/classes/Myclass.java
-	 *			-->
-	 * 			org/my_emf/classes/impl/MyclassImpl.java
-	 * @param String file path and name
-	 * @return converted path
-	 */
-	def protected static String convert_regular_file_name_path_to_implementation_type(String fqdn){
-		var buffer = fqdn.split("/")
-		return String.join("/", Arrays.copyOfRange(buffer, 0, buffer.size - 1)) +
-		 	   "/impl/" + buffer.get(buffer.size - 1) + "Impl.java"
-	}
-
-
-	/**
 	 * EClasses and EReferences do not store their data-types proper fq-import name.
 	 * The full path can be created by accessing the classes package and then continue to get the
-	 * super-package until top layer in the hierarchy has been reached.
-	 * Returns a the fq-import name
-	 * @param EReference which is to be examined
+	 * super-package until top layer in the hierarchy has been reached.<br>
+	 * Returns a the fq-import name.
+	 * @param e_obj E EReference or EClass
 	 * @return String
+	 * @author Adrian Zwenger
 	 */
 	def protected <E> create_import_name_for_ereference_or_eclass(E e_obj){
 		var String fqdn
@@ -292,12 +199,22 @@ class EMFCodeGenerationClass {
 	/**########################Regular Getter/Setters########################*/
 
 	/**
-	 * Returns the HashSet with the needed imports
+	 * Returns the HashSet with the {@link #needed_imports needed imports} represented as Strings.
+	 * @return HashSet<String>
+	 * @author Adrian Zwenger
 	 */
 	def HashSet<String> get_needed_imports(){
 		return needed_imports
 	}
 
+	/**
+	 * Takes String as input and returns it in uppercase with an underscore before each capital
+	 * latter of the original String. EMF uses this naming scheme for the Literals in the
+	 * Package-class
+	 * @param value String
+	 * @return String
+	 * @auhtor StackOverflow
+	 */
 	def protected static String emf_to_uppercase(String value){
 		/*
 		 * Thank your stackoverflow
@@ -305,40 +222,5 @@ class EMFCodeGenerationClass {
 		 */
 		return value.replaceAll("(.)([A-Z])", "$1_$2").toUpperCase()
 	}
-	
-	/**
-	 * creates the generic parameter declaration for a given EGenericType. Example: the described
-	 * EGenericType is an ArrayList<b extends ClassA<?>>,
-	 * the output would be: "ArrayList<b extends ClassA<?>>" if called with empty String.
-	 * Method is recursive
-	 * @param EGenericType generic for which this method is called
-	 * @param String declaration saves the recursion state up until then. on first call pass empty String
-	 * @return String
-	 */
-	/*def protected String etype_param_declarationgetter(EGenericType generic, String declaration){
-		var new_declaration = declaration
-		//get name of dependency and import them if needed
-		if(generic.EClassifier !== null){
-			new_declaration += generic.EClassifier.name
-			this.add_import(generic.EClassifier)
-		} else if (generic.ETypeParameter !== null) new_declaration += generic.ETypeParameter.name
-		else new_declaration += "?"
-		if(!generic.ETypeArguments.isEmpty){
-			new_declaration += "<"
-			var generics_iterator = generic.ETypeArguments.iterator
-			while(generics_iterator.hasNext){
-				new_declaration += this.etype_param_declarationgetter(generics_iterator.next, "")
-				if(generics_iterator.hasNext) new_declaration += ","
-			}
-			new_declaration += ">"
-		}
-		if(generic.EUpperBound !== null){
-			new_declaration += " extends "
-			new_declaration += this.etype_param_declarationgetter(generic.EUpperBound, "")
-		} else if (generic.ELowerBound !== null) {
-			new_declaration += " super "
-			new_declaration += this.etype_param_declarationgetter(generic.EUpperBound, "")
-		}
-		return new_declaration
-	}*/
+
 }

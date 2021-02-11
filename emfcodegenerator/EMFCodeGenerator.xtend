@@ -13,7 +13,10 @@ import emfcodegenerator.creators.util.EMFPackageFactorySourceCreator
 import emfcodegenerator.creators.util.EEnumCreator
 import org.eclipse.emf.ecore.EClass
 
-class EMFCodeGenerator extends EMFCodeGenerationClass{
+/**
+ * Class which generates the code
+ */
+class EMFCodeGenerator{
 
 	/**########################Attributes########################*/
 
@@ -46,26 +49,38 @@ class EMFCodeGenerator extends EMFCodeGenerationClass{
 	 */ 
 	new(String ecore_xmi_path, String genmodel_xmi_path){
 		super()
-		EMFCodeGenerator.emf_model = new EcoreGenmodelParser(ecore_xmi_path, genmodel_xmi_path)
-		this.packages = EMFCodeGenerator.emf_model.get_packages_to_package_inspector_map()
+		EMFCodeGenerationClass.emf_model =
+			new EcoreGenmodelParser(ecore_xmi_path, genmodel_xmi_path)
+		this.packages = EMFCodeGenerationClass.emf_model.get_packages_to_package_inspector_map()
 		for(EPackage e_pak : this.packages.keySet){
 			var e_pak_inspector = this.packages.get(e_pak)
 			if(!e_pak_inspector.is_initialized) {
 				e_pak_inspector.initialize()
-				this.packages = EMFCodeGenerator.emf_model.update_package_inspector(e_pak, e_pak_inspector)
+				this.packages =
+					EMFCodeGenerationClass.emf_model.update_package_inspector(
+						e_pak, e_pak_inspector
+					)
 			}
 
 			//create the FileCreators for the EClasses
 			for(EClass e_cl : e_pak_inspector.get_all_eclasses_in_package){
-				var i_creator = new InterfaceCreator(e_cl, emf_model,
-										e_pak_inspector.get_object_field_inspectors_for_class(e_cl),
-										e_pak_inspector.get_eoperation_inspector_for_class(e_cl),
-										e_pak_inspector)
+				var i_creator = new InterfaceCreator(
+									e_cl,
+									EMFCodeGenerationClass.emf_model,
+									e_pak_inspector.get_object_field_inspectors_for_class(e_cl),
+									e_pak_inspector.get_eoperation_inspector_for_class(e_cl),
+									e_pak_inspector
+									)
+
 				interfaces.add(i_creator)
-				var c_creator = new SourceCodeCreator(e_cl, emf_model,
-										e_pak_inspector.get_all_object_field_inspectors_for_class(e_cl),
-										e_pak_inspector.get_all_eoperation_inspector_for_class(e_cl),
-										e_pak_inspector)
+
+				var c_creator = new SourceCodeCreator(
+									e_cl,
+									EMFCodeGenerationClass.emf_model,
+									e_pak_inspector.get_all_object_field_inspectors_for_class(e_cl),
+									e_pak_inspector.get_all_eoperation_inspector_for_class(e_cl),
+									e_pak_inspector
+									)
 				implementations.add(c_creator)
 			}
 		}
@@ -101,7 +116,9 @@ class EMFCodeGenerator extends EMFCodeGenerationClass{
 	
 	def void generate_package_interfaces(){
 		for(package_inspector : packages.values){
-			var creator = new EMFPackageInterfaceCreator(package_inspector, packages, EMFCodeGenerator.emf_model)
+			var creator = new EMFPackageInterfaceCreator(
+				package_inspector, packages, EMFCodeGenerationClass.emf_model
+			)
 			var path = package_inspector.get_path_to_folder + "/" +
 					   package_inspector.get_emf_package_class_name + ".java"
 
@@ -121,7 +138,9 @@ class EMFCodeGenerator extends EMFCodeGenerationClass{
 	
 	def void generate_package_implementations(){
 		for(package_inspector : packages.values){
-			var creator = new EMFPackageSourceCreator(package_inspector, packages, EMFCodeGenerator.emf_model)
+			var creator = new EMFPackageSourceCreator(
+				package_inspector, packages, EMFCodeGenerationClass.emf_model
+			)
 			var path = package_inspector.get_path_to_folder + "/impl/" +
 					   package_inspector.get_emf_package_class_name + "Impl.java"
 
@@ -132,7 +151,9 @@ class EMFCodeGenerator extends EMFCodeGenerationClass{
 	
 	def void generate_package_factory_interfaces(){
 		for(package_inspector : packages.values){
-			var creator = new EMFPackageFactoryInterfaceCreator(EMFCodeGenerator.emf_model, package_inspector)
+			var creator = new EMFPackageFactoryInterfaceCreator(
+				EMFCodeGenerationClass.emf_model, package_inspector
+			)
 			var path = package_inspector.get_path_to_folder + "/" +
 					   package_inspector.get_emf_package_factory_class_name + ".java"
 
@@ -143,7 +164,9 @@ class EMFCodeGenerator extends EMFCodeGenerationClass{
 	
 	def void generate_package_factory_implementations(){
 		for(package_inspector : packages.values){
-			var creator = new EMFPackageFactorySourceCreator(EMFCodeGenerator.emf_model, package_inspector)
+			var creator =new EMFPackageFactorySourceCreator(
+				EMFCodeGenerationClass.emf_model, package_inspector
+			)
 			var path = package_inspector.get_path_to_folder + "/impl/" +
 					   package_inspector.get_emf_package_factory_class_name + "Impl.java"
 

@@ -13,19 +13,55 @@ import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EOperation
 
-//make sure, that all classes which use this Processor access the package dependencies and pass
-//them for dependency resolution
+
+/**
+ * This helper class can be used to traverse EMF-GenericType-hierarchies.
+ * This is needed to properly generate the generics for the meta-model, as they need to be
+ * declared and created in proper order.<br>
+ * make sure, that all classes which use this Processor access the package dependencies and pass
+ * them for dependency resolution.
+ */
 class EGenericTypeProcessor extends EMFCodeGenerationClass {
-	
-	public var HashMap<EGenericType,String> generic_bound_to_var_name_map = new HashMap<EGenericType,String>()
-	protected var package_dependency_map = new HashMap<EPackage,PackageInspector>()
-	var protected String generic_bound_var_name
-	var static int generic_bound_var_index = 0
+
 	/**
-	 * the package for which the EMF-code shall be created for
+	 * Maps a EGenericType to its designated variable name to be used in class created by
+	 * {@link emfcodegenerator.creators.util.EMFPackageSourceCreator EMFPackageSourceCreator}.
+	 */
+	public var HashMap<EGenericType,String> generic_bound_to_var_name_map =
+		new HashMap<EGenericType,String>()
+
+	/**
+	 * Maps all {@link org.eclipse.emf.ecore.EPackage EPackages}, which are needed as an dependency,
+	 * to its {@link emfcodegenerator.inspectors.util.PackageInspector inspector}.
+	 */
+	protected var package_dependency_map =
+		new HashMap<EPackage,PackageInspector>()
+
+	/**
+	 * The variable names are made of an String prefix and an unique
+	 * {@link #generic_bound_var_index int}.
+	 */
+	var protected String generic_bound_var_name
+	
+	/**
+	 * suffix for generated variable names. Take a look at
+	 * {@link #generic_bound_var_name generic_bound_var_name}.
+	 */
+	var static int generic_bound_var_index = 0
+
+	/**
+	 * the package for which the EMF-code shall be created for. Thus importing objects from the
+	 * same package can be prevented.<br>
+	 * This field is also needed for
+	 * {@link emfcodegenerator.creators.util.EMFPackageSourceCreator EMFPackageSourceCreator}, which
+	 * which inherits from this class.
 	 */
 	var protected PackageInspector e_pak
-	
+
+	/**
+	 * Maps all {@link org.eclipse.emf.ecore.EPackage EPackages}
+	 * to its {@link emfcodegenerator.inspectors.util.PackageInspector inspector}.
+	 */
 	protected var HashMap<EPackage,PackageInspector> packages
 	
 	/**
@@ -36,22 +72,19 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 	
 	/**########################Constructor########################*/
 	
+	/**
+	 * Constructs a new EGenericTypeProcessor.<br>
+	 * @param gen_model {@link emfcodegenerator.EcoreGenmodelParser EcoreGenmodelParser}
+	 * instance to access parsed information and
+	 * previously created {@link emfcodegenerator.inspectors.Inspector inspectors}.<br>
+	 * @param generic_var_name String which shall be used as the prefix for variable names. Take a
+	 * look at {@link #generic_bound_var_name generic_bound_var_name}.<br>
+	 * @param package_inspector PackageInspector instance for which the code shall be generated.
+	 * Stored in {@link #e_pak e_pak}.<br>
+	 * @author Adrian Zwenger
+	 */
 	new(EcoreGenmodelParser gen_model, String generic_var_name, PackageInspector package_inspector){
 		super(gen_model)
-		this.init(generic_var_name, package_inspector)
-	}
-	
-	new(String generic_var_name, PackageInspector package_inspector){
-		super()
-		this.init(generic_var_name, package_inspector)
-	}
-	
-	new(String super_package_name, String generic_var_name, PackageInspector package_inspector){
-		super(super_package_name)
-		this.init(generic_var_name, package_inspector)
-	}
-	
-	private def void init(String generic_var_name, PackageInspector package_inspector){
 		this.generic_bound_var_name = generic_var_name
 		this.packages = EGenericTypeProcessor.emf_model.get_packages_to_package_inspector_map()
 		this.e_pak = package_inspector
@@ -60,16 +93,33 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 	/**########################Methods########################*/
 
 	/**
-	 * recursively builds a LinkedList where the topmost element is the first iteration element
-	 * the tree is searched top down and sub elements are stored in reverse order, thus retaining 
-	 * the original tree-order of traversed structure when iterating backwards through list.
-	 * tree is scanned top-down and should be read bottom-up
+	 * recursively builds a LinkedList where the topmost element is the first iteration element.<br>
+	 * The tree is searched top down and sub elements are stored in reverse order, thus retaining 
+	 * the original tree-order of traversed structure when iterating backwards through list.<br>
+	 * Tree is scanned top-down and the resulting list should be read bottom-up.
+	 * This method can be used to traverse trees for the
+	 * {@link org.eclipse.emf.ecore.ETypeParameter ETypeParameter's} 
+	 * {@link org.eclipse.emf.ecore.EGenericType EBounds} of an
+	 * {@link org.eclipse.emf.ecore.EClass EClass} (take a look
+	 * {@link emfcodegenerator.creators.util.EMFPackageSourceCreator
+	 #generate_e_package_init_package_contents__create_type_params___for_eclasses here}),
+	 * {@link org.eclipse.emf.ecore.EDataType EDataTypes}
+	 * (take a look
+	 * {@link emfcodegenerator.creators.util.EMFPackageSourceCreator
+	 #generate_e_package_init_package_contents__create_type_params___for_edatatypes here})
+	 * or {@link org.eclipse.emf.ecore.EOperation EOperations} (take a look
+	 * {@link emfcodegenerator.inspectors.util.EOperationInspector
+	 #generate_init_code_for_package_class here}).<br>
+	 * To be used in cojuncture with
+	 * {@link #create_egeneric_type_bound_set_up_command(EGenericType, HashMap, ETypeParameter)
+	 create_egeneric_type_bound_set_up_command()}.
 	 * @author Adrian Zwenger
 	 * @param EGenericType typ: the top-most element of tree to traverse
 	 * @param LinkedList<EGenericType> bounds_list: list storing the current recursion state. Pass
 	 * empty list on first call
 	 * @return LinkedList<EGenericType>
-	 */
+ 	 * @author Adrian Zwenger
+ 	 */
 	def LinkedList<EGenericType> traverse_generic_bounds(
 		EGenericType type, LinkedList<EGenericType> bounds_list
 	){
@@ -99,11 +149,12 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 	}
 
 	/**
-	 * creates the command which gets the CLassifier for an EGenericType.
-	 * if the type was not previously registered by calling this.traverse_generic_bounds on all the
-	 * needed bounds it will return an empty String which in turn will create the "?" generic
-	 * @param EGenericType
-	 * @return String representing the needed command
+	 * Creates the command which gets the EClassifier for an EGenericType.<br>
+	 * If the type was not previously registered by traversing its hierarchy,
+	 * it will default to the command which will create the "?" EGenericType.
+	 * @param generic_type EGenericType
+	 * @return String
+	 * @author Adrian Zwenger
 	 */
 	def String get_eclassifier_getter_command_for_egenerictype(EGenericType generic_type){
 		//create the command which gets the defining EClassifier for the type/generic
@@ -168,8 +219,7 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 				)
 			}
 			//create the classifier getter
-			//println(package_var_name + ".get" + generic_type.EClassifier.name + "()")
-			return package_var_name + ".get" + generic_type.EClassifier.name + "()"
+			return '''«package_var_name».get«generic_type.EClassifier.name»()'''.toString
 		}
 		return ""
 	}
@@ -190,6 +240,7 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 	 * @param etype_to_var_name_map HashMap<ETypeParameter,String>: Map containing ETypeParameter and their variable name
 	 * @param type_param ETypeParameter: The Parameter to which the EGenericType recursively belongs to
 	 * @return String the generated command
+	 * @author Adrian Zwenger
 	 */
 	def String create_egeneric_type_bound_set_up_command(
 		EGenericType generic_type,
@@ -275,6 +326,16 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 		throw new OperationNotSupportedException(error_message.toString)
 	}
 
+	/**
+	 * Similar to {@link #traverse_generic_bounds traverse_generic_bounds}.<br>
+	 * However, EAttributes and EReferences need to be traversed a bit differently. Use this method
+	 * for them.
+	 * @param type EGenericType representing the current node from which to explore the hierarchy
+	 * @param bounds_list LinkedList<EGenericType> the current recursion/exploration state
+	 * @param e_class EClass to which the EAttribute/EReference belongs to
+	 * @return LinkedList<EGenericType>
+	 * @author Adrian Zwenger
+	 */
 	def LinkedList<EGenericType> traverse_generic_bounds_for_object_fields(
 		EGenericType type,
 		LinkedList<EGenericType> bounds_list,
@@ -347,9 +408,100 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 		new_bounds_list.addFirst(type)
 		return new_bounds_list
 	}
+	
+	/**
+	 * Tweaked version of {@link #traverse_generic_bounds traverse_generic_bounds} for
+	 * EOperations.<br>
+	 * Note, that during ETypeParameter generation for EOperation's everything needs
+	 * to be traversed. Even the ETypeParameters of the containing EClass.
+	 * However, this is not needed for the EParameters ETypeParameters.<br>
+	 * Set the ignore_eclass_parameters to true if they are to be skipped.
+	 * @param type EGenericType representing the current node from which to explore the hierarchy
+	 * @param bounds_list LinkedList<EGenericType> the current recursion/exploration state
+	 * @param e_op EOperation for which this method is called
+	 * @param ignore_eclass_parameters boolean. Pass TRUE when calling for the EParameters of an 
+	 * EOperation.
+	 * @return LinkedList<EGenericType>
+	 * @author Adrian Zwenger
+	 */
+	def LinkedList<EGenericType> traverse_generic_bounds_for_eoperations(
+		EGenericType type,
+		LinkedList<EGenericType> bounds_list,
+		EOperation e_op,
+		boolean ignore_eclass_parameters
+	){
+		var etype_param_set = e_op.ETypeParameters
+		var new_bounds_list = bounds_list
+		var boolean process_the_generic_type = true
+		if(type.ETypeParameter !== null && etype_param_set.contains(type.ETypeParameter)) {
+			//it is an ETypeParameter belonging to the e_op. Init code does not need to be generated
+			process_the_generic_type = false
+		}
+		if(ignore_eclass_parameters && type.ETypeParameter !== null && (e_op.eContainer as EClass).ETypeParameters.contains(type.ETypeParameter)) {
+			process_the_generic_type = false
+		}
+		if(type.ETypeParameter !== null && process_the_generic_type){
+			//the passed EObject is an ETypeParameter
+			var iterator = (new LinkedList<EGenericType>(type.ETypeParameter.EBounds)).descendingIterator
+			while(iterator.hasNext){
+				//bounds need to be added and thus traversed
+				var bound = iterator.next
+				this.traverse_generic_bounds_for_eoperations(bound, new_bounds_list, e_op, ignore_eclass_parameters)
+				
+				if(bound.ETypeParameter !== null && etype_param_set.contains(bound.ETypeArguments)){
+					//bound is an ETypeParameter belonging to the EClass. The parent element must be
+					//noted
+					this.element_to_parent_map.put(bound, type)
+				} else this.element_to_parent_map.put(bound, type)
+			}
+		}
+		if(type.ETypeArguments !== null && process_the_generic_type){
+			var iterator = (new LinkedList<EGenericType>(type.ETypeArguments)).iterator //.descendingIterator
+			while(iterator.hasNext){
+				var param = iterator.next
+				this.traverse_generic_bounds_for_eoperations(param, new_bounds_list, e_op, ignore_eclass_parameters)
+
+				if(param.ETypeParameter !== null && etype_param_set.contains(param.ETypeParameter)){
+					//Parameter is an ETypeParameter belonging to the EClass. The parent element must be
+					//noted
+					this.element_to_parent_map.put(param, type)
+				} else this.element_to_parent_map.put(param, type)
+			}
+		}
+		if(type.EUpperBound !== null && process_the_generic_type) {
+			var bound = type.EUpperBound
+			this.traverse_generic_bounds_for_eoperations(bound, new_bounds_list, e_op, ignore_eclass_parameters)
+			
+			if(bound.ETypeParameter !== null && etype_param_set.contains(bound.ETypeParameter)){
+				//bound is an ETypeParameter belonging to the EClass. The parent element must be
+				//noted
+				this.element_to_parent_map.put(bound, type)
+			} else this.element_to_parent_map.put(bound, type)
+		}
+		if(type.ELowerBound !== null && process_the_generic_type) {
+			var bound = type.ELowerBound			
+			this.traverse_generic_bounds_for_eoperations(bound, new_bounds_list, e_op, ignore_eclass_parameters)
+			
+			if(bound.ETypeParameter !== null && etype_param_set.contains(bound.ETypeParameter)){
+				//bound is an ETypeParameter belonging to the EClass. The parent element must be
+				//noted
+				this.element_to_parent_map.put(bound, type)
+			} else this.element_to_parent_map.put(bound, type)
+		}
+
+		if(process_the_generic_type)
+			this.generic_bound_to_var_name_map.put(
+				type,
+				this.get_next_generated_var_name()
+			)
+
+		new_bounds_list.addFirst(type)
+		return new_bounds_list
+	}
 
 	/**
-	 * creates the command used to set up bounds for ETypeParameters.<br>
+	 * creates the command used to set up bounds for ETypeParameters belonging to EOperations,
+	 * EAttributes and EReferences.<br>
 	 * If the passed EGenericType is:
 	 * <ol>
 	 *	<li> a ELowerBound to its parent, it will be added as such:<br>
@@ -369,6 +521,7 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 	 * @param etype_to_var_name_map HashMap<ETypeParameter,String>:
 	 * Map containing ETypeParameter and their variable name
 	 * @return String the generated command
+	 * @author Adrian Zwenger
 	 */
 	def String create_egeneric_type_bound_set_up_command_for_object_fields(
 		EGenericType e_obj,
@@ -461,94 +614,25 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 		error_message.append("for bound set up")
 		throw new OperationNotSupportedException(error_message.toString)
 	}
-	
+
 	/**
-	 * same as above, but slightly tweaked to be able to properly traverse EOperations.
-	 * Note, that during ETypeParameter generation for EOperation's everything needs
-	 * to be traversed. Even teh ETypeParameters of the e_ops class.
-	 * However, this is not needed for ETypeParameter generation of the EOperations EParameters
-	 * set the ignore_eclass_parameters to true if they are to be skipped
+	 * Helper method, which generates the next variable name to be used.<br>
+	 * After call {@link #generic_bound_var_index generic_bound_var_index} will be incremented by
+	 * one.
+	 * @return String
+	 * @author Adrian Zwenger
 	 */
-	def LinkedList<EGenericType> traverse_generic_bounds_for_object_fields(
-		EGenericType type,
-		LinkedList<EGenericType> bounds_list,
-		EOperation e_op,
-		boolean ignore_eclass_parameters
-	){
-		var etype_param_set = e_op.ETypeParameters
-		var new_bounds_list = bounds_list
-		var boolean process_the_generic_type = true
-		if(type.ETypeParameter !== null && etype_param_set.contains(type.ETypeParameter)) {
-			//it is an ETypeParameter belonging to the e_op. Init code does not need to be generated
-			process_the_generic_type = false
-		}
-		if(ignore_eclass_parameters && type.ETypeParameter !== null && (e_op.eContainer as EClass).ETypeParameters.contains(type.ETypeParameter)) {
-			process_the_generic_type = false
-		}
-		if(type.ETypeParameter !== null && process_the_generic_type){
-			//the passed EObject is an ETypeParameter
-			var iterator = (new LinkedList<EGenericType>(type.ETypeParameter.EBounds)).descendingIterator
-			while(iterator.hasNext){
-				//bounds need to be added and thus traversed
-				var bound = iterator.next
-				this.traverse_generic_bounds_for_object_fields(bound, new_bounds_list, e_op, ignore_eclass_parameters)
-				
-				if(bound.ETypeParameter !== null && etype_param_set.contains(bound.ETypeArguments)){
-					//bound is an ETypeParameter belonging to the EClass. The parent element must be
-					//noted
-					this.element_to_parent_map.put(bound, type)
-				} else this.element_to_parent_map.put(bound, type)
-			}
-		}
-		if(type.ETypeArguments !== null && process_the_generic_type){
-			var iterator = (new LinkedList<EGenericType>(type.ETypeArguments)).iterator //.descendingIterator
-			while(iterator.hasNext){
-				var param = iterator.next
-				this.traverse_generic_bounds_for_object_fields(param, new_bounds_list, e_op, ignore_eclass_parameters)
-
-				if(param.ETypeParameter !== null && etype_param_set.contains(param.ETypeParameter)){
-					//Parameter is an ETypeParameter belonging to the EClass. The parent element must be
-					//noted
-					this.element_to_parent_map.put(param, type)
-				} else this.element_to_parent_map.put(param, type)
-			}
-		}
-		if(type.EUpperBound !== null && process_the_generic_type) {
-			var bound = type.EUpperBound
-			this.traverse_generic_bounds_for_object_fields(bound, new_bounds_list, e_op, ignore_eclass_parameters)
-			
-			if(bound.ETypeParameter !== null && etype_param_set.contains(bound.ETypeParameter)){
-				//bound is an ETypeParameter belonging to the EClass. The parent element must be
-				//noted
-				this.element_to_parent_map.put(bound, type)
-			} else this.element_to_parent_map.put(bound, type)
-		}
-		if(type.ELowerBound !== null && process_the_generic_type) {
-			var bound = type.ELowerBound			
-			this.traverse_generic_bounds_for_object_fields(bound, new_bounds_list, e_op, ignore_eclass_parameters)
-			
-			if(bound.ETypeParameter !== null && etype_param_set.contains(bound.ETypeParameter)){
-				//bound is an ETypeParameter belonging to the EClass. The parent element must be
-				//noted
-				this.element_to_parent_map.put(bound, type)
-			} else this.element_to_parent_map.put(bound, type)
-		}
-
-		if(process_the_generic_type)
-			this.generic_bound_to_var_name_map.put(
-				type,
-				this.get_next_generated_var_name()
-			)
-
-		new_bounds_list.addFirst(type)
-		return new_bounds_list
-	}
-	
-	def String get_next_generated_var_name(){
+	private def String get_next_generated_var_name(){
 		return this.generic_bound_var_name + EGenericTypeProcessor.generic_bound_var_index++
 	}
 	
-	def get_package_dependencies(){
+	/**
+	 * Returns a map with all EPackages and their inspectors which were needed as an dependency.<br>
+	 * Returns the following data-field: {@link #package_dependency_map package_dependency_map}. 
+	 * @return HashMap<EPackage, PackageInspector>
+	 * @author Adrian Zwenger
+	 */
+	def HashMap<EPackage,PackageInspector> get_package_dependencies(){
 		return this.package_dependency_map
 	}
 }

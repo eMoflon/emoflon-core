@@ -1,17 +1,18 @@
 package emfcodegenerator.inspectors.util
 
-import emfcodegenerator.EMFCodeGenerationClass
 import emfcodegenerator.EcoreGenmodelParser
 import emfcodegenerator.inspectors.util.AbstractObjectFieldInspector
 import emfcodegenerator.inspectors.InspectedObjectType
 import java.util.ArrayList
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EcorePackage
-import org.eclipse.emf.ecore.impl.EClassImpl
-import org.eclipse.emf.ecore.impl.EPackageImpl
 import org.eclipse.emf.ecore.impl.EReferenceImpl
 import org.eclipse.emf.ecore.EClass
+import emfcodegenerator.util.collections.SmartCollectionFactory
 
+/**
+ * inspects EReferences
+ */
 class ReferenceInspector extends AbstractObjectFieldInspector {
 
 	/**########################Attributes########################*/
@@ -21,20 +22,46 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 	 */
 	var EReferenceImpl e_ref
 
+	/**
+	 * stores the declaration for the EReference-getter-method needed in the EMF-package-class
+	 */
 	var String getter_method_declaration_for_the_package_classes
+	
+	/**
+	 * stores if {@link #getter_method_declaration_for_the_package_classes
+	 getter_method_declaration_for_the_package_classes} holds a value
+	 */
 	var boolean getter_method_declaration_for_the_package_classes_is_generated = false
 
 	/**########################Constructor########################*/
+
+	/**
+	 * Constructs a new ReferenceInspector.
+	 * @param e_feature EStructuralFeature
+	 * @param gen_model EcoreGenmodelParser
+	 * @author Adrian Zwenger
+	 */
 	new(EStructuralFeature e_feature, EcoreGenmodelParser gen_model) {
 		super(e_feature, gen_model)
 		init(e_feature)
 	}
-	
+
+	/**
+	 * Constructs a new ReferenceInspector.
+	 * @param e_feature EStructuralFeature
+	 * @param super_package_name String
+	 * @author Adrian Zwenger
+	 */
 	new(EStructuralFeature e_feature, String super_package_name){
 		super(e_feature, super_package_name)
 		init(e_feature)
 	}
-	
+
+	/**
+	 * initializes this ReferenceInspector. This method is called by the constructor
+	 * @param e_feature EStructuralFeature
+	 * @author Adrian Zwenger
+	 */
 	def private void init(EStructuralFeature e_feature){
 		if(!(e_feature instanceof EReferenceImpl))
 			throw new IllegalArgumentException(
@@ -53,18 +80,21 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 
 		else if(this.is_a_tuple()){
 			this.default_value = "new " +
-				EMFCodeGenerationClass.get_elist_type_name(this.get_needed_elist_type_enum) +
+				SmartCollectionFactory.get_elist_type_name(this.get_needed_elist_type_enum) +
 				'''<«this.get_object_field_type_name»>()'''
 		}
 		else if(e_ref.defaultValue === null) this.default_value = "null"
 		else this.default_value = e_ref.defaultValue.toString()
 
 		//add package dependencies
-		this.meta_model_package_dependencies.add(this.e_ref.EReferenceType.EPackage as EPackageImpl)
+		this.meta_model_package_dependencies.add(this.e_ref.EReferenceType.EPackage)
 	}
 
 	/**########################Methods########################*/
 
+	/**
+	 * @inheritDoc
+	 */
 	override generate_init_code_for_package_class(EcoreGenmodelParser gen_model) {
 		if(this.type_init_commands_are_generated === true) return;
 		this.type_init_commands_are_generated = true
@@ -83,7 +113,7 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		var entry = new StringBuilder("initEReference(")
 		//the EClass in which this reference which is inspected is contained
 
-		var the_containing_eclass = this.e_ref.eContainer as EClassImpl
+		var the_containing_eclass = this.e_ref.eContainer as EClass
 		var eclass_name = the_containing_eclass.name
 		entry.append("get" + eclass_name + "_")
 		entry.append(this.get_name.substring(0,1).toUpperCase)
@@ -102,22 +132,22 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 			entry.append("(), ")
 		} else if(this.this_feautures_datatype_is_composed_of_multiple_generic_sub_types) {
 			//it is a generic thus only the top-level generic needs to be added
-			entry.append(this.generic_feauturetype_classifier_var_name)
-			entry.append(", ")
-		} else if(ReferenceInspector.emf_model.get_epackage_and_contained_classes_map.keySet
-				  	  .contains(this.e_ref.EReferenceType.EPackage)
+			entry.append(this.generic_feauturetype_classifier_var_name + ", ")
+		} else if(
+			ReferenceInspector.emf_model.get_epackage_and_contained_classes_map.keySet.contains(
+				this.e_ref.EReferenceType.EPackage
+			)
 		){
 			//the attribute-type is specified in a generated package
-			var String package_name = 
-				(this.e_ref.EReferenceType.EPackage.equals(
-					the_containing_eclass.EPackage
-				)) ? "this" : "the" + this.e_ref.EReferenceType.EPackage.name + "Package"
-			entry.append(package_name)
-			entry.append(".get")
-			entry.append(this.e_ref.EReferenceType.name)
-			entry.append("(), ")
+			var String package_name =
+				(this.e_ref.EReferenceType.EPackage.equals(the_containing_eclass.EPackage)) ?
+					"this" : "the" + this.e_ref.EReferenceType.EPackage.name + "Package"
+
+			entry.append('''«package_name».get«this.e_ref.EReferenceType.name»(), ''')
 		} else if(this.e_ref.EGenericType.ETypeParameter !== null &&
-				  the_containing_eclass.ETypeParameters.contains(this.e_ref.EGenericType.ETypeParameter)
+				  the_containing_eclass.ETypeParameters.contains(
+				  	this.e_ref.EGenericType.ETypeParameter
+				  )
 		){
 			//can only be of a generic ETypeParameter of the EClass
 			entry.append(the_containing_eclass.name.substring(0,1).toLowerCase())
@@ -133,16 +163,16 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		if(this.e_ref.EOpposite === null){
 			entry.append("null, ")
 		} else {
-			var class_of_opposite_reference = this.e_ref.EOpposite.eContainer as EClassImpl
+			var class_of_opposite_reference = this.e_ref.EOpposite.eContainer as EClass
 			var package_of_opposite_reference = class_of_opposite_reference.EPackage
-			if((this.e_ref.eContainer as EClassImpl).EPackage.equals(package_of_opposite_reference))
+			if((this.e_ref.eContainer as EClass).EPackage.equals(package_of_opposite_reference))
 				entry.append("this.get")
 			else {
 				entry.append("the")
 				entry.append(package_of_opposite_reference.name.substring(0,1).toUpperCase)
 				entry.append(package_of_opposite_reference.name.substring(1))
 				entry.append("Package.get")
-				this.meta_model_package_dependencies.add(package_of_opposite_reference as EPackageImpl)
+				this.meta_model_package_dependencies.add(package_of_opposite_reference)
 			}
 			entry.append(class_of_opposite_reference.name.substring(0, 1).toUpperCase())
 			entry.append(class_of_opposite_reference.name.substring(1))
@@ -171,7 +201,7 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		entry.append(", ")
 		
 		//add Class<?> containerClass,
-		entry.append((this.e_ref.eContainer as EClassImpl).name)
+		entry.append((this.e_ref.eContainer as EClass).name)
 		entry.append(".class, ")
 
 		//boolean isTransient,
@@ -208,17 +238,26 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		this.type_init_commands = body
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	override get_inspected_object_type() {
 		return InspectedObjectType.EREFERENCE
 	}
-	
+
+	/**
+	 * @inheritDoc
+	 */
 	override get_getter_method_declaration_for_the_package_classes() {
 		if(this.getter_method_declaration_for_the_package_classes_is_generated)
 			return "EReference " + this.getter_method_declaration_for_the_package_classes
 		var entry = this.get_getter_method_declaration_for_the_package_classes__stump_only()
 		return "EReference " + entry.toString()
 	}
-	
+
+	/**
+	 * @inheritDoc
+	 */
 	override get_getter_method_declaration_for_the_package_classes__stump_only(){
 		if(this.getter_method_declaration_for_the_package_classes_is_generated)
 			return this.getter_method_declaration_for_the_package_classes
@@ -232,6 +271,9 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		return entry.toString()
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	override get_literals_entry_for_package_classes() {
 		var entry = new StringBuilder("EReference ")
 		entry.append(this.get_emf_package_literals_interface_var_name())
@@ -241,15 +283,27 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		return entry.toString()
 	}
 
+	/**
+	 * returns true if the inspected EReference is in an containment-relationship
+	 * @return boolean
+	 * @author Adrian Zwenger
+	 */
 	def boolean is_contained(){
 		return this.e_ref.isContainment()
 	}
-	
+
+	/**
+	 * if a default value was specified and the EReference is in an containment-relationship,
+	 * and a tuple a fitting Collection is created and set up.
+	 * @param ereference_instance String the EReference instance
+	 * @return String
+	 * @author Adrian Zwenger
+	 */
 	def String get_default_value_if_contained_reference(String ereference_instance){
 		if(!this.is_contained || !this.is_a_tuple) return this.get_default_value
 		this.default_value =
 			"new " +
-			EMFCodeGenerationClass.get_elist_type_name(this.get_needed_elist_type_enum) +
+			SmartCollectionFactory.get_elist_type_name(this.get_needed_elist_type_enum) +
 			'''<«this.get_object_field_type_name»>(this, «ereference_instance»)'''
 		return this.default_value
 	}

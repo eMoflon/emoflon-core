@@ -23,25 +23,78 @@ import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.impl.EClassImpl
 import org.eclipse.emf.ecore.EEnum
 
+/**
+ * This class generates the interface for the EMF-package class
+ */
 class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileCreator{
 
 	/**########################Attributes########################*/
-
+	
+	/**
+	 * The inspector for the package
+	 */
 	var PackageInspector e_pak
+
+	/**
+	 * HashMap mapping all registered EPackages to their respective inspector
+	 */
 	var HashMap<EPackage,PackageInspector> packages_to_inspector_map
+
+	/**
+	 * stores the object-field declarations as a String
+	 */
 	var ArrayList<String> package_object_fields = new ArrayList<String>()
-	var ArrayList<String> package_method_declarations = new ArrayList<String>()
+
+	/**
+	 * stores the method-declarations as a String
+	 */
+	var ArrayList<String> package_method_declarations = new ArrayList<String>()	
+
+	/**
+	 * stores the LOC of the Literals sub-interface
+	 */
 	var ArrayList<String> subinterface_literals = new ArrayList<String>()
 
+	/**
+	 * stores the name of the implementation of this interface
+	 */
 	var String source_name
+
+	/**
+	 * String to be used when intending code.
+	 */
 	var String IDENTION
+
+	/**
+	 * stores the fq-file name to which this interface shall be written to.
+	 */
 	var String file_path
+
+	/**
+	 * stores the string used to declare the interface
+	 */
 	var String interface_declaration
+	
+	/**
+	 * stores if this Creator was properly initialized
+	 */
 	var boolean is_initialized = false
 
 	/**########################Constructors########################*/
 
-	new(PackageInspector package_inspector, HashMap<EPackage,PackageInspector> e_pak_map, EcoreGenmodelParser gen_model){
+	/**
+	 * Creates a new EMFPackageInterfaceCreator.
+	 * @param package_inspector PackageInspector
+	 * @param e_pak_map HashMap<EPackage,PackageInspector> containing all registered EPackages and
+	 * their Inspector.
+	 * @param gen_model EcoreGenmodelParser
+	 * @author Adrian Zwenger
+	 */
+	new(
+		PackageInspector package_inspector,
+		HashMap<EPackage,PackageInspector> e_pak_map,
+		EcoreGenmodelParser gen_model
+	){
 		super(gen_model)
 		this.e_pak = package_inspector
 		this.packages_to_inspector_map = e_pak_map
@@ -76,7 +129,8 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 	 * count of EOperations belonging to the super class.<br>
 	 * Calls this.register_eclass_without_supers_object_fields and
 	 * this.register_eclass_with_supers_object_fields
-	 * @return ArrayList<String> each entry representing 1 line of code in order
+	 * @return ArrayList<String>
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> register_eclass_id_object_fields(){
 		var ArrayList<String> object_fields = new ArrayList<String>()
@@ -114,10 +168,12 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 	}
 
 	/**
-	 * Called by this.register_eclass_id_object_fields to register ID's to all EStructuralFeatures
+	 * Called by {@link #register_eclass_id_object_fields register_eclass_id_object_fields()}
+	 * to register ID's to all EStructuralFeatures
 	 * of given EClass which inherits or extends other classes/interfaces.
 	 * @param EClass e_class the EClass for which the entries shall be generated
 	 * @return ArrayList<String> contains LOC in order.
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> register_eclass_with_supers_object_fields(EClass e_class){
 		var ArrayList<String> object_fields = new ArrayList<String>()
@@ -140,10 +196,14 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 				e_pak_of_super_class.get_package_declaration_name + "." +
 				e_pak_of_super_class.get_emf_package_class_name()
 			)
-			feature_id_offset = e_pak_of_super_class.get_emf_package_class_name + "." +
-								emf_to_uppercase(the_super_class.name) + "_FEATURE_COUNT + "
-			operation_id_offset = e_pak_of_super_class.get_emf_package_class_name + "." +
-								  emf_to_uppercase(the_super_class.name) + "_OPERATION_COUNT + "
+
+			var super_pak_name = e_pak_of_super_class.get_emf_package_class_name
+			var super_cl_name = emf_to_uppercase(the_super_class.name)
+
+			feature_id_offset = 
+				'''«super_pak_name».«super_cl_name»_FEATURE_COUNT + '''.toString
+			operation_id_offset =
+				'''«super_pak_name».«super_cl_name»"_OPERATION_COUNT + '''.toString
 		}
 		else the_super_class = null
 
@@ -165,21 +225,41 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 				)
 			} else {
 				for(EAttribute e_attr : ecl_impl.EAllAttributes){
-					if(EMFPackageInterfaceCreator.emf_model.get_struct_features_to_inspector_map.containsKey(e_attr)){
-						all_structural_features.add(EMFPackageInterfaceCreator.emf_model.get_struct_features_to_inspector_map.get(e_attr))
+					if(
+						EMFPackageInterfaceCreator.emf_model.get_struct_features_to_inspector_map
+												  .containsKey(e_attr)
+					){
+						all_structural_features.add(
+							EMFPackageInterfaceCreator.emf_model
+													  .get_struct_features_to_inspector_map
+													  .get(e_attr)
+						)
 					} else {
-						all_structural_features.add(new AttributeInspector(e_attr, EMFPackageInterfaceCreator.emf_model))
+						all_structural_features.add(
+							new AttributeInspector(e_attr, EMFPackageInterfaceCreator.emf_model)
+						)
 					}
 				}
 				for(EReference e_ref : ecl_impl.EAllReferences){
-					if(EMFPackageInterfaceCreator.emf_model.get_struct_features_to_inspector_map.containsKey(e_ref)){
-						all_structural_features.add(EMFPackageInterfaceCreator.emf_model.get_struct_features_to_inspector_map.get(e_ref))
+					if(
+						EMFPackageInterfaceCreator.emf_model.get_struct_features_to_inspector_map
+											      .containsKey(e_ref)
+					){
+						all_structural_features.add(
+							EMFPackageInterfaceCreator.emf_model
+													  .get_struct_features_to_inspector_map
+													  .get(e_ref)
+						)
 					} else {
-						all_structural_features.add(new ReferenceInspector(e_ref, EMFPackageInterfaceCreator.emf_model))
+						all_structural_features.add(
+							new ReferenceInspector(e_ref, EMFPackageInterfaceCreator.emf_model)
+						)
 					}
 				}
 				for(EOperation e_op : ecl_impl.EAllOperations)
-					all_e_operations.add(new EOperationInspector(e_op, EMFPackageInterfaceCreator.emf_model))
+					all_e_operations.add(
+						new EOperationInspector(e_op, EMFPackageInterfaceCreator.emf_model)
+					)
 			}
 		}
 		
@@ -193,22 +273,19 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 				e_pak_of_super_class.get_all_object_field_inspectors_for_class(the_super_class)
 			all_structural_features.removeAll(all_inherited_data_fields)
 			for(data_field : all_inherited_data_fields){
-				var entry = new StringBuilder("int " + class_name + "__")
 				var data_field_name = emf_to_uppercase(data_field.get_name)
-				entry.append(data_field_name)
-				entry.append(" = ")
-				entry.append(e_pak_of_super_class.get_emf_package_class_name)
-				entry.append(".")
-				entry.append(emf_to_uppercase(the_super_class.name))
-				entry.append("__")
-				entry.append(data_field_name)
-				entry.append(";")
-				object_fields.add(entry.toString)
+				var super_package = e_pak_of_super_class.get_emf_package_class_name
+				var super_class = emf_to_uppercase(the_super_class.name)
+				object_fields.add(
+'''int «class_name»__«data_field_name» = «super_package».«super_class»__«data_field_name»;'''
+				)
 			}
 		}
 
 		for(data_field : all_structural_features){
-			object_fields.add('''int «class_name»__«emf_to_uppercase(data_field.get_name)» = «feature_id_offset»«feature_id++»;'''.toString())
+			object_fields.add(
+'''int «class_name»__«emf_to_uppercase(data_field.get_name)» = «feature_id_offset»«feature_id++»;'''
+			)
 		}
 		object_fields.add(
 			'''int «class_name»_FEATURE_COUNT = «feature_id_offset»«feature_id»;'''.toString()
@@ -220,25 +297,22 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 				e_pak_of_super_class.get_all_eoperation_inspector_for_class(the_super_class)
 			all_structural_features.removeAll(all_inherited_operations)
 			for(data_field : all_inherited_operations){
-				var entry = new StringBuilder("int " + class_name + "__")
 				var data_field_name = emf_to_uppercase(data_field.get_name)
-				entry.append(data_field_name)
-				entry.append(" = ")
-				entry.append(e_pak_of_super_class.get_emf_package_class_name)
-				entry.append(".")
-				entry.append(emf_to_uppercase(the_super_class.name))
-				entry.append("___")
-				entry.append(data_field_name)
-				entry.append(";")
-				object_fields.add(entry.toString)
+				var p_class_name = e_pak_of_super_class.get_emf_package_class_name
+				var super_name = emf_to_uppercase(the_super_class.name)
+				object_fields.add(
+'''int «class_name»__«data_field_name» = «p_class_name».«super_name»___«data_field_name»;'''
+				)
 			}
 		}
 
 		for(e_operation : all_e_operations){
-			object_fields.add('''int «class_name»___«emf_to_uppercase(e_operation.get_name)» = «operation_id_offset»«operation_id++»;'''.toString())
+			object_fields.add(
+'''int «class_name»___«emf_to_uppercase(e_operation.get_name)» = «operation_id_offset»«operation_id++»;'''
+			)
 		}
 		object_fields.add(
-			'''int «class_name»_OPERATION_COUNT = «operation_id_offset»«operation_id»;'''.toString()
+			'''int «class_name»_OPERATION_COUNT = «operation_id_offset»«operation_id»;'''
 		)
 		
 		return object_fields
@@ -247,8 +321,9 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 	/**
 	 * Called by this.register_eclass_id_object_fields to register ID's to all EStructuralFeatures
 	 * of given EClass whithout supertypes.
-	 * @param EClass e_class the EClass for which the entries shall be generated
-	 * @return ArrayList<String> contains LOC in order.
+	 * @param e_class EClass for which the entries shall be generated
+	 * @return ArrayList<String>
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> register_eclass_without_supers_object_fields(EClass e_class){
 		var ArrayList<String> object_fields = new ArrayList<String>()
@@ -259,59 +334,55 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 
 		for(att : this.e_pak.get_object_field_inspectors_for_class(e_class)){
 			object_fields.add(
-				"int " + emf_to_uppercase(e_class.name) + "__" + emf_to_uppercase(att.get_name) +
-				" = " + obj_field_id.toString + ";"
+'''int «emf_to_uppercase(e_class.name)»__«emf_to_uppercase(att.get_name)» = «obj_field_id.toString»;'''
 			)
 			feature_count += 1
 			obj_field_id += 1
 		}
 		//add feature-count
 		object_fields.add(
-			"int " + emf_to_uppercase(e_class.name) + "_FEATURE_COUNT = " + feature_count + ";"
+			'''int «emf_to_uppercase(e_class.name)»_FEATURE_COUNT = «feature_count»;'''
 		)
 				
 		for(EOperation e_op : all_operations){
-			//var e_op_inspector = new EOperationInspector(e_op, EMFPackageInterfaceCreator.emf_model)
-			var declaration = new StringBuilder("int ")
-			declaration.append(emf_to_uppercase(e_class.name))
-			declaration.append("___")
-			declaration.append(emf_to_uppercase(e_op.name))
-			declaration.append(" = ")
-			declaration.append(op_count.toString)
-			declaration.append(";")
-			object_fields.add(declaration.toString)
-			op_count += 1
+			object_fields.add(
+'''int «emf_to_uppercase(e_class.name)»___«emf_to_uppercase(e_op.name)» = «op_count++»;'''
+			)
 		}//iterate over all EOperations
+
 		//add operation-count
 		object_fields.add(
-			"int " + emf_to_uppercase(e_class.name) +
-			"_OPERATION_COUNT = " + op_count + ";"
+			'''int «emf_to_uppercase(e_class.name)»_OPERATION_COUNT = «op_count»;'''
 		)
-		//adding EOPeration declarations if a class does not have Supertypes
-
 		return object_fields
 	}
 
 	/**
 	 * For all entities contained in an EPackage getters need to be generated. This contains
 	 * EClasses, EAttributes, EReferences, EOperations and EDataTypes.
-	 * @return ArrayList containing LOC in order.
+	 * @return ArrayList<String>
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String> register_method_declaration(){
 		var declarations = new ArrayList<String>()
 		this.add_import_as_String("org.eclipse.emf.ecore.EReference")
 		this.add_import_as_String("org.eclipse.emf.ecore.EAttribute")
 		this.add_import_as_String("org.eclipse.emf.ecore.EOperation")
-		for(e_class : this.e_pak.get_all_eclasses_in_package()){
-			//var e_class_name = e_class.name.substring(0,1).toUpperCase + e_class.name.substring(1)
-			var e_class_name = e_class.name
-			declarations.add("EClass get" + e_class_name + "();")
-			
-			for(AbstractObjectFieldInspector inspector : this.e_pak.get_object_field_inspectors_for_class(e_class)){
-				declarations.add(inspector.get_getter_method_declaration_for_the_package_classes() + ";")
-			}
 
-			for(EOperationInspector inspector : this.e_pak.get_eoperation_inspector_for_class(e_class)){
+		for(e_class : this.e_pak.get_all_eclasses_in_package()){
+			declarations.add('''EClass get«e_class.name»();''')
+			for(
+				AbstractObjectFieldInspector inspector :
+				this.e_pak.get_object_field_inspectors_for_class(e_class)
+			){
+				declarations.add(
+					inspector.get_getter_method_declaration_for_the_package_classes() + ";"
+				)
+			}
+			for(
+				EOperationInspector inspector :
+				this.e_pak.get_eoperation_inspector_for_class(e_class)
+			){
 				var method = inspector.get_getter_method_declaration_for_the_package_classes
 				declarations.add(method + ";")
 			}
@@ -334,27 +405,30 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 	/**
 	 * Each Package interface holds a sub interface called Literals in which literals are declared
 	 * whose call will return the representing EObject.<br>
-	 * sample entry: EAttribute MY_ATTRIBUTE = eIINSTANCE.getclassA_My_attribute();
-	 * @return ArrayList<String> contains LOC for each literal
+	 * <b>sample entry:</b> <em>EAttribute MY_ATTRIBUTE = eINSTANCE.getclassA_My_attribute();</em>
+	 * @return ArrayList<String>
+	 * @author Adrian Zwenger
 	 */
 	def private ArrayList<String>register_literals_interface_entries(){
 		var declarations = new ArrayList<String>()
 
 		for(e_class : this.e_pak.get_all_eclasses_in_package()){
-			var class_name = emf_to_uppercase(e_class.name)
-			//var e_class_name = e_class.name.substring(0,1).toUpperCase + e_class.name.substring(1)
-			var e_class_name = e_class.name
-			var method_stump = '''eINSTANCE.get«e_class_name»'''.toString
 			declarations.add(
-				"EClass " + class_name + " = " + method_stump + "();"
+				'''EClass «emf_to_uppercase(e_class.name)» = eINSTANCE.get«e_class.name»();'''
 			)
 
-			for(AbstractObjectFieldInspector inspector : this.e_pak.get_object_field_inspectors_for_class(e_class)){
+			for(
+				AbstractObjectFieldInspector inspector :
+				this.e_pak.get_object_field_inspectors_for_class(e_class)
+			){
 				var method = inspector.get_literals_entry_for_package_classes()
 				declarations.add(method)
 			}
 
-			for(EOperationInspector inspector : this.e_pak.get_eoperation_inspector_for_class(e_class)){
+			for(
+				EOperationInspector inspector :
+				this.e_pak.get_eoperation_inspector_for_class(e_class)
+			){
 				var method = inspector.get_literals_entry_for_package_classes
 				declarations.add(method)
 			}
@@ -362,37 +436,36 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 
 		for(EDataType e_type : this.e_pak.get_all_edata_types_in_package()){
 			declarations.add(
-				'''EDataType «emf_to_uppercase(e_type.name)» = eINSTANCE.get«e_type.name»();'''.toString
+				'''EDataType «emf_to_uppercase(e_type.name)» = eINSTANCE.get«e_type.name»();'''
 			)
 		}
 		
 		for(EEnum e_type : this.e_pak.get_all_eenums_in_package()){
 			declarations.add(
-				'''EEnum «emf_to_uppercase(e_type.name)» = eINSTANCE.get«e_type.name»();'''.toString
+				'''EEnum «emf_to_uppercase(e_type.name)» = eINSTANCE.get«e_type.name»();'''
 			)
 		}
 
 		return declarations
 	}
 
-	/**
-	 * generates all content needed to write the Interface to a file
-	 */
-	def private void generate_content(){
-		this.package_object_fields.addAll(register_eclass_id_object_fields())
-		this.package_method_declarations.addAll(register_method_declaration())
-		this.subinterface_literals.addAll(this.register_literals_interface_entries())
-	}
-
 	/**########################Public methods########################*/
 
+	/**
+	 * @inheritDoc
+	 */
 	override void initialize_creator(String fq_file_path, String IDENTION){
 		this.file_path = fq_file_path
 		this.IDENTION = IDENTION
-		generate_content()
+		this.package_object_fields.addAll(register_eclass_id_object_fields())
+		this.package_method_declarations.addAll(register_method_declaration())
+		this.subinterface_literals.addAll(this.register_literals_interface_entries())
 		this.is_initialized = true
 	}
-	
+
+	/**
+	 * @inheritDoc
+	 */
 	override write_to_file() {
 		if(!this.is_initialized)
 			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
@@ -411,36 +484,23 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 		var interface_declaration_string = this.interface_declaration + " {" + System.lineSeparator
 		
 		for(import_string : this.get_needed_imports()){
-			import_block.append("import ")
-			import_block.append(import_string)
-			import_block.append(";")
-			import_block.append(System.lineSeparator)
+			import_block.append('''import «import_string»;«System.lineSeparator»''')
 		} import_block.append(System.lineSeparator)
 		
 		for(obj_field : this.package_object_fields){
-			data_fields.append(this.IDENTION)
-			data_fields.append(obj_field)
-			data_fields.append(System.lineSeparator)
+			data_fields.append('''«this.IDENTION»«obj_field»«System.lineSeparator»''')
 		}
 		
 		for(method : this.package_method_declarations){
-			method_declaration.append(this.IDENTION)
-			method_declaration.append(method)
-			method_declaration.append(System.lineSeparator)
+			method_declaration.append('''«this.IDENTION»«method»«System.lineSeparator»''')
 		}
-		
-		literals_interface.append(IDENTION)
-		literals_interface.append("interface Literals {")
-		literals_interface.append(System.lineSeparator)
+
+		literals_interface.append('''«IDENTION»interface Literals {«System.lineSeparator»''')
+
 		for(entry : this.subinterface_literals){
-			literals_interface.append(IDENTION)
-			literals_interface.append(IDENTION)
-			literals_interface.append(entry)
-			literals_interface.append(System.lineSeparator)
+			literals_interface.append('''«IDENTION»«IDENTION»«entry»«System.lineSeparator»''')
 		}
-		literals_interface.append(IDENTION)
-		literals_interface.append("}")
-		literals_interface.append(System.lineSeparator)
+		literals_interface.append('''«IDENTION»}«System.lineSeparator»''')
 
 		package_fw.write(package_declaration_string)
 		package_fw.write(import_block.toString)
@@ -448,7 +508,7 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 		package_fw.write(data_fields.toString)
 		package_fw.write(method_declaration.toString)
 		package_fw.write(literals_interface.toString)
-		package_fw.write("}" + System.lineSeparator + System.lineSeparator)
+		package_fw.write('''}«System.lineSeparator»«System.lineSeparator»''')
 
 		package_fw.close()
 	}

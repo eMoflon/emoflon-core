@@ -1,12 +1,12 @@
-package emfcodegenerator.util
+package emfcodegenerator.util.collections
 
-import org.eclipse.emf.common.util.EList
-import java.util.HashSet
 import java.util.Collection
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
+import java.util.LinkedHashSet
+import emfcodegenerator.util.MinimalSObjectContainer
 
-class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContainer{
+class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerCollection<E>{
 	/**########################Attributes########################*/
 
 	/**
@@ -25,10 +25,10 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	 */
 	var boolean is_containment_object = false
 	
-	/**########################Constructors########################*/
+		/**########################Constructors########################*/
 
 	/**
-	 * Constructs new HashESet. The
+	 * Constructs new LinkedESet. The
 	 * {@link #the_eContainer eContainer} and the
 	 * {@link #the_econtaining_feature eContaining-Feature} are set as null.
 	 * @author Adrian Zwenger
@@ -38,7 +38,7 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	}
 
 	/**
-	 * Constructs new HashESet and sets the {@link #the_eContainer eContainer} and the
+	 * Constructs new LinkedESet and sets the {@link #the_eContainer eContainer} and the
 	 * {@link #the_econtaining_feature eContaining-Feature} to the given values.
 	 * @param eContainer EObject
 	 * @param eContaining_feature EStructuralFeature
@@ -52,7 +52,7 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	}
 
 	/**
-	 * Constructs new HashESet with the specified initial size and sets the
+	 * Constructs new LinkedESet with the specified initial size and sets the
 	 * {@link #the_eContainer eContainer} and the
 	 * {@link #the_econtaining_feature eContaining-feature} to null.
 	 * @param initial_size int
@@ -63,7 +63,7 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	}
 
 	/**
-	 * Constructs new HashESet with the specified initial size and sets the
+	 * Constructs new LinkedESet with the specified initial size and sets the
 	 * {@link #the_eContainer eContainer} and the
 	 * {@link #the_econtaining_feature eContaining-Feature} to the given values.
 	 * @param initial_size int
@@ -79,7 +79,7 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	}
 
 	/**
-	 * Constructs new HashESet with the specified initial size and sets the
+	 * Constructs new LinkedESet with the specified initial size and sets the
 	 * {@link #the_eContainer eContainer} and the
 	 * {@link #the_econtaining_feature eContaining-feature} to null.
 	 * @param initial_size int
@@ -91,7 +91,7 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	}
 
 	/**
-	 * Constructs new HashESet with the specified initial size and sets the
+	 * Constructs new LinkedESet with the specified initial size and sets the
 	 * {@link #the_eContainer eContainer} and the
 	 * {@link #the_econtaining_feature eContaining-Feature} to the given values.
 	 * @param initial_size int
@@ -108,7 +108,7 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	}
 
 	/**
-	 * Constructs new HashESet from a given Collection. The
+	 * Constructs new LinkedESet from a given Collection. The
 	 * {@link #the_eContainer eContainer} and the
 	 * {@link #the_econtaining_feature eContaining-Feature} are set as null.
 	 * @param c Collection<? extends E>
@@ -119,7 +119,7 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	}
 
 	/**
-	 * Constructs new HashESet from a given Collection and sets the
+	 * Constructs new LinkedESet from a given Collection and sets the
 	 * {@link #the_eContainer eContainer} and the
 	 * {@link #the_econtaining_feature eContaining-Feature} to the given values.
 	 * @param c Collection<? extends E>
@@ -182,7 +182,7 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	 * if this list is a containment list, passed objects will have their containment set and returned.
 	 * if it is not, the object will be returned unchanged
 	 */
-	def private E set_containment_to_passed_object(E obj){
+	override E set_containment_to_passed_object(E obj){
 		if(is_containment_object){
 			try{
 				(obj as MinimalSObjectContainer).set_containment(this.the_eContainer, this.the_econtaining_feature)
@@ -199,7 +199,7 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	 * if this list is a containment list, the containment will be removed from the passed object and it will be returned
 	 * if it is not, the object will be returned unchanged
 	 */
-	def private E remove_containment_to_passed_object(E obj){
+	override E remove_containment_to_passed_object(E obj){
 		if(is_containment_object){
 			try{
 				(obj as MinimalSObjectContainer).reset_containment()
@@ -211,35 +211,42 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 		}
 		return obj
 	}
-
-	/**########################EList methods########################*/
+	
+	/**########################EList methods which need to be implemented########################*/
 
 	override move(int newPosition, E object) {
-		throw new UnsupportedOperationException("HashESet does not support move, as it is an unordered set")
+		if(this.contains(object) && (newPosition<super.size) && (newPosition>=0)){
+			this.move(newPosition, this.indexOf(object))
+		}
 	}
 	
 	override move(int newPosition, int oldPosition) {
-		throw new UnsupportedOperationException("HashESet does not support move, as it is an unordered set")
+		throw new UnsupportedOperationException("LinkedESet does not support move, as it does not operate with indexes")
 	}
 	
 	override add(E e) {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+		super.add(this.set_containment_to_passed_object(e))
 	}
 	
 	override add(int index, E element) {
-		super.add(this.set_containment_to_passed_object(element))
+		throw new UnsupportedOperationException(
+			"LinkedESet does not support add(int, Object) as it does not operate with indexes"
+		)
 	}
 	
 	override addAll(Collection<? extends E> c) {
-		var int old = this.size()
+		var int previous_size = this.size()
 		for(E e : c){
 			this.add(e)
 		}
-		return old !== this.size()
+		//if size has changed, list has changed
+		return previous_size !== this.size()
 	}
 	
 	override addAll(int index, Collection<? extends E> c) {
-		throw new UnsupportedOperationException("HashESet does not support addAll(int,Collection<? extends E>), as it is an unordered set")
+		throw new UnsupportedOperationException(
+			"LinkedESet does not support addAll(int, Collection<? extends E>) as it does not operate with indexes"
+		)
 	}
 	
 	override clear() {
@@ -251,18 +258,19 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	}
 	
 	override containsAll(Collection<?> c) {
-		for(Object o : c) if(!this.contains(o)) return false
-		return true
+		return super.containsAll(c)
 	}
 	
 	override get(int index) {
-		throw new UnsupportedOperationException("HashESet does not support get(int), as it is an unordered set")
+		throw new UnsupportedOperationException(
+			"LinkedESet does not support get(int) as it does not operate with indexes"
+		)
 	}
 	
 	override indexOf(Object o) {
 		throw new UnsupportedOperationException(
-			"HashESet does not support indexOf(Object), as it is an unordered set"
-			)
+			"LinkedESet does not support indexOf(Object) as it does not operate with indexes"
+		)
 	}
 	
 	override isEmpty() {
@@ -270,13 +278,13 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	}
 	
 	override iterator() {
-		return new SmartEMFCollectionIterator(super.iterator())
+		return new SmartEMFCollectionIterator(super.iterator(), this)
 	}
 	
 	override lastIndexOf(Object o) {
 		throw new UnsupportedOperationException(
-			"HashESet does not support lastIndexOf(Object), as it is an unordered set"
-			)
+			"LinkedESet does not support lastIndexOf(Object) as it does not operate with indexes"
+		)
 	}
 	
 	override listIterator(){
@@ -284,7 +292,7 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 		//modification to the list while it holds a containment will lead to
 		//unresolved containment handling. Thus use is not permitted.
 		//if it is wished a custom list needs to be implemented in future
-		throw new UnsupportedOperationException("use of listIterators is not supported")
+		throw new UnsupportedOperationException("use of listIterators are not supported")
 	}
 	
 	override listIterator(int index){
@@ -292,37 +300,46 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 		//modification to the list while it holds a containment will lead to
 		//unresolved containment handling. Thus use is not permitted.
 		//if it is wished a custom list needs to be implemented in future
-		throw new UnsupportedOperationException("use of listIterators is not supported")
+		throw new UnsupportedOperationException("use of listIterators are not supported")
 	}
 	
 	override remove(Object o) {
-		if(this.contains(o))
-			return super.remove(this.remove_containment_to_passed_object(o as E))
+		if(this.contains(o)){
+			super.remove(o)
+			this.remove_containment_to_passed_object(o as E)
+			return true
+		}
 		return false
 	}
 	
 	override remove(int index) {
 		throw new UnsupportedOperationException(
-			"HashESet does not support remove(int), as it is an unordered set"
-			)
+			"LinkedESet does not support remove(int) as it does not operate with indexes"
+		)
 	}
 	
 	override removeAll(Collection<?> c) {
-		var int old = this.size()
-		for(Object e : c) this.remove(e)
-		return old !== this.size()
+		var int old_size = this.size()
+		for(Object o : c){
+			this.remove(o)
+		}
+		return this.size !== old_size
 	}
 	
 	override retainAll(Collection<?> c) {
 		var int old_size = this.size()
-		for(E obj : this) if(!(c.contains(obj))) this.remove(obj)
+		for(E obj : this){
+			if(!(c.contains(obj))){
+				this.remove(obj)
+			}
+		}
 		return this.size !== old_size
 	}
 	
 	override set(int index, E element) {
 		throw new UnsupportedOperationException(
-			"HashESet does not support set(int,E), as it is an unordered set"
-			)
+			"LinkedESet does not support set(int, E) as it does not operate with indexes"
+		)
 	}
 	
 	override size() {
@@ -331,7 +348,7 @@ class  HashESet<E> extends HashSet<E> implements EList<E>, MinimalSObjectContain
 	
 	override subList(int fromIndex, int toIndex) {
 		throw new UnsupportedOperationException(
-			"HashESet does not support subList(int, int), as it is an unordered set"
+			"LinkedESet does not support subList(int,int) as it does not operate with indexes"
 		)
 	}
 	

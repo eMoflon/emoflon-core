@@ -1,17 +1,17 @@
-package emfcodegenerator.util
+package emfcodegenerator.util.collections
 
 import java.util.ArrayList
-import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
 import java.util.Collection
 import java.util.Collections
+import emfcodegenerator.util.MinimalSObjectContainer
 
 /**
  * SmartEMF implementation of an {@link java.util.ArrayList ArrayList}.</br>
  * Goal of this Collection is to offer a Collection with Containment feature management abilities.
  */
-class DefaultEList<E> extends ArrayList<E> implements EList<E>, MinimalSObjectContainer {
+class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCollection<E> {
 
 	/**########################Attributes########################*/
 
@@ -157,7 +157,7 @@ class DefaultEList<E> extends ArrayList<E> implements EList<E>, MinimalSObjectCo
 		return is_containment_object
 	}
 
-	def private E set_containment_to_passed_object(E obj){
+	override E set_containment_to_passed_object(E obj){
 		if(is_containment_object){
 			try{
 				(obj as MinimalSObjectContainer).set_containment(this.the_eContainer, this.the_econtaining_feature)
@@ -174,7 +174,7 @@ class DefaultEList<E> extends ArrayList<E> implements EList<E>, MinimalSObjectCo
 	 * if this list is a containment list, the containment will be removed from the passed object and it will be returned
 	 * if it is not, the object will be returned unchanged
 	 */
-	def private E remove_containment_to_passed_object(E obj){
+	override E remove_containment_to_passed_object(E obj){
 		if(is_containment_object){
 			try{
 				(obj as MinimalSObjectContainer).reset_containment()
@@ -259,7 +259,7 @@ class DefaultEList<E> extends ArrayList<E> implements EList<E>, MinimalSObjectCo
 	}
 	
 	override iterator() {
-		return new SmartEMFCollectionIterator(super.iterator)
+		return new SmartEMFCollectionIterator(super.iterator, this)
 	}
 	
 	override lastIndexOf(Object o) {

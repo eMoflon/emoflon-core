@@ -1,5 +1,8 @@
 package emfcodegenerator
 
+/**
+ * TODO: move to EMFCodeGenerator and make arg-parsing possible
+ */
 class TestMain {
 	def static void main(String[] args){
 		var ecore = "D:\\Desktop\\emf\\CodeGenPlayground\\model\\codeGenPlayground.ecore"

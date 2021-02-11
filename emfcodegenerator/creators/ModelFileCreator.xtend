@@ -11,6 +11,12 @@ import java.util.HashSet
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EClass
 
+/**
+ * Abstract class with shared data-fields and methods for the
+ * {@link emfcodegenerator.creators.util.InterfaceCreator InterfaceCreator}
+ * {@link emfcodegenerator.creators.util.SourceCodeCreator SourceCodeCreator}.
+ * @author Adrian Zwenger
+ */
 abstract class ModelFileCreator extends EMFCodeGenerationClass implements FileCreator{
 	
 	/**
@@ -61,8 +67,11 @@ abstract class ModelFileCreator extends EMFCodeGenerationClass implements FileCr
 	 * Creates a new ModelFileCreator
 	 * @param eclass EClassImpl the EClass for which a file shall be created
 	 * @param gen_model EcoreGenmodelParser the wrapper for the ecore-xmi and genmodel-xmi files
-	 * @param e_data_fields HashSet<ObjectFieldInspector> the ObjectFieldInspector's for the contained Attributes/References
-	 * @param e_operations HashSet<EOperationInspector> the EOperationInspector's for all the EOperations
+	 * @param e_data_fields HashSet<ObjectFieldInspector> the ObjectFieldInspector's for the
+	 contained Attributes/References
+	 * @param e_operations HashSet<EOperationInspector> the EOperationInspector's for all the
+	 EOperations
+	 * @author Adrian Zwenger
 	 */
 	new(EClass eclass, EcoreGenmodelParser gen_model,
 		HashSet<AbstractObjectFieldInspector> e_data_fields,
@@ -74,13 +83,15 @@ abstract class ModelFileCreator extends EMFCodeGenerationClass implements FileCr
 
 		if(!e_pak.get_all_eclasses_in_package().contains(e_class)) 
 			throw new IllegalArgumentException(
-			'''The EClass «e_class.name» is not contained in EPackage «e_pak.get_name()»'''.toString
+			'''The EClass «e_class.name» is not contained in EPackage «e_pak.get_name()»'''
 			)
 
 		// register the file path
-		var file_path_relative_to_package_hierarchy = emf_model.get_object_to_class_name_map().get(e_class)
+		var file_path_relative_to_package_hierarchy =
+			emf_model.get_object_to_class_name_map().get(e_class)
 		//register the package declaration
-		package_declaration = '''«convert_fqdn_file_path_to_package_name(file_path_relative_to_package_hierarchy)»'''
+		package_declaration =
+			'''«convert_fqdn_file_path_to_package_name(file_path_relative_to_package_hierarchy)»'''
 		//create the declaration for the interface
 		
 		this.e_data_fields = new HashSet<AbstractObjectFieldInspector>(e_data_fields)
@@ -92,15 +103,15 @@ abstract class ModelFileCreator extends EMFCodeGenerationClass implements FileCr
 
 	/**
 	 * Takes fqdn file-path without file-extension (relative to root folder of project) and returns
-	 * the corresponding package where the file is loaded
+	 * the corresponding package where the file is loaded.<br>
+	 * Example: <br>
+	 * <b>Input</b> = "package/subpackage/myClass"<br>
+	 * <b>Output</b> = "package.subpackage"
 	 * @param fq_file_name String path to file without file-extension
 	 * @return String containing the path package of the java file
-	 * 
-	 * Example:
-	 * Input = "package/subpackage/myClass"
-	 * Output = "package.subpackage"
+	 * @author Adrian Zwenger
 	 */
-	def protected String convert_fqdn_file_path_to_package_name(String fq_file_name){
+	def private String convert_fqdn_file_path_to_package_name(String fq_file_name){
 		var package_path = fq_file_name.replace(GENERATED_FILE_DIR, "").split("/")
 		//example for a file path: package/subpackage/myClass
 		//thus splitting at every "/" and removing the GENERATED_FILE_PATH part
@@ -110,7 +121,7 @@ abstract class ModelFileCreator extends EMFCodeGenerationClass implements FileCr
 
 	/**
 	 * adds imports as a String, however it checks first if it needs to be imported or if it is
-	 * in the same package and thus does not need to be imported
+	 * in the same package and thus does not need to be imported.
 	 * @param String import_string
 	 */
 	override add_import_as_String(String import_string){
@@ -125,49 +136,42 @@ abstract class ModelFileCreator extends EMFCodeGenerationClass implements FileCr
 	/**########################Getters########################*/
 
 	/**
-	 * returns all method declarations
+	 * returns all method declarations in order of creation.
 	 * @return ArrayList<String> containing method_declarations
+	 * @author Adrian Zwenger
 	 */
 	abstract def ArrayList<String> get_method_declarations()
 
 	/**
-	 * returns the EPackage in which the class/interface is
+	 * Returns the EPackage in which the class/interface is contained.
 	 * @return EPackage of the class/interface
+	 * @author Adrian Zwenger
 	 */
 	abstract def EPackage get_package()
 	
 	/**
 	 * returns the name of the interface/class
 	 * @return String representing the interfaces/classes name
+	 * @author Adrian Zwenger
 	 */
 	abstract def String get_name()
 
 	/**
-	 * returns the String which is needed to declare to package an interface belongs to
+	 * returns the String which is needed to declare which package an interface/class belongs to.
 	 * @param String representing the String needed for declaring the package of the file
+	 * @author Adrian Zwenger
 	 */
 	abstract def String get_package_declaration()
 
 	/**
 	 * Returns the classes or interfaces signature/declaration as String
-	 *	@return String representing the declaration needed for the class/interface itself
+	 * @return String representing the declaration needed for the class/interface itself
+	 * @author Adrian Zwenger
 	 */
 	abstract def String get_declaration()
 
 	/**########################Control Flow########################*/
 
-	/**
-	 * prepares the Creator for parsing and assembling
-	 * @param fq_file_path String representing the complete path to the file to which shall be written
-	 * @param IDENTION String representing the chars with which code shall be indented
-	 */
-	abstract override void initialize_creator(String fq_file_path, String IDENTION)
-	
-	/**
-	 * starts the writing process writes the interface/class source-code contents to a file
-	 */
-	abstract override void write_to_file()
-	
 	override toString(){
 		return this.e_class.toString()
 	}

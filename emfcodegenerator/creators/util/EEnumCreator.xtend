@@ -8,21 +8,54 @@ import java.util.ArrayList
 import java.io.File
 import java.io.FileWriter
 
+/**
+ * This Creator can be used to generate the source-code of an
+ * {@link org.eclipse.emf.ecore.EEnum EEnum} implementation.
+ */
 class EEnumCreator extends EMFCodeGenerationClass implements FileCreator {
 	
+	/**
+	 * The inspector for the EPackage which contains the EEnum
+	 */
 	var PackageInspector e_pak
+	
+	/**
+	 * The EEnum for which the code shall be generated
+	 */
 	var EEnum e_enum
+	
+	/**
+	 * the fq-path of the file to which shall be written
+	 */
 	var String file_path
+	
+	/**
+	 * Stores if this Creator was properly initialized
+	 */
 	var boolean is_initialized = false
 
+	/**
+	 * Stores the entries of the EEnum
+	 */
 	var ArrayList<String> literals_declaration = new ArrayList<String>()
 	
+	/**
+	 * Constructs a new EEnumCreator.
+	 * @param eenum EEnum for which this Creator shall generate code.
+	 * @param e_pak PackageInspector of the EPackage in which the EEnum is contained.
+	 * @author Adrian Zwenger
+	 */
 	new(EEnum eenum, PackageInspector e_pak) {
 		super(PackageInspector.emf_model)
 		this.e_enum = eenum
 		this.e_pak = e_pak
 	}
 
+	/**
+	 * This method generates the code.
+	 * @param IDENTION String with which code shall be idented.
+	 * @author Adrian Zwenger
+	 */
 	def private void init(String IDENTION){
 		var iterator = this.e_enum.ELiterals.iterator
 		var literals_block = new ArrayList<String>()
@@ -127,13 +160,19 @@ class EEnumCreator extends EMFCodeGenerationClass implements FileCreator {
 		this.literals_declaration.add(get_by_int_method)
 		this.literals_declaration.add(generic_methods)
 	}
-	
+
+	/**
+	 * @inheritDoc
+	 */
 	override initialize_creator(String fq_file_path, String IDENTION) {
 		this.file_path = fq_file_path
 		this.is_initialized = true
 		this.init(IDENTION)
 	}
-	
+
+	/**
+	 * @inheritDoc
+	 */
 	override write_to_file() {
 		if(!this.is_initialized)
 			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
@@ -153,14 +192,13 @@ public enum «this.e_enum.name» implements Enumerator {
 
 '''
 		)
-		
+
 		for(entry : this.literals_declaration){
 			fw.write(entry)
 		}
-		
+
 		fw.write("}" + System.lineSeparator)
 		fw.close()
 		this.is_initialized = false
-	}
-	
+	}	
 }

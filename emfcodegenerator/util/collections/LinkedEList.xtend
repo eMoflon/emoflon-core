@@ -1,15 +1,15 @@
-package emfcodegenerator.util
+package emfcodegenerator.util.collections
 
 import java.util.LinkedList
-import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
 import java.util.Collection
 import java.util.function.Predicate
 import java.util.function.UnaryOperator
 import java.util.Collections
+import emfcodegenerator.util.MinimalSObjectContainer
 
-class LinkedEList<E> extends LinkedList<E> implements EList<E>, MinimalSObjectContainer {
+class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCollection<E> {
 
 	/**########################Attributes########################*/
 
@@ -29,7 +29,7 @@ class LinkedEList<E> extends LinkedList<E> implements EList<E>, MinimalSObjectCo
 	 */
 	var boolean is_containment_object = false
 	
-		/**########################Constructors########################*/
+	/**########################Constructors########################*/
 
 	/**
 	 * Constructs new LinkedEList and sets the {@link #the_eContainer eContainer} and the
@@ -130,7 +130,7 @@ class LinkedEList<E> extends LinkedList<E> implements EList<E>, MinimalSObjectCo
 	 * if this list is a containment list, passed objects will have their containment set and returned.
 	 * if it is not, the object will be returned unchanged
 	 */
-	def private E set_containment_to_passed_object(E obj){
+	override E set_containment_to_passed_object(E obj){
 		if(is_containment_object){
 			try{
 				(obj as MinimalSObjectContainer).set_containment(this.the_eContainer, this.the_econtaining_feature)
@@ -147,7 +147,7 @@ class LinkedEList<E> extends LinkedList<E> implements EList<E>, MinimalSObjectCo
 	 * if this list is a containment list, the containment will be removed from the passed object and it will be returned
 	 * if it is not, the object will be returned unchanged
 	 */
-	def private E remove_containment_to_passed_object(E obj){
+	override E remove_containment_to_passed_object(E obj){
 		if(is_containment_object){
 			try{
 				(obj as MinimalSObjectContainer).reset_containment()
@@ -331,8 +331,9 @@ class LinkedEList<E> extends LinkedList<E> implements EList<E>, MinimalSObjectCo
 		throw new UnsupportedOperationException("Warning! replaceAll(UnaryOperator<E> operator) does not support Containment management")
 		//super.replaceAll(operator)
 	}
+
 	override iterator(){
-		return new SmartEMFCollectionIterator(super.iterator)
+		return new SmartEMFCollectionIterator(super.iterator, this)
 	}
 	
 	override listIterator(){
