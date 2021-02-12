@@ -77,6 +77,10 @@ public class ProxyResolver {
 		return uri.toString().substring(uri.toString().lastIndexOf("/") + 1);
 	}
 	
+	public static void fixBrokenEReferences(EPackage epackage) {
+		epackage.getEClassifiers().stream().filter(c -> c instanceof EClass).forEach(c -> ((EClass) c).getEReferences().forEach(ProxyResolver::resolveReference));;
+	}
+	
 	private static EPackage resolvePackage(URI uri) {
 		if(uri2packages.containsKey(uri)) {
 			return uri2packages.get(uri);
