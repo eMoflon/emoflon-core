@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Emfcodegenerator
+Bundle-SymbolicName: emfcodegenerator
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: emfcodegenerator
+Bundle-RequiredExecutionEnvironment: JavaSE-14
+Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.23.0",
+ com.google.guava;bundle-version="27.1.0",
+ org.eclipse.xtext.xbase.lib;bundle-version="2.23.0",
+ org.eclipse.xtend.lib.macro;bundle-version="2.23.0",
+ org.eclipse.xtend.lib;bundle-version="2.23.0"
