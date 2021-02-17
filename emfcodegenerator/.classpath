@@ -8,8 +8,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="C:/Users/adria/.p2/pool/plugins/org.eclipse.emf.codegen.ecore_2.23.0.v20200701-0840.jar"/>
-	<classpathentry kind="lib" path="C:/Users/adria/.p2/pool/plugins/org.eclipse.emf.ecore.xmi_2.16.0.v20190528-0725.jar"/>
-	<classpathentry kind="lib" path="C:/Users/adria/.p2/pool/plugins/org.eclipse.emf.codegen_2.21.0.v20200708-0547.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
