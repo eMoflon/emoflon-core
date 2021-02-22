@@ -33,7 +33,7 @@ class TestMain {
 	 * Finds the first file in the directory with the specified extension.
 	 */
 	def static findFile(String directory, String separator, String fileExt) {
-		return directory + separator + new File(directory).list().filter[it.matches(".*" + fileExt)].iterator().next()
+		return directory + separator + new File(directory).list().filter[it.matches(".*\\." + fileExt)].iterator().next()
 	}
 		
 }
