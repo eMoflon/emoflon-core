@@ -202,7 +202,7 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	/**
 	 * sets the eContainer and eContainingFeature back to null. Call this method if the object is
 	 * in a containment relationship anymore
-	 * TODO: eNotifictaion support ?
+	 * TODO: eNotification support ?
 	 */
 	override void reset_containment(){
 		this.is_containment_object = false
@@ -217,7 +217,7 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	}
 
 	/**
-	 * TODO: eNotifictaion support ?
+	 * TODO: eNotification support ?
 	 */
 	override void set_containment(EObject container, EStructuralFeature feature){
 		if(this.the_eContainer !== null) this.reset_containment()
