@@ -57,7 +57,7 @@ abstract class ModelFileCreator extends EMFCodeGenerationClass implements FileCr
 	var protected String IDENTION
 
 	/**
-	 * a PackageInspector instance which inspects the EPackage in hwich the EClass is contained
+	 * a PackageInspector instance which inspects the EPackage in which the EClass is contained
 	 */
 	var protected PackageInspector e_pak
 	
