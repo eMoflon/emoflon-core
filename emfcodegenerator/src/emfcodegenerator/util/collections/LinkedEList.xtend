@@ -101,7 +101,7 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 				(object as MinimalSObjectContainer).reset_containment()
 			} catch (Exception e){
 				throw new IllegalArgumentException(
-			"The contents of this list do not implement MinimalSObjectContainer. Containments cannot be handled."
+			"The contents of this list do not implement MinimalSObjectContainer. Containments cannot be handled.", e
 				)
 			}
 		}
@@ -116,7 +116,7 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 				(object as MinimalSObjectContainer).set_containment(container, feature)
 			} catch (Exception e){
 				throw new IllegalArgumentException(
-			"The contents of this list do not implement MinimalSObjectContainer. Containments cannot be handled."
+			"The contents of this list do not implement MinimalSObjectContainer. Containments cannot be handled.", e
 				)
 			}
 		}
@@ -134,9 +134,9 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 		if(is_containment_object){
 			try{
 				(obj as MinimalSObjectContainer).set_containment(this.the_eContainer, this.the_econtaining_feature)
-			} catch (Exception E){
+			} catch (Exception e){
 				throw new IllegalArgumentException(
-			"The contents of this list do not implement MinimalSObjectContainer. Containments cannot be handled."
+			"The contents of this list do not implement MinimalSObjectContainer. Containments cannot be handled.", e
 				)
 			}
 		}
@@ -151,9 +151,9 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 		if(is_containment_object){
 			try{
 				(obj as MinimalSObjectContainer).reset_containment()
-			} catch (Exception E){
+			} catch (Exception e){
 				throw new IllegalArgumentException(
-			"The contents of this list do not implement MinimalSObjectContainer. Containments cannot be handled."
+			"The contents of this list do not implement MinimalSObjectContainer. Containments cannot be handled.", e
 				)
 			}
 		}
