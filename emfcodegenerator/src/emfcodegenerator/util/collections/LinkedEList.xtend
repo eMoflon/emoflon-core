@@ -8,6 +8,7 @@ import java.util.function.Predicate
 import java.util.function.UnaryOperator
 import java.util.Collections
 import emfcodegenerator.util.MinimalSObjectContainer
+import emfcodegenerator.notification.SmartEMFNotification
 
 class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCollection<E> {
 
@@ -28,6 +29,11 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	 * stores if this list is used to store a Containment
 	 */
 	var boolean is_containment_object = false
+	
+	/**
+	 * stores Notifications for merging or sends them immediately 
+	 */
+	val notifications = new ListNotificationBuilder
 	
 	/**########################Constructors########################*/
 
@@ -176,6 +182,7 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 		var int j = oldPosition
 		var int k = newPosition
 		Collections.rotate(this.subList(j < k ? j : k, (j < k ? k : j) + 1), j < k ? -1 : 1);
+		notifications.add(SmartEMFNotification.moveInList(eContainer, eContainingFeature, obj, oldPosition, newPosition))
 		return obj;
 	}
 
@@ -183,81 +190,76 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	
 	override add(int index, E obj){
 		//this.set_containment_to_passed_object(obj)
+		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, obj, index))
 		super.add(index, this.set_containment_to_passed_object(obj))
 	}
 	
 	override add(E obj){
+		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, obj, size))
 		super.add(this.set_containment_to_passed_object(obj))
 	}
 	
 	override addFirst(E obj){
+		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, obj, 0))
 		super.addFirst(this.set_containment_to_passed_object(obj))
 	}
 
 	override addLast(E obj){
-		super.addLast(this.set_containment_to_passed_object(obj))
+		add(obj)
 	}
 
 	override addAll(Collection<? extends E> c) {
 		var int old = this.size()
+		notifications.enableAccumulation
 		for(E e: c) this.add(this.set_containment_to_passed_object(e))
+		notifications.flush
 		return old !== this.size()
 	}
 
 	override clear(){
-		this.removeAll
+		this.removeAll(new LinkedList(this))
 	}
 
 	override offer(E obj){
-		super.offer(this.set_containment_to_passed_object(obj))
+		add(obj)
 	}
 
 	override offerFirst(E obj){
-		super.offer(this.set_containment_to_passed_object(obj))
+		addFirst(obj)
+		true
 	}
 
 	override offerLast(E obj){
-		super.offerLast(this.set_containment_to_passed_object(obj))
-	}
-	
-	override peekFirst(){
-		return this.remove_containment_to_passed_object(super.peekFirst())
-	}
-	
-	override peekLast(){
-		return this.remove_containment_to_passed_object(super.peekLast())
-	}
-
-	override peek(){
-		return this.remove_containment_to_passed_object(super.peek())
+		add(obj)
 	}
 	
 	override pollFirst(){
-		return this.remove_containment_to_passed_object(super.pollFirst())
+		poll
 	}
 	
 	override pollLast(){
-		return this.remove_containment_to_passed_object(super.pollLast())
+		if (!isEmpty) removeLast else null
 	}
 
 	override poll(){
-		return this.remove_containment_to_passed_object(super.poll())
+		if (!isEmpty) removeFirst else null
 	}
 	
 	override pop(){
-		return this.remove_containment_to_passed_object(super.pop())
+		removeFirst
 	}
 	
 	override push(E obj){
-		super.push(this.set_containment_to_passed_object(obj))
+		addFirst(obj)
 	}
 	
 	override remove(){
-		return this.remove_containment_to_passed_object(super.remove())
+		removeFirst
 	}
 	
 	override remove(Object obj){
 		if(this.contains(obj)){
+			notifications.add(SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, obj, indexOf(obj)))
 			super.remove(obj)
 			this.remove_containment_to_passed_object(obj as E)
 			return true
@@ -266,11 +268,12 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	}
 	
 	override remove(int index){
+		notifications.add(SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, get(index), index))
 		return this.remove_containment_to_passed_object(super.remove(index))
 	}
 	
 	override removeFirst(){
-		return this.remove_containment_to_passed_object(super.removeFirst())
+		remove(0)
 	}
 	
 	override removeFirstOccurrence(Object o){
@@ -278,7 +281,7 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	}
 	
 	override removeLast(){
-		return this.remove_containment_to_passed_object(super.removeLast())
+		remove(size - 1)
 	}
 	
 	override removeLastOccurrence(Object o){
@@ -292,38 +295,48 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	
 	override removeAll(Collection<?> c){
 		var int old = this.size()
+		notifications.enableAccumulation
 		for(Object o : c){
 			this.remove(o)
 		}
+		notifications.flush
 		return old !== this.size()
 	}
 	
 	override removeRange(int a, int b){
-		var int index = a
-		while(index < b) this.remove(index++)
+		var int index = b - 1
+		notifications.enableAccumulation
+		while(index >= a) this.remove(index--)
+		notifications.flush
 	}
 	
 	override set(int index, E obj){
-		this.remove_containment_to_passed_object(this.get(index))
+		val oldValue = this.get(index)
+		this.remove_containment_to_passed_object(oldValue)
+		notifications.add(SmartEMFNotification.set(eContainer, eContainingFeature, oldValue, obj, index))
 		super.set(index, this.set_containment_to_passed_object(obj))
 	}
 	
 	override retainAll(Collection<?> c){
 		var int old = this.size()
+		notifications.enableAccumulation
 		for(E obj : this){
 			if(!(c.contains(obj))){
 				this.remove(obj)
 			}
 		}
+		notifications.flush
 		return old !== this.size()
 	}
 	
 	override removeIf(Predicate<? super E> filter){
 		var int old = this.size()
+		notifications.enableAccumulation
 		for(E obj : this){
 			if(filter.test(obj))
 				this.remove(obj)
 		}
+		notifications.flush
 		return old !== this.size()
 	}
 	

@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.EOperation
 import java.lang.reflect.InvocationTargetException
 import org.eclipse.emf.common.notify.Notification
 import org.eclipse.emf.ecore.resource.Resource
+import emfcodegenerator.notification.SmartEMFNotification
 
 /**
  * SmartEMF base-class for all generated objects.
@@ -201,19 +202,37 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 
 	/**
 	 * sets the eContainer and eContainingFeature back to null. Call this method if the object is
-	 * in a containment relationship anymore
+	 * not in a containment relationship anymore
 	 * TODO: eNotification support ?
 	 */
 	override void reset_containment(){
+		val index = {
+			val list = the_eContainer.eGet(the_econtaining_feature)
+			switch (list) {
+				EList<?> : try {
+					(list as EList<?>).indexOf(this)
+				} catch (Throwable t) { //some EList implementations are not actually lists and throw an exception
+					Notification.NO_INDEX
+				}
+				default: Notification.NO_INDEX
+			}
+		}
+		
 		this.is_containment_object = false
 		if(!this.the_econtaining_feature.isMany){
 			this.the_eContainer.eSet(this.the_econtaining_feature, null)
 		} else {
-			var EList the_list = (this.the_eContainer.eGet(this.the_econtaining_feature) as EList)
+			var EList<?> the_list = (this.the_eContainer.eGet(this.the_econtaining_feature) as EList<?>)
 			while(the_list.contains(this)) the_list.remove(this)
 		}
+		(the_eContainer as SmartObject).notifyRemove(the_econtaining_feature, this, index)
 		this.the_eContainer = null
 		this.the_econtaining_feature = null
+	}
+		
+	def notifyRemove(EStructuralFeature feature, SmartObject object, int index) {
+		val notification = SmartEMFNotification.removeFromFeature(this, feature, object, index)
+		eNotify(notification)
 	}
 
 	/**
@@ -221,9 +240,29 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	 */
 	override void set_containment(EObject container, EStructuralFeature feature){
 		if(this.the_eContainer !== null) this.reset_containment()
+		
+		val index = {
+			val list = the_eContainer.eGet(the_econtaining_feature)
+			switch (list) {
+				EList<?> : try {
+					(list as EList<?>).indexOf(this)
+					(list as EList<?>).length
+				} catch (Throwable t) { //some EList implementations are not actually lists and throw an exception
+					Notification.NO_INDEX
+				}
+				default: Notification.NO_INDEX
+			}
+		}
+		
 		this.is_containment_object = true
 		this.the_eContainer = container
-		this.the_econtaining_feature = feature
+		this.the_econtaining_feature = feature;
+		(the_eContainer as SmartObject).notifyAdd(feature, this, index)
+	}
+	
+	def notifyAdd(EStructuralFeature feature, SmartObject object, int index) {
+		val notification = SmartEMFNotification.addToFeature(this, feature, object, index)
+		eNotify(notification)
 	}
 	
 }

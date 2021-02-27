@@ -5,6 +5,8 @@ import java.util.Collection
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
 import emfcodegenerator.util.MinimalSObjectContainer
+import emfcodegenerator.notification.SmartEMFNotification
+import java.util.LinkedList
 
 class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollection<E>{
 	/**########################Attributes########################*/
@@ -24,6 +26,11 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 	 * stores if this list is used to store a Containment
 	 */
 	var boolean is_containment_object = false
+	
+	/**
+	 * stores Notifications for merging or sends them immediately 
+	 */
+	val notifications = new ListNotificationBuilder
 	
 	/**########################Constructors########################*/
 
@@ -223,6 +230,7 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 	}
 	
 	override add(E e) {
+		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, e, -1))
 		return super.add(this.set_containment_to_passed_object(e))
 	}
 	
@@ -232,9 +240,11 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 	
 	override addAll(Collection<? extends E> c) {
 		var int old = this.size()
+		notifications.enableAccumulation
 		for(E e : c){
 			this.add(e)
 		}
+		notifications.flush
 		return old !== this.size()
 	}
 	
@@ -243,17 +253,8 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 	}
 	
 	override clear() {
-		this.removeAll()
+		this.removeAll(new LinkedList(this))
 		return;
-	}
-	
-	override contains(Object o) {
-		return super.contains(o)
-	}
-	
-	override containsAll(Collection<?> c) {
-		for(Object o : c) if(!this.contains(o)) return false
-		return true
 	}
 	
 	override get(int index) {
@@ -264,10 +265,6 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 		throw new UnsupportedOperationException(
 			"HashESet does not support indexOf(Object), as it is an unordered set"
 			)
-	}
-	
-	override isEmpty() {
-		return super.isEmpty()
 	}
 	
 	override iterator() {
@@ -297,8 +294,10 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 	}
 	
 	override remove(Object o) {
-		if(this.contains(o))
+		if(this.contains(o)) {
+			notifications.add(SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, o, -1))
 			return super.remove(this.remove_containment_to_passed_object(o as E))
+		}
 		return false
 	}
 	
@@ -310,13 +309,17 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 	
 	override removeAll(Collection<?> c) {
 		var int old = this.size()
+		notifications.enableAccumulation
 		for(Object e : c) this.remove(e)
+		notifications.flush
 		return old !== this.size()
 	}
 	
 	override retainAll(Collection<?> c) {
 		var int old_size = this.size()
+		notifications.enableAccumulation
 		for(E obj : this) if(!(c.contains(obj))) this.remove(obj)
+		notifications.flush
 		return this.size !== old_size
 	}
 	
@@ -324,10 +327,6 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 		throw new UnsupportedOperationException(
 			"HashESet does not support set(int,E), as it is an unordered set"
 			)
-	}
-	
-	override size() {
-		return super.size()
 	}
 	
 	override subList(int fromIndex, int toIndex) {

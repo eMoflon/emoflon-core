@@ -5,6 +5,8 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
 import java.util.LinkedHashSet
 import emfcodegenerator.util.MinimalSObjectContainer
+import emfcodegenerator.notification.SmartEMFNotification
+import java.util.LinkedList
 
 class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerCollection<E>{
 	/**########################Attributes########################*/
@@ -24,6 +26,11 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 	 * stores if this list is used to store a Containment
 	 */
 	var boolean is_containment_object = false
+	
+	/**
+	 * stores Notifications for merging or sends them immediately 
+	 */
+	val notifications = new ListNotificationBuilder
 	
 		/**########################Constructors########################*/
 
@@ -225,6 +232,7 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 	}
 	
 	override add(E e) {
+		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, e, -1))
 		super.add(this.set_containment_to_passed_object(e))
 	}
 	
@@ -236,9 +244,11 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 	
 	override addAll(Collection<? extends E> c) {
 		var int previous_size = this.size()
+		notifications.enableAccumulation
 		for(E e : c){
 			this.add(e)
 		}
+		notifications.flush
 		//if size has changed, list has changed
 		return previous_size !== this.size()
 	}
@@ -250,15 +260,7 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 	}
 	
 	override clear() {
-		this.removeAll()
-	}
-	
-	override contains(Object o) {
-		return super.contains(o)
-	}
-	
-	override containsAll(Collection<?> c) {
-		return super.containsAll(c)
+		this.removeAll(new LinkedList(this))
 	}
 	
 	override get(int index) {
@@ -271,10 +273,6 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 		throw new UnsupportedOperationException(
 			"LinkedESet does not support indexOf(Object) as it does not operate with indexes"
 		)
-	}
-	
-	override isEmpty() {
-		return super.isEmpty()
 	}
 	
 	override iterator() {
@@ -305,6 +303,7 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 	
 	override remove(Object o) {
 		if(this.contains(o)){
+			notifications.add(SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, o, -1))
 			super.remove(o)
 			this.remove_containment_to_passed_object(o as E)
 			return true
@@ -320,19 +319,23 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 	
 	override removeAll(Collection<?> c) {
 		var int old_size = this.size()
+		notifications.enableAccumulation
 		for(Object o : c){
 			this.remove(o)
 		}
+		notifications.flush
 		return this.size !== old_size
 	}
 	
 	override retainAll(Collection<?> c) {
 		var int old_size = this.size()
+		notifications.enableAccumulation
 		for(E obj : this){
 			if(!(c.contains(obj))){
 				this.remove(obj)
 			}
 		}
+		notifications.flush
 		return this.size !== old_size
 	}
 	
@@ -340,10 +343,6 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 		throw new UnsupportedOperationException(
 			"LinkedESet does not support set(int, E) as it does not operate with indexes"
 		)
-	}
-	
-	override size() {
-		return super.size()
 	}
 	
 	override subList(int fromIndex, int toIndex) {

@@ -28,7 +28,7 @@ abstract interface MinimalSObjectContainer {
 
 	/**
 	 * sets the eContainer and eContainingFeature back to null. Call this method if the object is
-	 * in a containment relationship anymore
+	 * not in a containment relationship anymore
 	 * @author Adrian Zwenger
 	 */
 	def abstract void reset_containment()

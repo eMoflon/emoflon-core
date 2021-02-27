@@ -6,6 +6,8 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import java.util.Collection
 import java.util.Collections
 import emfcodegenerator.util.MinimalSObjectContainer
+import emfcodegenerator.notification.SmartEMFNotification
+import java.util.LinkedList
 
 /**
  * SmartEMF implementation of an {@link java.util.ArrayList ArrayList}.</br>
@@ -30,6 +32,11 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 	 * stores if this list is used to store a Containment
 	 */
 	var boolean is_containment_object = false
+	
+	/**
+	 * stores Notifications for merging or sends them immediately 
+	 */
+	val notifications = new ListNotificationBuilder
 	
 	/**########################Constructors########################*/
 
@@ -201,6 +208,7 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 		var int j = oldPosition
 		var int k = newPosition
 		Collections.rotate(this.subList(j < k ? j : k, (j < k ? k : j) + 1), j < k ? -1 : 1);
+		notifications.add(SmartEMFNotification.moveInList(eContainer, eContainingFeature, get(newPosition), oldPosition, newPosition))
 		return obj;
 	}
 	
@@ -208,62 +216,46 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 	 * adds the object and updates its containment if needed
 	 */
 	override add(E e) {
-		super.add(this.set_containment_to_passed_object(e));
+		super.add(this.set_containment_to_passed_object(e))
+		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, e, indexOf(e)))
 	}
 	
 	override add(int index, E element) {
 		super.add(index, this.set_containment_to_passed_object(element))
+		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, element, index))
 	}
 	
 	override addAll(Collection<? extends E> c) {
 		var int old_size = this.size()
+		if (!c.isEmpty) {
+			notifications.enableAccumulation
+		}
 		for(E e : c){
 			this.add(e)
 		}
+		notifications.flush
 		return old_size !== this.size()
 	}
 	
 	override addAll(int index, Collection<? extends E> c) {
 		var int old_size = this.size()
 		if(c.size()>0){
+			notifications.enableAccumulation
 			var int i = c.size() - 1
 			while(i>=0) {
 				this.add(index, c.get(i--))
 			}
+			notifications.flush
 		}
 		return old_size !== this.size()	
 	}
 	
 	override clear() {
-		this.removeAll()
-	}
-	
-	override contains(Object o) {
-		return super.contains(o)
-	}
-	
-	override containsAll(Collection<?> c) {
-		return super.containsAll(c)
-	}
-	
-	override get(int index) {
-		return super.get(index)
-	}
-	
-	override indexOf(Object o) {
-		return super.indexOf(o)
-	}
-	
-	override isEmpty() {
-		return super.isEmpty()
+		this.removeAll(new LinkedList(this))
 	}
 	
 	override iterator() {
 		return new SmartEMFCollectionIterator(super.iterator, this)
-	}
-	
-	override lastIndexOf(Object o) {
-		return super.lastIndexOf(o)
 	}
 	
 	override listIterator(){
@@ -284,8 +276,7 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 	
 	override remove(Object o) {
 		if(this.contains(o)){
-			super.remove(o)
-			this.remove_containment_to_passed_object(o as E)
+			remove(indexOf(o))
 			return true
 		}
 		return false
@@ -295,41 +286,32 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 		if(index<0 || index>=this.size()) throw new IndexOutOfBoundsException()
 		var E obj = this.get(index)
 		super.remove(index)
+		notifications.add(SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, obj, index))
 		return this.remove_containment_to_passed_object(obj)
 	}
 	
 	override removeAll(Collection<?> c) {
+		notifications.enableAccumulation
 		var int old = this.size()
 		for(Object e : c) this.remove(e)
+		notifications.flush
 		return old !== this.size()
 	}
 	
 	override retainAll(Collection<?> c) {
+		notifications.enableAccumulation
 		var int old = this.size()
 		for(Object e : this) if(!c.contains(e)) this.remove(e)
+		notifications.flush
 		return old !== this.size()
 	}
 	
 	override set(int index, E element) {
 		if(index<0 || index>=this.size()) throw new IndexOutOfBoundsException()
-		this.remove_containment_to_passed_object(this.get(index))
+		val oldValue = this.get(index)
+		notifications.add(SmartEMFNotification.set(eContainer, eContainingFeature, oldValue, element, index))
+		this.remove_containment_to_passed_object(oldValue)
 		super.set(index, this.set_containment_to_passed_object(element))
-	}
-	
-	override size() {
-		return super.size()
-	}
-	
-	override subList(int fromIndex, int toIndex) {
-		return super.subList(fromIndex,toIndex)
-	}
-	
-	override toArray() {
-		return super.toArray()
-	}
-	
-	override <T> toArray(T[] a) {
-		super.toArray(a)
 	}
 
 }
