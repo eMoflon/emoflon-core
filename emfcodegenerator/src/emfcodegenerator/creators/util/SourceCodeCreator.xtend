@@ -453,7 +453,7 @@ class SourceCodeCreator extends InterfaceCreator {
 	 * This method creates a HashMap where the key is the declaration and the value is the body
 	 * of a setter method generated for a given
 	 * {@link emfcodegenerator.inspectors.ObjectFieldInspector ObjectfieldInspector}.
-	 * TODO setter methods need to send Notifications.
+	 * TODO setter methods need to send Notifications - implemented, needs testing
 	 * @param obj_field ObjectFieldInspector
 	 * @return HashMap<String,String>
 	 * @author Adrian Zwenger
@@ -462,19 +462,22 @@ class SourceCodeCreator extends InterfaceCreator {
 		if(!this.is_initialized)
 			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
 
+		addNotificationImport()
 		val boolean is_reference_and_contained =
 			obj_field.get_inspected_object_type === InspectedObjectType.EREFERENCE &&
 			(obj_field as ReferenceInspector).is_contained()
+		
+		val fieldName = obj_field.get_name
 			
 		var declaration = IDENTION + "public " + create_setter_method_stump((obj_field))
-		var body = ""
+		var body = IDENTION + IDENTION + "Object oldValue = this." + fieldName + ";" + System.lineSeparator
 
 		//if the passed feature is an EReference, then the containment of said reference must be
 		//handled. In that case the old contained object needs its containment flag reset
 		if(is_reference_and_contained)
 			body =
 '''
-«IDENTION»«IDENTION»if(this.«obj_field.get_name» != null) ((emfcodegenerator.util.MinimalSObjectContainer) this.«obj_field.get_name»).reset_containment();
+«IDENTION»«IDENTION»if(this.«obj_field.get_name» != null) ((emfcodegenerator.util.MinimalSObjectContainer) this.«fieldName»).reset_containment();
 '''.toString()
 
 		if(obj_field.is_a_tuple()){
@@ -487,7 +490,7 @@ class SourceCodeCreator extends InterfaceCreator {
 
 			body +=
 '''«IDENTION»«IDENTION»if(value instanceof «elist_type»){
-«IDENTION»«IDENTION»«IDENTION»this.«obj_field.get_name()» = («elist_type»<«obj_field_type»>) value;
+«IDENTION»«IDENTION»«IDENTION»this.«fieldName» = («elist_type»<«obj_field_type»>) value;
 «IDENTION»«IDENTION»} else {
 «IDENTION»«IDENTION»«IDENTION»throw new IllegalArgumentException();
 «IDENTION»«IDENTION»}
@@ -496,7 +499,7 @@ class SourceCodeCreator extends InterfaceCreator {
 		} else {
 			body +=
 '''
-«IDENTION»«IDENTION»this.«obj_field.get_name()» = value;
+«IDENTION»«IDENTION»this.«fieldName» = value;
 '''.toString()
 		}
 
@@ -506,7 +509,7 @@ class SourceCodeCreator extends InterfaceCreator {
 
 			body +=
 '''
-«IDENTION»«IDENTION»((emfcodegenerator.util.MinimalSObjectContainer) this.«obj_field.get_name()»).set_containment(
+«IDENTION»«IDENTION»((emfcodegenerator.util.MinimalSObjectContainer) this.«fieldName»).set_containment(
 «IDENTION»«IDENTION»«IDENTION»this,
 «IDENTION»«IDENTION»«IDENTION»«this.get_estructural_feature_getter_for_objectfield_inspector(obj_field)»
 «IDENTION»«IDENTION»);'''
@@ -517,6 +520,10 @@ class SourceCodeCreator extends InterfaceCreator {
 		if(obj_field.is_unsettable) 
 			body += System.lineSeparator + IDENTION + IDENTION +
 					"this." + obj_field.get_name + "IsSet = true;"
+					
+		body += System.lineSeparator + IDENTION + IDENTION +
+			'''eNotify(SmartEMFNotification.set(this, eClass().getEStructuralFeature("«fieldName»"), oldValue, value, -1));'''
+		
 		var map = new HashMap<String,String>()
 		map.put(declaration, body)
 		return map
@@ -545,14 +552,20 @@ class SourceCodeCreator extends InterfaceCreator {
 	 * @param obj_field ObjectFieldInspector
 	 * @return HashMap<String,String>
 	 * @author Adrian Zwenger
-	 * TODO: eNotification support
+	 * TODO: eNotification support - implemented, needs testing
 	 */
 	def protected HashMap<String,String> create_unset_for_object_field(ObjectFieldInspector obj_field){
+		addNotificationImport()
 		var declaration = IDENTION + "public " + create_unset_method_stump(obj_field)
-		var body = IDENTION + IDENTION +
-				   '''this.«obj_field.get_name» = «obj_field.get_default_value»;'''.toString +
+		val fieldName = obj_field.get_name
+		val newValue = obj_field.get_default_value
+		var body = '''Object oldValue = get«obj_field.get_name_with_first_letter_capitalized()»();''' +
+		           System.lineSeparator + IDENTION + IDENTION +
+				   '''this.«fieldName» = «newValue»;'''.toString +
 				   System.lineSeparator + IDENTION + IDENTION +
-				   '''this.«obj_field.get_name»IsSet = false;'''.toString
+				   '''this.«fieldName»IsSet = false;'''.toString +
+				   System.lineSeparator + IDENTION + IDENTION +
+				   '''eNotify(SmartEMFNotification.unset(this, eClass().getEStructuralFeature("«fieldName»"), oldValue, «newValue», -1));'''.toString
 		var map = new HashMap<String,String>()
 		map.put(declaration, body)
 		return map

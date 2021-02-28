@@ -10,12 +10,17 @@ import org.eclipse.emf.ecore.EOperation
 import java.lang.reflect.InvocationTargetException
 import org.eclipse.emf.common.notify.Notification
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.emf.common.notify.Adapter
+import emfcodegenerator.util.collections.LinkedEList
 
 /**
  * SmartEMF base-class for all generated objects.
  */
 class SmartObject implements MinimalSObjectContainer, EObject {
 
+	var EList<Adapter> eAdapters
+	var eDeliver = true
+	
 	/**
 	 * constructs a new MinimalSObjectContainer. Expects the EMF runtime model as param
 	 * @param EClass e_static_class
@@ -128,7 +133,7 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 		return null
 	}
 	
-    def void eSet(int feautureID, Object newValue){
+    def void eSet(int featureID, Object newValue){
 		throw new UnsupportedOperationException("Seems as the feature has not been registered.")
     }
 
@@ -140,11 +145,11 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 		this.e_static_class.eUnset(feature)
 	}
 
-    def void eUnset(int feautureID){
+    def void eUnset(int featureID){
         throw new UnsupportedOperationException("Seems as the feature has not been registered.")
     }
 
-    def boolean eIsSet(int feautureID){
+    def boolean eIsSet(int featureID){
         throw new UnsupportedOperationException("Seems as the feature has not been registered.")
     }
 		
@@ -153,22 +158,21 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	}
 
 	override eAdapters() {
-		//taken from BasicNotifierImpl
-		//BasicEObject.Container extends BasicNotifierImpl and does not override eAdapters
-		//return ECollections.emptyEList();
-		return this.e_static_class.eAdapters()
+		return eAdapters ?: {eAdapters = new LinkedEList(this); eAdapters}
 	}
 	
 	override eDeliver() {
-		return this.e_static_class.eDeliver()
+		return eDeliver
 	}
 	
 	override eNotify(Notification notification) {
-		this.e_static_class.eNotify(notification)
+		if (eDeliver()) for (Adapter a : eAdapters) {
+			a.notifyChanged(notification)
+		}
 	}
 	
 	override eSetDeliver(boolean deliver) {
-		this.e_static_class.eSetDeliver(deliver)
+		this.eDeliver = deliver
 	}
 
 	/**########################MinimalSObjectContainer########################*/
@@ -206,12 +210,14 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	 */
 	override void reset_containment(){
 		this.is_containment_object = false
+		
 		if(!this.the_econtaining_feature.isMany){
-			this.the_eContainer.eSet(this.the_econtaining_feature, null)
-		} else {
+			this.the_eContainer.eUnset(this.the_econtaining_feature)
+		} /* else {
 			var EList<?> the_list = (this.the_eContainer.eGet(this.the_econtaining_feature) as EList<?>)
 			while(the_list.contains(this)) the_list.remove(this)
-		}
+		} */
+		
 		this.the_eContainer = null
 		this.the_econtaining_feature = null
 	}
@@ -225,6 +231,10 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 		this.is_containment_object = true
 		this.the_eContainer = container
 		this.the_econtaining_feature = feature;
+		
+		if (!eContainingFeature.isMany) {
+			eContainer.eSet(eContainingFeature, this)
+		}
 	}
 	
 }

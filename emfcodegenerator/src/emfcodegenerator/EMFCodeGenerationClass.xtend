@@ -146,6 +146,15 @@ class EMFCodeGenerationClass {
 			add_import_as_String(import_string)
 		}
 	}
+	
+	/**
+	 * Adds {@link emfcodegenerator.notification.SmartEMFNotification} to the imports. <br/>
+	 * Call this method when generating code that should create notifications.
+	 * @return {@code true} if SmartEMFNotification was not already imported, {@code false} if it was
+	 */
+	def protected addNotificationImport() {
+		needed_imports.add("emfcodegenerator.notification.SmartEMFNotification")
+	}
 
 	/**########################Helper Methods########################*/
 

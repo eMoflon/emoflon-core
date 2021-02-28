@@ -8,6 +8,7 @@ import java.util.Collections
 import java.util.Collection
 import emfcodegenerator.util.collections.LinkedEList
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.common.notify.Adapter
 
 class SmartEMFNotification implements Notification, NotificationChainWorkaround {
 	
@@ -19,6 +20,7 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 	EStructuralFeature feature
 	NotificationChain next
 	
+	
 	new(int eventType, Object oldValue, Object newValue) {
 		this.eventType = eventType
 		this.oldValue = oldValue
@@ -26,6 +28,7 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 	}
 	
 	def static addToFeature(EObject owner, EStructuralFeature feature, Object object, int index) {
+		if (feature === null) return null
 		val notification = new SmartEMFNotification(ADD, null, object)
 		notification.notifier = owner
 		notification.feature = feature
@@ -41,8 +44,20 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		return notification
 	}
 	
+	def static unset(EObject owner, EStructuralFeature feature, Object oldValue, Object newValue, int index) {
+		val notification = new SmartEMFNotification(UNSET, oldValue, newValue)
+		notification.notifier = owner
+		notification.feature = feature
+		notification.position = index
+		return notification
+	}
+	
 	def static removeFromFeature(EObject owner, EStructuralFeature feature, Object object, int index) {
-		val notification = new SmartEMFNotification(if (feature.isMany) REMOVE else UNSET, object, null)
+		val notification = if (object instanceof Adapter && feature === null) {
+			new SmartEMFNotification(REMOVING_ADAPTER, object, null)
+		} else {
+			new SmartEMFNotification(REMOVE, object, null)
+		}
 		notification.notifier = owner
 		notification.feature = feature
 		notification.position = index
@@ -309,7 +324,7 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 	
 	override toString() {
 		'''«super.toString» (eventType: «eventTypeToString» «if (isTouch) ", touch: true" else ""», position: «position»'''
-		+ ''', notifier: «notifier», feature: «feature», oldValue: «oldValue», newValue: «newValue», wasSet: «wasSet()»)'''
+		+ ''', notifier: «notifier», feature: «feature ?: "(no feature)"», oldValue: «oldValue», newValue: «newValue», wasSet: «wasSet()»)'''
 	}
 	
 	private def eventTypeToString() {

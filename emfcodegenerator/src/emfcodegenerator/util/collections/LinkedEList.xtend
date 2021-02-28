@@ -87,6 +87,15 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	new(){
 		super()
 	}
+	
+	/**
+	 * Constructs new LinkedEList with a container, but without a containing feature.
+	 * This should only be used for the list returned by {@code SmartObject.eAdapters()}
+	 */ 
+	new(EObject container) {
+		super()
+		this.the_eContainer = container
+	}
 
 	/**########################MinimalSObjectContainer methods########################*/
 	
