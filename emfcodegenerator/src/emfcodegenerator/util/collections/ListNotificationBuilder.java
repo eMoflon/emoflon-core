@@ -41,7 +41,7 @@ public class ListNotificationBuilder {
 	 * @return {@code true} if the notification was dispatched, else {@code false}
 	 */
 	public boolean add(SmartEMFNotification n) {
-		if (n.getNotifier() == null) return false;
+		if (n == null || n.getNotifier() == null) return false;
 		if (currentChain == null) {
 			currentChain = n;
 			if (!accumulate) {

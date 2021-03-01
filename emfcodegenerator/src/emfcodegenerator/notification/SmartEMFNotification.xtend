@@ -323,8 +323,14 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 	}
 	
 	override toString() {
-		'''«super.toString» (eventType: «eventTypeToString» «if (isTouch) ", touch: true" else ""», position: «position»'''
+		val str = '''«super.toString» (eventType: «eventTypeToString» «if (isTouch) ", touch: true" else ""», position: «position»'''
 		+ ''', notifier: «notifier», feature: «feature ?: "(no feature)"», oldValue: «oldValue», newValue: «newValue», wasSet: «wasSet()»)'''
+		
+		if (next !== null) {
+			return str + System.lineSeparator + next.toString
+		} else {
+			return str
+		}
 	}
 	
 	private def eventTypeToString() {

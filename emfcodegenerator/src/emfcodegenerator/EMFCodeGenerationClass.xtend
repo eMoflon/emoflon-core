@@ -9,6 +9,8 @@ import java.util.HashSet
 import java.util.Collection
 import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EcorePackage
+import java.util.TreeSet
+import java.util.Set
 
 /**
  * class containing useful methods which all inheriting classes can have in common
@@ -29,10 +31,12 @@ class EMFCodeGenerationClass {
 	val static protected String GENERATED_FILE_DIR = "./src-gen/"
 	
 	/**
-	 * a HashSet containing strings of modules which need to be imported
+	 * a Set containing strings of modules which need to be imported
+	 * by using a TreeSet, the imports are sorted alphabetically
+	 *
 	 * example: "java.util.Map"
 	 */
-	var protected HashSet<String> needed_imports = new HashSet<String>()
+	var protected Set<String> needed_imports = new TreeSet<String>()
 
 	/**
 	 * stores the GenModel-XMI specified super package for the EMF code.
@@ -208,11 +212,11 @@ class EMFCodeGenerationClass {
 	/**########################Regular Getter/Setters########################*/
 
 	/**
-	 * Returns the HashSet with the {@link #needed_imports needed imports} represented as Strings.
-	 * @return HashSet<String>
+	 * Returns the Set with the {@link #needed_imports needed imports} represented as Strings.
+	 * @return Set<String>
 	 * @author Adrian Zwenger
 	 */
-	def HashSet<String> get_needed_imports(){
+	def Set<String> get_needed_imports() {
 		return needed_imports
 	}
 

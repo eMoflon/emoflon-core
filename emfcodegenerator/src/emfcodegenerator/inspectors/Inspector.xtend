@@ -1,6 +1,6 @@
 package emfcodegenerator.inspectors
 
-import java.util.HashSet
+import java.util.Set
 
 /**
  * Interface defining the shared methods by all Inspectors
@@ -25,7 +25,7 @@ interface Inspector {
 	 * @return HashSet<String>
 	 * @author Adrian Zwenger
 	 */
-	def HashSet<String> get_needed_imports()
+	def Set<String> get_needed_imports()
 
 	/**
 	 * Returns Enum signifying which EMF-object type is being inspected

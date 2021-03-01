@@ -363,7 +363,8 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 		//modification to the list while it holds a containment will lead to
 		//unresolved containment handling. Thus use is not permitted.
 		//if it is wished a custom list needs to be implemented in future
-		throw new UnsupportedOperationException("use of listIterators are not supported")
+//		throw new UnsupportedOperationException("use of listIterators are not supported")
+		super.listIterator()
 	}
 	
 	override listIterator(int index){
@@ -371,6 +372,7 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 		//modification to the list while it holds a containment will lead to
 		//unresolved containment handling. Thus use is not permitted.
 		//if it is wished a custom list needs to be implemented in future
-		throw new UnsupportedOperationException("use of listIterators are not supported")
+//		throw new UnsupportedOperationException("use of listIterators are not supported")
+		super.listIterator(index)
 	}
 }

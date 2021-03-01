@@ -442,7 +442,7 @@ class SourceCodeCreator extends InterfaceCreator {
 		var declaration = IDENTION + "public " + create_getter_method_stump((obj_field))
 		//var body = IDENTION + IDENTION + '''return  this.«obj_field.get_name()»;'''.toString
 		var body =
-'''«IDENTION»«IDENTION»return «(obj_field.is_a_tuple) ? ''' (EList<«obj_field.get_object_field_type_name»>) ''' : " "» this.«obj_field.get_name()»;'''
+'''«IDENTION»«IDENTION»return«(obj_field.is_a_tuple) ? ''' (EList<«obj_field.get_object_field_type_name»>) ''' : " "»this.«obj_field.get_name()»;'''
 
 		var map = new HashMap<String,String>()
 		map.put(declaration, body)
@@ -475,7 +475,7 @@ class SourceCodeCreator extends InterfaceCreator {
 		//if the passed feature is an EReference, then the containment of said reference must be
 		//handled. In that case the old contained object needs its containment flag reset
 		if(is_reference_and_contained)
-			body =
+			body +=
 '''
 «IDENTION»«IDENTION»if(this.«obj_field.get_name» != null) ((emfcodegenerator.util.MinimalSObjectContainer) this.«fieldName»).reset_containment();
 '''.toString()
@@ -522,7 +522,7 @@ class SourceCodeCreator extends InterfaceCreator {
 					"this." + obj_field.get_name + "IsSet = true;"
 					
 		body += System.lineSeparator + IDENTION + IDENTION +
-			'''eNotify(SmartEMFNotification.set(this, eClass().getEStructuralFeature("«fieldName»"), oldValue, value, -1));'''
+			'''if (eNotificationRequired()) eNotify(SmartEMFNotification.set(this, «get_estructural_feature_getter_for_objectfield_inspector(obj_field)», oldValue, value, -1));'''
 		
 		var map = new HashMap<String,String>()
 		map.put(declaration, body)
@@ -565,7 +565,7 @@ class SourceCodeCreator extends InterfaceCreator {
 				   System.lineSeparator + IDENTION + IDENTION +
 				   '''this.«fieldName»IsSet = false;'''.toString +
 				   System.lineSeparator + IDENTION + IDENTION +
-				   '''eNotify(SmartEMFNotification.unset(this, eClass().getEStructuralFeature("«fieldName»"), oldValue, «newValue», -1));'''.toString
+				   '''if (eNotificationRequired()) eNotify(SmartEMFNotification.unset(this, «get_estructural_feature_getter_for_objectfield_inspector(obj_field)», oldValue, «newValue», -1));'''.toString
 		var map = new HashMap<String,String>()
 		map.put(declaration, body)
 		return map
@@ -684,10 +684,10 @@ class SourceCodeCreator extends InterfaceCreator {
 					IDENTION + IDENTION + '''result.append("«attr.get_name»:");'''.toString() +
 					System.lineSeparator()
 				)
-				var to_string_entry = '''result.append(«attr.get_name»'''.toString()
-				if(attr instanceof AttributeInspector && !(attr as AttributeInspector).is_a_literal)
-					to_string_entry += ".toString()"
-				to_string_entry += ");"
+				var to_string_entry = '''result.append(java.util.Objects.toString(«attr.get_name»'''.toString()
+//				if(attr instanceof AttributeInspector && !(attr as AttributeInspector).is_a_literal)
+//					to_string_entry += ".toString()"
+				to_string_entry += ''', "null"));'''
 				if(attr.is_unsettable){
 					to_string_method_body.append(
 						IDENTION + IDENTION + '''if(«attr.get_name»IsSet)'''.toString +
@@ -822,8 +822,16 @@ class SourceCodeCreator extends InterfaceCreator {
 		}
 		//add inherited methods
 		var inherited_methods = create_inherited_methods()
+		removeDuplicates(inherited_methods)
 		method_declarations.addAll(inherited_methods.keySet)
 		methods.putAll(inherited_methods)
+	}
+		
+	//When I tested the generator, I sometimes got duplicate toString methods. This fixed it.
+	private def removeDuplicates(HashMap<String, String> inheritedMethods) {
+		val duplicates = inheritedMethods.keySet.map[x | x.replace(IDENTION + "@Override" + System.lineSeparator, "")]
+		method_declarations.removeAll(duplicates)
+		methods.keySet.removeAll(duplicates)
 	}
 
 	/**

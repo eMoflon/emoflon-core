@@ -12,6 +12,7 @@ import org.eclipse.emf.common.notify.Notification
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.common.notify.Adapter
 import emfcodegenerator.util.collections.LinkedEList
+import java.util.Collections
 
 /**
  * SmartEMF base-class for all generated objects.
@@ -173,6 +174,14 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	
 	override eSetDeliver(boolean deliver) {
 		this.eDeliver = deliver
+	}
+	
+	/**
+	 * Analogous to BasicNotifierImpl.eNotificationRequired
+	 * @return true when eDeliver is true and there is at least one adapter
+	 */
+	def eNotificationRequired() {
+		!(eAdapters ?: Collections.emptyList).isEmpty && eDeliver
 	}
 
 	/**########################MinimalSObjectContainer########################*/
