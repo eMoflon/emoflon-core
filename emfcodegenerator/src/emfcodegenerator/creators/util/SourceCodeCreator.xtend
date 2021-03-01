@@ -684,10 +684,10 @@ class SourceCodeCreator extends InterfaceCreator {
 					IDENTION + IDENTION + '''result.append("«attr.get_name»:");'''.toString() +
 					System.lineSeparator()
 				)
-				var to_string_entry = '''result.append(java.util.Objects.toString(«attr.get_name»'''.toString()
+				var to_string_entry = '''result.append(SmartObject.toStringIfNotNull(«attr.get_name»'''.toString()
 //				if(attr instanceof AttributeInspector && !(attr as AttributeInspector).is_a_literal)
 //					to_string_entry += ".toString()"
-				to_string_entry += ''', "null"));'''
+				to_string_entry += "));"
 				if(attr.is_unsettable){
 					to_string_method_body.append(
 						IDENTION + IDENTION + '''if(«attr.get_name»IsSet)'''.toString +

@@ -246,4 +246,8 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 		}
 	}
 	
+	static def toStringIfNotNull(Object obj) {
+		(obj ?: "null").toString
+	}
+	
 }
