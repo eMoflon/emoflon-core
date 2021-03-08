@@ -36,7 +36,7 @@ public class ListNotificationBuilder {
 	/**
 	 * If accumulation is enabled, adds a notification to the current chain.<br/>
 	 * If accumulation is disabled, immediately dispatches the notification.<br/>
-	 * If the notification has no notifier, ignores it.
+	 * If the notification is null or has no notifier, ignores it.
 	 * @param n - the notification to be added
 	 * @return {@code true} if the notification was dispatched, else {@code false}
 	 */
