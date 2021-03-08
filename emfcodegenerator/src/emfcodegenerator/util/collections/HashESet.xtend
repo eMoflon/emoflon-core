@@ -278,19 +278,11 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 	}
 	
 	override listIterator(){
-		//listiterators will not be supported as it allows modification of list
-		//modification to the list while it holds a containment will lead to
-		//unresolved containment handling. Thus use is not permitted.
-		//if it is wished a custom list needs to be implemented in future
-		throw new UnsupportedOperationException("use of listIterators is not supported")
+		new SmartEMFListIterator.PseudoListIterator(iterator)
 	}
 	
 	override listIterator(int index){
-		//listiterators will not be supported as it allows modification of list
-		//modification to the list while it holds a containment will lead to
-		//unresolved containment handling. Thus use is not permitted.
-		//if it is wished a custom list needs to be implemented in future
-		throw new UnsupportedOperationException("use of listIterators is not supported")
+		new SmartEMFListIterator.PseudoListIterator(iterator, index)
 	}
 	
 	override remove(Object o) {

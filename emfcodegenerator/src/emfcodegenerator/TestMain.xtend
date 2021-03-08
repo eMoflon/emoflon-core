@@ -14,10 +14,14 @@ class TestMain {
 		}
 		
 		//look for models in current directory if none specified
-		val modelPath = if (args.length > 0) args.get(0) else "."
-		val ecore = modelPath + pathSeparator + if (args.length > 1) args.get(1) else findFile(modelPath, pathSeparator, "ecore");
+		val modelPath = if (args.length > 0) args.get(0) else System.getProperty("user.dir")
+		val ecore = if (args.length > 1) args.get(1) else findFile(modelPath, pathSeparator, "ecore");
 		//if no filename is specified, assume the name is the same as for the ecore
-		val genmodel = modelPath + pathSeparator + if (args.length > 2) args.get(2) else ecore.replace(".ecore", ".genmodel");
+		val genmodel = if (args.length > 2) args.get(2) else ecore.replace(".ecore", ".genmodel");
+		
+		println(modelPath)
+		println(ecore)
+		println(genmodel)
 		
 		val generator = new EMFCodeGenerator(ecore, genmodel)
 		generator.generate_interfaces()
