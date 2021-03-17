@@ -66,9 +66,21 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		if(!(e_feature instanceof EReferenceImpl))
 			throw new IllegalArgumentException(
 				"Expected an EReference, but got a " + e_feature.class.name
-				)
+			)
 		
 		this.e_ref = e_feature as EReferenceImpl
+		
+		//unchangeable EReferences do not get setters. If no setter is provided a
+		//reference can never be set. Thus indicating, that the model is faulty.
+		if(!this.e_ref.changeable){
+			println(
+				(this.e_ref.eContainer as EClass).name + "." +
+				this.e_ref.name + " is unchangeable."
+			)
+			throw new IllegalArgumentException(
+				"Unchangeable EReference encountered. Model is invalid."
+			)	
+		}
 
 		//get import String for this Reference
 		this.fq_import_name = this.create_import_name_for_ereference_or_eclass(this.e_ref)
