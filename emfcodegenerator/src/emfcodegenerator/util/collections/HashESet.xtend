@@ -1,12 +1,15 @@
 package emfcodegenerator.util.collections
 
-import java.util.HashSet
+import emfcodegenerator.notification.SmartEMFNotification
+import emfcodegenerator.util.MinimalSObjectContainer
 import java.util.Collection
+import java.util.HashSet
+import java.util.LinkedList
+import java.util.function.Predicate
+import java.util.function.UnaryOperator
+import java.util.stream.Collectors
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
-import emfcodegenerator.util.MinimalSObjectContainer
-import emfcodegenerator.notification.SmartEMFNotification
-import java.util.LinkedList
 
 class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollection<E>{
 	/**########################Attributes########################*/
@@ -305,6 +308,25 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 		for(Object e : c) this.remove(e)
 		notifications.flush
 		return old !== this.size()
+	}
+	
+	override removeIf(Predicate<? super E> filter){
+		val toBeRemoved = this.stream().filter(filter).collect(Collectors.toList)
+		removeAll(toBeRemoved)
+	}
+	
+	override replaceAll(UnaryOperator<E> operator){
+		val LinkedList<Pair<E,E>> toBeReplaced = new LinkedList
+		for (E e : this) {
+			val newE = operator.apply(e)
+			if (e !== newE) {
+				toBeReplaced.add(e -> newE)
+			}
+		}
+		for (x : toBeReplaced) {
+			remove(x.key)
+			add(x.value)
+		}
 	}
 	
 	override retainAll(Collection<?> c) {

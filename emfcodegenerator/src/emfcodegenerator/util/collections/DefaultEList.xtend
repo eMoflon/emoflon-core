@@ -1,16 +1,19 @@
 package emfcodegenerator.util.collections
 
+import emfcodegenerator.notification.SmartEMFNotification
+import emfcodegenerator.util.MinimalSObjectContainer
 import java.util.ArrayList
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.EStructuralFeature
 import java.util.Collection
 import java.util.Collections
-import emfcodegenerator.util.MinimalSObjectContainer
-import emfcodegenerator.notification.SmartEMFNotification
 import java.util.LinkedList
+import java.util.function.Predicate
+import java.util.function.UnaryOperator
+import java.util.stream.Collectors
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EStructuralFeature
 
 /**
- * SmartEMF implementation of an {@link java.util.ArrayList ArrayList}.</br>
+ * SmartEMF implementation of an {@link ArrayList ArrayList}.</br>
  * Goal of this Collection is to offer a Collection with Containment feature management abilities.
  */
 class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCollection<E> {
@@ -288,6 +291,26 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 		for(Object e : c) this.remove(e)
 		notifications.flush
 		return old !== this.size()
+	}
+	
+	override removeIf(Predicate<? super E> filter){
+		val toBeRemoved = this.stream().filter(filter).collect(Collectors.toList)
+		removeAll(toBeRemoved)
+	}
+	
+	override replaceAll(UnaryOperator<E> operator){
+		val LinkedList<Pair<Integer,E>> toBeReplaced = new LinkedList
+		var index = 0
+		for (E e : this) {
+			val newE = operator.apply(e)
+			if (e !== newE) {
+				toBeReplaced.add(index -> newE)
+			}
+			index++
+		}
+		for (x : toBeReplaced) {
+			set(x.getKey, x.getValue)
+		}
 	}
 	
 	override retainAll(Collection<?> c) {

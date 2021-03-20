@@ -1,14 +1,15 @@
 package emfcodegenerator.util.collections
 
-import java.util.LinkedList
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.EStructuralFeature
+import emfcodegenerator.notification.SmartEMFNotification
+import emfcodegenerator.util.MinimalSObjectContainer
 import java.util.Collection
+import java.util.Collections
+import java.util.LinkedList
 import java.util.function.Predicate
 import java.util.function.UnaryOperator
-import java.util.Collections
-import emfcodegenerator.util.MinimalSObjectContainer
-import emfcodegenerator.notification.SmartEMFNotification
+import java.util.stream.Collectors
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EStructuralFeature
 
 class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCollection<E> {
 
@@ -339,19 +340,23 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	}
 	
 	override removeIf(Predicate<? super E> filter){
-		var int old = this.size()
-		notifications.enableAccumulation
-		for(E obj : this){
-			if(filter.test(obj))
-				this.remove(obj)
-		}
-		notifications.flush
-		return old !== this.size()
+		val toBeRemoved = this.stream().filter(filter).collect(Collectors.toList)
+		removeAll(toBeRemoved)
 	}
 	
 	override replaceAll(UnaryOperator<E> operator){
-		throw new UnsupportedOperationException("Warning! replaceAll(UnaryOperator<E> operator) does not support Containment management")
-		//super.replaceAll(operator)
+		val LinkedList<Pair<Integer,E>> toBeReplaced = new LinkedList
+		var index = 0
+		for (E e : this) {
+			val newE = operator.apply(e)
+			if (e !== newE) {
+				toBeReplaced.add(index -> newE)
+			}
+			index++
+		}
+		for (x : toBeReplaced) {
+			set(x.getKey, x.getValue)
+		}
 	}
 
 	override iterator(){

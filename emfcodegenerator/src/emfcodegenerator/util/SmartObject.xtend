@@ -167,7 +167,7 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	}
 	
 	override eNotify(Notification notification) {
-		if (eDeliver()) for (Adapter a : eAdapters) {
+		if (eNotificationRequired) for (Adapter a : eAdapters) {
 			a.notifyChanged(notification)
 		}
 	}

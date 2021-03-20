@@ -2,21 +2,25 @@ package persistence
 
 import com.google.common.collect.HashBiMap
 import com.google.common.collect.Iterators
+import java.io.BufferedWriter
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.io.PrintStream
+import java.io.OutputStreamWriter
 import java.io.Writer
-import java.util.Collections
 import java.util.HashMap
 import java.util.Map
+import javax.xml.parsers.DocumentBuilderFactory
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl
 import org.eclipse.emf.ecore.xmi.DOMHandler
 import org.eclipse.emf.ecore.xmi.XMIResource
 import org.eclipse.emf.ecore.xmi.impl.DefaultDOMHandlerImpl
+import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl
+import org.eclipse.emf.ecore.xmi.impl.XMISaveImpl
 import org.eclipse.emf.ecore.xml.type.AnyType
 import org.w3c.dom.Document
 import org.w3c.dom.Node
@@ -27,9 +31,11 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	public static val Resource.Factory FACTORY = [uri | new XtendXMIResource(uri)]
 	
 	val HashBiMap<String, EObject> idToEObjectBiMap = HashBiMap.create
-	val HashMap<EObject, AnyType> eObjectToExtensionMap = new HashMap()
+	val HashMap<EObject, AnyType> eObjectToExtensionMap = new HashMap
 	val domHelper = new DefaultDOMHandlerImpl
 	val XMIRoot dummyRoot = [getContents]
+	val defaultLoadOptions = new HashMap
+	val defaultSaveOptions = new HashMap
 	
 	var String xmiVersion = XMIResource.VERSION_VALUE
 	var String xmiNamespace = XMIResource.XMI_URI
@@ -37,10 +43,11 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	var String encoding = "ASCII"
 	var String systemId
 	var String publicId
-	var String indentation = "\t"
-	var boolean useZip = false
-	var boolean createIDsOnSave = true
-	var boolean useXPathIDs = true
+	var String indentation = "  "
+	var useZip = false
+	var createIDsOnSave = true
+	var useXPathIDs = true
+	var cascadeNotifications = false
 	
 	new() {
 		super()
@@ -71,11 +78,11 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	}
 	
 	override getDefaultLoadOptions() {
-		return Collections.emptyMap
+		defaultLoadOptions
 	}
 	
 	override getDefaultSaveOptions() {
-		return Collections.emptyMap
+		defaultSaveOptions
 	}
 	
 	override getEObjectToExtensionMap() {
@@ -92,6 +99,14 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	
 	override getID(EObject eObject) {
 		EObjectToIDMap.get(eObject)
+	}
+	
+	override getURIFragment(EObject obj) {
+		getID(obj)
+	}
+	
+	override getEObjectByID(String id) {
+		idToEObjectBiMap.get(id)
 	}
 	
 	override getIDToEObjectMap() {
@@ -119,25 +134,52 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	}
 	
 	override save(Writer writer, Map<?, ?> options) throws IOException {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
-	}
-	
-	override save(Document document, Map<?, ?> options, DOMHandler handler) {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
-	}
-	
-	protected override doSave(OutputStream str, Map<?, ?> options) {
-		var PrintStream printer = if (str instanceof PrintStream) {
-			str
-		} else {
-			new PrintStream(str)
-		}
 		//This does not detect if an object is removed and a different one is added - in these situations, createIDsOnSave must be true for IDs to be correct XPaths
 		if (createIDsOnSave || idToEObjectBiMap.size != Iterators.size(getAllContents)) {
 			createXPathIDs
 		}
-		printer.println(generateXMI())
-		printer.flush
+		val wri = new BufferedWriter(writer)
+		wri.append(generateXMI)
+		wri.flush
+	}
+	
+	override save(Document document, Map<?, ?> options, DOMHandler handler) {
+		//This does not detect if an object is removed and a different one is added - in these situations, createIDsOnSave must be true for IDs to be correct XPaths
+		if (createIDsOnSave || idToEObjectBiMap.size != Iterators.size(getAllContents)) {
+			createXPathIDs
+		}
+		
+		val doc = document ?: DocumentBuilderFactory.newInstance.newDocumentBuilder.newDocument
+		val hnd = handler ?: domHelper
+		val save = new XMISaveImpl(new XMIHelperImpl(this))
+		
+		var opt = new HashMap
+		if (options !== null) opt.putAll(options)
+		if (!opt.isEmpty) {
+			for (e : defaultSaveOptions.entrySet) {
+				opt.putIfAbsent(e.key, e.value)
+			}
+		}		
+		
+		save.save(this, doc, opt, hnd)
+	}
+	
+	protected override doSave(OutputStream str, Map<?, ?> options) {
+		save(new OutputStreamWriter(str), options)
+	}
+	
+	protected override doUnload() {
+		val allContents = getAllProperContents(unloadingContents);
+		if (!getContents.isEmpty) {
+			getContents.clear
+		}
+		getErrors.clear
+		getWarnings.clear
+		while (allContents.hasNext) {
+			allContents.next.eAdapters.clear
+		}
+		idToEObjectBiMap.clear
+		eObjectToExtensionMap.clear
 	}
 	
 	def CharSequence generateXMI() {
@@ -148,7 +190,7 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		var String rootAttributes = createRootAttributes(root)
 		
 		if (root == dummyRoot) {
-			
+			rootTagName = "xmi:XMI"
 		} else {
 			val eobj = if (root.contents.isEmpty) {
 				getContents.iterator.next
@@ -159,15 +201,27 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 			rootAttributes += " " + xmiAttributes(eobj)
 		}
 		
-		sb.append('''<«rootTagName» «rootAttributes»>«System.lineSeparator»''')
+		sb.append('''<?xml version="«xmlVersion»" encoding="«encoding»"?>«System.lineSeparator»''')
+		sb.append(createDoctypeIfNecessary(rootTagName))
+		sb.append('''<«rootTagName» «rootAttributes»>''')
 		
 		for (e : root.contents) {
-			sb.append(toXMITag(e, 1) + System.lineSeparator)
+			sb.append(System.lineSeparator + toXMITag(e, 1))
 		}
 		
-		sb.append('''</«rootTagName»>''')
+		sb.append('''</«rootTagName»>«System.lineSeparator»''')
 		
 		return sb
+	}
+	
+	private def createDoctypeIfNecessary(String rootTagName) {
+		val hasPublicId = publicId !== null && publicId != ""
+		val hasSystemId = systemId !== null && systemId != ""
+		if (hasPublicId) {
+			'''<!DOCTYPE «rootTagName» PUBLIC "«publicId»"«if (hasSystemId) ''' "«systemId»"''' else ""»>«System.lineSeparator»'''
+		} else if (hasSystemId) {
+			'''<!DOCTYPE «rootTagName» SYSTEM "«systemId»">«System.lineSeparator»'''
+		} else ""
 	}
 	
 	private def XMIRoot rootObject() {
@@ -186,39 +240,63 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		val sb = new StringBuilder()
 		val name = tagName(object)
 		
-		if (!object.eContents.isEmpty) {
-			sb.append('''«indentation»<«name» «xmiAttributes(object)»>«System.lineSeparator»''')
-			for (e : object.eContents) {
+		val contents = object.eContents.filter[x | !x.eContainingFeature.isTransient]
+		
+		if (!contents.isEmpty) {
+			sb.append('''«indentation»<«name»«xmiAttributes(object)»>«System.lineSeparator»''')
+			for (e : contents) {
 				sb.append(toXMITag(e, depth + 1))
 			}
 			sb.append('''«indentation»</«name»>''')
 		} else {
-			sb.append('''«indentation»<«name» «xmiAttributes(object)»/>«System.lineSeparator»''')
+			sb.append('''«indentation»<«name»«xmiAttributes(object)»/>«System.lineSeparator»''')
 		}
 		
 		return sb
 	}
 	
 	private def String rootName(EObject object) {
-		object.eClass().getName()
+		object.eClass.getEPackage.getName + ":" + object.eClass.getName
 	}
 	
 	private def String tagName(EObject object) {
-		var String name = object.eContainingFeature().getName()
-		val first = name.charAt(0)
-		name.replaceFirst(first.toString, Character.toLowerCase(first).toString)
+		val feat = object.eContainingFeature()
+		
+		if (feat !== null) {
+			var String name = feat.getName()
+			val first = name.charAt(0)
+			name.replaceFirst(first.toString, Character.toLowerCase(first).toString)
+		} else {
+			rootName(object)
+		}
 	}
 	
 	private def String xmiAttributes(EObject object) {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+		val eClass = object.eClass
+		val containments = eClass.getEAllContainments
+		val sb = new StringBuilder
+		
+		for (a : eClass.getEAllStructuralFeatures.filter[x | !containments.contains(x) && !x.isTransient]) {
+			if (object.eIsSet(a)) {
+				//TODO handle references
+				sb.append(''' «a.getName»="«object.eGet(a)»"''')
+			}
+		}
+		
+		sb.toString
 	}
 	
 	private def String createRootAttributes(XMIRoot root) {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+		val pkg = getPackage(root)
+		'''xmi:version="«xmiVersion»" xmlns:xmi="«xmiNamespace»" xmlns:«pkg.getNsPrefix»="«pkg.getNsURI»"'''
+	}
+	
+	private def EPackage getPackage(XMIRoot root) {
+		root.contents.iterator.next.eClass.getEPackage
 	}
 	
 	protected override doLoad(InputStream str, Map<?, ?> options) {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+		load(new InputSource(str), options)
 	}
 	
 	override setDoctypeInfo(String publicId, String systemId) {
@@ -234,16 +312,10 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		idToEObjectBiMap.forcePut(id, eObject)
 	}
 	
-	/**
-	 * Does nothing because compression is not implemented yet
-	 */
 	override setUseZip(boolean useZip) {
-//		this.useZip = useZip
+		this.useZip = useZip
 	}
 	
-	/**
-	 * @return false
-	 */
 	override useZip() {
 		useZip
 	}
@@ -257,6 +329,25 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	 */
 	def createXPathIDs() {
 		idToEObjectBiMap.clear
+		val needsIndices = contents.size > 1
+		val prefix = if (needsIndices) {
+			"/*"
+		} else ""
+		var count = 1
+		for (o : getContents) {
+			xPathForObject(o, prefix, count++, needsIndices)
+		}
+	}
+	
+	private def void xPathForObject(EObject obj, String prefix, int i, boolean needsIndex) {
+		val path = '''«prefix»/«tagName(obj)»«if (needsIndex)'''[«i»]'''»'''
+		setID(obj, path)
+		var j = 1
+		val contents = obj.eContents.filter[x | !x.eContainingFeature.isTransient]
+		val needsIndices = contents.size > 1
+		for (o : contents) {
+			xPathForObject(o, path, j++, needsIndices)
+		}
 	}
 	
 	def setUseXPathIDs(boolean useXPathIDs) {
@@ -276,8 +367,17 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		indentation
 	}
 	
+	// This does not check whether the string only contains whitespace - maybe it should throw an exception if it does not
 	def setIndentation(String indentation) {
 		this.indentation = indentation
+	}
+	
+	def getCascade() {
+		cascadeNotifications
+	}
+	
+	def setCascade(boolean cascade) {
+		cascadeNotifications = cascade
 	}
 	
 }
