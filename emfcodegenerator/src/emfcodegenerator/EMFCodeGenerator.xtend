@@ -174,4 +174,17 @@ class EMFCodeGenerator{
 			creator.write_to_file()
 		}
 	}
+
+	/**
+	 * Generates all model-code for the given EMF-model
+	 * @author Adrian Zwenger
+	 */
+	def void generate_all_model_code(){
+		generate_interfaces()
+		generate_implementation()
+		generate_package_factory_interfaces()
+		generate_package_factory_implementations()
+		generate_package_interfaces()
+		generate_package_implementations()
+	}
 }
