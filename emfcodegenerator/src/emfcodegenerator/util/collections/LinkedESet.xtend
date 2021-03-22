@@ -240,9 +240,11 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 	}
 	
 	override add(int index, E element) {
-		throw new UnsupportedOperationException(
-			"LinkedESet does not support add(int, Object) as it does not operate with indexes"
-		)
+		if (index != size) System.err.println("Warning: LinkedESet does not support adding at a specified position; adding at the end of the list")
+		add(element)
+//		throw new UnsupportedOperationException(
+//			"LinkedESet does not support add(int, Object) as it does not operate with indexes"
+//		)
 	}
 	
 	override addAll(Collection<? extends E> c) {
