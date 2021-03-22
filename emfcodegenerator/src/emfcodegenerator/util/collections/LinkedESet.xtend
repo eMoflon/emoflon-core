@@ -266,10 +266,12 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 		this.removeAll(new LinkedList(this))
 	}
 	
-	override get(int index) {
-		throw new UnsupportedOperationException(
-			"LinkedESet does not support get(int) as it does not operate with indexes"
-		)
+	override get(int index) { //this is horribly inefficient, but it's necessary to make loading work
+		val iter = iterator
+		for (var i = 0; i < index; i++) {
+			iter.next
+		}
+		return iter.next
 	}
 	
 	override indexOf(Object o) {

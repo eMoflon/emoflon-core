@@ -3,6 +3,7 @@ package persistence;
 import com.google.common.base.Objects;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterators;
+import emfcodegenerator.util.collections.DefaultEList;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,22 +15,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
+import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.xmi.DOMHandler;
 import org.eclipse.emf.ecore.xmi.DOMHelper;
 import org.eclipse.emf.ecore.xmi.XMIResource;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.DefaultDOMHandlerImpl;
+import org.eclipse.emf.ecore.xmi.impl.URIHandlerImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMISaveImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMLHelperImpl;
 import org.eclipse.emf.ecore.xml.type.AnyType;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Exceptions;
@@ -38,6 +46,8 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
+import persistence.ResourceContentEList;
+import persistence.SmartEMFXMILoad;
 import persistence.XMIRoot;
 
 @SuppressWarnings("all")
@@ -63,6 +73,8 @@ public class XtendXMIResource extends ResourceImpl implements XMIResource {
   private final HashMap<Object, Object> defaultLoadOptions = new HashMap<Object, Object>();
   
   private final HashMap<Object, Object> defaultSaveOptions = new HashMap<Object, Object>();
+  
+  private final DefaultEList<EObject> contents = new ResourceContentEList<EObject>();
   
   private String xmiVersion = XMIResource.VERSION_VALUE;
   
@@ -92,6 +104,10 @@ public class XtendXMIResource extends ResourceImpl implements XMIResource {
   
   public XtendXMIResource(final URI uri) {
     super(uri);
+  }
+  
+  public EList<EObject> getContents() {
+    return this.contents;
   }
   
   public String getXMINamespace() {
@@ -167,7 +183,25 @@ public class XtendXMIResource extends ResourceImpl implements XMIResource {
   }
   
   public void load(final InputSource inputSource, final Map<?, ?> options) throws IOException {
-    throw new UnsupportedOperationException("TODO: auto-generated method stub");
+    if ((!this.isLoaded)) {
+      final Notification notification = this.setLoaded(true);
+      this.isLoading = true;
+      if ((this.errors != null)) {
+        this.errors.clear();
+      }
+      if ((this.warnings != null)) {
+        this.warnings.clear();
+      }
+      try {
+        this.doLoad(inputSource.getByteStream(), options);
+      } finally {
+        this.isLoading = false;
+        if ((notification != null)) {
+          this.eNotify(notification);
+        }
+        this.setModified(false);
+      }
+    }
   }
   
   public void save(final Writer writer, final Map<?, ?> options) throws IOException {
@@ -290,12 +324,11 @@ public class XtendXMIResource extends ResourceImpl implements XMIResource {
     sb.append(_builder_1);
     List<EObject> _contents = root.contents();
     for (final EObject e : _contents) {
-      String _lineSeparator_1 = System.lineSeparator();
-      CharSequence _xMITag = this.toXMITag(e, 1);
-      String _plus_1 = (_lineSeparator_1 + _xMITag);
-      sb.append(_plus_1);
+      sb.append(this.toXMITag(e, 1));
     }
     StringConcatenation _builder_2 = new StringConcatenation();
+    String _lineSeparator_1 = System.lineSeparator();
+    _builder_2.append(_lineSeparator_1);
     _builder_2.append("</");
     _builder_2.append(rootTagName);
     _builder_2.append(">");
@@ -374,16 +407,21 @@ public class XtendXMIResource extends ResourceImpl implements XMIResource {
   }
   
   private CharSequence toXMITag(final EObject object, final int depth) {
-    final StringBuilder indentation = new StringBuilder();
-    for (int i = 0; (i < depth); i++) {
-      indentation.append(this.indentation);
-    }
+    final StringBuilder indentation = this.operator_multiply(this.indentation, depth);
     final StringBuilder sb = new StringBuilder();
-    final String name = this.tagName(object);
+    final String name = this.tagName(object, object.eContainingFeature());
     final Function1<EObject, Boolean> _function = new Function1<EObject, Boolean>() {
       public Boolean apply(final EObject x) {
-        boolean _isTransient = x.eContainingFeature().isTransient();
-        return Boolean.valueOf((!_isTransient));
+        boolean _xifexpression = false;
+        EStructuralFeature _eContainingFeature = x.eContainingFeature();
+        boolean _tripleNotEquals = (_eContainingFeature != null);
+        if (_tripleNotEquals) {
+          boolean _isTransient = x.eContainingFeature().isTransient();
+          _xifexpression = (!_isTransient);
+        } else {
+          _xifexpression = true;
+        }
+        return Boolean.valueOf(_xifexpression);
       }
     };
     final Iterable<EObject> contents = IterableExtensions.<EObject>filter(object.eContents(), _function);
@@ -391,19 +429,21 @@ public class XtendXMIResource extends ResourceImpl implements XMIResource {
     boolean _not = (!_isEmpty);
     if (_not) {
       StringConcatenation _builder = new StringConcatenation();
+      String _lineSeparator = System.lineSeparator();
+      _builder.append(_lineSeparator);
       _builder.append(indentation);
       _builder.append("<");
       _builder.append(name);
       String _xmiAttributes = this.xmiAttributes(object);
       _builder.append(_xmiAttributes);
       _builder.append(">");
-      String _lineSeparator = System.lineSeparator();
-      _builder.append(_lineSeparator);
       sb.append(_builder);
       for (final EObject e : contents) {
         sb.append(this.toXMITag(e, (depth + 1)));
       }
       StringConcatenation _builder_1 = new StringConcatenation();
+      String _lineSeparator_1 = System.lineSeparator();
+      _builder_1.append(_lineSeparator_1);
       _builder_1.append(indentation);
       _builder_1.append("</");
       _builder_1.append(name);
@@ -411,15 +451,58 @@ public class XtendXMIResource extends ResourceImpl implements XMIResource {
       sb.append(_builder_1);
     } else {
       StringConcatenation _builder_2 = new StringConcatenation();
+      String _lineSeparator_2 = System.lineSeparator();
+      _builder_2.append(_lineSeparator_2);
       _builder_2.append(indentation);
       _builder_2.append("<");
       _builder_2.append(name);
       String _xmiAttributes_1 = this.xmiAttributes(object);
       _builder_2.append(_xmiAttributes_1);
       _builder_2.append("/>");
-      String _lineSeparator_1 = System.lineSeparator();
-      _builder_2.append(_lineSeparator_1);
       sb.append(_builder_2);
+    }
+    return sb;
+  }
+  
+  private CharSequence crossReference(final EObject object, final EReference ref) {
+    CharSequence _xblockexpression = null;
+    {
+      final Object target = object.eGet(ref);
+      CharSequence _xifexpression = null;
+      if ((target instanceof EObject)) {
+        StringConcatenation _builder = new StringConcatenation();
+        String _tagName = this.tagName(null, ref);
+        _builder.append(_tagName);
+        _builder.append("=\"");
+        String _iD = this.getID(((EObject)target));
+        _builder.append(_iD);
+        _builder.append("\"");
+        _xifexpression = _builder;
+      } else {
+        if ((target instanceof List)) {
+          StringConcatenation _builder_1 = new StringConcatenation();
+          String _tagName_1 = this.tagName(null, ref);
+          _builder_1.append(_tagName_1);
+          _builder_1.append("=\"");
+          final StringBuilder sb = new StringBuilder(_builder_1);
+          for (final EObject t : ((List<EObject>) target)) {
+            sb.append(this.getID(t)).append(" ");
+          }
+          int _length = sb.length();
+          int _minus = (_length - 1);
+          sb.setCharAt(_minus, '\"');
+          return sb;
+        }
+      }
+      _xblockexpression = _xifexpression;
+    }
+    return _xblockexpression;
+  }
+  
+  private StringBuilder operator_multiply(final String string, final int i) {
+    final StringBuilder sb = new StringBuilder();
+    for (int j = 0; (j < i); j++) {
+      sb.append(string);
     }
     return sb;
   }
@@ -432,51 +515,64 @@ public class XtendXMIResource extends ResourceImpl implements XMIResource {
   }
   
   private String tagName(final EObject object) {
-    String _xblockexpression = null;
-    {
-      final EStructuralFeature feat = object.eContainingFeature();
-      String _xifexpression = null;
-      if ((feat != null)) {
-        String _xblockexpression_1 = null;
-        {
-          String name = feat.getName();
-          final char first = name.charAt(0);
-          _xblockexpression_1 = name.replaceFirst(Character.valueOf(first).toString(), Character.valueOf(Character.toLowerCase(first)).toString());
-        }
-        _xifexpression = _xblockexpression_1;
-      } else {
-        _xifexpression = this.rootName(object);
+    return this.tagName(object, object.eContainingFeature());
+  }
+  
+  private String tagName(final EObject object, final EStructuralFeature feat) {
+    String _xifexpression = null;
+    if ((feat != null)) {
+      String _xblockexpression = null;
+      {
+        String name = feat.getName();
+        final char first = name.charAt(0);
+        _xblockexpression = name.replaceFirst(Character.valueOf(first).toString(), Character.valueOf(Character.toLowerCase(first)).toString());
       }
-      _xblockexpression = _xifexpression;
+      _xifexpression = _xblockexpression;
+    } else {
+      _xifexpression = this.rootName(object);
     }
-    return _xblockexpression;
+    return _xifexpression;
   }
   
   private String xmiAttributes(final EObject object) {
     String _xblockexpression = null;
     {
       final EClass eClass = object.eClass();
-      final EList<EReference> containments = eClass.getEAllContainments();
       final StringBuilder sb = new StringBuilder();
-      final Function1<EStructuralFeature, Boolean> _function = new Function1<EStructuralFeature, Boolean>() {
-        public Boolean apply(final EStructuralFeature x) {
-          return Boolean.valueOf(((!containments.contains(x)) && (!x.isTransient())));
+      final Function1<EReference, Boolean> _function = new Function1<EReference, Boolean>() {
+        public Boolean apply(final EReference x) {
+          return Boolean.valueOf(((!x.isContainment()) && (!x.isContainer())));
         }
       };
-      Iterable<EStructuralFeature> _filter = IterableExtensions.<EStructuralFeature>filter(eClass.getEAllStructuralFeatures(), _function);
-      for (final EStructuralFeature a : _filter) {
-        boolean _eIsSet = object.eIsSet(a);
-        if (_eIsSet) {
-          StringConcatenation _builder = new StringConcatenation();
-          _builder.append(" ");
-          String _name = a.getName();
-          _builder.append(_name, " ");
-          _builder.append("=\"");
-          Object _eGet = object.eGet(a);
-          _builder.append(_eGet, " ");
-          _builder.append("\"");
-          sb.append(_builder);
+      final Iterable<EReference> references = IterableExtensions.<EReference>filter(object.eClass().getEAllReferences(), _function);
+      final Function1<EAttribute, Boolean> _function_1 = new Function1<EAttribute, Boolean>() {
+        public Boolean apply(final EAttribute x) {
+          boolean _isTransient = x.isTransient();
+          return Boolean.valueOf((!_isTransient));
         }
+      };
+      Iterable<EAttribute> _filter = IterableExtensions.<EAttribute>filter(eClass.getEAttributes(), _function_1);
+      for (final EAttribute a : _filter) {
+        if (((!a.isUnsettable()) || object.eIsSet(a))) {
+          if ((!(a instanceof EReference))) {
+            StringConcatenation _builder = new StringConcatenation();
+            _builder.append(" ");
+            String _name = a.getName();
+            _builder.append(_name, " ");
+            _builder.append("=\"");
+            Object _eGet = object.eGet(a);
+            _builder.append(_eGet, " ");
+            _builder.append("\"");
+            sb.append(_builder);
+          }
+        }
+      }
+      for (final EReference r : references) {
+        StringConcatenation _builder_1 = new StringConcatenation();
+        _builder_1.append(" ");
+        CharSequence _crossReference = this.crossReference(object, r);
+        _builder_1.append(_crossReference, " ");
+        sb.append(_builder_1);
       }
       _xblockexpression = sb.toString();
     }
@@ -510,8 +606,47 @@ public class XtendXMIResource extends ResourceImpl implements XMIResource {
   
   protected void doLoad(final InputStream str, final Map<?, ?> options) {
     try {
-      InputSource _inputSource = new InputSource(str);
-      this.load(_inputSource, options);
+      HashMap<Object, Object> _elvis = null;
+      if (this.defaultLoadOptions != null) {
+        _elvis = this.defaultLoadOptions;
+      } else {
+        HashMap<Object, Object> _hashMap = new HashMap<Object, Object>();
+        _elvis = _hashMap;
+      }
+      final HashMap<Object, Object> opt = _elvis;
+      if ((options != null)) {
+        opt.putAll(options);
+      }
+      Object _get = opt.get(XMLResource.OPTION_URI_HANDLER);
+      final XMLResource.URIHandler uriHandler = ((XMLResource.URIHandler) _get);
+      URI _xifexpression = null;
+      if ((uriHandler instanceof URIHandlerImpl)) {
+        _xifexpression = ((URIHandlerImpl)uriHandler).getBaseURI();
+      } else {
+        _xifexpression = null;
+      }
+      final URI handlerURI = _xifexpression;
+      try {
+        if ((str instanceof URIConverter.Loadable)) {
+          ((URIConverter.Loadable)str).loadResource(this);
+        } else {
+          XMLHelperImpl _xMLHelperImpl = new XMLHelperImpl(this);
+          final SmartEMFXMILoad loader = new SmartEMFXMILoad(_xMLHelperImpl);
+          Object _get_1 = opt.get(XMLResource.OPTION_RESOURCE_HANDLER);
+          final XMLResource.ResourceHandler handler = ((XMLResource.ResourceHandler) _get_1);
+          if ((handler != null)) {
+            handler.preLoad(this, str, opt);
+          }
+          loader.load(this, str, opt);
+          if ((handler != null)) {
+            handler.postLoad(this, str, opt);
+          }
+        }
+      } finally {
+        if ((uriHandler != null)) {
+          uriHandler.setBaseURI(handlerURI);
+        }
+      }
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
@@ -547,53 +682,50 @@ public class XtendXMIResource extends ResourceImpl implements XMIResource {
    */
   public void createXPathIDs() {
     this.idToEObjectBiMap.clear();
-    int _size = this.contents.size();
-    final boolean needsIndices = (_size > 1);
-    String _xifexpression = null;
-    if (needsIndices) {
-      _xifexpression = "/*";
-    } else {
-      _xifexpression = "";
-    }
-    final String prefix = _xifexpression;
-    int count = 1;
+    final String prefix = "";
+    int count = 0;
     EList<EObject> _contents = this.getContents();
     for (final EObject o : _contents) {
       int _plusPlus = count++;
-      this.xPathForObject(o, prefix, _plusPlus, needsIndices);
+      int _size = this.getContents().size();
+      boolean _lessEqualsThan = (_size <= 1);
+      this.xPathForObject(o, prefix, _plusPlus, _lessEqualsThan);
     }
   }
   
-  private void xPathForObject(final EObject obj, final String prefix, final int i, final boolean needsIndex) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append(prefix);
-    _builder.append("/");
-    String _tagName = this.tagName(obj);
-    _builder.append(_tagName);
-    CharSequence _xifexpression = null;
-    if (needsIndex) {
-      StringConcatenation _builder_1 = new StringConcatenation();
-      _builder_1.append("[");
-      _builder_1.append(i);
-      _builder_1.append("]");
-      _xifexpression = _builder_1;
+  private void xPathForObject(final EObject obj, final String prefix, final int i, final boolean disableTopIndex) {
+    String _xifexpression = null;
+    boolean _equals = Objects.equal(prefix, "");
+    if (_equals) {
+      Object _xifexpression_1 = null;
+      if (disableTopIndex) {
+        _xifexpression_1 = "";
+      } else {
+        _xifexpression_1 = Integer.valueOf(i);
+      }
+      _xifexpression = ("/" + _xifexpression_1);
+    } else {
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append(prefix);
+      _builder.append("/@");
+      String _tagName = this.tagName(obj);
+      _builder.append(_tagName);
+      _builder.append(".");
+      _builder.append(i);
+      _xifexpression = _builder.toString();
     }
-    _builder.append(_xifexpression);
-    final String path = _builder.toString();
+    final String path = _xifexpression;
     this.setID(obj, path);
-    int j = 1;
+    int j = 0;
     final Function1<EObject, Boolean> _function = new Function1<EObject, Boolean>() {
       public Boolean apply(final EObject x) {
-        boolean _isTransient = x.eContainingFeature().isTransient();
-        return Boolean.valueOf((!_isTransient));
+        return Boolean.valueOf(((x.eContainingFeature() != null) && (!x.eContainingFeature().isTransient())));
       }
     };
     final Iterable<EObject> contents = IterableExtensions.<EObject>filter(obj.eContents(), _function);
-    int _size = IterableExtensions.size(contents);
-    final boolean needsIndices = (_size > 1);
     for (final EObject o : contents) {
       int _plusPlus = j++;
-      this.xPathForObject(o, path, _plusPlus, needsIndices);
+      this.xPathForObject(o, path, _plusPlus, false);
     }
   }
   
@@ -628,5 +760,74 @@ public class XtendXMIResource extends ResourceImpl implements XMIResource {
   
   public boolean setCascade(final boolean cascade) {
     return this.cascadeNotifications = cascade;
+  }
+  
+  protected EObject getEObject(final List<String> uriFragmentPath) {
+    final int size = uriFragmentPath.size();
+    String _xifexpression = null;
+    if ((size == 0)) {
+      _xifexpression = "";
+    } else {
+      _xifexpression = uriFragmentPath.get(0);
+    }
+    EObject eObject = this.getEObjectForURIFragmentRootSegment(_xifexpression);
+    for (int i = 1; ((i < size) && (eObject != null)); i++) {
+      eObject = this.eObjectForURIFragmentSegment(eObject, uriFragmentPath.get(i));
+    }
+    return eObject;
+  }
+  
+  private EObject eObjectForURIFragmentSegment(final EObject obj, final String segment) {
+    int _length = segment.length();
+    final int lastIndex = (_length - 1);
+    if (((lastIndex == (-1)) || (!Objects.equal(Character.valueOf(segment.charAt(0)).toString(), "@")))) {
+      throw new IllegalArgumentException((("Expecting @ at index 0 of \'" + segment) + "\'"));
+    }
+    final char lastChar = segment.charAt(lastIndex);
+    boolean _equals = Objects.equal(Character.valueOf(lastChar), "]");
+    if (_equals) {
+      final int index = segment.indexOf("[");
+      if ((index >= 0)) {
+        EStructuralFeature _eStructuralFeature = obj.eClass().getEStructuralFeature(segment.substring(1, index));
+        final EReference eRef = ((EReference) _eStructuralFeature);
+        final String predicate = segment.substring((index + 1), lastIndex);
+        return this.eObjectForURIPredicate(predicate, eRef);
+      } else {
+        throw new IllegalArgumentException((("Expecting [ in \'" + segment) + "\'"));
+      }
+    } else {
+      int dotIndex = (-1);
+      boolean _isDigit = Character.isDigit(lastChar);
+      if (_isDigit) {
+        dotIndex = segment.lastIndexOf(".", (lastIndex - 1));
+        if ((dotIndex >= 0)) {
+          Object _eGet = obj.eGet(obj.eClass().getEStructuralFeature(segment.substring(1, dotIndex)));
+          final EList<?> eList = ((EList<?>) _eGet);
+          final int pos = Integer.parseInt(segment.substring((dotIndex + 1)));
+          int _size = eList.size();
+          boolean _lessThan = (pos < _size);
+          if (_lessThan) {
+            final Object res = eList.get(pos);
+            EObject _xifexpression = null;
+            if ((res instanceof FeatureMap.Entry)) {
+              Object _value = ((FeatureMap.Entry)res).getValue();
+              _xifexpression = ((EObject) _value);
+            } else {
+              _xifexpression = ((EObject) res);
+            }
+            return _xifexpression;
+          }
+        }
+      }
+      if ((dotIndex < 0)) {
+        Object _eGet_1 = obj.eGet(obj.eClass().getEStructuralFeature(segment.substring(1)));
+        return ((EObject) _eGet_1);
+      }
+    }
+    return null;
+  }
+  
+  private EObject eObjectForURIPredicate(final String pred, final EReference ref) {
+    throw new UnsupportedOperationException("TODO: auto-generated method stub");
   }
 }

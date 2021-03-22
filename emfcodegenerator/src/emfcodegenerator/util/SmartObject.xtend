@@ -1,18 +1,22 @@
 package emfcodegenerator.util
 
-import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.common.util.TreeIterator
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.emf.ecore.EReference
-import org.eclipse.emf.common.util.EList
-import org.eclipse.emf.ecore.EOperation
-import java.lang.reflect.InvocationTargetException
-import org.eclipse.emf.common.notify.Notification
-import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.emf.common.notify.Adapter
+import com.google.common.collect.Sets
 import emfcodegenerator.util.collections.LinkedEList
+import java.lang.reflect.InvocationTargetException
 import java.util.Collections
+import java.util.List
+import java.util.function.Function
+import java.util.stream.Collector
+import org.eclipse.emf.common.notify.Adapter
+import org.eclipse.emf.common.notify.Notification
+import org.eclipse.emf.common.util.EList
+import org.eclipse.emf.common.util.TreeIterator
+import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EOperation
+import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.resource.Resource
 
 /**
  * SmartEMF base-class for all generated objects.
@@ -93,7 +97,41 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	 * returns the direct contents of the EClass
 	 */
 	override EList<EObject> eContents(){
-		return this.e_static_class.eContents()
+		val containments = eClass().getEAllContainments
+		return containments.stream().map([x | toContentList(x)]).collect(toChainingEList())
+	}
+		
+	def Collector<List<EObject>, ?, EList<EObject>> toChainingEList() {
+		return new Collector<List<EObject>, EList<EObject>, EList<EObject>>(){
+			
+			override accumulator() {
+				[a, b | a.addAll(b)]
+			}
+			
+			override characteristics() {
+				Sets.immutableEnumSet(Collector.Characteristics.CONCURRENT, Collector.Characteristics.IDENTITY_FINISH)
+			}
+			
+			override combiner() {
+				[a, b | a.addAll(b); a]
+			}
+			
+			override finisher() {
+				Function.identity
+			}
+			
+			override supplier() {
+				[new LinkedEList()]
+			}
+			
+		}
+	}
+		
+	private def List<EObject> toContentList(EReference reference) {
+		val obj = eGet(reference);
+		if (obj instanceof EList) {
+			obj as EList<EObject>
+		} else Collections.singletonList(obj as EObject)
 	}
 
 	/**
@@ -155,7 +193,9 @@ class SmartObject implements MinimalSObjectContainer, EObject {
     }
 		
 	override boolean eIsSet(EStructuralFeature feature) {
-		throw new RuntimeException("Feature might not be registered....")
+//		throw new RuntimeException("Feature might not be registered....")
+		System.out.println(feature.getName());
+		return false;
 	}
 
 	override eAdapters() {

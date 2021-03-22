@@ -2,6 +2,7 @@ package persistence
 
 import com.google.common.collect.HashBiMap
 import com.google.common.collect.Iterators
+import emfcodegenerator.util.collections.DefaultEList
 import java.io.BufferedWriter
 import java.io.IOException
 import java.io.InputStream
@@ -9,18 +10,26 @@ import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.io.Writer
 import java.util.HashMap
+import java.util.List
 import java.util.Map
 import javax.xml.parsers.DocumentBuilderFactory
+import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EPackage
+import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.emf.ecore.resource.URIConverter
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl
+import org.eclipse.emf.ecore.util.FeatureMap
 import org.eclipse.emf.ecore.xmi.DOMHandler
 import org.eclipse.emf.ecore.xmi.XMIResource
 import org.eclipse.emf.ecore.xmi.impl.DefaultDOMHandlerImpl
+import org.eclipse.emf.ecore.xmi.impl.URIHandlerImpl
 import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl
 import org.eclipse.emf.ecore.xmi.impl.XMISaveImpl
+import org.eclipse.emf.ecore.xmi.impl.XMLHelperImpl
 import org.eclipse.emf.ecore.xml.type.AnyType
 import org.w3c.dom.Document
 import org.w3c.dom.Node
@@ -36,6 +45,7 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	val XMIRoot dummyRoot = [getContents]
 	val defaultLoadOptions = new HashMap
 	val defaultSaveOptions = new HashMap
+	val DefaultEList<EObject> contents = new ResourceContentEList
 	
 	var String xmiVersion = XMIResource.VERSION_VALUE
 	var String xmiNamespace = XMIResource.XMI_URI
@@ -55,6 +65,10 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	
 	new(URI uri) {
 		super(uri)
+	}
+	
+	override getContents() {
+		contents
 	}
 	
 	override getXMINamespace() {
@@ -130,7 +144,21 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	}
 	
 	override load(InputSource inputSource, Map<?, ?> options) throws IOException {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+		if (!isLoaded) {
+			val notification = setLoaded(true)
+			isLoading = true
+			
+			if (errors !== null) errors.clear
+			if (warnings !== null) warnings.clear
+			
+			try {
+				doLoad(inputSource.getByteStream, options)
+			} finally {
+				isLoading = false
+				if (notification !== null) eNotify(notification)
+				setModified(false)
+			}
+		}
 	}
 	
 	override save(Writer writer, Map<?, ?> options) throws IOException {
@@ -206,10 +234,10 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		sb.append('''<«rootTagName» «rootAttributes»>''')
 		
 		for (e : root.contents) {
-			sb.append(System.lineSeparator + toXMITag(e, 1))
+			sb.append(toXMITag(e, 1))
 		}
 		
-		sb.append('''</«rootTagName»>«System.lineSeparator»''')
+		sb.append('''«System.lineSeparator»</«rootTagName»>«System.lineSeparator»''')
 		
 		return sb
 	}
@@ -233,25 +261,42 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	}
 	
 	private def CharSequence toXMITag(EObject object, int depth) {
-		val indentation = new StringBuilder()
-		for (var i = 0; i < depth; i++) {
-			indentation.append(this.indentation)
-		}
+		val indentation = this.indentation * depth
 		val sb = new StringBuilder()
-		val name = tagName(object)
+		val name = tagName(object, object.eContainingFeature)
 		
-		val contents = object.eContents.filter[x | !x.eContainingFeature.isTransient]
+		val contents = object.eContents.filter[x | if (x.eContainingFeature !== null) !x.eContainingFeature.isTransient else true]
 		
 		if (!contents.isEmpty) {
-			sb.append('''«indentation»<«name»«xmiAttributes(object)»>«System.lineSeparator»''')
+			sb.append('''«System.lineSeparator»«indentation»<«name»«xmiAttributes(object)»>''')
 			for (e : contents) {
 				sb.append(toXMITag(e, depth + 1))
 			}
-			sb.append('''«indentation»</«name»>''')
+			sb.append('''«System.lineSeparator»«indentation»</«name»>''')
 		} else {
-			sb.append('''«indentation»<«name»«xmiAttributes(object)»/>«System.lineSeparator»''')
+			sb.append('''«System.lineSeparator»«indentation»<«name»«xmiAttributes(object)»/>''')
 		}
 		
+		return sb
+	}
+	
+	private def crossReference(EObject object, EReference ref) {
+		val target = object.eGet(ref)
+		if (target instanceof EObject) {
+			'''«tagName(null, ref)»="«getID(target)»"'''
+		} else  if (target instanceof List) {
+			val sb = new StringBuilder('''«tagName(null, ref)»="''')
+			for (t : target as List<EObject>) {
+				sb.append(getID(t)).append(" ")
+			}
+			sb.setCharAt(sb.length - 1, '"')
+			return sb
+		}
+	}
+	
+	private def operator_multiply(String string, int i) {
+		val sb = new StringBuilder()
+		for (var j = 0; j < i; j++) sb.append(string);
 		return sb
 	}
 	
@@ -259,9 +304,11 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		object.eClass.getEPackage.getName + ":" + object.eClass.getName
 	}
 	
-	private def String tagName(EObject object) {
-		val feat = object.eContainingFeature()
-		
+	private def tagName(EObject object) {
+		tagName(object, object.eContainingFeature)
+	}
+	
+	private def String tagName(EObject object, EStructuralFeature feat) {
 		if (feat !== null) {
 			var String name = feat.getName()
 			val first = name.charAt(0)
@@ -273,14 +320,18 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	
 	private def String xmiAttributes(EObject object) {
 		val eClass = object.eClass
-		val containments = eClass.getEAllContainments
 		val sb = new StringBuilder
+		val references = object.eClass.getEAllReferences.filter[x | !x.isContainment && !x.isContainer]
 		
-		for (a : eClass.getEAllStructuralFeatures.filter[x | !containments.contains(x) && !x.isTransient]) {
-			if (object.eIsSet(a)) {
-				//TODO handle references
-				sb.append(''' «a.getName»="«object.eGet(a)»"''')
+		for (a : eClass.getEAttributes.filter[x | !x.isTransient]) {
+			if (!a.isUnsettable || object.eIsSet(a)) {
+				if (!(a instanceof EReference)) {
+					sb.append(''' «a.getName»="«object.eGet(a)»"''')
+				}
 			}
+		}
+		for (r : references) {
+			sb.append(''' «crossReference(object, r)»''')
 		}
 		
 		sb.toString
@@ -296,7 +347,30 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	}
 	
 	protected override doLoad(InputStream str, Map<?, ?> options) {
-		load(new InputSource(str), options)
+		val opt = defaultLoadOptions ?: new HashMap
+		if (options !== null) opt.putAll(options)
+		
+		val uriHandler = opt.get(OPTION_URI_HANDLER) as URIHandler
+		val handlerURI = if (uriHandler instanceof URIHandlerImpl) {
+			uriHandler.getBaseURI
+		} else null
+		try {
+			if (str instanceof URIConverter.Loadable) {
+				str.loadResource(this)
+			} else {
+//				val loader = new XMILoadImpl(new XMLHelperImpl(this))
+				val loader = new SmartEMFXMILoad(new XMLHelperImpl(this))
+				val handler = opt.get(OPTION_RESOURCE_HANDLER) as ResourceHandler
+				
+				if (handler !== null) handler.preLoad(this, str, opt)
+				
+				loader.load(this, str, opt)
+				
+				if (handler !== null) handler.postLoad(this, str, opt)
+			}
+		} finally {
+			if (uriHandler !== null) uriHandler.setBaseURI(handlerURI)
+		}
 	}
 	
 	override setDoctypeInfo(String publicId, String systemId) {
@@ -329,24 +403,24 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	 */
 	def createXPathIDs() {
 		idToEObjectBiMap.clear
-		val needsIndices = contents.size > 1
-		val prefix = if (needsIndices) {
-			"/*"
-		} else ""
-		var count = 1
+		val prefix = ""
+		var count = 0
 		for (o : getContents) {
-			xPathForObject(o, prefix, count++, needsIndices)
+			xPathForObject(o, prefix, count++, getContents().size() <= 1)
 		}
 	}
 	
-	private def void xPathForObject(EObject obj, String prefix, int i, boolean needsIndex) {
-		val path = '''«prefix»/«tagName(obj)»«if (needsIndex)'''[«i»]'''»'''
+	private def void xPathForObject(EObject obj, String prefix, int i, boolean disableTopIndex) {
+		val path = if (prefix == "") {
+			"/" + if (disableTopIndex) "" else i
+		} else {
+			'''«prefix»/@«tagName(obj)».«i»'''
+		}
 		setID(obj, path)
-		var j = 1
-		val contents = obj.eContents.filter[x | !x.eContainingFeature.isTransient]
-		val needsIndices = contents.size > 1
+		var j = 0
+		val contents = obj.eContents.filter[x | x.eContainingFeature !== null && !x.eContainingFeature.isTransient]
 		for (o : contents) {
-			xPathForObject(o, path, j++, needsIndices)
+			xPathForObject(o, path, j++, false)
 		}
 	}
 	
@@ -378,6 +452,60 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	
 	def setCascade(boolean cascade) {
 		cascadeNotifications = cascade
+	}
+	
+	protected override getEObject(List<String> uriFragmentPath) {
+		val size = uriFragmentPath.size
+		var eObject = getEObjectForURIFragmentRootSegment(size == 0 ? "" : uriFragmentPath.get(0))
+		
+		for (var i = 1; i < size && eObject !== null; i++) {
+			eObject = eObjectForURIFragmentSegment(eObject, uriFragmentPath.get(i))
+		}
+		
+		return eObject
+	}
+	
+	private def EObject eObjectForURIFragmentSegment(EObject obj, String segment) {
+		val lastIndex = segment.length - 1
+		if (lastIndex == -1 || segment.charAt(0).toString != '@') {
+			throw new IllegalArgumentException("Expecting @ at index 0 of '" + segment + "'")
+		}
+		
+		val lastChar = segment.charAt(lastIndex)
+		if (lastChar == ']') {
+			val index = segment.indexOf('[')
+			if (index >= 0) {
+				val eRef = obj.eClass.getEStructuralFeature(segment.substring(1, index)) as EReference
+				val predicate = segment.substring(index + 1, lastIndex)
+				return eObjectForURIPredicate(predicate, eRef)
+			} else {
+				throw new IllegalArgumentException("Expecting [ in '" + segment + "'")
+			}
+		} else {
+			var dotIndex = -1
+			if (Character.isDigit(lastChar)) {
+				dotIndex = segment.lastIndexOf('.', lastIndex - 1)
+				if (dotIndex >= 0) {
+					val eList = obj.eGet(obj.eClass.getEStructuralFeature(segment.substring(1, dotIndex))) as EList<?>
+					val pos = Integer.parseInt(segment.substring(dotIndex + 1))
+					if (pos < eList.size) {
+						val res = eList.get(pos)
+						return if (res instanceof FeatureMap.Entry) {
+							res.value as EObject
+						} else {
+							res as EObject
+						}
+					}
+				}
+			}
+			if (dotIndex < 0) return obj.eGet(obj.eClass.getEStructuralFeature(segment.substring(1))) as EObject
+		}
+		return null
+	}
+	
+	private def EObject eObjectForURIPredicate(String pred, EReference ref) {
+		//This did not get called during testing
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 	
 }
