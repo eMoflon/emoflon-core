@@ -268,13 +268,13 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	}
 	
 	override remove(Object obj){
-		if(this.contains(obj)){
-			notifications.add(SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, obj, indexOf(obj)))
-			super.remove(obj)
-			this.remove_containment_to_passed_object(obj as E)
-			return true
-		}
-		return false
+		val index = indexOf(obj)
+		if (index < 0) return false
+		val notification = SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, obj, index)
+		super.remove(obj)
+		notifications.add(notification)
+		this.remove_containment_to_passed_object(obj as E)
+		return true
 	}
 	
 	override remove(int index){
