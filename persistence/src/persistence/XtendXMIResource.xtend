@@ -45,7 +45,7 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	val XMIRoot dummyRoot = [getContents]
 	val defaultLoadOptions = new HashMap
 	val defaultSaveOptions = new HashMap
-	val DefaultEList<EObject> contents = new ResourceContentEList
+	val DefaultEList<EObject> contents = new DefaultEList
 	
 	var String xmiVersion = XMIResource.VERSION_VALUE
 	var String xmiNamespace = XMIResource.XMI_URI

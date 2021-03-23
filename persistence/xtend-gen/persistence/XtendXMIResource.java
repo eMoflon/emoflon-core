@@ -46,7 +46,6 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
-import persistence.ResourceContentEList;
 import persistence.SmartEMFXMILoad;
 import persistence.XMIRoot;
 
@@ -74,7 +73,7 @@ public class XtendXMIResource extends ResourceImpl implements XMIResource {
   
   private final HashMap<Object, Object> defaultSaveOptions = new HashMap<Object, Object>();
   
-  private final DefaultEList<EObject> contents = new ResourceContentEList<EObject>();
+  private final DefaultEList<EObject> contents = new DefaultEList<EObject>();
   
   private String xmiVersion = XMIResource.VERSION_VALUE;
   
