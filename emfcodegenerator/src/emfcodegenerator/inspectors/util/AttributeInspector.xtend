@@ -62,7 +62,24 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 				this.default_value =  '''«e_attr.defaultValue»F'''.toString
 			this.default_value =  e_attr.defaultValue.toString
 		}
-		else if(e_attr.defaultValue === null) this.default_value = "null"
+		else if(e_attr.defaultValue === null){
+			//unchangeable EAttributes do not get setters. If no setter is provided an
+			//attribute can only be set via its getter if it is contained in an collection.
+			//Thus if it isn't a tuple and not changeable or no default value was provided,
+			//then the model is faulty.
+			if(!this.is_changeable){
+				println(
+					(this.e_attr.eContainer as EClass).name + "." +
+					this.e_attr.name +
+					" is unchangeable and a either a literal or a non" +
+					" String-object not contained in a Collection." + System.lineSeparator +
+					"Please increase the UpperBound  in the meta-model or set a default value."
+				)
+				throw new IllegalArgumentException(
+					"Unchangeable, non Collection EAttribute encountered. Model is invalid."
+				)
+			} else this.default_value = "null"
+		}
 		else this.default_value = e_attr.defaultValue.toString()
 	}
 
