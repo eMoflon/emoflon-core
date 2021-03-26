@@ -186,7 +186,7 @@ class HashEMultiset<E> implements Multiset<E>, MinimalSObjectContainerCollection
 	}
 	
 	override clear() {
-		removeAll(new LinkedList(this))
+		removeAll(HashMultiset.create(backingHashMultiset))
 	}
 	
 	override contains(Object o) {
