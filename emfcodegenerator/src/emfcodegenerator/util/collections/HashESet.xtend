@@ -143,6 +143,15 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 		this.the_econtaining_feature = eContaining_feature
 		this.is_containment_object = true
 	}
+	
+	/**
+	 * Constructs new HashESet with a container, but without a containing feature.
+	 * This should only be used for the list returned by {@code SmartObject.eAdapters()}
+	 */ 
+	new(EObject container) {
+		super()
+		this.the_eContainer = container
+	}
 
 	/**########################MinimalSObjectContainer methods########################*/
 
@@ -233,7 +242,7 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 	}
 	
 	override add(E e) {
-		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, e, -1))
+		addNotification[SmartEMFNotification.addToFeature(eContainer, eContainingFeature, e, -1)]
 		return super.add(this.set_containment_to_passed_object(e))
 	}
 	
@@ -290,7 +299,7 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 	
 	override remove(Object o) {
 		if(this.contains(o)) {
-			notifications.add(SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, o, -1))
+			addNotification[SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, o, -1)]
 			return super.remove(this.remove_containment_to_passed_object(o as E))
 		}
 		return false
@@ -366,5 +375,8 @@ class  HashESet<E> extends HashSet<E> implements MinimalSObjectContainerCollecti
 		}
 		return a
 	}
-
+	
+	override notificationBuilder() {
+		notifications
+	}
 }

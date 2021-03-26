@@ -22,6 +22,10 @@ class SmartCollectionFactory {
 		return new LinkedEList<E>()
 	}
 	
+	def static <E> HashEMultiset<E> createHashEMultiset() {
+		return new HashEMultiset<E>()
+	}
+	
 	def static <E> EList<E> automatically_determine_and_create_collection(EReference e_ref){
 		var is_ordered = e_ref.ordered
 		var is_unique = e_ref.unique
@@ -30,7 +34,8 @@ class SmartCollectionFactory {
 			case EListTypeEnum.NONE: throw new UnsupportedOperationException()
 			case EListTypeEnum.SET: return createHashESet()
 			case EListTypeEnum.LINKED_LIST: return createLinkedEList()
-			case EListTypeEnum.LINKED_SET: return createLinkedESet
+			case EListTypeEnum.LINKED_SET: return createLinkedESet()
+			case EListTypeEnum.MULTISET: return createHashEMultiset()
 			default: return createDefaultEList()
 		}
 	}
@@ -47,21 +52,17 @@ class SmartCollectionFactory {
 			case EListTypeEnum.SET: return "emfcodegenerator.util.collections.HashESet"
 			case EListTypeEnum.LINKED_LIST: return "emfcodegenerator.util.collections.LinkedEList"
 			case EListTypeEnum.LINKED_SET: return "emfcodegenerator.util.collections.LinkedESet"
+			case EListTypeEnum.MULTISET: return "emfcodegenerator.util.collections.HashEMultiset"
 			default: return "emfcodegenerator.util.collections.DefaultEList"
 		}
 	}
 	
 	def static EListTypeEnum get_needed_elist_type(boolean is_ordered, boolean is_unique){
-		if(!is_ordered && !is_unique){
-			return EListTypeEnum.DEFAULT
-		} else if(!is_ordered && is_unique){
-			return EListTypeEnum.SET
-		} else if(is_ordered && !is_unique){
-			return EListTypeEnum.LINKED_LIST
-		} else if(is_ordered && is_unique){
-			return EListTypeEnum.LINKED_SET
-		} else {
-			return EListTypeEnum.NONE
+		switch (is_ordered -> is_unique) {
+			case false -> false: return EListTypeEnum.MULTISET
+			case false -> true:  return EListTypeEnum.SET
+			case true  -> false: return EListTypeEnum.LINKED_LIST
+			case true  -> true:  return EListTypeEnum.LINKED_SET
 		}
 	}
 	
@@ -71,6 +72,7 @@ class SmartCollectionFactory {
 			case EListTypeEnum.SET: return "HashESet"
 			case EListTypeEnum.LINKED_LIST: return "LinkedEList"
 			case EListTypeEnum.LINKED_SET: return "LinkedESet"
+			case EListTypeEnum.MULTISET: return "HashEMultiset"
 			default: return "DefaultEList"
 		}
 	}

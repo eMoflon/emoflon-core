@@ -1,14 +1,14 @@
 package emfcodegenerator.notification
 
-import org.eclipse.emf.ecore.EStructuralFeature
+import emfcodegenerator.util.collections.LinkedEList
+import java.util.Collection
+import java.util.Collections
+import org.eclipse.emf.common.notify.Adapter
 import org.eclipse.emf.common.notify.Notification
 import org.eclipse.emf.common.notify.NotificationChain
-import org.eclipse.emf.common.notify.impl.NotificationChainImpl
-import java.util.Collections
-import java.util.Collection
-import emfcodegenerator.util.collections.LinkedEList
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.common.notify.Adapter
+import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.common.util.EList
 
 class SmartEMFNotification implements Notification, NotificationChainWorkaround {
 	
@@ -25,6 +25,15 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		this.eventType = eventType
 		this.oldValue = oldValue
 		this.newValue = newValue
+	}
+	
+	new(Notification n) {
+		this.eventType = n.eventType
+		this.position = n.position
+		this.oldValue = n.oldValue
+		this.newValue = n.newValue
+		this.notifier = n.notifier as EObject
+		this.feature = n.feature as EStructuralFeature
 	}
 	
 	def static addToFeature(EObject owner, EStructuralFeature feature, Object object, int index) {
@@ -54,6 +63,9 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 	
 	def static removeFromFeature(EObject owner, EStructuralFeature feature, Object object, int index) {
 		val notification = if (object instanceof Adapter && feature === null) {
+			if (object instanceof Adapter.Internal) {
+				object.unsetTarget(owner)
+			}
 			new SmartEMFNotification(REMOVING_ADAPTER, object, null)
 		} else {
 			new SmartEMFNotification(REMOVE, object, null)
@@ -69,6 +81,39 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		notification.notifier = owner
 		notification.feature = feature
 		notification.position = newIndex
+		return notification
+	}
+	
+	def static SmartEMFNotification chainToNotification(NotificationList c) {
+		val iter = c.iterator
+		val first = iter.next
+		val notification = new SmartEMFNotification(first)
+		while (iter.hasNext) {
+			notification.add(new SmartEMFNotification(iter.next))
+		}
+		return notification
+	}
+	
+	def static addManyIdentical(EObject owner, EStructuralFeature feature, EList<?> objects) {
+		if (objects.size == 0) return null;
+		if (objects.size == 1) return addToFeature(owner, feature, objects.iterator.next as Object, NO_INDEX)
+		
+		val notification = new SmartEMFNotification(ADD_MANY, null, objects)
+		notification.notifier = owner
+		notification.feature = feature
+		notification.position = NO_INDEX
+		return notification
+	}
+	
+	def static removeManyIdentical(EObject owner, EStructuralFeature feature, EList<?> objects) {
+		if (objects.size == 0) return null;
+		if (objects.size == 1) return removeFromFeature(owner, feature, objects.iterator.next as Object, NO_INDEX)
+		
+		val int[] arr = Collections.nCopies(objects.size, -1)
+		val notification = new SmartEMFNotification(REMOVE_MANY, objects, arr)
+		notification.notifier = owner
+		notification.feature = feature
+		notification.position = NO_INDEX
 		return notification
 	}
 	
@@ -261,8 +306,8 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 	}
 	
 	private def mergeCollections(Object a, Object b) {
-		val collA = if (a instanceof Collection) a else Collections.singleton(a)
-		val collB = if (b instanceof Collection) b else Collections.singleton(b)
+		val Collection<Object> collA = if (a instanceof Collection) a else Collections.singleton(a)
+		val Collection<Object> collB = if (b instanceof Collection) b else Collections.singleton(b)
 		val list = new LinkedEList<Object>()
 		list.addAll(collA)
 		list.addAll(collB)
@@ -270,19 +315,25 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 	}
 	
 	private def int[] mergeArrays(Object a, Object b) {
-		if (a instanceof int[]) _mergeArrays(a, b)
-		else _mergeArrays(Collections.singletonList(a as Integer), b)
-	}
-	
-	private def int[] _mergeArrays(int[] a, Object b) {
-		if (b instanceof int[]) mergeArrays(a, b)
-		else __mergeArrays(a, Collections.singletonList(b as Integer))
-	}
-	
-	private def int[] __mergeArrays(int[] a, int[] b) {
-		a.addAll(b)
-		a.sort(null)
-		a
+		val aIsArr = a instanceof int[]
+		val bIsArr = b instanceof int[]
+		val lengthA = if (aIsArr) (a as int[]).length else 1
+		val lengthB = if (bIsArr) (b as int[]).length else 1
+		val int[] merged = newIntArrayOfSize(lengthA + lengthB)
+		
+		if (aIsArr) {
+			System.arraycopy(a, 0, merged, 0, lengthA)
+		} else {
+			merged.set(0, a as Integer)
+		}
+		
+		if (bIsArr) {
+			System.arraycopy(b, 0, merged, lengthA, lengthB)
+		} else {
+			merged.set(lengthA, b as Integer)
+		}
+		
+		return merged
 	}
 	
 	override wasSet() {
@@ -305,9 +356,7 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 			next = if (notification instanceof NotificationChain) {
 				notification
 			} else {
-				val chain = new NotificationChainImpl()
-				chain.add(notification)
-				chain
+				new SmartEMFNotification(notification)
 			}
 			true
 		} else {

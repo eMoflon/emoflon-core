@@ -5,10 +5,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.function.Supplier;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import emfcodegenerator.notification.SmartEMFNotification;
 import emfcodegenerator.util.MinimalSObjectContainer;
 
 interface MinimalSObjectContainerCollection<E> extends InternalEList<E>, MinimalSObjectContainer {
@@ -104,5 +106,22 @@ interface MinimalSObjectContainerCollection<E> extends InternalEList<E>, Minimal
 	@Override
 	default E setUnique(int index, E e) {
 		return set(index, e);
+	}
+	
+	/**
+	 * @return the list's ListNotificationBuilder
+	 */
+	ListNotificationBuilder notificationBuilder();
+	
+	/**
+	 * Checks if notifications should be generated. If yes, uses the supplied factory to generate one and adds it to the notification builder.
+	 * @return whether a notification was generated
+	 */
+	default boolean addNotification(Supplier<SmartEMFNotification> notificationFactory) {
+		if (eContainer() != null && eContainer().eDeliver()) {
+			return notificationBuilder().add(notificationFactory.get());
+		} else {
+			return false;
+		}
 	}
 }

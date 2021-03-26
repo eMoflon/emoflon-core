@@ -235,7 +235,7 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 	}
 	
 	override add(E e) {
-		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, e, -1))
+		addNotification[SmartEMFNotification.addToFeature(eContainer, eContainingFeature, e, -1)]
 		super.add(this.set_containment_to_passed_object(e))
 	}
 	
@@ -302,7 +302,7 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 	
 	override remove(Object o) {
 		if(this.contains(o)){
-			notifications.add(SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, o, -1))
+			addNotification[SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, o, -1)]
 			super.remove(o)
 			this.remove_containment_to_passed_object(o as E)
 			return true
@@ -385,6 +385,10 @@ class LinkedESet<E> extends LinkedHashSet<E> implements MinimalSObjectContainerC
 			arr.set(index++, e)
 		}
 		return a
+	}
+	
+	override notificationBuilder() {
+		notifications
 	}
 
 }

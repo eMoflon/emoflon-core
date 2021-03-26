@@ -1,14 +1,20 @@
 package emfcodegenerator.util
 
-import com.google.common.collect.Sets
+import emfcodegenerator.notification.NotificationList
+import emfcodegenerator.notification.SmartEMFNotification
+import emfcodegenerator.util.collections.HashESet
 import emfcodegenerator.util.collections.LinkedEList
 import java.lang.reflect.InvocationTargetException
+import java.util.Collection
 import java.util.Collections
+import java.util.Iterator
 import java.util.List
 import java.util.function.Function
 import java.util.stream.Collector
 import org.eclipse.emf.common.notify.Adapter
 import org.eclipse.emf.common.notify.Notification
+import org.eclipse.emf.common.notify.NotificationChain
+import org.eclipse.emf.common.util.DelegatingEList.UnmodifiableEList
 import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.common.util.TreeIterator
 import org.eclipse.emf.ecore.EClass
@@ -17,6 +23,8 @@ import org.eclipse.emf.ecore.EOperation
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.emf.ecore.util.EcoreUtil
+import persistence.XtendXMIResource
 
 /**
  * SmartEMF base-class for all generated objects.
@@ -80,7 +88,7 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	 * returns an iterator iterating over all contents of the class
 	 */
 	override TreeIterator<EObject> eAllContents(){
-		return this.e_static_class.eAllContents
+		EcoreUtil.getAllContents(Collections.singleton(this))
 	}
 
 	/**
@@ -97,8 +105,8 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	 * returns the direct contents of the EClass
 	 */
 	override EList<EObject> eContents(){
-		val containments = eClass().getEAllContainments
-		return containments.stream().map([x | toContentList(x)]).collect(toChainingEList())
+		val containments = eClass.getEAllContainments
+		return containments.stream.map[x | toContentList(x)].collect(toChainingEList())
 	}
 		
 	def Collector<List<EObject>, ?, EList<EObject>> toChainingEList() {
@@ -109,7 +117,7 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 			}
 			
 			override characteristics() {
-				Sets.immutableEnumSet(Collector.Characteristics.CONCURRENT, Collector.Characteristics.IDENTITY_FINISH)
+				Collections.singleton(Collector.Characteristics.IDENTITY_FINISH)
 			}
 			
 			override combiner() {
@@ -138,14 +146,16 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	 * Returns a list view of the cross referenced objects; it is unmodifiable.
 	 * This will be the list of EObjects determined by the contents of the reference features of
 	 * this object's meta class, excluding containment features and their opposites.
-	 * The cross reference list's iterator will be of type EContentsEList.FeatureIterator,
-	 * for efficient determination of the feature of each cross reference in the list
 	 */
 	override EList<EObject> eCrossReferences(){
-		return this.e_static_class.eCrossReferences()
+		val crossrefs = eClass.getEAllReferences.stream
+			.filter[x | !x.isContainment && !x.isContainer]
+			.map[x | toContentList(x)]
+			.collect(toChainingEList())
+		return new UnmodifiableEList(crossrefs)
 	}
 
-	override Object eInvoke(EOperation operation, EList<?> arguments) throws InvocationTargetException{
+	override Object eInvoke(EOperation operation, EList<?> arguments) throws InvocationTargetException {
 		throw new UnsupportedOperationException()
 	}
 
@@ -193,13 +203,13 @@ class SmartObject implements MinimalSObjectContainer, EObject {
     }
 		
 	override boolean eIsSet(EStructuralFeature feature) {
-//		throw new RuntimeException("Feature might not be registered....")
-		System.out.println(feature.getName());
-		return false;
+		throw new RuntimeException("Feature might not be registered....")
+//		System.out.println(feature.getName());
+//		return false;
 	}
 
 	override eAdapters() {
-		return eAdapters ?: {eAdapters = new LinkedEList(this); eAdapters}
+		return eAdapters ?: {eAdapters = new HashESet(this); eAdapters}
 	}
 	
 	override eDeliver() {
@@ -222,6 +232,85 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	 */
 	def eNotificationRequired() {
 		!(eAdapters ?: Collections.emptyList).isEmpty && eDeliver
+	}
+	
+	protected def Notification cascadeNotifications(Notification n) {
+		if (!getCascade(eResource) && #[Notification.ADD, Notification.ADD_MANY].contains(n.eventType)) {
+			return n
+		}
+		val chain = if (n instanceof NotificationChain) {
+			n
+		} else {
+			new NotificationList(n)
+		}
+		switch (n.eventType) {
+			case Notification.ADD, case Notification.REMOVE, case Notification.SET: {
+				val eobj = if (n.eventType == Notification.REMOVE) {
+					n.oldValue
+				} else {
+					n.newValue
+				}
+				if (eobj === null || !(eobj instanceof EObject)) return n
+				val iter = (eobj as EObject).eAllContents
+				if (iter.hasNext) {
+					chain.add(childNotifications(iter, n.eventType))
+				} else {
+					return n
+				}
+			}
+			case Notification.ADD_MANY, case Notification.REMOVE_MANY: {
+				val list = (if (n.eventType == Notification.ADD_MANY) {
+					n.newValue
+				} else {
+					n.oldValue
+				}) as Collection<EObject>
+				if (list === null || list.isEmpty) return n
+				for (eobj : list) {
+					val iter = (eobj as EObject).eAllContents
+					chain.add(childNotifications(iter, n.eventType))
+				}
+			}
+		}
+		if (chain !== n) {
+			return SmartEMFNotification.chainToNotification(chain as NotificationList)
+		} else {
+			return n
+		}
+	}
+		
+	def boolean getCascade(Resource resource) {
+		if (resource instanceof XtendXMIResource) {
+			return resource.getCascade
+		} else {
+			return false
+		}	
+	}
+	
+	private def Notification childNotifications(Iterator<EObject> children, int eventType) {
+		var SmartEMFNotification notification = null
+		while (children.hasNext) {
+			val content = children.next as EObject
+			val container = content.eContainer
+			val feature = content.eContainingFeature
+			val index = -1 //iterating over the list to find the index is slow - only implement if actually needed
+			switch (eventType) {
+				case Notification.ADD, case Notification.ADD_MANY, case Notification.SET: {
+					if (notification === null) {
+						notification = SmartEMFNotification.addToFeature(container, feature, content, index)
+					} else {
+						notification.add(SmartEMFNotification.addToFeature(container, feature, content, index))
+					}
+				}
+				case Notification.REMOVE, case Notification.REMOVE_MANY: {
+					if (notification === null) {
+						notification = SmartEMFNotification.removeFromFeature(container, feature, content, index)
+					} else {
+						notification.add(SmartEMFNotification.removeFromFeature(container, feature, content, index))
+					}
+				}
+			}
+		}
+		return notification
 	}
 
 	/**########################MinimalSObjectContainer########################*/

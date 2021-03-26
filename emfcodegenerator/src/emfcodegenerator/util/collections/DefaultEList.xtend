@@ -211,7 +211,7 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 		var int j = oldPosition
 		var int k = newPosition
 		Collections.rotate(this.subList(j < k ? j : k, (j < k ? k : j) + 1), j < k ? -1 : 1);
-		notifications.add(SmartEMFNotification.moveInList(eContainer, eContainingFeature, get(newPosition), oldPosition, newPosition))
+		addNotification[SmartEMFNotification.moveInList(eContainer, eContainingFeature, get(newPosition), oldPosition, newPosition)]
 		return obj;
 	}
 	
@@ -219,13 +219,14 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 	 * adds the object and updates its containment if needed
 	 */
 	override add(E e) {
-		super.add(this.set_containment_to_passed_object(e))
-		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, e, indexOf(e)))
+		val added = super.add(this.set_containment_to_passed_object(e))
+		addNotification[SmartEMFNotification.addToFeature(eContainer, eContainingFeature, e, indexOf(e))]
+		added
 	}
 	
 	override add(int index, E element) {
 		super.add(index, this.set_containment_to_passed_object(element))
-		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, element, index))
+		addNotification[SmartEMFNotification.addToFeature(eContainer, eContainingFeature, element, index)]
 	}
 	
 	override addAll(Collection<? extends E> c) {
@@ -279,9 +280,9 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 	
 	override remove(int index) {
 		if(index<0 || index>=this.size()) throw new IndexOutOfBoundsException()
-		var E obj = this.get(index)
+		val E obj = this.get(index)
 		super.remove(index)
-		notifications.add(SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, obj, index))
+		addNotification[SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, obj, index)]
 		return this.remove_containment_to_passed_object(obj)
 	}
 	
@@ -324,9 +325,12 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 	override set(int index, E element) {
 		if(index<0 || index>=this.size()) throw new IndexOutOfBoundsException()
 		val oldValue = this.get(index)
-		notifications.add(SmartEMFNotification.set(eContainer, eContainingFeature, oldValue, element, index))
+		addNotification[SmartEMFNotification.set(eContainer, eContainingFeature, oldValue, element, index)]
 		this.remove_containment_to_passed_object(oldValue)
 		super.set(index, this.set_containment_to_passed_object(element))
 	}
-
+	
+	override notificationBuilder() {
+		notifications
+	}
 }

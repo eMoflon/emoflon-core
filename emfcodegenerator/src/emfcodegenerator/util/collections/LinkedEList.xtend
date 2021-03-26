@@ -4,7 +4,9 @@ import emfcodegenerator.notification.SmartEMFNotification
 import emfcodegenerator.util.MinimalSObjectContainer
 import java.util.Collection
 import java.util.Collections
+import java.util.HashSet
 import java.util.LinkedList
+import java.util.Set
 import java.util.function.Predicate
 import java.util.function.UnaryOperator
 import java.util.stream.Collectors
@@ -87,15 +89,6 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	 */
 	new(){
 		super()
-	}
-	
-	/**
-	 * Constructs new LinkedEList with a container, but without a containing feature.
-	 * This should only be used for the list returned by {@code SmartObject.eAdapters()}
-	 */ 
-	new(EObject container) {
-		super()
-		this.the_eContainer = container
 	}
 
 	/**########################MinimalSObjectContainer methods########################*/
@@ -188,11 +181,11 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 		//https://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#rotate%28java.util.List,%20int%29
 		if(newPosition<0 || oldPosition<0 || newPosition>=this.size || oldPosition>=this.size)
 			throw new IndexOutOfBoundsException()
-		var E obj = this.get(oldPosition)
+		val E obj = this.get(oldPosition)
 		var int j = oldPosition
 		var int k = newPosition
 		Collections.rotate(this.subList(j < k ? j : k, (j < k ? k : j) + 1), j < k ? -1 : 1);
-		notifications.add(SmartEMFNotification.moveInList(eContainer, eContainingFeature, obj, oldPosition, newPosition))
+		addNotification[SmartEMFNotification.moveInList(eContainer, eContainingFeature, obj, oldPosition, newPosition)]
 		return obj;
 	}
 
@@ -200,17 +193,18 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	
 	override add(int index, E obj){
 		//this.set_containment_to_passed_object(obj)
-		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, obj, index))
+		addNotification[SmartEMFNotification.addToFeature(eContainer, eContainingFeature, obj, index)]
 		super.add(index, this.set_containment_to_passed_object(obj))
 	}
 	
 	override add(E obj){
-		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, obj, size))
+		val added = addNotification[SmartEMFNotification.addToFeature(eContainer, eContainingFeature, obj, size)]
 		super.add(this.set_containment_to_passed_object(obj))
+		added
 	}
 	
 	override addFirst(E obj){
-		notifications.add(SmartEMFNotification.addToFeature(eContainer, eContainingFeature, obj, 0))
+		addNotification[SmartEMFNotification.addToFeature(eContainer, eContainingFeature, obj, 0)]
 		super.addFirst(this.set_containment_to_passed_object(obj))
 	}
 
@@ -227,7 +221,7 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	}
 
 	override clear(){
-		this.removeAll(new LinkedList(this))
+		this.removeAll(new HashSet(this))
 	}
 
 	override offer(E obj){
@@ -268,17 +262,16 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	}
 	
 	override remove(Object obj){
-		val index = indexOf(obj)
-		if (index < 0) return false
-		val notification = SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, obj, index)
-		super.remove(obj)
-		notifications.add(notification)
-		this.remove_containment_to_passed_object(obj as E)
-		return true
+		val removed = super.remove(obj)
+		if (removed) {
+			addNotification[SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, obj, -1)] //finding the index would take too long
+			this.remove_containment_to_passed_object(obj as E)
+		}
+		return removed
 	}
 	
 	override remove(int index){
-		notifications.add(SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, get(index), index))
+		addNotification[SmartEMFNotification.removeFromFeature(eContainer, eContainingFeature, get(index), index)]
 		return this.remove_containment_to_passed_object(super.remove(index))
 	}
 	
@@ -304,26 +297,26 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	}
 	
 	override removeAll(Collection<?> c){
-		var int old = this.size()
+		val old = size
+		if (old == 0) return false
+		val toBeRemoved = if (c instanceof Set) c else new HashSet(c)
 		notifications.enableAccumulation
-		for(Object o : c){
-			this.remove(o)
+		while (toBeRemoved.contains(first)) {
+			removeFirst
 		}
+		subList(1, size).removeAll(toBeRemoved)
 		notifications.flush
-		return old !== this.size()
+		return old !== size
 	}
 	
 	override removeRange(int a, int b){
-		var int index = b - 1
-		notifications.enableAccumulation
-		while(index >= a) this.remove(index--)
-		notifications.flush
+		subList(a, b).clear
 	}
 	
 	override set(int index, E obj){
 		val oldValue = this.get(index)
 		this.remove_containment_to_passed_object(oldValue)
-		notifications.add(SmartEMFNotification.set(eContainer, eContainingFeature, oldValue, obj, index))
+		addNotification[SmartEMFNotification.set(eContainer, eContainingFeature, oldValue, obj, index)]
 		super.set(index, this.set_containment_to_passed_object(obj))
 	}
 	
@@ -340,7 +333,7 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	}
 	
 	override removeIf(Predicate<? super E> filter){
-		val toBeRemoved = this.stream().filter(filter).collect(Collectors.toList)
+		val toBeRemoved = this.stream().filter(filter).collect(Collectors.toSet)
 		removeAll(toBeRemoved)
 	}
 	
@@ -369,5 +362,9 @@ class LinkedEList<E> extends LinkedList<E> implements MinimalSObjectContainerCol
 	
 	override listIterator(int index){
 		return new SmartEMFListIterator(super.listIterator(index), this)
+	}
+	
+	override notificationBuilder() {
+		notifications
 	}
 }

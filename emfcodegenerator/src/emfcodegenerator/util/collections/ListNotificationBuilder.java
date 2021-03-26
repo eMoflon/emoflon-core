@@ -4,33 +4,48 @@ import emfcodegenerator.notification.SmartEMFNotification;
 
 public class ListNotificationBuilder {
 	private SmartEMFNotification currentChain;
-	private boolean accumulate = false;
+	private int accumulate = 0;
 	
 	/**
 	 * Enables accumulation of notifications.<br/>
 	 * When accumulation is enabled, notifications are not dispatched until {@link #flush()} is called.<br/>
-	 * Until that point, if a notification is added to the current chain, it may be merged with the preceding notification.
+	 * Until that point, if a notification is added to the current chain, it may be merged with the preceding notification.<br/>
+	 * {@link #flush()} must be called as often as this method before notifications are dispatched.
 	 */
 	public void enableAccumulation() {
-		this.accumulate = true;
+		this.accumulate++;
 	}
 	
 	/**
 	 * @return {@code true} if accumulation is enabled
 	 */
 	public boolean accumulates() {
-		return accumulate;
+		return accumulate > 0;
 	}
 	
 	/**
-	 * Dispatches the current notification chain and disables accumulation.
+	 * Lowers the accumulation counter by 1.
+	 * If it reaches 0, dispatches the current notification chain (if not null).
 	 */
 	public void flush() {
+		if (accumulates()) {
+			accumulate--;
+		}
+		if (currentChain != null && !accumulates()) {
+			currentChain.dispatch();
+			currentChain = null;
+		}
+	}
+	
+	/**
+	 * Dispatches the current notification chain (if not null) and disables accumulation.
+	 */
+	public void forceFlush() {
 		if (currentChain != null) {
 			currentChain.dispatch();
+			currentChain = null;
 		}
-		currentChain = null;
-		accumulate = false;
+		accumulate = 0;
 	}
 	
 	/**
@@ -44,7 +59,7 @@ public class ListNotificationBuilder {
 		if (n == null || n.getNotifier() == null) return false;
 		if (currentChain == null) {
 			currentChain = n;
-			if (!accumulate) {
+			if (!accumulates()) {
 				flush();
 			}
 			return true;
