@@ -7,24 +7,23 @@ public class ListNotificationBuilder {
 	private int accumulate = 0;
 	
 	/**
-	 * Enables accumulation of notifications.<br/>
-	 * When accumulation is enabled, notifications are not dispatched until {@link #flush()} is called.<br/>
-	 * Until that point, if a notification is added to the current chain, it may be merged with the preceding notification.<br/>
-	 * {@link #flush()} must be called as often as this method before notifications are dispatched.
+	 * Increments the accumulation counter.<br/>
+	 * While the counter is greater than zero, if a notification is added to the current chain,<br/>
+	 * it is not dispatched and it may be merged with the preceding notification.
 	 */
 	public void enableAccumulation() {
 		this.accumulate++;
 	}
 	
 	/**
-	 * @return {@code true} if accumulation is enabled
+	 * @return {@code true} if accumulation is enabled, i.e. the accumulation counter is greater than 0.
 	 */
 	public boolean accumulates() {
 		return accumulate > 0;
 	}
 	
 	/**
-	 * Lowers the accumulation counter by 1.
+	 * Decrements the accumulation counter.
 	 * If it reaches 0, dispatches the current notification chain (if not null).
 	 */
 	public void flush() {
@@ -38,7 +37,7 @@ public class ListNotificationBuilder {
 	}
 	
 	/**
-	 * Dispatches the current notification chain (if not null) and disables accumulation.
+	 * Dispatches the current notification chain (if not null) and resets the accumulation counter to 0.
 	 */
 	public void forceFlush() {
 		if (currentChain != null) {
