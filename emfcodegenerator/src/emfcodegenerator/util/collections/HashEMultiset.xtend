@@ -246,7 +246,7 @@ class HashEMultiset<E> implements Multiset<E>, MinimalSObjectContainerCollection
 	}
 	
 	override removeIf(Predicate<? super E> p) {
-		val toBeRemoved = stream.filter(p).collect(Collectors.toList)
+		val toBeRemoved = elementSet.stream.filter(p).collect(Collectors.toSet)
 		removeAll(toBeRemoved)
 	}
 	
