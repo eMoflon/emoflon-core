@@ -217,10 +217,11 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	}
 	
 	override eNotify(Notification n) {
-		val notification = cascadeNotifications(n)
+		val chain = cascadeNotifications(n)
 		if (eNotificationRequired) for (Adapter a : eAdapters) {
-			a.notifyChanged(notification)
+			a.notifyChanged(n)
 		}
+		chain.dispatch
 	}
 	
 	override eSetDeliver(boolean deliver) {
@@ -235,9 +236,9 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 		!(eAdapters ?: Collections.emptyList).isEmpty && eDeliver
 	}
 	
-	protected def Notification cascadeNotifications(Notification n) {
+	protected def NotificationChain cascadeNotifications(Notification n) {
 		if (!getCascade(eResource) && #[Notification.ADD, Notification.ADD_MANY].contains(n.eventType)) {
-			return n
+			return new NotificationList(n)
 		}
 		val chain = if (n instanceof NotificationChain) {
 			n
@@ -251,12 +252,12 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 				} else {
 					n.newValue
 				}
-				if (eobj === null || !(eobj instanceof EObject)) return n
+				if (eobj === null || !(eobj instanceof EObject)) return chain
 				val iter = (eobj as EObject).eAllContents
 				if (iter.hasNext) {
 					chain.add(childNotifications(iter, n.eventType))
 				} else {
-					return n
+					return chain
 				}
 			}
 			case Notification.ADD_MANY, case Notification.REMOVE_MANY: {
@@ -265,18 +266,14 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 				} else {
 					n.oldValue
 				}) as Collection<EObject>
-				if (list === null || list.isEmpty) return n
+				if (list === null || list.isEmpty) return chain
 				for (eobj : list) {
 					val iter = (eobj as EObject).eAllContents
 					chain.add(childNotifications(iter, n.eventType))
 				}
 			}
 		}
-		if (chain !== n) {
-			return SmartEMFNotification.chainToNotification(chain as NotificationList)
-		} else {
-			return n
-		}
+		return chain
 	}
 		
 	def boolean getCascade(Resource resource) {
