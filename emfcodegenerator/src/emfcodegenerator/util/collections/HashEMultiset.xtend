@@ -274,10 +274,10 @@ class HashEMultiset<E> implements Multiset<E>, MinimalSObjectContainerCollection
 	}
 	
 	override retainAll(Collection<?> c) {
+		val oldSize = size
 		val toBeRetained = Sets.newHashSet(c)
 		val toBeRemoved = new LinkedList(Sets.difference(this.elementSet, toBeRetained))
 		removeAll(toBeRemoved)
-		val oldSize = size
 		
 		oldSize != size
 	}
