@@ -5,9 +5,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import emfcodegenerator.notification.SmartEMFNotification;
@@ -118,7 +120,8 @@ interface MinimalSObjectContainerCollection<E> extends InternalEList<E>, Minimal
 	 * @return whether a notification was generated
 	 */
 	default boolean addNotification(Supplier<SmartEMFNotification> notificationFactory) {
-		if (eContainer() != null && eContainer().eDeliver()) {
+		EObject container = eContainer();
+		if (container != null && container.eDeliver() && !Objects.requireNonNullElse(container.eAdapters(), Collections.EMPTY_LIST).isEmpty()) {
 			return notificationBuilder().add(notificationFactory.get());
 		} else {
 			return false;

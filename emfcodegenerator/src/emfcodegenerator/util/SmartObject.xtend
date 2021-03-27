@@ -216,7 +216,8 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 		return eDeliver
 	}
 	
-	override eNotify(Notification notification) {
+	override eNotify(Notification n) {
+		val notification = cascadeNotifications(n)
 		if (eNotificationRequired) for (Adapter a : eAdapters) {
 			a.notifyChanged(notification)
 		}
