@@ -24,8 +24,8 @@ import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.util.EcoreUtil
-import persistence.XtendXMIResource
 import org.eclipse.emf.ecore.util.InternalEList
+import persistence.XtendXMIResource
 
 /**
  * SmartEMF base-class for all generated objects.
