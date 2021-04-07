@@ -249,7 +249,7 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	}
 	
 	/**
-	 * Generates an XMI representation of this reslource's contents.
+	 * Generates an XMI representation of this resource's contents.
 	 */
 	def CharSequence generateXMI() {
 		val root = rootObject()
@@ -301,6 +301,9 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		}
 	}
 	
+	/**
+	 * Creates an XMI tag from a non-root object.
+	 */
 	private def CharSequence toXMITag(EObject object, int depth) {
 		val indentation = this.indentation * depth
 		val sb = new StringBuilder()
@@ -321,6 +324,9 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		return sb
 	}
 	
+	/**
+	 * Creates an XMI attribute from a cross reference.
+	 */
 	private def crossReference(EObject object, EReference ref) {
 		val target = object.eGet(ref)
 		if (target instanceof EObject) {
@@ -335,12 +341,18 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		}
 	}
 	
+	/**
+	 * Concatenates {@code string} {@code i} times to an empty StringBuilder
+	 */
 	private def operator_multiply(String string, int i) {
 		val sb = new StringBuilder()
 		for (var j = 0; j < i; j++) sb.append(string);
 		return sb
 	}
 	
+	/**
+	 * @return the tag name for the root object
+	 */
 	private def String rootName(EObject object) {
 		object.eClass.getEPackage.getName + ":" + object.eClass.getName
 	}
@@ -349,6 +361,9 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		tagName(object, object.eContainingFeature)
 	}
 	
+	/**
+	 * @return the tag name for a non-root object
+	 */
 	private def String tagName(EObject object, EStructuralFeature feat) {
 		if (feat !== null) {
 			var String name = feat.getName()
@@ -359,6 +374,9 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		}
 	}
 	
+	/**
+	 * Creates XMI attributes from an object's attributes and cross-references
+	 */
 	private def String xmiAttributes(EObject object) {
 		val eClass = object.eClass
 		val sb = new StringBuilder
@@ -378,6 +396,9 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		sb.toString
 	}
 	
+	/**
+	 * Creates the XML attributes of the root object
+	 */
 	private def String createRootAttributes(XMIRoot root) {
 		val pkg = getPackage(root)
 		'''xmi:version="«xmiVersion»" xmlns:xmi="«xmiNamespace»" xmlns:«pkg.getNsPrefix»="«pkg.getNsURI»"'''
@@ -418,6 +439,9 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		this.publicId = publicId
 	}
 	
+	/*
+	 * non-ASCII encodings may not work correctly
+	 */
 	override setEncoding(String encoding) {
 		this.encoding = encoding
 	}
