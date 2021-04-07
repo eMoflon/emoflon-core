@@ -114,8 +114,8 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 	 * {@link #create_egeneric_type_bound_set_up_command(EGenericType, HashMap, ETypeParameter)
 	 create_egeneric_type_bound_set_up_command()}.
 	 * @author Adrian Zwenger
-	 * @param EGenericType typ: the top-most element of tree to traverse
-	 * @param LinkedList<EGenericType> bounds_list: list storing the current recursion state. Pass
+	 * @param type EGenericType the top-most element of tree to traverse
+	 * @param bounds_list LinkedList<EGenericType> list storing the current recursion state. Pass
 	 * empty list on first call
 	 * @return LinkedList<EGenericType>
  	 * @author Adrian Zwenger

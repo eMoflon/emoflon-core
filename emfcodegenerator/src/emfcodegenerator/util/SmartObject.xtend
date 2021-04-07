@@ -160,10 +160,20 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 		throw new UnsupportedOperationException()
 	}
 
+	/**
+	 * supposed to return true if the current object is a proxy. As all model instances are not a proxy and all SmartObject instances are model
+	 * instances, false is always returned.
+	 * @return boolean
+	 */
 	override boolean eIsProxy(){
-		return this.e_static_class.eIsProxy()
+		return false
 	}
 
+	/**
+	 * Returns the containing resource, or null.
+	 * An object is contained in a resource if it, or one of it's containers, appears in the contents of that resource.
+	 * An object must be contained by a resource in order to be serialized.
+	 */
 	override eResource() {
 		return resource ?: if (eContainer !== null) eContainer.eResource else null;
 	}
@@ -183,32 +193,32 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	}
 
 	override Object eGet(EStructuralFeature eFeature, boolean resolve){
-		return this.eGet(eFeature)
+		throw new UnsupportedOperationException("Feature not implemented")
 	}
 	
 	def Object eGet(int featureID, boolean resolve, boolean coreType){
-		return null
+		throw new UnsupportedOperationException("Feature not implemented")
 	}
 	
-    def void eSet(int featureID, Object newValue){
+	def void eSet(int featureID, Object newValue){
 		throw new UnsupportedOperationException("Seems as the feature has not been registered.")
-    }
+	}
 
 	override eSet(EStructuralFeature feature, Object newValue) {
-		this.e_static_class.eSet(feature, newValue)
+		throw new UnsupportedOperationException("Feature not implemented")
 	}
 	
 	override eUnset(EStructuralFeature feature) {
 		this.e_static_class.eUnset(feature)
 	}
 
-    def void eUnset(int featureID){
-        throw new UnsupportedOperationException("Seems as the feature has not been registered.")
-    }
+	def void eUnset(int featureID){
+        	throw new UnsupportedOperationException("Seems as the feature has not been registered.")
+    	}
 
-    def boolean eIsSet(int featureID){
-        throw new UnsupportedOperationException("Seems as the feature has not been registered.")
-    }
+    	def boolean eIsSet(int featureID){
+    	    throw new UnsupportedOperationException("Seems as the feature has not been registered.")
+    	}
 		
 	override boolean eIsSet(EStructuralFeature feature) {
 		throw new RuntimeException("Feature might not be registered....")

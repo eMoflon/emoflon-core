@@ -85,6 +85,9 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 
 	/**########################Methods########################*/
 
+	/**
+	 * @inheritDoc
+	 */
 	override generate_init_code_for_package_class(EcoreGenmodelParser gen_model){
 		if(this.type_init_commands_are_generated === true) return;
 		this.type_init_commands_are_generated = true
@@ -190,21 +193,35 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 		this.type_init_commands = body
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	override get_inspected_object_type() {
 		return InspectedObjectType.EATTRIBUTE
 	}
 
+	/**
+	 * returns true if the inspected EAttribute is a literal/primitive
+	 * @return boolean
+	 * @author Adrian Zwenger
+	 */
 	def boolean is_a_literal(){
 		return (this.e_attr.EType as EClassifierImpl).instanceClass.isPrimitive
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	override get_getter_method_declaration_for_the_package_classes() {
 		if(this.getter_method_declaration_for_the_package_classes_is_generated)
 			return "EAttribute " + this.getter_method_declaration_for_the_package_classes
 		var entry = this.get_getter_method_declaration_for_the_package_classes__stump_only()
 		return "EAttribute " + entry.toString()
 	}
-	
+
+	/**
+	 * @inheritDoc
+	 */
 	override get_getter_method_declaration_for_the_package_classes__stump_only(){
 		if(this.getter_method_declaration_for_the_package_classes_is_generated)
 			return this.getter_method_declaration_for_the_package_classes
@@ -217,7 +234,10 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 		this.getter_method_declaration_for_the_package_classes_is_generated = true
 		return entry.toString()
 	}
-	
+
+	/**
+	 * @inheritDoc
+	 */
 	override get_literals_entry_for_package_classes() {
 		var entry = new StringBuilder("EAttribute ")
 		entry.append(emf_to_uppercase((this.e_attr.eContainer as EClass).name))
