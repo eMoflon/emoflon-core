@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.util.EcoreUtil
 import persistence.XtendXMIResource
+import org.eclipse.emf.ecore.util.InternalEList
 
 /**
  * SmartEMF base-class for all generated objects.
@@ -163,8 +164,15 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 		return this.e_static_class.eIsProxy()
 	}
 
-	override Resource eResource() {
-		return this.e_static_class.eResource()
+	override eResource() {
+		return resource ?: if (eContainer !== null) eContainer.eResource else null;
+	}
+	
+	/**
+	 * @return this object's resource if it is a top-level object, {@code null} otherwise
+	 */
+	def eDirectResource() {
+		resource
 	}
 	
 	/**
@@ -229,6 +237,29 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	}
 	
 	/**
+	 * Analogous to and adapted from BasicEObjectImpl.eSetResource
+	 */
+	def eSetResource(Resource.Internal r, NotificationChain n) {
+		val oldR = eResource() as Resource.Internal
+		var NotificationChain chain = n
+		
+		if (oldR !== null && r !== null) {
+			chain = (r.contents as InternalEList<?>).basicRemove(this, chain)
+			oldR.detached(this)
+		}
+		if (eContainer !== null) {
+			val ref = eContainer.eGet(eContainingFeature)
+			if (ref instanceof EList) {
+				ref.remove(this)
+			} else {
+				eContainer.eUnset(eContainingFeature)
+			}
+		}
+		
+		return chain
+	}
+	
+	/**
 	 * Analogous to BasicNotifierImpl.eNotificationRequired
 	 * @return true when eDeliver is true and there is at least one adapter
 	 */
@@ -237,7 +268,7 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	}
 	
 	protected def NotificationChain cascadeNotifications(Notification n) {
-		if (!getCascade(eResource) && #[Notification.ADD, Notification.ADD_MANY].contains(n.eventType)) {
+		if (!getCascade() && #[Notification.ADD, Notification.ADD_MANY].contains(n.eventType)) {
 			return new NotificationList(n)
 		}
 		val chain = if (n instanceof NotificationChain) {
@@ -246,8 +277,8 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 			new NotificationList(n)
 		}
 		switch (n.eventType) {
-			case Notification.ADD, case Notification.REMOVE, case Notification.SET: {
-				val eobj = if (n.eventType == Notification.REMOVE) {
+			case Notification.ADD, case Notification.REMOVE, case Notification.SET, case Notification.UNSET: {
+				val eobj = if (#[Notification.REMOVE, Notification.UNSET].contains(n.eventType)) {
 					n.oldValue
 				} else {
 					n.newValue
@@ -276,9 +307,13 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 		return chain
 	}
 		
-	def boolean getCascade(Resource resource) {
-		if (resource instanceof XtendXMIResource) {
-			return resource.getCascade
+	/**
+	 * @return if this object should generate cascaded add-notifications
+	 */
+	def boolean getCascade() {
+		val res = eResource
+		if (res !== null && res instanceof XtendXMIResource) {
+			return (res as XtendXMIResource).getCascade
 		} else {
 			return false
 		}	
@@ -299,7 +334,7 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 						notification.add(SmartEMFNotification.addToFeature(container, feature, content, index))
 					}
 				}
-				case Notification.REMOVE, case Notification.REMOVE_MANY: {
+				case Notification.REMOVE, case Notification.REMOVE_MANY, case Notification.UNSET: {
 					if (notification === null) {
 						notification = SmartEMFNotification.removeFromFeature(container, feature, content, index)
 					} else {
@@ -334,6 +369,11 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	 * stores true if this object is part of a containment relationship
 	 */
 	var boolean is_containment_object = false
+		
+	/**
+	 * the resource that directly contains this object 
+	 */
+	var	Resource resource
 
 	override is_containment_object() {
 		this.is_containment_object
@@ -342,7 +382,6 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	/**
 	 * sets the eContainer and eContainingFeature back to null. Call this method if the object is
 	 * not in a containment relationship anymore
-	 * TODO: eNotification support ?
 	 */
 	override void reset_containment(){
 		this.is_containment_object = false
@@ -358,9 +397,6 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 		this.the_econtaining_feature = null
 	}
 
-	/**
-	 * TODO: eNotification support ?
-	 */
 	override void set_containment(EObject container, EStructuralFeature feature){
 		if(this.the_eContainer !== null) this.reset_containment()
 		

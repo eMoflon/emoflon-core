@@ -2,6 +2,10 @@ package emfcodegenerator.util.collections;
 
 import emfcodegenerator.notification.SmartEMFNotification;
 
+/**
+ * This class accumulates and dispatches notifications.
+ * @author paulschiffner
+ */
 public class ListNotificationBuilder {
 	private SmartEMFNotification currentChain;
 	private int accumulate = 0;
@@ -30,9 +34,8 @@ public class ListNotificationBuilder {
 		if (accumulates()) {
 			accumulate--;
 		}
-		if (currentChain != null && !accumulates()) {
-			currentChain.dispatch();
-			currentChain = null;
+		if (!accumulates()) {
+			forceFlush();
 		}
 	}
 	

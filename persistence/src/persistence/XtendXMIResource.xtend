@@ -2,7 +2,7 @@ package persistence
 
 import com.google.common.collect.HashBiMap
 import com.google.common.collect.Iterators
-import emfcodegenerator.util.collections.DefaultEList
+import emfcodegenerator.util.SmartObject
 import java.io.BufferedWriter
 import java.io.IOException
 import java.io.InputStream
@@ -13,15 +13,18 @@ import java.util.HashMap
 import java.util.List
 import java.util.Map
 import javax.xml.parsers.DocumentBuilderFactory
+import org.eclipse.emf.common.notify.NotificationChain
 import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.InternalEObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.URIConverter
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl
+import org.eclipse.emf.ecore.resource.impl.ResourceImpl.ContentsEList
 import org.eclipse.emf.ecore.util.FeatureMap
 import org.eclipse.emf.ecore.xmi.DOMHandler
 import org.eclipse.emf.ecore.xmi.XMIResource
@@ -35,6 +38,9 @@ import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.xml.sax.InputSource
 
+/**
+ * A simplified resource implementation that serializes to XMI. Ignores save options. Can enable notification cascading for its contents.
+ */
 class XtendXMIResource extends ResourceImpl implements XMIResource {
 	
 	public static val Resource.Factory FACTORY = [uri | new XtendXMIResource(uri)]
@@ -45,7 +51,39 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 	val XMIRoot dummyRoot = [getContents]
 	val defaultLoadOptions = new HashMap
 	val defaultSaveOptions = new HashMap
-	val DefaultEList<EObject> contents = new DefaultEList
+	
+    val EList<EObject> contents = new ContentsEList<EObject>(){
+    	override inverseAdd(EObject object, NotificationChain chain) {
+    		if (object instanceof InternalEObject) {
+    			super.inverseAdd(object, chain)
+    		} else if (object instanceof SmartObject) {
+    			val notifications = object.eSetResource(XtendXMIResource.this, chain)
+    			attached(object)
+    			notifications
+    		} else throw new UnsupportedOperationException("Unknown EObject implementation")
+    	}
+    	
+    	override inverseRemove (EObject object, NotificationChain chain) {
+    		if (object instanceof InternalEObject) {
+    			super.inverseRemove(object, chain)
+    		} else if (object instanceof SmartObject) {
+    			if (isLoaded || unloadingContents !== null) {
+    				detached(object)
+    			}
+    			object.eSetResource(null, chain)
+    		} else throw new UnsupportedOperationException("Unknown EObject implementation")
+    	}
+    	
+    	override contains(Object o) {
+    		if (size <= 4 || o instanceof InternalEObject) {
+    			super.contains(o)
+    		} else if (o instanceof SmartObject) {
+    			o.eDirectResource == this
+    		} else {
+    		  data.contains(o)
+    		}
+    	}
+    }
 	
 	var String xmiVersion = XMIResource.VERSION_VALUE
 	var String xmiNamespace = XMIResource.XMI_URI
@@ -210,6 +248,9 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		eObjectToExtensionMap.clear
 	}
 	
+	/**
+	 * Generates an XMI representation of this reslource's contents.
+	 */
 	def CharSequence generateXMI() {
 		val root = rootObject()
 		val sb = new StringBuilder()
@@ -358,7 +399,6 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 			if (str instanceof URIConverter.Loadable) {
 				str.loadResource(this)
 			} else {
-//				val loader = new XMILoadImpl(new XMLHelperImpl(this))
 				val loader = new SmartEMFXMILoad(new XMLHelperImpl(this))
 				val handler = opt.get(OPTION_RESOURCE_HANDLER) as ResourceHandler
 				
@@ -410,6 +450,9 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		}
 	}
 	
+	/**
+	 * Creates XPath-style IDs for EObjects. This is necessary for saving cross-references.
+	 */
 	private def void xPathForObject(EObject obj, String prefix, int i, boolean disableTopIndex) {
 		val path = if (prefix == "") {
 			"/" + if (disableTopIndex) "" else i
@@ -424,32 +467,54 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		}
 	}
 	
+	/**
+	 * @param useXPathIDs whether XPath-style IDs are used
+	 */
 	def setUseXPathIDs(boolean useXPathIDs) {
 		this.useXPathIDs = useXPathIDs
 	}
 	
+	/**
+	 * @return whether XPath-style IDs are used
+	 */
 	def getUseXPathIDs() {
 		useXPathIDs
 	}
 	
+	/**
+	 * @param create whether IDs for cross-references should be generated when the resource is saved
+	 */
 	def createIDsOnSave(boolean create) {
 		createIDsOnSave = create
 		useXPathIDs = create
 	}
 	
+	/**
+	 * @return the indentation string
+	 */
 	def getIndentation() {
 		indentation
 	}
 	
-	// This does not check whether the string only contains whitespace - maybe it should throw an exception if it does not
+	/**
+	 * @param indentation the string used to indent the generated XMI files. If null, use four spaces.
+	 */
+	 // This does not check whether the string only contains whitespace - maybe it should throw an exception if it does not
 	def setIndentation(String indentation) {
-		this.indentation = indentation
+		this.indentation = indentation ?: "   "
 	}
 	
+	/**
+	 * @return whether cascading of add-notifications is enabled.
+	 */
 	def getCascade() {
 		cascadeNotifications
 	}
 	
+	/**
+	 * Enables or disables cascaded add-notifications for the objects in this resource.
+	 * @param cascade whether cascaded add-notifications should be enabled
+	 */
 	def setCascade(boolean cascade) {
 		cascadeNotifications = cascade
 	}
@@ -465,42 +530,47 @@ class XtendXMIResource extends ResourceImpl implements XMIResource {
 		return eObject
 	}
 	
+	//adapted from org.eclipse.emf.ecore.impl.BasicEObjectImpl#eObjectForURIFragmentSegment
 	private def EObject eObjectForURIFragmentSegment(EObject obj, String segment) {
-		val lastIndex = segment.length - 1
-		if (lastIndex == -1 || segment.charAt(0).toString != '@') {
-			throw new IllegalArgumentException("Expecting @ at index 0 of '" + segment + "'")
-		}
-		
-		val lastChar = segment.charAt(lastIndex)
-		if (lastChar == ']') {
-			val index = segment.indexOf('[')
-			if (index >= 0) {
-				val eRef = obj.eClass.getEStructuralFeature(segment.substring(1, index)) as EReference
-				val predicate = segment.substring(index + 1, lastIndex)
-				return eObjectForURIPredicate(predicate, eRef)
-			} else {
-				throw new IllegalArgumentException("Expecting [ in '" + segment + "'")
-			}
+		if (obj instanceof InternalEObject) {
+			obj.eObjectForURIFragmentSegment(segment)
 		} else {
-			var dotIndex = -1
-			if (Character.isDigit(lastChar)) {
-				dotIndex = segment.lastIndexOf('.', lastIndex - 1)
-				if (dotIndex >= 0) {
-					val eList = obj.eGet(obj.eClass.getEStructuralFeature(segment.substring(1, dotIndex))) as EList<?>
-					val pos = Integer.parseInt(segment.substring(dotIndex + 1))
-					if (pos < eList.size) {
-						val res = eList.get(pos)
-						return if (res instanceof FeatureMap.Entry) {
-							res.value as EObject
-						} else {
-							res as EObject
+			val lastIndex = segment.length - 1
+			if (lastIndex == -1 || segment.charAt(0).toString != '@') {
+				throw new IllegalArgumentException("Expecting @ at index 0 of '" + segment + "'")
+			}
+			
+			val lastChar = segment.charAt(lastIndex)
+			if (lastChar == ']') {
+				val index = segment.indexOf('[')
+				if (index >= 0) {
+					val eRef = obj.eClass.getEStructuralFeature(segment.substring(1, index)) as EReference
+					val predicate = segment.substring(index + 1, lastIndex)
+					return eObjectForURIPredicate(predicate, eRef)
+				} else {
+					throw new IllegalArgumentException("Expecting [ in '" + segment + "'")
+				}
+			} else {
+				var dotIndex = -1
+				if (Character.isDigit(lastChar)) {
+					dotIndex = segment.lastIndexOf('.', lastIndex - 1)
+					if (dotIndex >= 0) {
+						val eList = obj.eGet(obj.eClass.getEStructuralFeature(segment.substring(1, dotIndex))) as EList<?>
+						val pos = Integer.parseInt(segment.substring(dotIndex + 1))
+						if (pos < eList.size) {
+							val res = eList.get(pos)
+							return if (res instanceof FeatureMap.Entry) {
+								res.value as EObject
+							} else {
+								res as EObject
+							}
 						}
 					}
 				}
+				if (dotIndex < 0) return obj.eGet(obj.eClass.getEStructuralFeature(segment.substring(1))) as EObject
 			}
-			if (dotIndex < 0) return obj.eGet(obj.eClass.getEStructuralFeature(segment.substring(1))) as EObject
+			return null
 		}
-		return null
 	}
 	
 	private def EObject eObjectForURIPredicate(String pred, EReference ref) {

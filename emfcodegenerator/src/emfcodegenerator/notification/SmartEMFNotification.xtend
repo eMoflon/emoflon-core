@@ -10,6 +10,11 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.common.util.EList
 
+/**
+ * This class implements the {@link Notification} and {@link NotificationChainWorkaround} interfaces.
+ * All notifications that the generated classes send are of this type.
+ * It supports notification merging and chaining.
+ */
 class SmartEMFNotification implements Notification, NotificationChainWorkaround {
 	
 	int eventType	
@@ -36,6 +41,13 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		this.feature = n.feature as EStructuralFeature
 	}
 	
+	/**
+	 * Creates a SmartEMFNotification that represents an event where an object is added to a collection.
+	 * @param owner the object that contains the collection
+	 * @param feature the feature that the collection represents
+	 * @param object the objects that is added to the collection
+	 * @param index the object's position after adding
+	 */
 	def static addToFeature(EObject owner, EStructuralFeature feature, Object object, int index) {
 		if (feature === null) return null
 		val notification = new SmartEMFNotification(ADD, null, object)
@@ -45,6 +57,14 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		return notification
 	}
 	
+	/**
+	 * Creates a SmartEMFNotification that represents an event where an attribute is set to a value.
+	 * @param owner the object that contains the attribute
+	 * @param feature the attribute
+	 * @param oldValue the attribute's old value
+	 * @param newValue the attribute's new value
+	 * @param index if the attribute is a list, the position where in the list the value was set
+	 */
 	def static set(EObject owner, EStructuralFeature feature, Object oldValue, Object newValue, int index) {
 		val notification = new SmartEMFNotification(SET, oldValue, newValue)
 		notification.notifier = owner
@@ -61,6 +81,13 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		return notification
 	}
 	
+	/**
+	 * Creates a SmartEMFNotification that represents an event where an object is removed from a collection.
+	 * @param owner the object that contains the collection
+	 * @param feature the feature that the collection represents
+	 * @param object the objects that is removed from the collection
+	 * @param index the object's position before removal
+	 */
 	def static removeFromFeature(EObject owner, EStructuralFeature feature, Object object, int index) {
 		val notification = if (object instanceof Adapter && feature === null) {
 			if (object instanceof Adapter.Internal) {
@@ -76,6 +103,14 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		return notification
 	}
 	
+	/**
+	 * Creates a SmartEMFNotification that represents an event where an object is moved within a list.
+	 * @param owner the object that contains the collection
+	 * @param feature the feature that the collection represents
+	 * @param object the objects that is moved within the collection
+	 * @param oldIndex the object's old position
+	 * @param newIndex the object's new position
+	 */
 	def static moveInList(EObject owner, EStructuralFeature feature, Object object, int oldIndex, int newIndex) {
 		val notification = new SmartEMFNotification(MOVE, oldIndex, object)
 		notification.notifier = owner
@@ -84,8 +119,13 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		return notification
 	}
 	
+	/**
+	 * Creates a SmartEMFNotification from a {@link NotificationList}. Individual notifications may be merged.
+	 * @param c the notification list
+	 */
 	def static SmartEMFNotification chainToNotification(NotificationList c) {
 		val iter = c.iterator
+		if (!iter.hasNext) return null
 		val first = iter.next
 		val notification = new SmartEMFNotification(first)
 		while (iter.hasNext) {
@@ -94,7 +134,13 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		return notification
 	}
 	
-	def static addManyIdentical(EObject owner, EStructuralFeature feature, EList<?> objects) {
+	/**
+	 * Creates a SmartEMFNotification that represents an event where many objects are added to a collection.
+	 * @param owner the object that contains the collection
+	 * @param feature the feature that the collection represents
+	 * @param objects the objects that are added to the collection
+	 */
+	def static addMany(EObject owner, EStructuralFeature feature, EList<?> objects) {
 		if (objects.size == 0) return null;
 		if (objects.size == 1) return addToFeature(owner, feature, objects.iterator.next as Object, NO_INDEX)
 		
@@ -105,7 +151,13 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		return notification
 	}
 	
-	def static removeManyIdentical(EObject owner, EStructuralFeature feature, EList<?> objects) {
+	/**
+	 * Creates a SmartEMFNotification that represents an event where many objects are removed from a collection.
+	 * @param owner the object that contains the collection
+	 * @param feature the feature that the collection represents
+	 * @param objects the objects that are removed from the collection
+	 */
+	def static removeMany(EObject owner, EStructuralFeature feature, EList<?> objects) {
 		if (objects.size == 0) return null;
 		if (objects.size == 1) return removeFromFeature(owner, feature, objects.iterator.next as Object, NO_INDEX)
 		
@@ -142,98 +194,188 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		}
 	}
 	
+	/**
+	 * @return the new value as a primitive boolean value
+	 * @throws ClassCastException if the new value is not a {@link Boolean}.
+	 */
 	override getNewBooleanValue() {
 		newValue as Boolean
 	}
 	
+	/**
+	 * @return the new value as a primitive byte value
+	 * @throws ClassCastException if the new value is not a {@link Byte}.
+	 */
 	override getNewByteValue() {
 		newValue as Byte
 	}
 	
+	/**
+	 * @return the new value as a primitive char value
+	 * @throws ClassCastException if the new value is not a {@link Character}.
+	 */
 	override getNewCharValue() {
 		newValue as Character
 	}
 	
+	/**
+	 * @return the new value as a primitive double value
+	 * @throws ClassCastException if the new value is not a {@link Double}.
+	 */
 	override getNewDoubleValue() {
 		newValue as Double
 	}
 	
+	/**
+	 * @return the new value as a primitive float value
+	 * @throws ClassCastException if the new value is not a {@link Float}.
+	 */
 	override getNewFloatValue() {
 		newValue as Float
 	}
 	
+	/**
+	 * @return the new value as a primitive int value
+	 * @throws ClassCastException if the new value is not an {@link Integer}.
+	 */
 	override getNewIntValue() {
 		newValue as Integer
 	}
 	
+	/**
+	 * @return the new value as a primitive long value
+	 * @throws ClassCastException if the new value is not a {@link Long}.
+	 */
 	override getNewLongValue() {
 		newValue as Long
 	}
 	
+	/**
+	 * @return the new value as a primitive short value
+	 * @throws ClassCastException if the new value is not a {@link Short}.
+	 */
 	override getNewShortValue() {
 		newValue as Short
 	}
 	
+	/**
+	 * @return the new value as a string
+	 * @throws ClassCastException if the new value is not a {@link String}.
+	 */
 	override getNewStringValue() {
 		newValue as String
 	}
 	
+	/**
+	 * @return the new value
+	 */
 	override getNewValue() {
 		newValue
 	}
 	
+	/**
+	 * @return the object affected by the change
+	 */
 	override getNotifier() {
 		notifier
 	}
 	
+	/**
+	 * @return the old value as a primitive boolean value
+	 * @throws ClassCastException if the old value is not a {@link Boolean}.
+	 */
 	override getOldBooleanValue() {
 		oldValue as Boolean
 	}
 	
+	/**
+	 * @return the old value as a primitive byte value
+	 * @throws ClassCastException if the old value is not a {@link Byte}.
+	 */
 	override getOldByteValue() {
 		oldValue as Byte
 	}
 	
+	/**
+	 * @return the old value as a primitive char value
+	 * @throws ClassCastException if the old value is not a {@link Character}.
+	 */
 	override getOldCharValue() {
 		oldValue as Character
 	}
 	
+	/**
+	 * @return the old value as a primitive double value
+	 * @throws ClassCastException if the old value is not a {@link Double}.
+	 */
 	override getOldDoubleValue() {
 		oldValue as Double
 	}
 	
+	/**
+	 * @return the old value as a primitive float value
+	 * @throws ClassCastException if the old value is not a {@link Float}.
+	 */
 	override getOldFloatValue() {
 		oldValue as Float
 	}
 	
+	/**
+	 * @return the old value as a primitive int value
+	 * @throws ClassCastException if the old value is not an {@link Integer}.
+	 */
 	override getOldIntValue() {
 		oldValue as Integer
 	}
 	
+	/**
+	 * @return the old value as a primitive long value
+	 * @throws ClassCastException if the old value is not a {@link Long}.
+	 */
 	override getOldLongValue() {
 		oldValue as Long
 	}
 	
+	/**
+	 * @return the old value as a primitive short value
+	 * @throws ClassCastException if the old value is not a {@link Short}.
+	 */
 	override getOldShortValue() {
 		oldValue as Short
 	}
 	
+	/**
+	 * @return the old value as a string
+	 * @throws ClassCastException if the old value is not a {@link String}.
+	 */
 	override getOldStringValue() {
 		oldValue as String
 	}
 	
+	/**
+	 * @return the old value
+	 */
 	override getOldValue() {
 		oldValue
 	}
 	
+	/**
+	 * @return the index in the list where the event occurred, or {@link Notification#NO_INDEX} if not applicable
+	 */
 	override getPosition() {
 		position
 	}
 	
+	/**
+	 * @return {@code true} if the notification's feature has been reset to its default value, {@code false} otherwise
+	 */
 	override isReset() {
 		eventType == UNSET || (eventType == SET && newValue == getFeatureDefaultValue())
 	}
 	
+	/**
+	 * @return whether the notification represents a state-changing event
+	 */
 	override isTouch() {
 		switch (eventType) {
 			case RESOLVE,
@@ -251,9 +393,16 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
      * Notifications can be merged when all these conditions are met: <ul>
      * <li>They have the same notifier</li>
      * <li>They have the same feature</li>
-     * <li>They have compatible event types</li>
+     * <li>They have compatible event types: <ul>
+     *     <li>{@link #SET SET}, {@link #UNSET UNSET}</li>
+     *     <li>{@link #ADD ADD}, {@link #ADD_MANY ADD_MANY}</li>
+     *     <li>{@link #REMOVE REMOVE}, {@link #REMOVE_MANY REMOVE_MANY}</li>
+     *     </ul>
+     * </li>
      * </ul>
      * <tt>null</tt> is treated as a "nothing new happened" notification and will always be merged; the result of this merging is the unmodified old notification.
+     * 
+     * @param notification a notification that happened after this one (if order is relevant)
      * @return whether the notification can be and has been merged with this one.
      */
      //TODO When an object is moved and removed from the list immediately afterwards, should the notifications be merged? Does this ever happen in real code?
@@ -268,15 +417,19 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 			switch (eventTypes) {
 				case SET -> UNSET,
 				case UNSET -> UNSET: {
-					this.eventType = UNSET
-					this.newValue = notification.newValue
-					true
+					if (this.position == notification.position && this.newValue == notification.oldValue) {
+						this.eventType = UNSET
+						this.newValue = notification.newValue
+						true
+					} else false
 				}
 				case SET -> SET,
 				case UNSET -> SET: {
-					this.eventType = SET
-					this.newValue = notification.newValue
-					true
+					if (this.position == notification.position && this.newValue == notification.oldValue) {
+						this.eventType = SET
+						this.newValue = notification.newValue
+						true
+					} else false
 				}
 				case ADD -> ADD,
 				case ADD -> ADD_MANY,
@@ -286,6 +439,11 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 					this.position = Math.min(this.position, notification.position)
 					this.newValue = mergeCollections(this.newValue, notification.newValue)
 					true
+					/* The merged notification has the following properties:
+					 * - eventType is ADD_MANY
+					 * - position is the first position  in the list where an item was added
+					 * - newValue is a collection of the items that were added
+					 */
 				}
 				case REMOVE -> REMOVE,
 				case REMOVE -> REMOVE_MANY,
@@ -299,12 +457,24 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 					this.newValue = mergeArrays(this.newValue, notification.newValue)
 					this.oldValue = mergeCollections(this.oldValue, notification.oldValue)
 					true
+					/* The merged notification has the following properties:
+					 * - eventType is REMOVE_MANY
+					 * - position is the first position in the list where an item was removed
+					 * - newValue is an int[] containing the positions of the items they had at the time of removal;
+					 *   depending on how a collection implements removeAll() or whether it even is a list,
+					 *   these positions may not be meaningful
+					 * - oldValue is a collection of the items that were removed
+					 */
 				}
 				default: false
 			}
 		}
 	}
 	
+	/**
+	 * Returns a list that contains a or (if a is a Collection) its contents
+	 * and b of (if b is a Collection) its contents
+	 */
 	private def mergeCollections(Object a, Object b) {
 		val Collection<Object> collA = if (a instanceof Collection) a else Collections.singleton(a)
 		val Collection<Object> collB = if (b instanceof Collection) b else Collections.singleton(b)
@@ -314,6 +484,12 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		list
 	}
 	
+	/**
+	 * Returns an int[] that contains the contents of a and b.
+	 * If a or b are of type {@link Integer}, they are treated as single-element int[]s.
+	 * 
+	 * @throws ClassCastException if a or b is neither of type Integer nor of type int[]
+	 */
 	private def int[] mergeArrays(Object a, Object b) {
 		val aIsArr = a instanceof int[]
 		val bIsArr = b instanceof int[]
@@ -336,6 +512,9 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		return merged
 	}
 	
+	/**
+	 * @return whether the notifier's feature was considered set before the change occurred.
+	 */
 	override wasSet() {
 		switch (eventType) {
 			case SET: isFeatureUnsettable && position != NO_INDEX
@@ -349,7 +528,11 @@ class SmartEMFNotification implements Notification, NotificationChainWorkaround 
 		}
 	}
 	
-	override add(Notification notification) {
+  /**
+   * Adds a notification to the chain.
+   * @return whether the notification was added.
+   */
+  override add(Notification notification) {
 		if (merge(notification)) {
 			false
 		} else if (next === null) {

@@ -16,6 +16,10 @@ import java.util.stream.Stream
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
 
+/**
+ * This is a non-unique, non-ordered collection. It is based on the Guava {@link HashMultiset}.<br/>
+ * Because Xtend already introduces Guava as a dependency, it can be used here.
+ */
 class HashEMultiset<E> implements Multiset<E>, MinimalSObjectContainerCollection<E> {
 	
 	/**
@@ -99,11 +103,11 @@ class HashEMultiset<E> implements Multiset<E>, MinimalSObjectContainerCollection
 	}
 	
 	/**
-	 * Constructs new HashEMultiset with the specified initial number
+	 * Constructs new HashEMultiset with the specified expected number
 	 * of distinct elements and sets the
 	 * {@link #the_eContainer eContainer} and the
 	 * {@link #the_econtaining_feature eContaining-feature} to null.
-	 * @param initial_size int
+	 * @param initialsize int
 	 * @param eContainer EObject
 	 * @param eContaining_feature EStructuralFeature
 	 * @author Adrian Zwenger, Paul Schiffner
@@ -113,7 +117,7 @@ class HashEMultiset<E> implements Multiset<E>, MinimalSObjectContainerCollection
 	}
 	
 	/**
-	 * Constructs new HashEMultiset with the specified initial number
+	 * Constructs new HashEMultiset with the specified expected number
 	 * of distinct elements and sets the
 	 * {@link #the_eContainer eContainer} and the
 	 * {@link #the_econtaining_feature eContaining-Feature} to the given values.
@@ -358,7 +362,7 @@ class HashEMultiset<E> implements Multiset<E>, MinimalSObjectContainerCollection
 			.limit(count)
 			.collect(Collectors.toCollection([new HashEMultiset]))
 		backingHashMultiset.add(element, count)
-		addNotification[SmartEMFNotification.addManyIdentical(eContainer, eContainingFeature, addedElements)]	
+		addNotification[SmartEMFNotification.addMany(eContainer, eContainingFeature, addedElements)]	
 		return before
 	}
 	
@@ -397,7 +401,7 @@ class HashEMultiset<E> implements Multiset<E>, MinimalSObjectContainerCollection
 			.limit(count)
 			.collect(Collectors.toCollection([new HashEMultiset]))
 		backingHashMultiset.remove(element, count)
-		addNotification[SmartEMFNotification.removeManyIdentical(eContainer, eContainingFeature, removedElements)]
+		addNotification[SmartEMFNotification.removeMany(eContainer, eContainingFeature, removedElements)]
 		return before
 	}
 	

@@ -3,11 +3,17 @@ package persistence;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.xmi.XMLHelper;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.SAXXMIHandler;
 
+/**
+ * This is a version of {@link SAXXMIHandler} that does not depend on objects implementing {@link InternalEObject}.
+ * However, if they don't, it can't handle proxies.
+ * @author paulschiffner
+ */
 public class SmartEMFXMIHandler extends SAXXMIHandler {
 
 	public SmartEMFXMIHandler(XMLResource xmiResource, XMLHelper helper, Map<?, ?> options) {
@@ -26,7 +32,11 @@ public class SmartEMFXMIHandler extends SAXXMIHandler {
 		        }
 		        else if (name.equals(hrefAttribute) && (!recordUnknownFeature || types.peek() != UNKNOWN_FEATURE_TYPE || obj.eClass() != anyType))
 		        {
-		          throw new UnsupportedOperationException("Can't handle proxies");
+		          if (obj instanceof InternalEObject) {
+		        	  handleProxy((InternalEObject)obj, attribs.getValue(i));
+		          } else {
+		        	  throw new UnsupportedOperationException("Can't handle proxies for non-InternalEObjects");
+		          }
 		        }
 		        else if (isNamespaceAware)
 		        {
