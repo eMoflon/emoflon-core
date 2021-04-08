@@ -146,11 +146,11 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 
 		//add constructor to methods
 		var constructor_declaration = 
-			'''private «this.e_pak.get_emf_package_class_name»Impl()'''.toString()
+			'''private Â«this.e_pak.get_emf_package_class_nameÂ»Impl()'''.toString()
 		this.method_declarations.add(constructor_declaration)
 		var body = new ArrayList<String>()
 		body.add(
-	'''super(eNS_URI, «this.e_pak.get_emf_package_factory_class_name».eINSTANCE);'''.toString()
+	'''super(eNS_URI, Â«this.e_pak.get_emf_package_factory_class_nameÂ».eINSTANCE);'''.toString()
 		)
 		this.methods.put(constructor_declaration, body)
 	}
@@ -199,7 +199,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 			new ArrayList<ObjectFieldInspector>()
 		
 		//Each class is stored in the package as an EClassifier. The data field is added here.
-		this.object_fields.add('''private EClass «class_object_name» = null;'''.toString)
+		this.object_fields.add('''private EClass Â«class_object_nameÂ» = null;'''.toString)
 
 		//create all methods for the EAttributes and EReferences of one class
 		for(EStructuralFeature e_feature : e_class.EStructuralFeatures){
@@ -214,8 +214,8 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 				inspector.get_getter_method_declaration_for_the_package_classes()
 
 			body = new ArrayList<String>()
-			body.add('''return («data_type») this.'''.toString + class_object_name + 
-					'''.getEStructuralFeatures().get(«feature_count»);'''.toString)
+			body.add('''return (Â«data_typeÂ») this.'''.toString + class_object_name + 
+					'''.getEStructuralFeatures().get(Â«feature_countÂ»);'''.toString)
 			
 			this.method_declarations.add(declaration)
 			this.methods.put(declaration, body)
@@ -243,7 +243,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 
   			body = new ArrayList<String>()
 			body.add('''return this.'''.toString + class_object_name + 
-					'''.getEOperations().get(«feature_count»);'''.toString())
+					'''.getEOperations().get(Â«feature_countÂ»);'''.toString())
 
 			this.method_declarations.add(declaration)
 			this.methods.put(declaration, body)
@@ -298,15 +298,15 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		var p_name = this.e_pak.get_emf_package_class_name()
 		//create method name
 		var declaration =
-			'''public static «p_name» init()'''.toString()
+			'''public static Â«p_nameÂ» init()'''.toString()
 
 		//init an ArrayList for method content
 		var body = new ArrayList<String>()
 
 		//add verification if EPackage was already registered or if it still needs to be created
 		body.add(
-			'''if (isInited) return («p_name») '''.toString +
-			'''EPackage.Registry.INSTANCE.getEPackage(«p_name».eNS_URI);'''.toString
+			'''if (isInited) return (Â«p_nameÂ») '''.toString +
+			'''EPackage.Registry.INSTANCE.getEPackage(Â«p_nameÂ».eNS_URI);'''.toString
 			)
 
 		//to init one EPackage, all EPackages need to be inited
@@ -321,12 +321,12 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		var package_name = this.e_pak.get_emf_package_class_name()
 		var this_package_var_name = "the_" + package_name
 		snippets.add(
-'''Object registered_«package_name» = EPackage.Registry.INSTANCE.getEPackage(«package_name».eNS_URI);'''.toString()
+'''Object registered_Â«package_nameÂ» = EPackage.Registry.INSTANCE.getEPackage(Â«package_nameÂ».eNS_URI);'''.toString()
 		)
 		snippets.add(
-'''«package_name»Impl the_«package_name» = («package_name»Impl) ((registered_«package_name» instanceof «package_name»Impl) ? registered_«package_name» : new «package_name»Impl());'''.toString
+'''Â«package_nameÂ»Impl the_Â«package_nameÂ» = (Â«package_nameÂ»Impl) ((registered_Â«package_nameÂ» instanceof Â«package_nameÂ»Impl) ? registered_Â«package_nameÂ» : new Â«package_nameÂ»Impl());'''.toString
 		)
-		init_snippets.put('''the_«package_name»'''.toString(), snippets)
+		init_snippets.put('''the_Â«package_nameÂ»'''.toString(), snippets)
 
 		//get or create and register all the EPackages
 		body.addAll(snippets)
@@ -338,10 +338,10 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 			
 			var inspector = this.packages.get(epak)
 			this.add_import_as_String(
-'''«inspector.get_package_declaration_name».«inspector.get_emf_package_class_name»'''
+'''Â«inspector.get_package_declaration_nameÂ».Â«inspector.get_emf_package_class_nameÂ»'''
 			)
 			this.add_import_as_String(
-'''«inspector.get_package_declaration_name».impl.«inspector.get_emf_package_class_name»Impl'''
+'''Â«inspector.get_package_declaration_nameÂ».impl.Â«inspector.get_emf_package_class_nameÂ»Impl'''
 			)
 			var buffer = inspector.get_init_code_snippet()
 			init_snippets.putAll(buffer)
@@ -361,9 +361,9 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		//packages will be registered and stored as NullPointer somehow.............
 		body.addAll(init_package_contents)
 		
-		body.add('''EPackage.Registry.INSTANCE.put(«p_name».eNS_URI, «this_package_var_name»);''')
+		body.add('''EPackage.Registry.INSTANCE.put(Â«p_nameÂ».eNS_URI, Â«this_package_var_nameÂ»);''')
 
-		body.add('''return «this_package_var_name»;'''.toString)
+		body.add('''return Â«this_package_var_nameÂ»;'''.toString)
 		this.method_declarations.add(declaration)
 		this.methods.put(declaration, body)
 	}
@@ -380,9 +380,9 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		var body = new ArrayList<String>()
 		body.add("if (this.isInitialized) return;")
 		body.add("isInitialized = true;")
-		body.add('''setName(«this.e_pak.get_emf_package_class_name».eNAME);'''.toString())
-		body.add('''setNsPrefix(«this.e_pak.get_emf_package_class_name».eNS_PREFIX);'''.toString())
-		body.add('''setNsURI(«this.e_pak.get_emf_package_class_name».eNS_URI);'''.toString())
+		body.add('''setName(Â«this.e_pak.get_emf_package_class_nameÂ».eNAME);'''.toString())
+		body.add('''setNsPrefix(Â«this.e_pak.get_emf_package_class_nameÂ».eNS_PREFIX);'''.toString())
+		body.add('''setNsURI(Â«this.e_pak.get_emf_package_class_nameÂ».eNS_URI);'''.toString())
 		return body
 	}
 
@@ -411,7 +411,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 					var p_class_name = inspector.get_emf_package_class_name
 
 					body.add(
-'''«p_class_name» the«p_class_name» = («p_class_name») EPackage.Registry.INSTANCE.getEPackage(«p_class_name».eNS_URI);'''
+'''Â«p_class_nameÂ» theÂ«p_class_nameÂ» = (Â«p_class_nameÂ») EPackage.Registry.INSTANCE.getEPackage(Â«p_class_nameÂ».eNS_URI);'''
 					)
 				}
 			}
@@ -468,7 +468,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 							  .get(type_parameter)
 
 		    	type_parameter_body.add(
-'''ETypeParameter «param_var_name» = addETypeParameter(«e_class_name»EClass, "«type_parameter.name»");'''
+'''ETypeParameter Â«param_var_nameÂ» = addETypeParameter(Â«e_class_nameÂ»EClass, "Â«type_parameter.nameÂ»");'''
 				)
 
 				etype_to_var_name_map.put(type_parameter, param_var_name)
@@ -493,7 +493,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 						//create the generic
 						//add the newly created EGenericType to the creation code-block
 						type_parameter_creation_block.add(
-'''EGenericType «this.generic_bound_to_var_name_map.get(generic_type)»  = createEGenericType(«get_classifier_command»);'''.toString()
+'''EGenericType Â«this.generic_bound_to_var_name_map.get(generic_type)Â»  = createEGenericType(Â«get_classifier_commandÂ»);'''.toString()
 						)
 					}
 					type_parameter_set_up_block.add(
@@ -543,7 +543,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 					entry.append(" = addETypeParameter(")
 					entry.append(data_type_name)
 					entry.append(", ")
-					entry.append('''"«type_param.name»"''')
+					entry.append('''"Â«type_param.nameÂ»"''')
 					entry.append(");")
 					type_parameter_creation_block.add(entry.toString())
 				}
@@ -618,7 +618,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 			}
 
 			class_init_command.append(
-'''«instance_class».class, "«e_class.name»", «e_class.isAbstract», «e_class.isInterface», «is_generated»);'''
+'''Â«instance_classÂ».class, "Â«e_class.nameÂ»", Â«e_class.isAbstractÂ», Â«e_class.isInterfaceÂ», Â«is_generatedÂ»);'''
 			)
 
 			init_block.add(class_init_command.toString)
@@ -739,7 +739,6 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
                                   java.lang.String name,
                                   boolean isSerializable,
                                   boolean isGenerated)
-
 			protected EDataType initEDataType(EDataType d,
                                   java.lang.Class<?> instanceClass,
                                   java.lang.String name,
@@ -800,11 +799,11 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		for(EEnum eenum : this.e_pak.get_all_eenums_in_package){
 			this.add_import_as_String(this.e_pak.get_package_declaration_name + "." + eenum.name)
 			body.add(
-				'''initEEnum(«eenum.name»EEnum, «eenum.name».class, "«eenum.name»");'''.toString
+				'''initEEnum(Â«eenum.nameÂ»EEnum, Â«eenum.nameÂ».class, "Â«eenum.nameÂ»");'''.toString
 			)
 			for(entry : eenum.ELiterals){
 				body.add(
-		'''addEEnumLiteral(«eenum.name»EEnum, «eenum.name».«entry.name.toUpperCase»);'''.toString()
+		'''addEEnumLiteral(Â«eenum.nameÂ»EEnum, Â«eenum.nameÂ».Â«entry.name.toUpperCaseÂ»);'''.toString()
 				)
 			}
 		}
@@ -901,7 +900,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 
 			//create the EClass
 			body.add(
-		'''«local_class_var_name» = this.createEClass(«emf_to_uppercase(ecl.name)»);'''.toString()
+		'''Â«local_class_var_nameÂ» = this.createEClass(Â«emf_to_uppercase(ecl.name)Â»);'''.toString()
 			)
 
 			/* 
@@ -917,7 +916,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 				)
 				
 				entry.append(
-'''«local_class_var_name», «this.e_pak.get_emf_package_class_name()».«emf_to_uppercase(ecl.name)»__«emf_to_uppercase(obj_field.get_name)»);'''
+'''Â«local_class_var_nameÂ», Â«this.e_pak.get_emf_package_class_name()Â».Â«emf_to_uppercase(ecl.name)Â»__Â«emf_to_uppercase(obj_field.get_name)Â»);'''
 				)
 				
 				body.add(entry.toString)
@@ -926,7 +925,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 			//create EOperations
 			for(e_op : this.eoperation_precedence_map.get(ecl)){
 				body.add(
-'''this.createEOperation(«local_class_var_name», «this.e_pak.get_emf_package_class_name()».«emf_to_uppercase(ecl.name)»___«emf_to_uppercase(e_op.get_name)»);'''.toString
+'''this.createEOperation(Â«local_class_var_nameÂ», Â«this.e_pak.get_emf_package_class_name()Â».Â«emf_to_uppercase(ecl.name)Â»___Â«emf_to_uppercase(e_op.get_name)Â»);'''.toString
 				)
 			}
 		}
@@ -934,14 +933,14 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		//create custom EDataTypes
 		for(e_data_type : this.e_pak.get_all_edata_types_in_package()){
 			body.add(
-'''this.«e_data_type.name.substring(0, 1).toLowerCase()»«e_data_type.name.substring(1)»EDataType = createEDataType(«emf_to_uppercase(e_data_type.name)»);'''
+'''this.Â«e_data_type.name.substring(0, 1).toLowerCase()Â»Â«e_data_type.name.substring(1)Â»EDataType = createEDataType(Â«emf_to_uppercase(e_data_type.name)Â»);'''
 			)
 		}
 		
 		//create EEnums
 		for(eenum : this.e_pak.get_all_eenums_in_package){
 			body.add(
-		'''this.«eenum.name»EEnum = createEEnum(«emf_to_uppercase(eenum.name)»);'''.toString()
+		'''this.Â«eenum.nameÂ»EEnum = createEEnum(Â«emf_to_uppercase(eenum.name)Â»);'''.toString()
 			)
 		}
 
@@ -996,7 +995,7 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 	 */
 	override write_to_file() {
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 		
 		var package_file = new File(this.fq_file_name)
 		package_file.getParentFile().mkdirs()
@@ -1006,37 +1005,37 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		var method_block = new StringBuilder()
 
 		for(import_string : this.get_needed_imports()){
-			import_block.append('''import «import_string»;«System.lineSeparator»'''.toString)
+			import_block.append('''import Â«import_stringÂ»;Â«System.lineSeparatorÂ»'''.toString)
 		}import_block.append(System.lineSeparator)
 		
 		for(declaration : this.method_declarations){
 			var method = new StringBuilder(IDENTION)
 			method.append(
-				'''«declaration» { «System.lineSeparator»'''.toString
+				'''Â«declarationÂ» { Â«System.lineSeparatorÂ»'''.toString
 			)
 
 			var iterator = this.methods.get(declaration).iterator
 
 			while(iterator.hasNext){
 				method.append(
-					'''«IDENTION»«IDENTION»«iterator.next»«System.lineSeparator»'''.toString()
+					'''Â«IDENTIONÂ»Â«IDENTIONÂ»Â«iterator.nextÂ»Â«System.lineSeparatorÂ»'''.toString()
 				)
 			}
 
-			method.append('''«IDENTION»}«System.lineSeparator»«System.lineSeparator»'''.toString)
+			method.append('''Â«IDENTIONÂ»}Â«System.lineSeparatorÂ»Â«System.lineSeparatorÂ»'''.toString)
 			method_block.append(method.toString)
 		}
 
 		for(declaration : this.object_fields){
-			data_fields.append('''«IDENTION»«declaration»«System.lineSeparator»'''.toString)
+			data_fields.append('''Â«IDENTIONÂ»Â«declarationÂ»Â«System.lineSeparatorÂ»'''.toString)
 		}data_fields.append(System.lineSeparator)
 
 		package_fw.write(
-			'''«this.package_declaration»«System.lineSeparator»«System.lineSeparator»'''.toString()
+			'''Â«this.package_declarationÂ»Â«System.lineSeparatorÂ»Â«System.lineSeparatorÂ»'''.toString()
 		)
 		package_fw.write(import_block.toString)
 		package_fw.write(
-			'''«this.class_declaration» {«System.lineSeparator»«System.lineSeparator»'''.toString()
+			'''Â«this.class_declarationÂ» {Â«System.lineSeparatorÂ»Â«System.lineSeparatorÂ»'''.toString()
 		)
 		package_fw.write(data_fields.toString)
 		package_fw.write(method_block.toString)

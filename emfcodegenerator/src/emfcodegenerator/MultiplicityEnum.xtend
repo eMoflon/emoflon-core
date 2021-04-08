@@ -1,7 +1,7 @@
 package emfcodegenerator
 
 /**
- * Enum to handle EMF multiplicities
+ * Enum to handle EMF multiplicities.
  */
 class MultiplicityEnum {
 	var public static SINGLE_ELEMENT = 1

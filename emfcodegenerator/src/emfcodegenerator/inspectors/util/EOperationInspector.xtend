@@ -253,7 +253,7 @@ class EOperationInspector extends EMFCodeGenerationClass implements FeatureInspe
 	 * @return String
 	 */
 	def private String create_method_signiture(){
-		var declaration = '''«return_value» «e_op.name»('''.toString
+		var declaration = '''Â«return_valueÂ» Â«e_op.nameÂ»('''.toString
 		var new_declaration = "<"
 		var iterator = generic_parameters.iterator()
 		
@@ -270,7 +270,7 @@ class EOperationInspector extends EMFCodeGenerationClass implements FeatureInspe
 		iterator = operation_parameters_names.iterator
 		while(iterator.hasNext){
 			var key = iterator.next
-			declaration += '''«operation_parameters.get(key)» «key»'''.toString
+			declaration += '''Â«operation_parameters.get(key)Â» Â«keyÂ»'''.toString
 			if(iterator.hasNext) declaration += ", "
 		}
 		declaration += ")"
@@ -306,8 +306,8 @@ class EOperationInspector extends EMFCodeGenerationClass implements FeatureInspe
 	def HashMap<String,String> get_method_implementation(String IDENTION){
 		var HashMap<String,String> map = new HashMap<String,String>()
 		map.put(
-			'''«IDENTION»public «get_method_declaration»'''.toString, 
-			'''«IDENTION»«IDENTION»throw new UnsupportedOperationException("Not Implemented");'''
+			'''Â«IDENTIONÂ»public Â«get_method_declarationÂ»'''.toString, 
+			'''Â«IDENTIONÂ»Â«IDENTIONÂ»throw new UnsupportedOperationException("Not Implemented");'''
 			)
 		return map
 	}
@@ -401,7 +401,7 @@ class EOperationInspector extends EMFCodeGenerationClass implements FeatureInspe
 			return this.getter_method_declaration_for_the_package_classes
 		var class_name = (this.e_op.eContainer as EClass).name
 		var eop_name = this.get_name_with_first_letter_capitalized()
-		var a = '''get«class_name»__«eop_name»«this.create_getter_method_suffix()»()'''
+		var a = '''getÂ«class_nameÂ»__Â«eop_nameÂ»Â«this.create_getter_method_suffix()Â»()'''
 		this.getter_method_declaration_for_the_package_classes = a
 		this.getter_method_declaration_for_the_package_classes_is_generated = true
 		return a
@@ -412,10 +412,10 @@ class EOperationInspector extends EMFCodeGenerationClass implements FeatureInspe
 	 */
 	override get_literals_entry_for_package_classes() {
 		var var_name =
-'''«emf_to_uppercase((this.e_op.eContainer as EClass).name)»___«emf_to_uppercase(this.get_name)»'''
+'''Â«emf_to_uppercase((this.e_op.eContainer as EClass).name)Â»___Â«emf_to_uppercase(this.get_name)Â»'''
 		var getter =
-'''eINSTANCE.«this.get_getter_method_declaration_for_the_package_classes__stump_only()»'''
-		return '''EOperation «var_name» = «getter»;'''.toString()
+'''eINSTANCE.Â«this.get_getter_method_declaration_for_the_package_classes__stump_only()Â»'''
+		return '''EOperation Â«var_nameÂ» = Â«getterÂ»;'''.toString()
 	}
 
 	/**
@@ -461,7 +461,7 @@ class EOperationInspector extends EMFCodeGenerationClass implements FeatureInspe
 		var order = ((this.e_op.isOrdered) ? "" : "!") + "IS_ORDERED"
 		
 		body.add(
-'''EOperation «this.my_init_code_var_name» = initEOperation(«getter», null, "«this.e_op.name»", «this.e_op.lowerBound», «this.e_op.upperBound», «uniqueness», «order»);'''.toString()
+'''EOperation Â«this.my_init_code_var_nameÂ» = initEOperation(Â«getterÂ», null, "Â«this.e_op.nameÂ»", Â«this.e_op.lowerBoundÂ», Â«this.e_op.upperBoundÂ», Â«uniquenessÂ», Â«orderÂ»);'''.toString()
 		)
 
 		//###############################create ETypeParameters (generics of method)
@@ -489,7 +489,7 @@ class EOperationInspector extends EMFCodeGenerationClass implements FeatureInspe
 
 			//declaration and instancing of parameter
 	    	type_parameter_creation_block.add(
-'''ETypeParameter «param_var_name» = addETypeParameter(«getter_method», "«etype_param.name»");'''
+'''ETypeParameter Â«param_var_nameÂ» = addETypeParameter(Â«getter_methodÂ», "Â«etype_param.nameÂ»");'''
 			)
 
 	    	//add the ETypeparameter and its newly generated variable name to registry
@@ -579,7 +579,7 @@ class EOperationInspector extends EMFCodeGenerationClass implements FeatureInspe
 			}
 			
 			type_parameter_set_up_block.add(
-				'''initEOperation(«this.my_init_code_var_name», «return_obj_var_name»);'''
+				'''initEOperation(Â«this.my_init_code_var_nameÂ», Â«return_obj_var_nameÂ»);'''
 			)
 		}
 		//###############################create Parameters of method
@@ -602,7 +602,7 @@ class EOperationInspector extends EMFCodeGenerationClass implements FeatureInspe
 			var first_part_of_command = new StringBuilder("addEParameter(")
 			var rest_of_command = new StringBuilder()
 				rest_of_command.append(
-					'''"«parameter.name»", «parameter.lowerBound», «parameter.upperBound»'''
+					'''"Â«parameter.nameÂ»", Â«parameter.lowerBoundÂ», Â«parameter.upperBoundÂ»'''
 					)
 				rest_of_command.append(((parameter.isUnique) ? ", " : ", !") + "IS_UNIQUE, ")
 				rest_of_command.append(((parameter.isOrdered) ? "" : "!") + "IS_ORDERED);")
@@ -777,7 +777,7 @@ class EOperationInspector extends EMFCodeGenerationClass implements FeatureInspe
 						){
 							var needed_param = all_needed_type_parameters.get(top_level_type_param.ETypeParameter)
 							type_parameter_set_up_block.add(
-'''«exception_classifier_name».getETypeArguments().add(createEGenericType(«needed_param»));'''
+'''Â«exception_classifier_nameÂ».getETypeArguments().add(createEGenericType(Â«needed_paramÂ»));'''
 							)
 						} else {
 							while(iterator.hasNext){
@@ -860,7 +860,7 @@ class EOperationInspector extends EMFCodeGenerationClass implements FeatureInspe
 		String var_name, String classifier_getter_method
 	){
 		return
-		'''EGenericType «var_name» = createEGenericType(«classifier_getter_method»);'''.toString
+		'''EGenericType Â«var_nameÂ» = createEGenericType(Â«classifier_getter_methodÂ»);'''.toString
 	}
 
 	/**

@@ -396,14 +396,14 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 		var package_name = this.get_emf_package_class_name()
 
 		snippets.add(
-'''Object registered_«package_name» = EPackage.Registry.INSTANCE.getEPackage(«package_name».eNS_URI);'''
+'''Object registered_Â«package_nameÂ» = EPackage.Registry.INSTANCE.getEPackage(Â«package_nameÂ».eNS_URI);'''
 		)
 
 		snippets.add(
-'''«package_name»Impl the_«package_name» = («package_name»Impl) ((registered_«package_name» instanceof «package_name»Impl) ? registered_«package_name» : «package_name».eINSTANCE);'''.toString
+'''Â«package_nameÂ»Impl the_Â«package_nameÂ» = (Â«package_nameÂ»Impl) ((registered_Â«package_nameÂ» instanceof Â«package_nameÂ»Impl) ? registered_Â«package_nameÂ» : Â«package_nameÂ».eINSTANCE);'''.toString
 		)
 
-		this.init_snippet.put('''the_«package_name»'''.toString(), snippets)
+		this.init_snippet.put('''the_Â«package_nameÂ»'''.toString(), snippets)
 	}
 
 	/**

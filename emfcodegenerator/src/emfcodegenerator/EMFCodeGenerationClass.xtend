@@ -28,7 +28,7 @@ class EMFCodeGenerationClass {
 	 * The sub-directory relative to the working directory where the
 	 * generated files shall be saved at
 	 */
-	val static protected String GENERATED_FILE_DIR = "./src-gen/"
+	var static protected String GENERATED_FILE_DIR = "./src-gen/"
 	
 	/**
 	 * a Set containing strings of modules which need to be imported
@@ -234,6 +234,15 @@ class EMFCodeGenerationClass {
 		 * https://stackoverflow.com/questions/1591132/how-can-i-add-an-underscore-before-each-capital-letter-inside-a-java-string
 		 */
 		return value.replaceAll("(.)([A-Z])", "$1_$2").toUpperCase()
+	}
+	
+	/**
+	 * updates the output directory for generated files to given path
+	 * @param dir String
+	 * @author Adrian Zwenger
+	 */
+	def void set_output_dir(String dir){
+		EMFCodeGenerationClass.GENERATED_FILE_DIR = dir
 	}
 
 }

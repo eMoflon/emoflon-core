@@ -151,8 +151,8 @@ class InterfaceCreator extends ModelFileCreator {
 	 */
 	def protected static String create_getter_method_stump(ObjectFieldInspector e_attr){
 		var String var_type = e_attr.get_object_field_type_name()
-		if(e_attr.is_a_tuple()) var_type = '''EList<«var_type»>'''.toString()
-		return '''«var_type» get«e_attr.get_name_with_first_letter_capitalized()»()'''.toString()
+		if(e_attr.is_a_tuple()) var_type = '''EList<Â«var_typeÂ»>'''.toString()
+		return '''Â«var_typeÂ» getÂ«e_attr.get_name_with_first_letter_capitalized()Â»()'''.toString()
 	}
 
 	/**
@@ -163,8 +163,8 @@ class InterfaceCreator extends ModelFileCreator {
 	 */
 	def protected static String create_setter_method_stump(ObjectFieldInspector e_attr){
 		var String var_type = e_attr.get_object_field_type_name()
-		if(e_attr.is_a_tuple()) var_type = '''EList<«var_type»>'''.toString()
-		return '''void set«e_attr.get_name_with_first_letter_capitalized()»(«var_type» value)'''.toString()
+		if(e_attr.is_a_tuple()) var_type = '''EList<Â«var_typeÂ»>'''.toString()
+		return '''void setÂ«e_attr.get_name_with_first_letter_capitalized()Â»(Â«var_typeÂ» value)'''.toString()
 	}
 
 	/**
@@ -174,7 +174,7 @@ class InterfaceCreator extends ModelFileCreator {
 	 * @author Adrian Zwenger
 	 */
 	def protected static String create_unset_method_stump(ObjectFieldInspector e_attr){
-		return '''void unset«e_attr.get_name_with_first_letter_capitalized»()'''.toString()
+		return '''void unsetÂ«e_attr.get_name_with_first_letter_capitalizedÂ»()'''.toString()
 	}
 	
 	/**
@@ -184,7 +184,7 @@ class InterfaceCreator extends ModelFileCreator {
 	 * @author Adrian Zwenger
 	 */
 	def protected static String create_isset_method_stump(ObjectFieldInspector e_attr){
-		return '''boolean isSet«e_attr.get_name_with_first_letter_capitalized»()'''.toString()
+		return '''boolean isSetÂ«e_attr.get_name_with_first_letter_capitalizedÂ»()'''.toString()
 	}
 
 	/**########################Getters########################*/
@@ -194,7 +194,7 @@ class InterfaceCreator extends ModelFileCreator {
 	 */
 	override get_method_declarations(){
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 		return method_declarations
 	}
 
@@ -203,7 +203,7 @@ class InterfaceCreator extends ModelFileCreator {
 	 */
 	override get_declaration(){
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 		return interface_declaration
 	}
 
@@ -226,7 +226,7 @@ class InterfaceCreator extends ModelFileCreator {
 	 */
 	override get_package_declaration(){
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 		return package_declaration
 	}
 
@@ -273,7 +273,7 @@ class InterfaceCreator extends ModelFileCreator {
 	 */
 	override write_to_file(){
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 		var interface_file = new File(this.fq_file_path)
 		interface_file.getParentFile().mkdirs()
 		var interface_fw = new FileWriter(interface_file , false)
@@ -284,7 +284,7 @@ class InterfaceCreator extends ModelFileCreator {
 
 		//add imports
 		for(needed_import : this.get_needed_imports()){
-			interface_fw.write('''import «needed_import»;'''.toString)
+			interface_fw.write('''import Â«needed_importÂ»;'''.toString)
 			interface_fw.write(System.lineSeparator)
 		}
 		interface_fw.write(System.lineSeparator)

@@ -128,7 +128,7 @@ class EMFCodeGenerator{
 			for(eenum : package_inspector.get_all_eenums_in_package){
 				var eenum_creator = new EEnumCreator(eenum, package_inspector)
 				eenum_creator.initialize_creator(
-					'''«package_inspector.get_path_to_folder»/«eenum.name».java'''.toString,
+					'''Â«package_inspector.get_path_to_folderÂ»/Â«eenum.nameÂ».java'''.toString,
 					"    "
 				)
 				eenum_creator.write_to_file()

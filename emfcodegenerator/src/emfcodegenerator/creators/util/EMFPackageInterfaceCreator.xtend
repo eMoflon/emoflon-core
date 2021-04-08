@@ -101,16 +101,16 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 		var interface_name = e_pak.get_emf_package_class_name()
 		this.source_name = interface_name + "Impl"
 		this.interface_declaration =
-			'''public interface «interface_name» extends EPackage'''.toString
+			'''public interface Â«interface_nameÂ» extends EPackage'''.toString
 
 		this.add_import_as_String("org.eclipse.emf.ecore.EAttribute")
 		this.add_import_as_String("org.eclipse.emf.ecore.EClass")
 		this.add_import_as_String("org.eclipse.emf.ecore.EPackage")
 		this.add_import_as_String("org.eclipse.emf.ecore.EDataType")
 		
-		this.package_object_fields.add('''String eNAME = "«e_pak.get_name»";'''.toString)
-		this.package_object_fields.add('''String eNS_URI = "«e_pak.get_ens_uri»";'''.toString)
-		this.package_object_fields.add('''String eNS_PREFIX = "«e_pak.get_ens_prefix»";'''.toString)
+		this.package_object_fields.add('''String eNAME = "Â«e_pak.get_nameÂ»";'''.toString)
+		this.package_object_fields.add('''String eNS_URI = "Â«e_pak.get_ens_uriÂ»";'''.toString)
+		this.package_object_fields.add('''String eNS_PREFIX = "Â«e_pak.get_ens_prefixÂ»";'''.toString)
 		this.package_object_fields.add(
 			interface_name + " eINSTANCE = " + e_pak.get_package_declaration_name + ".impl." +
 			this.source_name + ".init();"
@@ -152,7 +152,7 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 		//register ID's for EDataTypes
 		for(EDataType e_type : this.e_pak.get_all_edata_types_in_package()){
 			object_fields.add(
-				'''int «emf_to_uppercase(e_type.name)» = «class_id++»;'''.toString
+				'''int Â«emf_to_uppercase(e_type.name)Â» = Â«class_id++Â»;'''.toString
 			)
 		}
 		
@@ -161,7 +161,7 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 		//register ID's for EEnums
 		for(EEnum e_enum : this.e_pak.get_all_eenums_in_package){
 			object_fields.add(
-				'''int «emf_to_uppercase(e_enum.name)» = «class_id++»;'''.toString
+				'''int Â«emf_to_uppercase(e_enum.name)Â» = Â«class_id++Â»;'''.toString
 			)
 		}
 		return object_fields
@@ -201,9 +201,9 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 			var super_cl_name = emf_to_uppercase(the_super_class.name)
 
 			feature_id_offset = 
-				'''«super_pak_name».«super_cl_name»_FEATURE_COUNT + '''.toString
+				'''Â«super_pak_nameÂ».Â«super_cl_nameÂ»_FEATURE_COUNT + '''.toString
 			operation_id_offset =
-				'''«super_pak_name».«super_cl_name»"_OPERATION_COUNT + '''.toString
+				'''Â«super_pak_nameÂ».Â«super_cl_nameÂ»"_OPERATION_COUNT + '''.toString
 		}
 		else the_super_class = null
 
@@ -277,18 +277,18 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 				var super_package = e_pak_of_super_class.get_emf_package_class_name
 				var super_class = emf_to_uppercase(the_super_class.name)
 				object_fields.add(
-'''int «class_name»__«data_field_name» = «super_package».«super_class»__«data_field_name»;'''
+'''int Â«class_nameÂ»__Â«data_field_nameÂ» = Â«super_packageÂ».Â«super_classÂ»__Â«data_field_nameÂ»;'''
 				)
 			}
 		}
 
 		for(data_field : all_structural_features){
 			object_fields.add(
-'''int «class_name»__«emf_to_uppercase(data_field.get_name)» = «feature_id_offset»«feature_id++»;'''
+'''int Â«class_nameÂ»__Â«emf_to_uppercase(data_field.get_name)Â» = Â«feature_id_offsetÂ»Â«feature_id++Â»;'''
 			)
 		}
 		object_fields.add(
-			'''int «class_name»_FEATURE_COUNT = «feature_id_offset»«feature_id»;'''.toString()
+			'''int Â«class_nameÂ»_FEATURE_COUNT = Â«feature_id_offsetÂ»Â«feature_idÂ»;'''.toString()
 		)
 		
 		//EOperation entries
@@ -301,18 +301,18 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 				var p_class_name = e_pak_of_super_class.get_emf_package_class_name
 				var super_name = emf_to_uppercase(the_super_class.name)
 				object_fields.add(
-'''int «class_name»__«data_field_name» = «p_class_name».«super_name»___«data_field_name»;'''
+'''int Â«class_nameÂ»__Â«data_field_nameÂ» = Â«p_class_nameÂ».Â«super_nameÂ»___Â«data_field_nameÂ»;'''
 				)
 			}
 		}
 
 		for(e_operation : all_e_operations){
 			object_fields.add(
-'''int «class_name»___«emf_to_uppercase(e_operation.get_name)» = «operation_id_offset»«operation_id++»;'''
+'''int Â«class_nameÂ»___Â«emf_to_uppercase(e_operation.get_name)Â» = Â«operation_id_offsetÂ»Â«operation_id++Â»;'''
 			)
 		}
 		object_fields.add(
-			'''int «class_name»_OPERATION_COUNT = «operation_id_offset»«operation_id»;'''
+			'''int Â«class_nameÂ»_OPERATION_COUNT = Â«operation_id_offsetÂ»Â«operation_idÂ»;'''
 		)
 		
 		return object_fields
@@ -334,25 +334,25 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 
 		for(att : this.e_pak.get_object_field_inspectors_for_class(e_class)){
 			object_fields.add(
-'''int «emf_to_uppercase(e_class.name)»__«emf_to_uppercase(att.get_name)» = «obj_field_id.toString»;'''
+'''int Â«emf_to_uppercase(e_class.name)Â»__Â«emf_to_uppercase(att.get_name)Â» = Â«obj_field_id.toStringÂ»;'''
 			)
 			feature_count += 1
 			obj_field_id += 1
 		}
 		//add feature-count
 		object_fields.add(
-			'''int «emf_to_uppercase(e_class.name)»_FEATURE_COUNT = «feature_count»;'''
+			'''int Â«emf_to_uppercase(e_class.name)Â»_FEATURE_COUNT = Â«feature_countÂ»;'''
 		)
 				
 		for(EOperation e_op : all_operations){
 			object_fields.add(
-'''int «emf_to_uppercase(e_class.name)»___«emf_to_uppercase(e_op.name)» = «op_count++»;'''
+'''int Â«emf_to_uppercase(e_class.name)Â»___Â«emf_to_uppercase(e_op.name)Â» = Â«op_count++Â»;'''
 			)
 		}//iterate over all EOperations
 
 		//add operation-count
 		object_fields.add(
-			'''int «emf_to_uppercase(e_class.name)»_OPERATION_COUNT = «op_count»;'''
+			'''int Â«emf_to_uppercase(e_class.name)Â»_OPERATION_COUNT = Â«op_countÂ»;'''
 		)
 		return object_fields
 	}
@@ -370,7 +370,7 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 		this.add_import_as_String("org.eclipse.emf.ecore.EOperation")
 
 		for(e_class : this.e_pak.get_all_eclasses_in_package()){
-			declarations.add('''EClass get«e_class.name»();''')
+			declarations.add('''EClass getÂ«e_class.nameÂ»();''')
 			for(
 				AbstractObjectFieldInspector inspector :
 				this.e_pak.get_object_field_inspectors_for_class(e_class)
@@ -390,13 +390,13 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 
 		for(EDataType e_type : this.e_pak.get_all_edata_types_in_package()){
 			declarations.add(
-				'''EDataType get«e_type.name»();'''.toString
+				'''EDataType getÂ«e_type.nameÂ»();'''.toString
 			)
 		}
 
 		for(EEnum e_type : this.e_pak.get_all_eenums_in_package()){
 			declarations.add(
-				'''EEnum get«e_type.name»();'''.toString
+				'''EEnum getÂ«e_type.nameÂ»();'''.toString
 			)
 		}
 		return declarations
@@ -414,7 +414,7 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 
 		for(e_class : this.e_pak.get_all_eclasses_in_package()){
 			declarations.add(
-				'''EClass «emf_to_uppercase(e_class.name)» = eINSTANCE.get«e_class.name»();'''
+				'''EClass Â«emf_to_uppercase(e_class.name)Â» = eINSTANCE.getÂ«e_class.nameÂ»();'''
 			)
 
 			for(
@@ -436,13 +436,13 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 
 		for(EDataType e_type : this.e_pak.get_all_edata_types_in_package()){
 			declarations.add(
-				'''EDataType «emf_to_uppercase(e_type.name)» = eINSTANCE.get«e_type.name»();'''
+				'''EDataType Â«emf_to_uppercase(e_type.name)Â» = eINSTANCE.getÂ«e_type.nameÂ»();'''
 			)
 		}
 		
 		for(EEnum e_type : this.e_pak.get_all_eenums_in_package()){
 			declarations.add(
-				'''EEnum «emf_to_uppercase(e_type.name)» = eINSTANCE.get«e_type.name»();'''
+				'''EEnum Â«emf_to_uppercase(e_type.name)Â» = eINSTANCE.getÂ«e_type.nameÂ»();'''
 			)
 		}
 
@@ -468,7 +468,7 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 	 */
 	override write_to_file() {
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 		var package_file = new File(this.file_path)
 		package_file.getParentFile().mkdirs()
 		var package_fw = new FileWriter(package_file , false)
@@ -484,23 +484,23 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 		var interface_declaration_string = this.interface_declaration + " {" + System.lineSeparator
 		
 		for(import_string : this.get_needed_imports()){
-			import_block.append('''import «import_string»;«System.lineSeparator»''')
+			import_block.append('''import Â«import_stringÂ»;Â«System.lineSeparatorÂ»''')
 		} import_block.append(System.lineSeparator)
 		
 		for(obj_field : this.package_object_fields){
-			data_fields.append('''«this.IDENTION»«obj_field»«System.lineSeparator»''')
+			data_fields.append('''Â«this.IDENTIONÂ»Â«obj_fieldÂ»Â«System.lineSeparatorÂ»''')
 		}
 		
 		for(method : this.package_method_declarations){
-			method_declaration.append('''«this.IDENTION»«method»«System.lineSeparator»''')
+			method_declaration.append('''Â«this.IDENTIONÂ»Â«methodÂ»Â«System.lineSeparatorÂ»''')
 		}
 
-		literals_interface.append('''«IDENTION»interface Literals {«System.lineSeparator»''')
+		literals_interface.append('''Â«IDENTIONÂ»interface Literals {Â«System.lineSeparatorÂ»''')
 
 		for(entry : this.subinterface_literals){
-			literals_interface.append('''«IDENTION»«IDENTION»«entry»«System.lineSeparator»''')
+			literals_interface.append('''Â«IDENTIONÂ»Â«IDENTIONÂ»Â«entryÂ»Â«System.lineSeparatorÂ»''')
 		}
-		literals_interface.append('''«IDENTION»}«System.lineSeparator»''')
+		literals_interface.append('''Â«IDENTIONÂ»}Â«System.lineSeparatorÂ»''')
 
 		package_fw.write(package_declaration_string)
 		package_fw.write(import_block.toString)
@@ -508,7 +508,7 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 		package_fw.write(data_fields.toString)
 		package_fw.write(method_declaration.toString)
 		package_fw.write(literals_interface.toString)
-		package_fw.write('''}«System.lineSeparator»«System.lineSeparator»''')
+		package_fw.write('''}Â«System.lineSeparatorÂ»Â«System.lineSeparatorÂ»''')
 
 		package_fw.close()
 	}

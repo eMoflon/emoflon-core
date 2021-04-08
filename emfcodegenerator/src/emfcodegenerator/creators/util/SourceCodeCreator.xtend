@@ -278,7 +278,7 @@ class SourceCodeCreator extends InterfaceCreator {
 	 */
 	override get_declaration(){
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 		return class_declaration
 	}
 
@@ -356,7 +356,7 @@ class SourceCodeCreator extends InterfaceCreator {
 	 */
 	def private HashMap<String,String> create_constructor(){
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 		/*
 		 * Two constructors are needed. One regular one and one which passes an EClass bottom-up
 		 * through the inheritance hierarchy.<br>
@@ -376,13 +376,13 @@ class SourceCodeCreator extends InterfaceCreator {
 
 		//regular constructor
 		var body = 
-'''«IDENTION»«IDENTION»super(«e_pak.get_emf_package_class_name».Literals.«emf_to_uppercase(super.get_name)»);//regular constructor'''.toString()
+'''Â«IDENTIONÂ»Â«IDENTIONÂ»super(Â«e_pak.get_emf_package_class_nameÂ».Literals.Â«emf_to_uppercase(super.get_name)Â»);//regular constructor'''.toString()
 
 		method.put(declaration + "()", body)
 		
 		//constructor for inheritance
 		declaration += "(EClass type)"
-		body = '''«IDENTION»«IDENTION»super(type);//constructor for inheritance'''.toString
+		body = '''Â«IDENTIONÂ»Â«IDENTIONÂ»super(type);//constructor for inheritance'''.toString
 
 		method.put(declaration, body)
 		return method
@@ -405,7 +405,7 @@ class SourceCodeCreator extends InterfaceCreator {
 			SmartCollectionFactory.get_elist_type_name(obj_field.get_needed_elist_type_enum)
 		var obj_field_type = obj_field.get_object_field_type_name
 		var data_type = (obj_field.is_a_tuple) ? 
-			'''«elist_type»<«obj_field_type»>'''.toString : obj_field_type
+			'''Â«elist_typeÂ»<Â«obj_field_typeÂ»>'''.toString : obj_field_type
 
 		var default_value =
 			(obj_field.get_inspected_object_type === InspectedObjectType.EREFERENCE) ?
@@ -415,12 +415,12 @@ class SourceCodeCreator extends InterfaceCreator {
 				obj_field.get_default_value()
 
 		declarations.add(
-	'''«IDENTION»protected «data_type» «obj_field.get_name()» = «default_value»;'''
+	'''Â«IDENTIONÂ»protected Â«data_typeÂ» Â«obj_field.get_name()Â» = Â«default_valueÂ»;'''
 		)
 
 		if(obj_field.is_unsettable){
 			declarations.add(
-				'''«IDENTION»protected boolean «obj_field.get_name»IsSet = false;'''.toString
+				'''Â«IDENTIONÂ»protected boolean Â«obj_field.get_nameÂ»IsSet = false;'''.toString
 			)
 		}
 
@@ -440,9 +440,9 @@ class SourceCodeCreator extends InterfaceCreator {
 	 */
 	def protected HashMap<String,String> create_getter_for_object_field(ObjectFieldInspector obj_field){
 		var declaration = IDENTION + "public " + create_getter_method_stump((obj_field))
-		//var body = IDENTION + IDENTION + '''return  this.«obj_field.get_name()»;'''.toString
+		//var body = IDENTION + IDENTION + '''return  this.Â«obj_field.get_name()Â»;'''.toString
 		var body =
-'''«IDENTION»«IDENTION»return«(obj_field.is_a_tuple) ? ''' (EList<«obj_field.get_object_field_type_name»>) ''' : " "»this.«obj_field.get_name()»;'''
+'''Â«IDENTIONÂ»Â«IDENTIONÂ»returnÂ«(obj_field.is_a_tuple) ? ''' (EList<Â«obj_field.get_object_field_type_nameÂ»>) ''' : " "Â»this.Â«obj_field.get_name()Â»;'''
 
 		var map = new HashMap<String,String>()
 		map.put(declaration, body)
@@ -460,7 +460,7 @@ class SourceCodeCreator extends InterfaceCreator {
 	 */
 	def protected HashMap<String,String> create_setter_for_object_field(ObjectFieldInspector obj_field){
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 
 		addNotificationImport()
 		val boolean is_reference_and_contained =
@@ -477,7 +477,7 @@ class SourceCodeCreator extends InterfaceCreator {
 		if(is_reference_and_contained)
 			body +=
 '''
-«IDENTION»«IDENTION»if(this.«obj_field.get_name» != null) ((emfcodegenerator.util.MinimalSObjectContainer) this.«fieldName»).reset_containment();
+Â«IDENTIONÂ»Â«IDENTIONÂ»if(this.Â«obj_field.get_nameÂ» != null) ((emfcodegenerator.util.MinimalSObjectContainer) this.Â«fieldNameÂ»).reset_containment();
 '''.toString()
 
 		if(obj_field.is_a_tuple()){
@@ -489,17 +489,17 @@ class SourceCodeCreator extends InterfaceCreator {
 			)
 
 			body +=
-'''«IDENTION»«IDENTION»if(value instanceof «elist_type»){
-«IDENTION»«IDENTION»«IDENTION»this.«fieldName» = («elist_type»<«obj_field_type»>) value;
-«IDENTION»«IDENTION»} else {
-«IDENTION»«IDENTION»«IDENTION»throw new IllegalArgumentException();
-«IDENTION»«IDENTION»}
+'''Â«IDENTIONÂ»Â«IDENTIONÂ»if(value instanceof Â«elist_typeÂ»){
+Â«IDENTIONÂ»Â«IDENTIONÂ»Â«IDENTIONÂ»this.Â«fieldNameÂ» = (Â«elist_typeÂ»<Â«obj_field_typeÂ»>) value;
+Â«IDENTIONÂ»Â«IDENTIONÂ»} else {
+Â«IDENTIONÂ»Â«IDENTIONÂ»Â«IDENTIONÂ»throw new IllegalArgumentException();
+Â«IDENTIONÂ»Â«IDENTIONÂ»}
 '''.toString()
 
 		} else {
 			body +=
 '''
-«IDENTION»«IDENTION»this.«fieldName» = value;
+Â«IDENTIONÂ»Â«IDENTIONÂ»this.Â«fieldNameÂ» = value;
 '''.toString()
 		}
 
@@ -509,10 +509,10 @@ class SourceCodeCreator extends InterfaceCreator {
 
 			body +=
 '''
-«IDENTION»«IDENTION»((emfcodegenerator.util.MinimalSObjectContainer) this.«fieldName»).set_containment(
-«IDENTION»«IDENTION»«IDENTION»this,
-«IDENTION»«IDENTION»«IDENTION»«this.get_estructural_feature_getter_for_objectfield_inspector(obj_field)»
-«IDENTION»«IDENTION»);'''
+Â«IDENTIONÂ»Â«IDENTIONÂ»((emfcodegenerator.util.MinimalSObjectContainer) this.Â«fieldNameÂ»).set_containment(
+Â«IDENTIONÂ»Â«IDENTIONÂ»Â«IDENTIONÂ»this,
+Â«IDENTIONÂ»Â«IDENTIONÂ»Â«IDENTIONÂ»Â«this.get_estructural_feature_getter_for_objectfield_inspector(obj_field)Â»
+Â«IDENTIONÂ»Â«IDENTIONÂ»);'''
 
 	}
 			
@@ -522,7 +522,7 @@ class SourceCodeCreator extends InterfaceCreator {
 					"this." + obj_field.get_name + "IsSet = true;"
 					
 		body += System.lineSeparator + IDENTION + IDENTION +
-			'''if (eNotificationRequired()) eNotify(SmartEMFNotification.set(this, «get_estructural_feature_getter_for_objectfield_inspector(obj_field)», oldValue, value, -1));'''
+			'''if (eNotificationRequired()) eNotify(SmartEMFNotification.set(this, Â«get_estructural_feature_getter_for_objectfield_inspector(obj_field)Â», oldValue, value, -1));'''
 		
 		var map = new HashMap<String,String>()
 		map.put(declaration, body)
@@ -539,7 +539,7 @@ class SourceCodeCreator extends InterfaceCreator {
 	 */
 	def protected HashMap<String,String> create_isset_for_object_field(ObjectFieldInspector obj_field){
 		var declaration = IDENTION + "public " + create_isset_method_stump(obj_field)
-		var body = IDENTION + IDENTION + '''return «obj_field.get_name()»IsSet;'''
+		var body = IDENTION + IDENTION + '''return Â«obj_field.get_name()Â»IsSet;'''
 		var map = new HashMap<String,String>()
 		map.put(declaration, body)
 		return map
@@ -559,13 +559,13 @@ class SourceCodeCreator extends InterfaceCreator {
 		var declaration = IDENTION + "public " + create_unset_method_stump(obj_field)
 		val fieldName = obj_field.get_name
 		val newValue = obj_field.get_default_value
-		var body = '''Object oldValue = get«obj_field.get_name_with_first_letter_capitalized()»();''' +
+		var body = '''Object oldValue = getÂ«obj_field.get_name_with_first_letter_capitalized()Â»();''' +
 		           System.lineSeparator + IDENTION + IDENTION +
-				   '''this.«fieldName» = «newValue»;'''.toString +
+				   '''this.Â«fieldNameÂ» = Â«newValueÂ»;'''.toString +
 				   System.lineSeparator + IDENTION + IDENTION +
-				   '''this.«fieldName»IsSet = false;'''.toString +
+				   '''this.Â«fieldNameÂ»IsSet = false;'''.toString +
 				   System.lineSeparator + IDENTION + IDENTION +
-				   '''if (eNotificationRequired()) eNotify(SmartEMFNotification.unset(this, «get_estructural_feature_getter_for_objectfield_inspector(obj_field)», oldValue, «newValue», -1));'''.toString
+				   '''if (eNotificationRequired()) eNotify(SmartEMFNotification.unset(this, Â«get_estructural_feature_getter_for_objectfield_inspector(obj_field)Â», oldValue, Â«newValueÂ», -1));'''.toString
 		var map = new HashMap<String,String>()
 		map.put(declaration, body)
 		return map
@@ -606,7 +606,7 @@ class SourceCodeCreator extends InterfaceCreator {
 		var to_string_method_body = new StringBuilder(
 			IDENTION + IDENTION +
 			'''StringBuilder result = new StringBuilder(super.toString() + '''.toString() +
-			'''"(name: «e_class.name») ");'''.toString() +
+			'''"(name: Â«e_class.nameÂ») ");'''.toString() +
 			System.lineSeparator()
 			)
 
@@ -614,7 +614,7 @@ class SourceCodeCreator extends InterfaceCreator {
 		//checked before passing request to super class
 		if(!this.e_data_fields.isEmpty){
 			var switch_case_declaration = 
-				'''«IDENTION + IDENTION»switch(feautureID) {«System.lineSeparator»'''.toString()
+				'''Â«IDENTION + IDENTIONÂ»switch(feautureID) {Â«System.lineSeparatorÂ»'''.toString()
 			e_get_method_body.append(switch_case_declaration)
 			e_set_method_body.append(switch_case_declaration)
 			e_unset_method_body.append(switch_case_declaration)
@@ -635,17 +635,17 @@ class SourceCodeCreator extends InterfaceCreator {
 				var attr_type = attr.get_object_field_type_name()
 
 				var case_statement = IDENTION + IDENTION + IDENTION + 
-					'''case «package_class_name».«id_name»:'''.toString() + System.lineSeparator() +
+					'''case Â«package_class_nameÂ».Â«id_nameÂ»:'''.toString() + System.lineSeparator() +
 					IDENTION + IDENTION + IDENTION + IDENTION
 				
 				//create eGet case body
 				e_get_method_body.append(
-					case_statement + ''' return get«attr_name»();''' + System.lineSeparator()
+					case_statement + ''' return getÂ«attr_nameÂ»();''' + System.lineSeparator()
 					)
 					
 				alternate_e_get_method_body.append(
-'''«IDENTION»«IDENTION»if («this.get_estructural_feature_getter_for_objectfield_inspector(attr)».equals(eFeature))
-«IDENTION»«IDENTION»«IDENTION»return get«attr_name»();''' + System.lineSeparator()
+'''Â«IDENTIONÂ»Â«IDENTIONÂ»if (Â«this.get_estructural_feature_getter_for_objectfield_inspector(attr)Â».equals(eFeature))
+Â«IDENTIONÂ»Â«IDENTIONÂ»Â«IDENTIONÂ»return getÂ«attr_nameÂ»();''' + System.lineSeparator()
 				)
 				
 				//create eSet case body
@@ -653,44 +653,44 @@ class SourceCodeCreator extends InterfaceCreator {
 					var elist_type =
 						SmartCollectionFactory.get_elist_type_name(attr.get_needed_elist_type_enum)
 					var cast_type = (attr.is_a_tuple) ? 
-						'''«elist_type»<«attr_type»>'''.toString : attr_type
+						'''Â«elist_typeÂ»<Â«attr_typeÂ»>'''.toString : attr_type
 					e_set_method_body.append(
-						case_statement + '''set«attr_name»((«cast_type») newValue);'''.toString() +
+						case_statement + '''setÂ«attr_nameÂ»((Â«cast_typeÂ») newValue);'''.toString() +
 						System.lineSeparator()
 						)
 					alternate_e_set_method_body.append(
-						'''«IDENTION»«IDENTION»if («this.get_estructural_feature_getter_for_objectfield_inspector(attr)».equals(eFeature))
-«IDENTION»«IDENTION»«IDENTION»{set«attr_name»((«cast_type») newValue); return;}''' + System.lineSeparator()
+						'''Â«IDENTIONÂ»Â«IDENTIONÂ»if (Â«this.get_estructural_feature_getter_for_objectfield_inspector(attr)Â».equals(eFeature))
+Â«IDENTIONÂ»Â«IDENTIONÂ»Â«IDENTIONÂ»{setÂ«attr_nameÂ»((Â«cast_typeÂ») newValue); return;}''' + System.lineSeparator()
 					)
 				}
 
 				//create eUnset case body
 				if(attr.is_unsettable && attr.is_changeable)
 				e_unset_method_body.append(
-					case_statement + '''unset«attr_name»();'''.toString + System.lineSeparator() + 
+					case_statement + '''unsetÂ«attr_nameÂ»();'''.toString + System.lineSeparator() + 
 					IDENTION + IDENTION + IDENTION + IDENTION +"return;" + System.lineSeparator()
 					)
 
 				//create eIsSet case body
 				if(attr.is_unsettable)
 				e_isset_method_body.append(
-					case_statement + '''return isSet«attr_name»();'''.toString() +
+					case_statement + '''return isSetÂ«attr_nameÂ»();'''.toString() +
 					System.lineSeparator()
 					)
 				
 				//create toString method body
 				
 				to_string_method_body.append(
-					IDENTION + IDENTION + '''result.append("«attr.get_name»:");'''.toString() +
+					IDENTION + IDENTION + '''result.append("Â«attr.get_nameÂ»:");'''.toString() +
 					System.lineSeparator()
 				)
-				var to_string_entry = '''result.append(SmartObject.toStringIfNotNull(«attr.get_name»'''.toString()
+				var to_string_entry = '''result.append(SmartObject.toStringIfNotNull(Â«attr.get_nameÂ»'''.toString()
 //				if(attr instanceof AttributeInspector && !(attr as AttributeInspector).is_a_literal)
 //					to_string_entry += ".toString()"
 				to_string_entry += "));"
 				if(attr.is_unsettable){
 					to_string_method_body.append(
-						IDENTION + IDENTION + '''if(«attr.get_name»IsSet)'''.toString +
+						IDENTION + IDENTION + '''if(Â«attr.get_nameÂ»IsSet)'''.toString +
 						to_string_entry +
 						System.lineSeparator + IDENTION + IDENTION +
 						'''else result.append("<unset>");'''.toString() + System.lineSeparator()
@@ -708,7 +708,7 @@ class SourceCodeCreator extends InterfaceCreator {
 							)
 			}
 
-			var switch_case_closer = '''«IDENTION»«IDENTION»}«System.lineSeparator()»'''.toString
+			var switch_case_closer = '''Â«IDENTIONÂ»Â«IDENTIONÂ»}Â«System.lineSeparator()Â»'''.toString
 
 			e_get_method_body.append(switch_case_closer)
 			//alternate_e_get_method_body.append(switch_case_closer)
@@ -762,7 +762,7 @@ class SourceCodeCreator extends InterfaceCreator {
 	 */
 	def private void generate_members() {
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 
 		for(entry : this.create_constructor.keySet){
 			this.method_declarations.add(entry)
@@ -880,7 +880,7 @@ class SourceCodeCreator extends InterfaceCreator {
 				)
 		}
 		var command =
-'''«package_of_reference_type.get_package_declaration_name».«package_of_reference_type.get_emf_package_class_name».Literals.«obj_field.get_emf_package_literals_interface_var_name()»'''.toString
+'''Â«package_of_reference_type.get_package_declaration_nameÂ».Â«package_of_reference_type.get_emf_package_class_nameÂ».Literals.Â«obj_field.get_emf_package_literals_interface_var_name()Â»'''.toString
 		obj_field_to_e_feature_getter_map.put(
 			obj_field,
 			command
@@ -916,7 +916,7 @@ class SourceCodeCreator extends InterfaceCreator {
 	 */
 	override write_to_file(){
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 		var class_file = new File(this.fq_file_path)
 		class_file.getParentFile().mkdirs()
 		var class_fw = new FileWriter(class_file , false)
@@ -927,7 +927,7 @@ class SourceCodeCreator extends InterfaceCreator {
 		
 		//import needed modules
 		for(needed_import : needed_imports){
-			class_fw.write('''import «needed_import»;'''.toString)
+			class_fw.write('''import Â«needed_importÂ»;'''.toString)
 			class_fw.write(System.lineSeparator)
 		}
 		class_fw.write(System.lineSeparator)

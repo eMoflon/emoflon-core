@@ -13,7 +13,7 @@ interface FeatureInspector extends Inspector{
 	 * The Package class creates getters for all Object types which need to be generated.
 	 * This method shall do that.
 	 * Example: "EReference getclassA_Reference_to_class_b();"
-	 * @String
+	 * @return String
 	 */
 	def String get_getter_method_declaration_for_the_package_classes()
 	
@@ -21,10 +21,9 @@ interface FeatureInspector extends Inspector{
 	 * The Package class creates getters for all Object types which need to be generated.
 	 * This method shall do that.
 	 * Example: "getclassA_Reference_to_class_b();"
-	 * @String
+	 * @return String
 	 */
 	def String get_getter_method_declaration_for_the_package_classes__stump_only()
-
 	/**
 	 * The Package-interface has a sub-interface called Literals. Each feature has an entry there.
 	 * This method generates that entry

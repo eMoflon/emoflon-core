@@ -93,7 +93,7 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		else if(this.is_a_tuple()){
 			this.default_value = "new " +
 				SmartCollectionFactory.get_elist_type_name(this.get_needed_elist_type_enum) +
-				'''<«this.get_object_field_type_name»>()'''
+				'''<Â«this.get_object_field_type_nameÂ»>()'''
 		}
 		else if(e_ref.defaultValue === null) this.default_value = "null"
 		else this.default_value = e_ref.defaultValue.toString()
@@ -155,7 +155,7 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 				(this.e_ref.EReferenceType.EPackage.equals(the_containing_eclass.EPackage)) ?
 					"this" : "the" + this.e_ref.EReferenceType.EPackage.name + "Package"
 
-			entry.append('''«package_name».get«this.e_ref.EReferenceType.name»(), ''')
+			entry.append('''Â«package_nameÂ».getÂ«this.e_ref.EReferenceType.nameÂ»(), ''')
 		} else if(this.e_ref.EGenericType.ETypeParameter !== null &&
 				  the_containing_eclass.ETypeParameters.contains(
 				  	this.e_ref.EGenericType.ETypeParameter
@@ -195,12 +195,12 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		}
 		
 		//add String name,
-		entry.append('''"«this.get_name()»", ''')
+		entry.append('''"Â«this.get_name()Â»", ''')
 		
 		//add String defaultValue
 		entry.append(
 			(this.e_ref.defaultValueLiteral === null) ?
-			"null" : '''"«this.e_ref.defaultValueLiteral»"'''
+			"null" : '''"Â«this.e_ref.defaultValueLiteralÂ»"'''
 			)
 		entry.append(", ")
 		
@@ -316,7 +316,7 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		this.default_value =
 			"new " +
 			SmartCollectionFactory.get_elist_type_name(this.get_needed_elist_type_enum) +
-			'''<«this.get_object_field_type_name»>(this, «ereference_instance»)'''
+			'''<Â«this.get_object_field_type_nameÂ»>(this, Â«ereference_instanceÂ»)'''
 		return this.default_value
 	}
 }

@@ -61,26 +61,25 @@ class EEnumCreator extends EMFCodeGenerationClass implements FileCreator {
 		var literals_block = new ArrayList<String>()
 		var values_block = new ArrayList<String>()
 		var values_array =
-'''«IDENTION»private static final «this.e_enum.name»[] VALUES_ARRAY = new «this.e_enum.name»[] { '''
+'''Â«IDENTIONÂ»private static final Â«this.e_enum.nameÂ»[] VALUES_ARRAY = new Â«this.e_enum.nameÂ»[] { '''
 		
 		var get_by_int_method =
 '''
-
-«IDENTION»public static «this.e_enum.name» get(int value) {
-«IDENTION»«IDENTION»switch(value) {
+Â«IDENTIONÂ»public static Â«this.e_enum.nameÂ» get(int value) {
+Â«IDENTIONÂ»Â«IDENTIONÂ»switch(value) {
 '''
 		while(iterator.hasNext){
 			var literal = iterator.next
 			var a =
 '''
-«IDENTION»«literal.name.toUpperCase»(«literal.value», "«literal.name»", "«literal.name»")'''
+Â«IDENTIONÂ»Â«literal.name.toUpperCaseÂ»(Â«literal.valueÂ», "Â«literal.nameÂ»", "Â«literal.nameÂ»")'''
 
 			a += ((iterator.hasNext) ? "," : ";") + System.lineSeparator
 			literals_block.add(a.toString)
 
 			a =
 '''
-«IDENTION»public static final int «literal.name.toUpperCase»_VALUE = «literal.value»;
+Â«IDENTIONÂ»public static final int Â«literal.name.toUpperCaseÂ»_VALUE = Â«literal.valueÂ»;
 '''
 			values_block.add(a.toString)
 
@@ -88,70 +87,59 @@ class EEnumCreator extends EMFCodeGenerationClass implements FileCreator {
 			
 			get_by_int_method +=
 '''
-«IDENTION»«IDENTION»«IDENTION»case «literal.name.toUpperCase»_VALUE: return «literal.name.toUpperCase»;
+Â«IDENTIONÂ»Â«IDENTIONÂ»Â«IDENTIONÂ»case Â«literal.name.toUpperCaseÂ»_VALUE: return Â«literal.name.toUpperCaseÂ»;
 '''
 		}
 
 		values_array += "};" + System.lineSeparator
 		var values_list =
 '''
-«IDENTION»public static final List<«this.e_enum.name»> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+Â«IDENTIONÂ»public static final List<Â«this.e_enum.nameÂ»> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 '''
 
 		get_by_int_method +=
 '''
-«IDENTION»«IDENTION»}
-«IDENTION»«IDENTION»return null;
-«IDENTION»}
-
+Â«IDENTIONÂ»Â«IDENTIONÂ»}
+Â«IDENTIONÂ»Â«IDENTIONÂ»return null;
+Â«IDENTIONÂ»}
 '''
 		var generic_methods =
 '''
-«IDENTION»private final int value;
-
-«IDENTION»private final String name;
-
-«IDENTION»private final String literal;
-
-«IDENTION»public static «this.e_enum.name» getByName(String name) {
-«IDENTION»«IDENTION»for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-«IDENTION»«IDENTION»«IDENTION»«this.e_enum.name» result = VALUES_ARRAY[i];
-«IDENTION»«IDENTION»«IDENTION»if (result.getName().equals(name)) return result;
-«IDENTION»«IDENTION»}
-«IDENTION»«IDENTION»return null;
-«IDENTION»}
-
-«IDENTION»public static «this.e_enum.name» get(String literal) {
-«IDENTION»«IDENTION»for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-«IDENTION»«IDENTION»«IDENTION»«this.e_enum.name» result = VALUES_ARRAY[i];
-«IDENTION»«IDENTION»«IDENTION»if (result.toString().equals(literal)) return result;
-«IDENTION»«IDENTION»}
-«IDENTION»«IDENTION»return null;
-«IDENTION»}
-
-«IDENTION»private «this.e_enum.name»(int value, String name, String literal) {
-«IDENTION»«IDENTION»this.value = value;
-«IDENTION»«IDENTION»this.name = name;
-«IDENTION»«IDENTION»this.literal = literal;
-«IDENTION»}
-
-
-«IDENTION»public int getValue() {
-«IDENTION»«IDENTION»return value;
-«IDENTION»}
-
-«IDENTION»public String getName() {
-«IDENTION»«IDENTION»return name;
-«IDENTION»}
-
-«IDENTION»public String getLiteral() {
-«IDENTION»«IDENTION»return literal;
-«IDENTION»}
-
-«IDENTION»@Override
-«IDENTION»public String toString() {
-«IDENTION»«IDENTION»return literal;
-«IDENTION»}
+Â«IDENTIONÂ»private final int value;
+Â«IDENTIONÂ»private final String name;
+Â«IDENTIONÂ»private final String literal;
+Â«IDENTIONÂ»public static Â«this.e_enum.nameÂ» getByName(String name) {
+Â«IDENTIONÂ»Â«IDENTIONÂ»for (int i = 0; i < VALUES_ARRAY.length; ++i) {
+Â«IDENTIONÂ»Â«IDENTIONÂ»Â«IDENTIONÂ»Â«this.e_enum.nameÂ» result = VALUES_ARRAY[i];
+Â«IDENTIONÂ»Â«IDENTIONÂ»Â«IDENTIONÂ»if (result.getName().equals(name)) return result;
+Â«IDENTIONÂ»Â«IDENTIONÂ»}
+Â«IDENTIONÂ»Â«IDENTIONÂ»return null;
+Â«IDENTIONÂ»}
+Â«IDENTIONÂ»public static Â«this.e_enum.nameÂ» get(String literal) {
+Â«IDENTIONÂ»Â«IDENTIONÂ»for (int i = 0; i < VALUES_ARRAY.length; ++i) {
+Â«IDENTIONÂ»Â«IDENTIONÂ»Â«IDENTIONÂ»Â«this.e_enum.nameÂ» result = VALUES_ARRAY[i];
+Â«IDENTIONÂ»Â«IDENTIONÂ»Â«IDENTIONÂ»if (result.toString().equals(literal)) return result;
+Â«IDENTIONÂ»Â«IDENTIONÂ»}
+Â«IDENTIONÂ»Â«IDENTIONÂ»return null;
+Â«IDENTIONÂ»}
+Â«IDENTIONÂ»private Â«this.e_enum.nameÂ»(int value, String name, String literal) {
+Â«IDENTIONÂ»Â«IDENTIONÂ»this.value = value;
+Â«IDENTIONÂ»Â«IDENTIONÂ»this.name = name;
+Â«IDENTIONÂ»Â«IDENTIONÂ»this.literal = literal;
+Â«IDENTIONÂ»}
+Â«IDENTIONÂ»public int getValue() {
+Â«IDENTIONÂ»Â«IDENTIONÂ»return value;
+Â«IDENTIONÂ»}
+Â«IDENTIONÂ»public String getName() {
+Â«IDENTIONÂ»Â«IDENTIONÂ»return name;
+Â«IDENTIONÂ»}
+Â«IDENTIONÂ»public String getLiteral() {
+Â«IDENTIONÂ»Â«IDENTIONÂ»return literal;
+Â«IDENTIONÂ»}
+Â«IDENTIONÂ»@Override
+Â«IDENTIONÂ»public String toString() {
+Â«IDENTIONÂ»Â«IDENTIONÂ»return literal;
+Â«IDENTIONÂ»}
 '''
 		this.literals_declaration.addAll(literals_block)
 		this.literals_declaration.addAll(values_block)
@@ -175,21 +163,18 @@ class EEnumCreator extends EMFCodeGenerationClass implements FileCreator {
 	 */
 	override write_to_file() {
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 		var file = new File(this.file_path)
 		file.getParentFile().mkdirs()
 		var fw = new FileWriter(file , false)
 		fw.write(
 '''
-package «this.e_pak.get_package_declaration_name»;
-
+package Â«this.e_pak.get_package_declaration_nameÂ»;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.emf.common.util.Enumerator;
-
-public enum «this.e_enum.name» implements Enumerator {
-
+public enum Â«this.e_enum.nameÂ» implements Enumerator {
 '''
 		)
 

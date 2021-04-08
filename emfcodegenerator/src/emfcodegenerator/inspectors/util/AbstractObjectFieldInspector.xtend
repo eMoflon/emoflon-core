@@ -422,7 +422,7 @@ class AbstractObjectFieldInspector extends EMFCodeGenerationClass implements Obj
 	 */
 	override get_emf_package_literals_interface_var_name(){
 	return
-'''«emf_to_uppercase((this.e_feature.eContainer as EClass).name)»_«emf_to_uppercase(this.get_name)»'''
+'''Â«emf_to_uppercase((this.e_feature.eContainer as EClass).name)Â»_Â«emf_to_uppercase(this.get_name)Â»'''
 	}
 
 	/**########################Abstract Methods########################*/

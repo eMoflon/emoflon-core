@@ -219,7 +219,7 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 				)
 			}
 			//create the classifier getter
-			return '''«package_var_name».get«generic_type.EClassifier.name»()'''.toString
+			return '''Â«package_var_nameÂ».getÂ«generic_type.EClassifier.nameÂ»()'''.toString
 		}
 		return ""
 	}

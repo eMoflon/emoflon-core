@@ -94,7 +94,7 @@ class EMFPackageFactoryInterfaceCreator extends EMFCodeGenerationClass implement
 	 */
 	def protected String get_getter_method_declaration_for_e_class(EClass e_class){
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 		return this.e_class_to_getter_declaration_map.get(e_class)
 	}
 
@@ -109,7 +109,7 @@ class EMFPackageFactoryInterfaceCreator extends EMFCodeGenerationClass implement
 		var type_decl = this.e_pak.get_type_arguments_declaration_for_eclass(e_class)
 		var reduced_type_decl =
 			this.e_pak.get_reduced_type_arguments_declaration_for_eclass(e_class)
-		return '''«type_decl» «e_class.name»«reduced_type_decl» create«e_class.name»()'''.toString
+		return '''Â«type_declÂ» Â«e_class.nameÂ»Â«reduced_type_declÂ» createÂ«e_class.nameÂ»()'''.toString
 	}
 
 	/**########################Public Methods########################*/
@@ -136,26 +136,26 @@ class EMFPackageFactoryInterfaceCreator extends EMFCodeGenerationClass implement
 		
 		//declare the interface
 		this.interface_body.add(
-			'''public interface «this.interface_name» extends EFactory {'''.toString
+			'''public interface Â«this.interface_nameÂ» extends EFactory {'''.toString
 		)
 		this.interface_body.add(System.lineSeparator)
 		
 		//add data fields
 		this.interface_body.add(
-		'''«IDENTION»«this.interface_name» eINSTANCE = «this.package_declaration».impl.«this.interface_name»Impl.init();'''.toString
+		'''Â«IDENTIONÂ»Â«this.interface_nameÂ» eINSTANCE = Â«this.package_declarationÂ».impl.Â«this.interface_nameÂ»Impl.init();'''.toString
 		)
 		this.interface_body.add(System.lineSeparator)
 		
 		//add the getter method for the PackageClass
 		this.interface_body.add(
-			'''«IDENTION»«this.e_pak.get_emf_package_class_name» get«this.e_pak.get_emf_package_class_name»();'''.toString
+			'''Â«IDENTIONÂ»Â«this.e_pak.get_emf_package_class_nameÂ» getÂ«this.e_pak.get_emf_package_class_nameÂ»();'''.toString
 		)
 		this.interface_body.add(System.lineSeparator)
 		
 		//add the rest of the getters
 		for(method : this.e_class_to_getter_declaration_map.keySet){
 			this.interface_body.add(
-				'''«IDENTION»«this.e_class_to_getter_declaration_map.get(method)»;'''.toString
+				'''Â«IDENTIONÂ»Â«this.e_class_to_getter_declaration_map.get(method)Â»;'''.toString
 			)
 			this.interface_body.add(System.lineSeparator)
 		}
@@ -168,7 +168,7 @@ class EMFPackageFactoryInterfaceCreator extends EMFCodeGenerationClass implement
 	 */
 	override write_to_file() {
 		if(!this.is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			throw new RuntimeException('''The Â«this.classÂ» was not initialized.'''.toString)
 		var factory_file = new File(this.file_path)
 		factory_file.getParentFile().mkdirs()
 		var factory_fw = new FileWriter(factory_file, false)

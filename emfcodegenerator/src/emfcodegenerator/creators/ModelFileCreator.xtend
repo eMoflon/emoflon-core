@@ -83,7 +83,7 @@ abstract class ModelFileCreator extends EMFCodeGenerationClass implements FileCr
 
 		if(!e_pak.get_all_eclasses_in_package().contains(e_class)) 
 			throw new IllegalArgumentException(
-			'''The EClass «e_class.name» is not contained in EPackage «e_pak.get_name()»'''
+			'''The EClass Â«e_class.nameÂ» is not contained in EPackage Â«e_pak.get_name()Â»'''
 			)
 
 		// register the file path
@@ -91,7 +91,7 @@ abstract class ModelFileCreator extends EMFCodeGenerationClass implements FileCr
 			emf_model.get_object_to_class_name_map().get(e_class)
 		//register the package declaration
 		package_declaration =
-			'''«convert_fqdn_file_path_to_package_name(file_path_relative_to_package_hierarchy)»'''
+			'''Â«convert_fqdn_file_path_to_package_name(file_path_relative_to_package_hierarchy)Â»'''
 		//create the declaration for the interface
 		
 		this.e_data_fields = new HashSet<AbstractObjectFieldInspector>(e_data_fields)

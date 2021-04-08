@@ -53,13 +53,13 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 		if(this.is_a_tuple()){
 			this.default_value =  "new " +
 				SmartCollectionFactory.get_elist_type_name(this.get_needed_elist_type_enum) +
-				'''<«this.get_object_field_type_name»>()'''
+				'''<Â«this.get_object_field_type_nameÂ»>()'''
 		}
 		else if(e_attr.defaultValue !== null){
 			if(e_attr.defaultValue instanceof String){
-				this.default_value =  '''"«e_attr.defaultValue»"'''.toString
+				this.default_value =  '''"Â«e_attr.defaultValueÂ»"'''.toString
 			} else if((this.e_attr.EType as EClassifierImpl).instanceClassName.contains("float"))
-				this.default_value =  '''«e_attr.defaultValue»F'''.toString
+				this.default_value =  '''Â«e_attr.defaultValueÂ»F'''.toString
 			this.default_value =  e_attr.defaultValue.toString
 		}
 		else if(e_attr.defaultValue === null){
@@ -151,10 +151,10 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 			throw new RuntimeException("Encountered unknown EAttribute-Data-Type")
 		}
 		//add name
-		entry.append('''"«this.get_name»", '''.toString)
+		entry.append('''"Â«this.get_nameÂ»", '''.toString)
 		//String defaultValue
 		entry.append((this.e_attr.defaultValueLiteral === null) ?
-			"null" : '''"«this.e_attr.defaultValueLiteral»"'''.toString)
+			"null" : '''"Â«this.e_attr.defaultValueLiteralÂ»"'''.toString)
 		entry.append(", ")
 		//int lowerBound,
 		entry.append(this.e_attr.lowerBound)
