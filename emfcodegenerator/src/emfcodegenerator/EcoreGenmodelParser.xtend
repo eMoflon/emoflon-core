@@ -257,7 +257,7 @@ class EcoreGenmodelParser {
 							var reference = feature as EReference
 							if(reference.EGenericType === null)
 								throw new IllegalArgumentException('''
-ERROR! The target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»" has not been specified.'''
+ERROR! The target of EReference "Â«reference.nameÂ»" contained in class "Â«package_path.replace("/", ".") + (e_class).getName()Â»" has not been specified.'''
 								)
 
 							if(
@@ -270,8 +270,8 @@ ERROR! The target of EReference "«reference.name»" contained in class "«package_
 								 */
 
 								println(
-'''Warning!! Target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»" is a generic type-parameter.
-«"\t"»Please do take care, that the runtime instance inherits from emfcodegenerator.util.SmartObject.'''
+'''Warning!! Target of EReference "Â«reference.nameÂ»" contained in class "Â«package_path.replace("/", ".") + (e_class).getName()Â»" is a generic type-parameter.
+Â«"\t"Â»Please do take care, that the runtime instance inherits from emfcodegenerator.util.SmartObject.'''
 								)
 
 							} else if(reference.EGenericType.EClassifier !== null) {
@@ -280,7 +280,7 @@ ERROR! The target of EReference "«reference.name»" contained in class "«package_
 								if(the_classifier.EPackage.equals(EcorePackage.eINSTANCE)){
 									//the reference type is an EMF-class which are not supported
 									throw new IllegalArgumentException('''
-ERROR! The target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»"is not supported as it is en Eclipse-EMF class.'''
+ERROR! The target of EReference "Â«reference.nameÂ»" contained in class "Â«package_path.replace("/", ".") + (e_class).getName()Â»"is not supported as it is en Eclipse-EMF class.'''
 								)
 								} else if(
 									!the_classifier.EPackage.equals(EcorePackage.eINSTANCE) &&
@@ -297,8 +297,8 @@ ERROR! The target of EReference "«reference.name»" contained in class "«package_
 									 * SmartObject}
 									 */
 									println('''
-Warning!! Target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»" is not an Eclipse-EMF and was not registered in the given XMI-files.
-«"\t"»Please do take care, that the runtime instances inherit from emfcodegenerator.util.SmartObject.
+Warning!! Target of EReference "Â«reference.nameÂ»" contained in class "Â«package_path.replace("/", ".") + (e_class).getName()Â»" is not an Eclipse-EMF and was not registered in the given XMI-files.
+Â«"\t"Â»Please do take care, that the runtime instances inherit from emfcodegenerator.util.SmartObject.
 ''')
 								}
 							}
