@@ -1,5 +1,6 @@
 package org.moflon.emf.build;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -7,6 +8,9 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -23,6 +27,10 @@ import org.moflon.core.preferences.EMoflonPreferencesStorage;
 import org.moflon.core.utilities.LogUtils;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.emf.codegen.CodeGenerator;
+
+import emfcodegenerator.EMFCodeGenerator;
+
+
 
 public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 	private static final Logger logger = Logger.getLogger(MoflonEmfCodeGenerator.class);
@@ -70,16 +78,39 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 
 			// Generate code
 			subMon.subTask("Generating code for project " + getProjectName());
-			final CodeGenerator codeGenerator = new CodeGenerator();
-			final IStatus codeGenerationStatus = codeGenerator.generateCode(genModel,
-					new BasicMonitor.EclipseSubProgress(subMon, 30));
-			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
+			
+			//Find the current workspace
+			//TODO: Find better way to find full model path
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();			
+			//TODO: throw exception when path of genmodel is not the path of the ecore
+			IResource genModel = root.findMember(getEcoreFile().getFullPath().toString().replace(".ecore", ".genmodel"));
+
+			File genmodelFile = new File(genModel.getLocationURI());
+			File ecoreFile = new File(root.findMember(getEcoreFile().getFullPath().toString()).getLocationURI());
+			
+			String genModelPath = genmodelFile.getAbsolutePath();
+			String ecorePath = ecoreFile.getAbsolutePath();
+
+			if(genmodelFile.exists() && !genmodelFile.isDirectory() && ecoreFile.exists() && !ecoreFile.isDirectory()) {
+				//paths of the files necessary for smartEMF extension
+				final EMFCodeGenerator codeGenerator = new EMFCodeGenerator(ecorePath,genModelPath);
+				codeGenerator.generate_all_model_code();				
+			} else {
+				logger.warn("Problem when generating code: the genmodel file needs to be in the same folder as the ecore file.");
 			}
-			if (codeGenerationStatus.matches(IStatus.ERROR)) {
-				return codeGenerationStatus;
-			}
-			subMon.worked(5);
+
+			
+			//old emf model creation
+//			final CodeGenerator codeGenerator = new CodeGenerator();
+//			final IStatus codeGenerationStatus = codeGenerator.generateCode(genModel,
+//					new BasicMonitor.EclipseSubProgress(subMon, 30));
+//			if (subMon.isCanceled()) {
+//				return Status.CANCEL_STATUS;
+//			}
+//			if (codeGenerationStatus.matches(IStatus.ERROR)) {
+//				return codeGenerationStatus;
+//			}
+//			subMon.worked(5);
 
 			final long tic = System.nanoTime();
 			final double durationInSeconds = (tic - toc) / 1e9;
