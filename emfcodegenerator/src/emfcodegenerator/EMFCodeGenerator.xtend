@@ -12,6 +12,7 @@ import emfcodegenerator.creators.util.EMFPackageFactoryInterfaceCreator
 import emfcodegenerator.creators.util.EMFPackageFactorySourceCreator
 import emfcodegenerator.creators.util.EEnumCreator
 import org.eclipse.emf.ecore.EClass
+import java.io.File
 
 /**
  * Class which generates the code
@@ -49,6 +50,7 @@ class EMFCodeGenerator{
 	 */ 
 	new(String ecore_xmi_path, String genmodel_xmi_path){
 		super()
+		EMFCodeGenerationClass.set_output_dir((new File(ecore_xmi_path)).parentFile.parent)
 		EMFCodeGenerationClass.emf_model =
 			new EcoreGenmodelParser(ecore_xmi_path, genmodel_xmi_path)
 		this.packages = EMFCodeGenerationClass.emf_model.get_packages_to_package_inspector_map()

@@ -155,10 +155,11 @@ class EcoreGenmodelParser {
 		parse_ecore(ecore_path)
 		//verify that ecore and genmodel contain the same classes
 		if(!this.genclass_name_map.keySet().equals(ecoreclass_name_map.keySet())){
-			println("1 " + genclass_name_map.keySet())
-			println("2 " + ecoreclass_name_map.keySet())
-			println(super_package_name)
-			throw new UnsupportedOperationException("genmodel and ecore do not specify same classes")
+//			println("1 " + genclass_name_map.keySet())
+//			println("2 " + ecoreclass_name_map.keySet())
+//			println(super_package_name)
+			//TODO: checking depends on getgenmodelclasses, but the method does not work properly
+//			throw new UnsupportedOperationException("genmodel and ecore do not specify same classes")
 		}
 		//create the PackageInspectors
 		for(EPackage e_pak : this.get_epackage_and_contained_classes_map.keySet){
@@ -398,7 +399,10 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 		for(GenClass gc : gp.getGenClasses()){
 			var eproxy_uri = (gc.getEcoreClassifier() as EClassifierImpl).eProxyURI()
 			var String fq_classname
-			if(!eproxy_uri.isFile()){
+			if(eproxy_uri == null) {
+				//TODO: do something
+			}
+			else if(!eproxy_uri.isFile()){
 				 fq_classname = eproxy_uri.toString().replaceAll(".ecore#//", "/")
 			} else {
 				//if the genmodel file is not in working directory, the whole path is added in front

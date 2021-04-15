@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EcorePackage
 import java.util.TreeSet
 import java.util.Set
+import java.io.File
 
 /**
  * class containing useful methods which all inheriting classes can have in common
@@ -28,7 +29,7 @@ class EMFCodeGenerationClass {
 	 * The sub-directory relative to the working directory where the
 	 * generated files shall be saved at
 	 */
-	var static protected String GENERATED_FILE_DIR = "./src-gen/"
+	var static protected String GENERATED_FILE_DIR 
 	
 	/**
 	 * a Set containing strings of modules which need to be imported
@@ -241,8 +242,9 @@ class EMFCodeGenerationClass {
 	 * @param dir String
 	 * @author Adrian Zwenger
 	 */
-	def void set_output_dir(String dir){
-		EMFCodeGenerationClass.GENERATED_FILE_DIR = dir
+	def static void set_output_dir(String dir){
+		//TODO: make the path dependent on (build.properties?) configuration (or the given model path in .genmodel)
+		EMFCodeGenerationClass.GENERATED_FILE_DIR = dir + File.separatorChar+ "gen" + File.separatorChar
 	}
 
 }

@@ -44,7 +44,9 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 		//if the Attribute is a custom EMF data type, instanceClass will be null
 		if(e_attr.EAttributeType.instanceClass === null && !fq_module_name.nullOrEmpty)
 			this.fq_import_name = fq_module_name
-		if(!e_attr.EGenericType.ERawType.instanceClass.isPrimitive && !fq_module_name.nullOrEmpty)
+		if(e_attr.EGenericType.ERawType.instanceClass === null) //for enums
+			this.fq_import_name = e_attr.EType.name
+		if(!(e_attr.EGenericType.ERawType.instanceClass === null) && !e_attr.EGenericType.ERawType.instanceClass.isPrimitive && !fq_module_name.nullOrEmpty)
 			this.fq_import_name = fq_module_name
 		this.fq_import_name = null
 		this.add_import_as_String(this.fq_import_name)
@@ -58,9 +60,13 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 		else if(e_attr.defaultValue !== null){
 			if(e_attr.defaultValue instanceof String){
 				this.default_value =  '''"«e_attr.defaultValue»"'''.toString
-			} else if((this.e_attr.EType as EClassifierImpl).instanceClassName.contains("float"))
+			} else if ((this.e_attr.EType as EClassifierImpl).instanceClass === null){
+				this.default_value = '''«e_attr.EType.name».«e_attr.defaultValue»'''.toString
+			} else if(!((this.e_attr.EType as EClassifierImpl).instanceClass === null)
+				&&(this.e_attr.EType as EClassifierImpl).instanceClassName.contains("float"))
 				this.default_value =  '''«e_attr.defaultValue»F'''.toString
-			this.default_value =  e_attr.defaultValue.toString
+			else
+				this.default_value =  e_attr.defaultValue.toString
 		}
 		else if(e_attr.defaultValue === null){
 			//unchangeable EAttributes do not get setters. If no setter is provided an
