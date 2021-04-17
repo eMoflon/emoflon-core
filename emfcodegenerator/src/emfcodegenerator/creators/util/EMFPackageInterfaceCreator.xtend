@@ -203,7 +203,7 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 			feature_id_offset = 
 				'''«super_pak_name».«super_cl_name»_FEATURE_COUNT + '''.toString
 			operation_id_offset =
-				'''«super_pak_name».«super_cl_name»"_OPERATION_COUNT + '''.toString
+				'''«super_pak_name».«super_cl_name»_OPERATION_COUNT + '''.toString
 		}
 		else the_super_class = null
 
