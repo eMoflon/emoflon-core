@@ -18,14 +18,14 @@ import net.sourceforge.plantuml.eclipse.utils.DiagramTextProvider;
 final public class EMoflonVisualiser implements DiagramTextProvider {
 
 	private static final Logger logger = Logger.getLogger(EMoflonVisualiser.class);
-	private static final int MAX_SIZE = 500;
+	private static final int MAX_SIZE = 1000;
 	
 	private List<EMoflonDiagramTextProvider> textProvider = new LinkedList<>();
 	
 	public EMoflonVisualiser() {
 		textProvider.addAll(ExtensionsUtil.collectExtensions(EMoflonDiagramTextProvider.PLUGIN_ID, "class", EMoflonDiagramTextProvider.class));
-		textProvider.add(new EMoflonMetamodelVisualiser());
 		textProvider.add(new EMoflonModelVisualiser());
+		textProvider.add(new EMoflonMetamodelVisualiser());
 	}
 	
 	@Override
@@ -52,7 +52,7 @@ final public class EMoflonVisualiser implements DiagramTextProvider {
 	
 	public EMoflonDiagramTextProvider selectProvider(IEditorPart editor, ISelection selection) {
 		for(EMoflonDiagramTextProvider provider : textProvider) {
-			if(provider.supportsEditor(editor))
+			if(provider.supportsEditor(editor) && provider.supportsSelection(selection))
 				return provider;
 		}
 		return null;
