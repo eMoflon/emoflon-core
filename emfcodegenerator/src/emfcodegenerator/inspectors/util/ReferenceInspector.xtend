@@ -128,8 +128,8 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		var the_containing_eclass = this.e_ref.eContainer as EClass
 		var eclass_name = the_containing_eclass.name
 		entry.append("get" + eclass_name + "_")
-		entry.append(this.get_name.substring(0,1).toUpperCase)
-		entry.append(this.get_name.substring(1))
+		entry.append(this.get_unfiltered_name.substring(0,1).toUpperCase)
+		entry.append(this.get_unfiltered_name.substring(1))
 		entry.append("(), ")
 		
 		//add EClassifier
@@ -153,7 +153,8 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 			//the attribute-type is specified in a generated package
 			var String package_name =
 				(this.e_ref.EReferenceType.EPackage.equals(the_containing_eclass.EPackage)) ?
-					"this" : "the" + this.e_ref.EReferenceType.EPackage.name + "Package"
+					"this" : "the" + this.e_ref.EReferenceType.EPackage.name.substring(0, 1).toUpperCase() 
+					+ this.e_ref.EReferenceType.EPackage.name.substring(1) + "Package"
 
 			entry.append('''«package_name».get«this.e_ref.EReferenceType.name»(), ''')
 		} else if(this.e_ref.EGenericType.ETypeParameter !== null &&

@@ -32,6 +32,13 @@ interface ObjectFieldInspector extends FeatureInspector{
 	def String get_fq_import_name()
 
 	/**
+	 * returns the name even if it a blacklisted name
+	 * @return String
+	 * @author Adrian Zwenger
+	 */
+	def String get_unfiltered_name()	
+	
+	/**
 	 * returns if field is a tuple and thus needs to be stored in an EList
 	 * @retuen boolean
 	 * @author Adrian Zwenger

@@ -152,6 +152,8 @@ class InterfaceCreator extends ModelFileCreator {
 	def protected static String create_getter_method_stump(ObjectFieldInspector e_attr){
 		var String var_type = e_attr.get_object_field_type_name()
 		if(e_attr.is_a_tuple()) var_type = '''EList<«var_type»>'''.toString()
+		
+		if(var_type == "boolean") return '''«var_type» is«e_attr.get_name_with_first_letter_capitalized()»()'''.toString()
 		return '''«var_type» get«e_attr.get_name_with_first_letter_capitalized()»()'''.toString()
 	}
 

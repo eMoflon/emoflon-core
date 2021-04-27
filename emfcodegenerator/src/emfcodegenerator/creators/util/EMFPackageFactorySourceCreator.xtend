@@ -38,7 +38,14 @@ class EMFPackageFactorySourceCreator extends EMFPackageFactoryInterfaceCreator {
 		this.class_name = this.interface_name + "Impl"
 		//add the interface as an import
 		this.add_import_as_String(this.package_declaration + "." + this.interface_name)
-		this.add_import_as_String(this.package_declaration + ".*")
+		//no import with "*"; else there can be ambiguity which classes are imported
+		//this.add_import_as_String(this.package_declaration + ".*")
+		for(import: package_inspector.get_all_eclasses_in_package){
+			//just import all classes for simplicity sake
+			this.add_import_as_String(this.package_declaration + "." + import.name)
+		}
+		//add also the package 
+		this.add_import_as_String(this.package_declaration + "." + this.interface_name.replace("Factory" , "Package"))
 		this.add_import_as_String("org.eclipse.emf.ecore.EClass")
 		this.add_import_as_String("org.eclipse.emf.ecore.EObject")
 		this.add_import_as_String("org.eclipse.emf.ecore.EPackage")

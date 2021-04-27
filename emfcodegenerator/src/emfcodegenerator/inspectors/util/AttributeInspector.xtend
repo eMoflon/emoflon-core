@@ -157,7 +157,7 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 			throw new RuntimeException("Encountered unknown EAttribute-Data-Type")
 		}
 		//add name
-		entry.append('''"«this.get_name»", '''.toString)
+		entry.append('''"«this.get_unfiltered_name»", '''.toString)
 		//String defaultValue
 		entry.append((this.e_attr.defaultValueLiteral === null) ?
 			"null" : '''"«this.e_attr.defaultValueLiteral»"'''.toString)

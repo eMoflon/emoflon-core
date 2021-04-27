@@ -640,12 +640,13 @@ class SourceCodeCreator extends InterfaceCreator {
 				
 				//create eGet case body
 				e_get_method_body.append(
-					case_statement + ''' return get«attr_name»();''' + System.lineSeparator()
+					
+					case_statement + ''' return «IF attr_type == "boolean"» is«ELSE» get«ENDIF»«attr_name»();''' + System.lineSeparator()
 					)
 					
 				alternate_e_get_method_body.append(
 '''«IDENTION»«IDENTION»if («this.get_estructural_feature_getter_for_objectfield_inspector(attr)».equals(eFeature))
-«IDENTION»«IDENTION»«IDENTION»return get«attr_name»();''' + System.lineSeparator()
+«IDENTION»«IDENTION»«IDENTION»return «IF attr_type == "boolean"» is«ELSE» get«ENDIF»«attr_name»();''' + System.lineSeparator()
 				)
 				
 				//create eSet case body
