@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="DiagramTextProvider" name="DiagramTextProvider" schema="schema/DiagramTextProvider.exsd"/>
   <extension point="org.eclipse.core.expressions.propertyTesters">
     <propertyTester class="org.moflon.core.ui.propertytester.PerspectivePropertyTester" id="org.moflon.core.ui.propertytester.PerspectivePropertyTester" namespace="org.moflon.core.ui.property" properties="perspectiveId" type="org.eclipse.e4.ui.model.application.ui.advanced.MPerspective"/>
   </extension>
@@ -348,12 +349,6 @@
          </adapter>
     </factory>
   </extension>
-  <extension point="net.sourceforge.plantuml.eclipse.diagramTextProvider">
-    <diagramTextProvider priority="10" providerClass="org.moflon.core.ui.visualisation.models.EMoflonModelVisualiser">
-    </diagramTextProvider>
-    <diagramTextProvider priority="15" providerClass="org.moflon.core.ui.visualisation.metamodels.EMoflonMetamodelVisualiser">
-    </diagramTextProvider>
-  </extension>
   <!--
   Property dialog contributsion
   -->
@@ -363,5 +358,12 @@
         <adapt type="org.eclipse.core.resources.IMarker"></adapt>
       </enabledWhen>
     </page>
+  </extension>
+  <extension
+        point="net.sourceforge.plantuml.eclipse.diagramIntentProvider">
+     <diagramIntentProvider
+           priority="10"
+           providerClass="org.moflon.core.ui.visualisation.common.EMoflonIntentProvider">
+     </diagramIntentProvider>
   </extension>
 </plugin>
