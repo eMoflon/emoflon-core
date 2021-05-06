@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.moflon.core.utilities.MoflonUtil;
 import org.moflon.emf.codegen.resource.GenModelResource;
 import org.moflon.emf.codegen.resource.GenModelResourceFactory;
+import persistence.XtendXMIResourceFactoryImpl;
 
 public class GenModelBuilder {
 	public static final String ARCHIVE_SCHEME = "archive";
@@ -94,6 +95,9 @@ public class GenModelBuilder {
 			for (final GenPackage genPackage : genModel.getGenPackages()) {
 				setDefaultPackagePrefixes(genPackage);
 			}
+			
+			//for smartemf: put default emf build root class as smartemf; can later be changed manually
+			genModel.setRootExtendsInterface("emfcodegenerator.util.SmartObject");
 		} else {
 			// Load GenModel
 			final Resource genModelResource = resourceSet.getResource(genModelURI, true);
