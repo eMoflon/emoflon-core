@@ -57,7 +57,7 @@ public final class MonitoredGenModelBuilder implements ITask {
 		}
 			
 		//for smartemf: genmodel should not be recreated when a genmodel already exists		
-		this.moflonProperties.getReplaceGenModel().setBool(false);
+		//this.moflonProperties.getReplaceGenModel().setBool(false);
 		
 		subMon.setWorkRemaining(90);
 		if (subMon.isCanceled()) {
