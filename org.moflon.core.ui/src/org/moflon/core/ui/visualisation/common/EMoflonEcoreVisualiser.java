@@ -18,7 +18,7 @@ import org.moflon.core.ui.visualisation.diagrams.VisualEdge;
  * @author Johannes Brandt (initial contribution)
  *
  */
-public abstract class EMoflonEcoreVisualiser<T> extends EMoflonVisualiser {
+public abstract class EMoflonEcoreVisualiser<T> implements EMoflonDiagramTextProvider {
 
 	/**
 	 * Stores whether or not the superset of Ecore elements can be retrieved from
