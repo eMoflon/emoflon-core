@@ -56,9 +56,6 @@ public final class MonitoredGenModelBuilder implements ITask {
 			this.moflonProperties = MoflonPropertiesContainerHelper.load(project, subMon.split(5));
 		}
 			
-		//for smartemf: genmodel should not be recreated when a genmodel already exists		
-		//this.moflonProperties.getReplaceGenModel().setBool(false);
-		
 		subMon.setWorkRemaining(90);
 		if (subMon.isCanceled()) {
 			return Status.CANCEL_STATUS;
@@ -171,7 +168,7 @@ public final class MonitoredGenModelBuilder implements ITask {
 	}
 
 	public final GenModel getGenModel() {
-		return genModel;
+ 		return genModel;
 	}
 
 	@Override

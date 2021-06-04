@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -19,14 +20,17 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.BasicMonitor;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.moflon.core.preferences.EMoflonPreferencesStorage;
 import org.moflon.core.utilities.LogUtils;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.emf.codegen.CodeGenerator;
+import org.moflon.emf.codegen.MoflonGenModelBuilder;
 
 import emfcodegenerator.EMFCodeGenerator;
 
@@ -56,7 +60,7 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 			LogUtils.info(logger, "Generating code for project %s", getProjectName());
 
 			final long toc = System.nanoTime();
-
+			
 			// Build or load GenModel
 			final MonitoredGenModelBuilder genModelBuilderJob = new MonitoredGenModelBuilder(getResourceSet(),
 					getAllResources(), getEcoreFile(), true, getMoflonProperties());
@@ -79,11 +83,11 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 			// Generate code
 			subMon.subTask("Generating code for project " + getProjectName());
 			
-			//the genmodel has the information if a model is generated with the old or new emf
-			GenModel genmodel = genModelBuilderJob.getGenModel();
-			//old emf when root interface : org.eclipse.emf.ecore.impl.EObject
-			//everything else is smartemf
-			if(genmodel.getRootExtendsInterface().equals("org.eclipse.emf.ecore.EObject")) {
+			//TODO:be able to change between SmartEMF and normal EMF
+			boolean istSmartEmf = true;
+			//for testing purposes: if the genmodel name is of a specific model, then just create the old emf
+			if(genModelBuilderJob.getGenModel().getModelName().equals("SimpleEMFEcoreModel")) istSmartEmf = false;
+			if(!istSmartEmf) {
 					
 				//old emf model creation
 				final CodeGenerator codeGenerator = new CodeGenerator();
