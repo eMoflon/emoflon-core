@@ -73,6 +73,7 @@ public class GenModelBuilder {
 			// Create new GenModel
 			final GenModelResource genModelResource = (GenModelResource) resourceSet.createResource(genModelURI);
 			genModel = GenModelPackage.eINSTANCE.getGenModelFactory().createGenModel();
+			genModel.setRootExtendsInterface("org.eclipse.emf.ecore.EObject");
 			genModelResource.getContents().add(genModel);
 
 			adjustRegistry(genModel);
@@ -95,9 +96,7 @@ public class GenModelBuilder {
 			for (final GenPackage genPackage : genModel.getGenPackages()) {
 				setDefaultPackagePrefixes(genPackage);
 			}
-			
-			//for smartemf: put default emf build root class as smartemf; can later be changed manually
-			genModel.setRootExtendsInterface("emfcodegenerator.util.SmartObject");
+
 		} else {
 			// Load GenModel
 			final Resource genModelResource = resourceSet.getResource(genModelURI, true);
