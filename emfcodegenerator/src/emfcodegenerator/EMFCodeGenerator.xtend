@@ -13,6 +13,7 @@ import emfcodegenerator.creators.util.EMFPackageFactorySourceCreator
 import emfcodegenerator.creators.util.EEnumCreator
 import org.eclipse.emf.ecore.EClass
 import java.io.File
+import emfcodegenerator.creators.util.SmartEMFObjectCreator
 
 /**
  * Class which generates the code
@@ -29,17 +30,17 @@ class EMFCodeGenerator{
 	/**
 	 * HashMap mapping InterfaceCreator to PackageInspector
 	 */	
-	var HashSet<InterfaceCreator> interfaces = new HashSet<InterfaceCreator>()
+	var HashSet<InterfaceCreator> interfaces = new HashSet()
 	
 	/**
 	 * HashMap mapping InterfaceCreator to PackageInspector
 	 */
-	var HashSet<SourceCodeCreator> implementations = new HashSet<SourceCodeCreator>()
+	var HashSet<SmartEMFObjectCreator> implementations = new HashSet()
 
 	/**
 	 * HashMap storing EPackages and their PackagInspectors
 	 */
-	var HashMap<EPackage, PackageInspector> packages = new HashMap<EPackage, PackageInspector>()
+	var HashMap<EPackage, PackageInspector> packages = new HashMap()
 
 	/**########################Constructor########################*/
 
@@ -76,13 +77,14 @@ class EMFCodeGenerator{
 
 				interfaces.add(i_creator)
 
-				var c_creator = new SourceCodeCreator(
-									e_cl,
-									EMFCodeGenerationClass.emf_model,
-									e_pak_inspector.get_all_object_field_inspectors_for_class(e_cl),
-									e_pak_inspector.get_all_eoperation_inspector_for_class(e_cl),
-									e_pak_inspector
-									)
+				var c_creator = new SmartEMFObjectCreator(e_cl)
+//				var c_creator = new SourceCodeCreator(
+//									e_cl,
+//									EMFCodeGenerationClass.emf_model,
+//									e_pak_inspector.get_all_object_field_inspectors_for_class(e_cl),
+//									e_pak_inspector.get_all_eoperation_inspector_for_class(e_cl),
+//									e_pak_inspector
+//									)
 				implementations.add(c_creator)
 			}
 		}
@@ -107,12 +109,10 @@ class EMFCodeGenerator{
 	 * generates all implementation files for the EClasses specified in the EMF-model
 	 */
 	def void generate_implementation(){
-		for(SourceCodeCreator new_source : implementations){
+		for(SmartEMFObjectCreator new_source : implementations){
 			//initialise a file-writer
-			var path = packages.get(new_source.get_package).get_path_to_folder + "/impl/" +
-					   new_source.get_name + ".java"
-			new_source.initialize_creator(path, IDENTION)
-			new_source.write_to_file()
+			var path = packages.get(new_source.package).get_path_to_folder 
+			new_source.writeToFile(path)
 		}
 	}
 	

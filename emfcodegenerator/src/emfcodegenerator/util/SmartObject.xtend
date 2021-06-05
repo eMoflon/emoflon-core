@@ -209,7 +209,7 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	}
 	
 	override eUnset(EStructuralFeature feature) {
-		this.e_static_class.eUnset(feature)
+		this.eGet(feature)
 	}
 
 	def void eUnset(int featureID){

@@ -247,7 +247,7 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 	override get_literals_entry_for_package_classes() {
 		var entry = new StringBuilder("EAttribute ")
 		entry.append(emf_to_uppercase((this.e_attr.eContainer as EClass).name))
-		entry.append("_")
+		entry.append("__")
 		entry.append(emf_to_uppercase(this.get_name))
 		entry.append(" = eINSTANCE.")
 		entry.append(this.get_getter_method_declaration_for_the_package_classes__stump_only())

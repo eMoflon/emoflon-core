@@ -233,6 +233,7 @@ class EMFCodeGenerationClass {
 		/*
 		 * Thank your stackoverflow
 		 * https://stackoverflow.com/questions/1591132/how-can-i-add-an-underscore-before-each-capital-letter-inside-a-java-string
+		 * lars: dirty hack with replaceFirst
 		 */
 		return value.replaceAll("(.)([A-Z])", "$1_$2").toUpperCase()
 	}
