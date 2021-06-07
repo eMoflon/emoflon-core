@@ -413,10 +413,6 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 		this.is_containment_object = true
 		this.the_eContainer = container
 		this.the_econtaining_feature = feature;
-		
-		if (!eContainingFeature.isMany) {
-			eContainer.eSet(eContainingFeature, this)
-		}
 	}
 	
 	static def toStringIfNotNull(Object obj) {
