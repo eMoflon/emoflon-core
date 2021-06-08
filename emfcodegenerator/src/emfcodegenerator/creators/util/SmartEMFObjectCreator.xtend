@@ -49,7 +49,7 @@ class SmartEMFObjectCreator {
 		    «IF feature.isMany»
 		    protected «getFieldTypeName(feature)» «getValidName(feature.name)» = new «getFieldTypeName(feature)»(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)»);
 			«ELSE»
-			protected «getFieldTypeName(feature)» «getValidName(feature.name)»;
+		    protected «getFieldTypeName(feature)» «getValidName(feature.name)»;
 			«ENDIF»
 			«ENDFOR»
 			
@@ -229,7 +229,7 @@ class SmartEMFObjectCreator {
 		return '''«getListTypeName(feature)»<«feature.EType.name»>'''
 	}
 	
-	def splitNameAtUppercases(String name) {
+	static def splitNameAtUppercases(String name) {
 		var splittedName = new LinkedList
 		var from = 0
 		for(var i=1; i<name.length; i++) {
@@ -254,7 +254,7 @@ class SmartEMFObjectCreator {
 		}
 	}
 	
-	def getLiteral(ENamedElement feature) {
+	static def getLiteral(ENamedElement feature) {
 		if(feature instanceof EStructuralFeature)
 			return '''«FOR part : splitNameAtUppercases(feature.EContainingClass.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»__«FOR part : splitNameAtUppercases(feature.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''		
 		else {

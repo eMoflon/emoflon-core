@@ -6,6 +6,7 @@ import org.eclipse.emf.ecore.EClass
 import java.util.TreeMap
 import java.io.File
 import java.io.FileWriter
+import org.eclipse.emf.ecore.EReference
 
 /**
  * creates the implementation for the package factory
