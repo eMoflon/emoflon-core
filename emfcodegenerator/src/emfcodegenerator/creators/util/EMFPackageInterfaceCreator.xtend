@@ -88,7 +88,7 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 			interface Literals {
 				
 				«FOR clazz : e_pak.get_all_eclasses_in_package»
-				EClass «clazz.name.toUpperCase» = eINSTANCE.get«clazz.name.toFirstUpper»();
+				EClass «SmartEMFObjectCreator.getLiteral(clazz)» = eINSTANCE.get«clazz.name.toFirstUpper»();
 				
 				«FOR feature : clazz.EStructuralFeatures»
 				«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» «SmartEMFObjectCreator.getLiteral(feature).toUpperCase» = eINSTANCE.get«clazz.name.toFirstUpper»_«feature.name.toFirstUpper»();

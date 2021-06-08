@@ -247,18 +247,19 @@ class SmartEMFObjectCreator {
 	
 	// ids are always generated for the current eClass
 	def getLiteralID(ENamedElement feature) {
+		val containingClass = feature.eContainer as EClassifier
 		if(feature instanceof EStructuralFeature)
-			return '''«FOR part : splitNameAtUppercases(eClass.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»__«FOR part : splitNameAtUppercases(feature.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''		
+			return '''«FOR part : splitNameAtUppercases(containingClass.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»__«FOR part : splitNameAtUppercases(feature.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''		
 		else {
 			return '''«FOR part : splitNameAtUppercases(feature.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''
 		}
 	}
 	
-	static def getLiteral(ENamedElement feature) {
-		if(feature instanceof EStructuralFeature)
-			return '''«FOR part : splitNameAtUppercases(feature.EContainingClass.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»__«FOR part : splitNameAtUppercases(feature.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''		
+	static def getLiteral(ENamedElement elt) {
+		if(elt instanceof EStructuralFeature)
+			return '''«FOR part : splitNameAtUppercases(elt.EContainingClass.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»__«FOR part : splitNameAtUppercases(elt.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''		
 		else {
-			return '''«FOR part : splitNameAtUppercases(feature.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''
+			return '''«FOR part : splitNameAtUppercases(elt.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''
 		}
 	}
 	
