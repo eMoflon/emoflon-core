@@ -1,4 +1,4 @@
-package emfcodegenerator
+package org.moflon.smartemf
 
 /**
  * Enum to handle EMF multiplicities.

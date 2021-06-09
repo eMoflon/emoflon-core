@@ -1,7 +1,7 @@
-package emfcodegenerator.inspectors
+package org.moflon.smartemf.inspectors
 
-import emfcodegenerator.EcoreGenmodelParser
 import java.util.ArrayList
+import org.moflon.smartemf.EcoreGenmodelParser
 
 /**
  * Interface defining the shared methods in between EAttribute-, EReference- and

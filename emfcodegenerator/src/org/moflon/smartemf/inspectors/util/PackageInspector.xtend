@@ -1,23 +1,22 @@
-package emfcodegenerator.inspectors.util
+package org.moflon.smartemf.inspectors.util
 
-import emfcodegenerator.EMFCodeGenerationClass
-import emfcodegenerator.EcoreGenmodelParser
-import emfcodegenerator.inspectors.util.AbstractObjectFieldInspector
-import emfcodegenerator.inspectors.InspectedObjectType
-import emfcodegenerator.inspectors.Inspector
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
 import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EDataType
+import org.eclipse.emf.ecore.EEnum
+import org.eclipse.emf.ecore.EGenericType
 import org.eclipse.emf.ecore.EOperation
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
-import org.eclipse.emf.ecore.ETypeParameter
 import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.emf.ecore.EGenericType
-import org.eclipse.emf.ecore.EEnum
+import org.eclipse.emf.ecore.ETypeParameter
+import org.moflon.smartemf.EMFCodeGenerationClass
+import org.moflon.smartemf.EcoreGenmodelParser
+import org.moflon.smartemf.inspectors.InspectedObjectType
+import org.moflon.smartemf.inspectors.Inspector
 
 /**
  * Inspects EPackages

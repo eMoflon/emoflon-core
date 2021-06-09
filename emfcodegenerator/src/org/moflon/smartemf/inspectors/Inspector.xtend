@@ -1,4 +1,4 @@
-package emfcodegenerator.inspectors
+package org.moflon.smartemf.inspectors
 
 import java.util.Set
 

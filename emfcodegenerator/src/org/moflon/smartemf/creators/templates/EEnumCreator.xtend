@@ -1,16 +1,16 @@
-package emfcodegenerator.creators.util
+package org.moflon.smartemf.creators.templates
 
-import emfcodegenerator.EMFCodeGenerationClass
-import emfcodegenerator.creators.FileCreator
-import emfcodegenerator.inspectors.util.PackageInspector
-import org.eclipse.emf.ecore.EEnum
-import java.util.ArrayList
 import java.io.File
 import java.io.FileWriter
+import java.util.ArrayList
+import org.eclipse.emf.ecore.EEnum
+import org.moflon.smartemf.EMFCodeGenerationClass
+import org.moflon.smartemf.creators.FileCreator
+import org.moflon.smartemf.inspectors.util.PackageInspector
 
 /**
  * This Creator can be used to generate the source-code of an
- * {@link org.eclipse.emf.ecore.EEnum EEnum} implementation.
+ * {@link EEnum EEnum} implementation.
  */
 class EEnumCreator extends EMFCodeGenerationClass implements FileCreator {
 	

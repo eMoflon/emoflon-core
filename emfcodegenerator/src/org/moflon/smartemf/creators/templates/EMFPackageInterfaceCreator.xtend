@@ -1,28 +1,15 @@
-package emfcodegenerator.creators.util
+package org.moflon.smartemf.creators.templates
 
-import emfcodegenerator.EMFCodeGenerationClass
-import emfcodegenerator.EcoreGenmodelParser
-import emfcodegenerator.creators.FileCreator
-import emfcodegenerator.inspectors.util.AbstractObjectFieldInspector
-import emfcodegenerator.inspectors.ObjectFieldInspector
-import emfcodegenerator.inspectors.util.AttributeInspector
-import emfcodegenerator.inspectors.util.EOperationInspector
-import emfcodegenerator.inspectors.util.PackageInspector
-import emfcodegenerator.inspectors.util.ReferenceInspector
 import java.io.File
 import java.io.FileWriter
-import java.util.ArrayList
 import java.util.HashMap
-import java.util.HashSet
-import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.ecore.EDataType
-import org.eclipse.emf.ecore.EOperation
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
-import org.eclipse.emf.ecore.impl.EClassImpl
-import org.eclipse.emf.ecore.EEnum
-import java.util.LinkedList
+import org.moflon.smartemf.EMFCodeGenerationClass
+import org.moflon.smartemf.EcoreGenmodelParser
+import org.moflon.smartemf.creators.FileCreator
+import org.moflon.smartemf.inspectors.util.PackageInspector
 
 /**
  * This class generates the interface for the EMF-package class

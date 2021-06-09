@@ -1,12 +1,11 @@
-package emfcodegenerator.creators.util
+package org.moflon.smartemf.creators.templates
 
-import emfcodegenerator.inspectors.util.PackageInspector
-import emfcodegenerator.EcoreGenmodelParser
-import org.eclipse.emf.ecore.EClass
-import java.util.TreeMap
 import java.io.File
 import java.io.FileWriter
-import org.eclipse.emf.ecore.EReference
+import java.util.TreeMap
+import org.eclipse.emf.ecore.EClass
+import org.moflon.smartemf.EcoreGenmodelParser
+import org.moflon.smartemf.inspectors.util.PackageInspector
 
 /**
  * creates the implementation for the package factory

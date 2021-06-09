@@ -1,18 +1,20 @@
-package emfcodegenerator
+package org.moflon.smartemf
 
-import emfcodegenerator.creators.util.EMFPackageInterfaceCreator
-import emfcodegenerator.creators.util.EMFPackageSourceCreator
-import emfcodegenerator.creators.util.InterfaceCreator
-import emfcodegenerator.inspectors.util.PackageInspector
+import java.io.File
 import java.util.HashMap
 import java.util.HashSet
-import org.eclipse.emf.ecore.EPackage
-import emfcodegenerator.creators.util.EMFPackageFactoryInterfaceCreator
-import emfcodegenerator.creators.util.EMFPackageFactorySourceCreator
-import emfcodegenerator.creators.util.EEnumCreator
 import org.eclipse.emf.ecore.EClass
-import java.io.File
-import emfcodegenerator.creators.util.SmartEMFObjectCreator
+import org.eclipse.emf.ecore.EPackage
+import org.moflon.smartemf.creators.templates.EEnumCreator
+import org.moflon.smartemf.creators.templates.EMFPackageFactoryInterfaceCreator
+import org.moflon.smartemf.creators.templates.EMFPackageFactorySourceCreator
+import org.moflon.smartemf.creators.templates.EMFPackageInterfaceCreator
+import org.moflon.smartemf.creators.templates.EMFPackageSourceCreator
+import org.moflon.smartemf.creators.templates.InterfaceCreator
+import org.moflon.smartemf.creators.templates.SmartEMFObjectCreator
+import org.moflon.smartemf.inspectors.util.PackageInspector
+
+import static org.moflon.smartemf.EMFCodeGenerationClass.*
 
 /**
  * Class which generates the code

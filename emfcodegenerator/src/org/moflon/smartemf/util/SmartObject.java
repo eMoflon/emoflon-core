@@ -1,4 +1,4 @@
-package emfcodegenerator.util;
+package org.moflon.smartemf.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -15,10 +15,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-
-import emfcodegenerator.util.collections.DefaultSmartEList;
-import emfcodegenerator.util.collections.HashSmartESet;
-import emfcodegenerator.util.collections.LinkedSmartEList;
+import org.moflon.smartemf.util.collections.DefaultSmartEList;
 
 public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 

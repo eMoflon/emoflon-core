@@ -1,16 +1,15 @@
-package emfcodegenerator.creators.util
+package org.moflon.smartemf.creators.templates
 
-import emfcodegenerator.EGenericTypeProcessor
-import emfcodegenerator.EcoreGenmodelParser
-import emfcodegenerator.creators.FileCreator
-import emfcodegenerator.inspectors.util.PackageInspector
 import java.io.File
 import java.io.FileWriter
 import java.util.HashMap
+import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
-import org.eclipse.emf.ecore.EAttribute
-import org.eclipse.emf.ecore.impl.EcorePackageImpl
+import org.moflon.smartemf.EGenericTypeProcessor
+import org.moflon.smartemf.EcoreGenmodelParser
+import org.moflon.smartemf.creators.FileCreator
+import org.moflon.smartemf.inspectors.util.PackageInspector
 
 /**
  * Creator-class which generates the class-file for the SmartEMF-package-class.

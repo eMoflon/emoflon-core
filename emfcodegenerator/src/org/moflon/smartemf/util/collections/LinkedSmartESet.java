@@ -1,4 +1,4 @@
-package emfcodegenerator.util.collections;
+package org.moflon.smartemf.util.collections;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;

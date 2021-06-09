@@ -1,4 +1,4 @@
-package emfcodegenerator.util;
+package org.moflon.smartemf.util;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;

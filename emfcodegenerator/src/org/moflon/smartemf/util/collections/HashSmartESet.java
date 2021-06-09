@@ -1,4 +1,4 @@
-package emfcodegenerator.util.collections;
+package org.moflon.smartemf.util.collections;
 
 import java.util.Collection;
 import java.util.HashSet;

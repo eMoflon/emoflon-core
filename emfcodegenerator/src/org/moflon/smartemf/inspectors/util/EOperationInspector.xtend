@@ -1,24 +1,24 @@
-package emfcodegenerator.inspectors.util
+package org.moflon.smartemf.inspectors.util
 
-import emfcodegenerator.EMFCodeGenerationClass
-import emfcodegenerator.EcoreGenmodelParser
-import emfcodegenerator.inspectors.InspectedObjectType
 import java.util.ArrayList
 import java.util.HashMap
-import org.eclipse.emf.ecore.EGenericType
-import org.eclipse.emf.ecore.EOperation
-import org.eclipse.emf.ecore.EParameter
-import org.eclipse.emf.ecore.ETypeParameter
-import org.eclipse.emf.ecore.impl.EOperationImpl
-import emfcodegenerator.inspectors.FeatureInspector
-import org.eclipse.emf.ecore.EClass
-import emfcodegenerator.EGenericTypeProcessor
-import java.util.LinkedList
 import java.util.HashSet
-import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.EcorePackage
+import java.util.LinkedList
+import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EEnum
+import org.eclipse.emf.ecore.EGenericType
+import org.eclipse.emf.ecore.EOperation
+import org.eclipse.emf.ecore.EPackage
+import org.eclipse.emf.ecore.EParameter
+import org.eclipse.emf.ecore.ETypeParameter
+import org.eclipse.emf.ecore.EcorePackage
+import org.eclipse.emf.ecore.impl.EOperationImpl
+import org.moflon.smartemf.EGenericTypeProcessor
+import org.moflon.smartemf.EMFCodeGenerationClass
+import org.moflon.smartemf.EcoreGenmodelParser
+import org.moflon.smartemf.inspectors.FeatureInspector
+import org.moflon.smartemf.inspectors.InspectedObjectType
 
 /**
  * This Inspector inspects EOperations and can be used to generate the code for it.

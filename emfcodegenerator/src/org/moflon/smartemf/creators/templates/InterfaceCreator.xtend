@@ -1,10 +1,5 @@
-package emfcodegenerator.creators.util
+package org.moflon.smartemf.creators.templates
 
-import emfcodegenerator.EcoreGenmodelParser
-import emfcodegenerator.creators.ModelFileCreator
-import emfcodegenerator.inspectors.ObjectFieldInspector
-import emfcodegenerator.inspectors.util.EOperationInspector
-import emfcodegenerator.inspectors.util.PackageInspector
 import java.io.File
 import java.io.FileWriter
 import java.util.ArrayList
@@ -12,7 +7,12 @@ import java.util.HashMap
 import java.util.HashSet
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EGenericType
-import emfcodegenerator.inspectors.util.AbstractObjectFieldInspector
+import org.moflon.smartemf.EcoreGenmodelParser
+import org.moflon.smartemf.creators.ModelFileCreator
+import org.moflon.smartemf.inspectors.ObjectFieldInspector
+import org.moflon.smartemf.inspectors.util.AbstractObjectFieldInspector
+import org.moflon.smartemf.inspectors.util.EOperationInspector
+import org.moflon.smartemf.inspectors.util.PackageInspector
 
 /**
  * creates the interface file for an EClass

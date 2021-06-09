@@ -1,15 +1,14 @@
-package emfcodegenerator.inspectors.util
+package org.moflon.smartemf.inspectors.util
 
-import emfcodegenerator.EcoreGenmodelParser
-import emfcodegenerator.inspectors.InspectedObjectType
 import java.util.ArrayList
+import org.eclipse.emf.ecore.EAttribute
+import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.impl.EClassImpl
 import org.eclipse.emf.ecore.impl.EClassifierImpl
-import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.ecore.EAttribute
-import emfcodegenerator.util.collections.SmartCollectionFactory
+import org.moflon.smartemf.inspectors.InspectedObjectType
+import org.moflon.smartemf.EcoreGenmodelParser
 
 class AttributeInspector extends AbstractObjectFieldInspector{
 	
@@ -53,9 +52,6 @@ class AttributeInspector extends AbstractObjectFieldInspector{
 		
 		//set the default value for this EAttribute
 		if(this.is_a_tuple()){
-			this.default_value =  "new " +
-				SmartCollectionFactory.get_elist_type_name(this.get_needed_elist_type_enum) +
-				'''<«this.get_object_field_type_name»>()'''
 		}
 		else if(e_attr.defaultValue !== null){
 			if(e_attr.defaultValue instanceof String){

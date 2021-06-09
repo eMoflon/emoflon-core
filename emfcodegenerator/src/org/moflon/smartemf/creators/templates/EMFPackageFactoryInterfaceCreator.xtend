@@ -1,14 +1,14 @@
-package emfcodegenerator.creators.util
+package org.moflon.smartemf.creators.templates
 
-import emfcodegenerator.EcoreGenmodelParser
-import emfcodegenerator.inspectors.util.PackageInspector
-import emfcodegenerator.EMFCodeGenerationClass
-import emfcodegenerator.creators.FileCreator
-import java.util.HashMap
-import org.eclipse.emf.ecore.EClass
-import java.util.ArrayList
 import java.io.File
 import java.io.FileWriter
+import java.util.ArrayList
+import java.util.HashMap
+import org.eclipse.emf.ecore.EClass
+import org.moflon.smartemf.EMFCodeGenerationClass
+import org.moflon.smartemf.EcoreGenmodelParser
+import org.moflon.smartemf.creators.FileCreator
+import org.moflon.smartemf.inspectors.util.PackageInspector
 
 /**
  * creates the interface for the package factory

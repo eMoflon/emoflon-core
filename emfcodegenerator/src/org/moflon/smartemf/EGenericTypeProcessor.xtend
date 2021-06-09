@@ -1,18 +1,17 @@
-package emfcodegenerator
+package org.moflon.smartemf
 
-import java.util.LinkedList
-import org.eclipse.emf.ecore.EGenericType
 import java.util.HashMap
-import emfcodegenerator.inspectors.util.PackageInspector
-import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.EcorePackage
+import java.util.LinkedList
 import javax.naming.OperationNotSupportedException
-import org.eclipse.emf.ecore.ETypeParameter
-import emfcodegenerator.EcoreGenmodelParser
 import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EDataType
+import org.eclipse.emf.ecore.EGenericType
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EOperation
-
+import org.eclipse.emf.ecore.EPackage
+import org.eclipse.emf.ecore.ETypeParameter
+import org.eclipse.emf.ecore.EcorePackage
+import org.moflon.smartemf.inspectors.util.PackageInspector
 
 /**
  * This helper class can be used to traverse EMF-GenericType-hierarchies.
@@ -31,7 +30,7 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 		new HashMap<EGenericType,String>()
 
 	/**
-	 * Maps all {@link org.eclipse.emf.ecore.EPackage EPackages}, which are needed as an dependency,
+	 * Maps all {@link EPackage EPackages}, which are needed as an dependency,
 	 * to its {@link emfcodegenerator.inspectors.util.PackageInspector inspector}.
 	 */
 	protected var package_dependency_map =
@@ -59,7 +58,7 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 	var protected PackageInspector e_pak
 
 	/**
-	 * Maps all {@link org.eclipse.emf.ecore.EPackage EPackages}
+	 * Maps all {@link EPackage EPackages}
 	 * to its {@link emfcodegenerator.inspectors.util.PackageInspector inspector}.
 	 */
 	protected var HashMap<EPackage,PackageInspector> packages
@@ -98,16 +97,16 @@ class EGenericTypeProcessor extends EMFCodeGenerationClass {
 	 * the original tree-order of traversed structure when iterating backwards through list.<br>
 	 * Tree is scanned top-down and the resulting list should be read bottom-up.
 	 * This method can be used to traverse trees for the
-	 * {@link org.eclipse.emf.ecore.ETypeParameter ETypeParameter's} 
-	 * {@link org.eclipse.emf.ecore.EGenericType EBounds} of an
-	 * {@link org.eclipse.emf.ecore.EClass EClass} (take a look
+	 * {@link ETypeParameter ETypeParameter's} 
+	 * {@link EGenericType EBounds} of an
+	 * {@link EClass EClass} (take a look
 	 * {@link emfcodegenerator.creators.util.EMFPackageSourceCreator
 	 #generate_e_package_init_package_contents__create_type_params___for_eclasses here}),
-	 * {@link org.eclipse.emf.ecore.EDataType EDataTypes}
+	 * {@link EDataType EDataTypes}
 	 * (take a look
 	 * {@link emfcodegenerator.creators.util.EMFPackageSourceCreator
 	 #generate_e_package_init_package_contents__create_type_params___for_edatatypes here})
-	 * or {@link org.eclipse.emf.ecore.EOperation EOperations} (take a look
+	 * or {@link EOperation EOperations} (take a look
 	 * {@link emfcodegenerator.inspectors.util.EOperationInspector
 	 #generate_init_code_for_package_class here}).<br>
 	 * To be used in cojuncture with

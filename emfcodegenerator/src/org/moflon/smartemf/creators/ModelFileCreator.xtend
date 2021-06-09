@@ -1,15 +1,15 @@
-package emfcodegenerator.creators
+package org.moflon.smartemf.creators
 
-import emfcodegenerator.EMFCodeGenerationClass
-import emfcodegenerator.EcoreGenmodelParser
-import emfcodegenerator.inspectors.util.AbstractObjectFieldInspector
-import emfcodegenerator.inspectors.util.EOperationInspector
-import emfcodegenerator.inspectors.util.PackageInspector
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.HashSet
-import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EPackage
+import org.moflon.smartemf.EMFCodeGenerationClass
+import org.moflon.smartemf.EcoreGenmodelParser
+import org.moflon.smartemf.inspectors.util.AbstractObjectFieldInspector
+import org.moflon.smartemf.inspectors.util.EOperationInspector
+import org.moflon.smartemf.inspectors.util.PackageInspector
 
 /**
  * Abstract class with shared data-fields and methods for the

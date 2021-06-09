@@ -1,48 +1,39 @@
-package emfcodegenerator
+package org.moflon.smartemf
 
 /*
  * @author Adrian Zwenger
  */
 
-//java.util 
-import java.util.HashMap;
+//java.util
 
-//org.eclipse.emf.codegen.ecore_2.23.0.v20200701-0840.jar
-import org.eclipse.emf.codegen.ecore.genmodel.GenClass;
-import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
-import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage;
-import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
-
-//org.eclipse.emf.ecore_2.23.0.v20200630-0516.jar
-import org.eclipse.emf.ecore.impl.EClassifierImpl;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.EObject
-
-//org.eclipse.emf.ecore.xmi_2.16.0.v20190528-0725.jar
-import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-
-
-
-//
-import org.eclipse.emf.common.util.URI;
 import java.util.Arrays
+import java.util.HashMap
 import java.util.HashSet
-import org.eclipse.emf.ecore.EDataType
-import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.codegen.ecore.genmodel.GenClass
+import org.eclipse.emf.codegen.ecore.genmodel.GenModel
+import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
+import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EAttribute
-import emfcodegenerator.inspectors.util.AttributeInspector
-import org.eclipse.emf.ecore.EReference
-import emfcodegenerator.inspectors.util.ReferenceInspector
-import emfcodegenerator.inspectors.util.PackageInspector
-import emfcodegenerator.inspectors.util.AbstractObjectFieldInspector
 import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.ecore.ETypeParameter
-import org.eclipse.emf.ecore.EEnum
-import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.EClassifier
+import org.eclipse.emf.ecore.EDataType
+import org.eclipse.emf.ecore.EEnum
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.EPackage
+import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.ETypeParameter
+import org.eclipse.emf.ecore.EcorePackage
+import org.eclipse.emf.ecore.impl.EClassifierImpl
+import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
+import org.moflon.smartemf.inspectors.util.AbstractObjectFieldInspector
+import org.moflon.smartemf.inspectors.util.AttributeInspector
+import org.moflon.smartemf.inspectors.util.PackageInspector
+import org.moflon.smartemf.inspectors.util.ReferenceInspector
 
 /**
  * Wrapper for parsing Ecore- and GenModel-XMI files. All
@@ -78,22 +69,22 @@ class EcoreGenmodelParser {
 	var HashMap<EClass,String> reverse_ecoreclass_name_map = new HashMap<EClass,String>()
 
 	/**
-	 * Maps the parsed {@link org.eclipse.emf.ecore.EPackage EPackages} to the
-	 * {@link org.eclipse.emf.ecore.EClass EClasses} directly contained in said package.
+	 * Maps the parsed {@link EPackage EPackages} to the
+	 * {@link EClass EClasses} directly contained in said package.
 	 */
 	var HashMap<EPackage,HashSet<EClass>> epackage_and_contained_classes =
 		new HashMap<EPackage,HashSet<EClass>>()
 	
 	/**
-	 * Maps the parsed {@link org.eclipse.emf.ecore.EPackage EPackages} to the
-	 * {@link org.eclipse.emf.ecore.EDataType EDataTypes} directly contained in said package.
+	 * Maps the parsed {@link EPackage EPackages} to the
+	 * {@link EDataType EDataTypes} directly contained in said package.
 	 */
 	var HashMap<EPackage,HashSet<EDataType>> epackage_and_contained_edatatypes =
 		new HashMap<EPackage,HashSet<EDataType>>()
 	
 	/**
-	 * Maps the parsed {@link org.eclipse.emf.ecore.EPackage EPackages} to the
-	 * {@link org.eclipse.emf.ecore.EEnum EEnums} directly contained in said package.
+	 * Maps the parsed {@link EPackage EPackages} to the
+	 * {@link EEnum EEnums} directly contained in said package.
 	 */
 	var HashMap<EPackage,HashSet<EEnum>> epackage_and_contained_eenums =
 		new HashMap<EPackage,HashSet<EEnum>>()
@@ -105,7 +96,7 @@ class EcoreGenmodelParser {
 	var String super_package_name
 
 	/**
-	 * top-layer {@link org.eclipse.emf.ecore.EPackage EPackage} in hierarchy
+	 * top-layer {@link EPackage EPackage} in hierarchy
 	 */
 	var EPackage super_package
 
@@ -115,7 +106,7 @@ class EcoreGenmodelParser {
 	var String genmodel_xmi_fq_path
 
 	/**
-	 * maps found {@link org.eclipse.emf.ecore.EStructuralFeature EStructuralFeature} to an
+	 * maps found {@link EStructuralFeature EStructuralFeature} to an
 	 * {@link emfcodegenerator.inspectors.util.AbstractObjectFieldInspector
 	 * AbstractObjectFieldInspector} for said feature.
 	 */
@@ -123,7 +114,7 @@ class EcoreGenmodelParser {
 		new HashMap<EStructuralFeature,AbstractObjectFieldInspector>()
 
 	/**
-	 * maps found {@link org.eclipse.emf.ecore.EPackage EPackage} to its respective
+	 * maps found {@link EPackage EPackage} to its respective
 	 * {@link emfcodegenerator.inspectors.util.PackageInspector PackageInspector}.
 	 */
 	var HashMap<EPackage, PackageInspector> packages_to_package_inspector_map =

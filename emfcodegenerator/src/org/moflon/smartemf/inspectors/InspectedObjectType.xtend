@@ -1,4 +1,4 @@
-package emfcodegenerator.inspectors
+package org.moflon.smartemf.inspectors
 
 /**
  * Enum signifying which EMF-object type is being inspected

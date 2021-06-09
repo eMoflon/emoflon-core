@@ -1,20 +1,18 @@
-package emfcodegenerator.inspectors.util
+package org.moflon.smartemf.inspectors.util
 
-import emfcodegenerator.EMFCodeGenerationClass
-import org.eclipse.emf.ecore.EStructuralFeature
-import emfcodegenerator.EcoreGenmodelParser
 import java.util.ArrayList
-import java.util.LinkedList
-import org.eclipse.emf.ecore.EGenericType
 import java.util.HashSet
-import emfcodegenerator.MultiplicityEnum
-import org.eclipse.emf.ecore.ETypeParameter
-import emfcodegenerator.EGenericTypeProcessor
+import java.util.LinkedList
 import org.eclipse.emf.ecore.EClass
-import emfcodegenerator.inspectors.ObjectFieldInspector
-import emfcodegenerator.util.collections.EListTypeEnum
-import emfcodegenerator.util.collections.SmartCollectionFactory
+import org.eclipse.emf.ecore.EGenericType
 import org.eclipse.emf.ecore.EPackage
+import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.ETypeParameter
+import org.moflon.smartemf.EGenericTypeProcessor
+import org.moflon.smartemf.EMFCodeGenerationClass
+import org.moflon.smartemf.EcoreGenmodelParser
+import org.moflon.smartemf.MultiplicityEnum
+import org.moflon.smartemf.inspectors.ObjectFieldInspector
 
 /**
  * This class represent the shared functionality of AttributeInspectors and ReferenceInspectors
@@ -50,11 +48,6 @@ class AbstractObjectFieldInspector extends EMFCodeGenerationClass implements Obj
 	 * flag which stores if the init-commands have been generated
 	 */
 	protected var boolean type_init_commands_are_generated = false
-
-	/**
-	 * stores which EList-type is needed to store this EReference
-	 */
-	protected var EListTypeEnum needed_elist_type = EListTypeEnum.NONE
 
 	/**
 	 * boolean representing if this reference needs a setter method
@@ -129,8 +122,6 @@ class AbstractObjectFieldInspector extends EMFCodeGenerationClass implements Obj
 	 */
 	private def void init(EStructuralFeature e_feature){
 		this.e_feature = e_feature
-		this.needed_elist_type =
-			SmartCollectionFactory.get_needed_elist_type(this.is_ordered(), this.is_unique())
 		
 		switch(e_feature.upperBound){
 			case MultiplicityEnum.SINGLE_ELEMENT: {
@@ -308,13 +299,6 @@ class AbstractObjectFieldInspector extends EMFCodeGenerationClass implements Obj
 	 */ 
 	override get_meta_model_package_dependencies(){
 		return this.meta_model_package_dependencies
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	override get_needed_elist_type_enum(){
-		return this.needed_elist_type
 	}
 
 	/**

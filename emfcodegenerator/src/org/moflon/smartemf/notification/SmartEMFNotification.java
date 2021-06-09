@@ -1,4 +1,4 @@
-package emfcodegenerator.notification;
+package org.moflon.smartemf.notification;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;

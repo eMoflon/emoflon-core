@@ -1,14 +1,12 @@
-package emfcodegenerator.inspectors.util
+package org.moflon.smartemf.inspectors.util
 
-import emfcodegenerator.EcoreGenmodelParser
-import emfcodegenerator.inspectors.util.AbstractObjectFieldInspector
-import emfcodegenerator.inspectors.InspectedObjectType
 import java.util.ArrayList
+import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.impl.EReferenceImpl
-import org.eclipse.emf.ecore.EClass
-import emfcodegenerator.util.collections.SmartCollectionFactory
+import org.moflon.smartemf.EcoreGenmodelParser
+import org.moflon.smartemf.inspectors.InspectedObjectType
 
 /**
  * inspects EReferences
@@ -91,9 +89,6 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 		}
 
 		else if(this.is_a_tuple()){
-			this.default_value = "new " +
-				SmartCollectionFactory.get_elist_type_name(this.get_needed_elist_type_enum) +
-				'''<«this.get_object_field_type_name»>()'''
 		}
 		else if(e_ref.defaultValue === null) this.default_value = "null"
 		else this.default_value = e_ref.defaultValue.toString()
@@ -314,10 +309,6 @@ class ReferenceInspector extends AbstractObjectFieldInspector {
 	 */
 	def String get_default_value_if_contained_reference(String ereference_instance){
 		if(!this.is_contained || !this.is_a_tuple) return this.get_default_value
-		this.default_value =
-			"new " +
-			SmartCollectionFactory.get_elist_type_name(this.get_needed_elist_type_enum) +
-			'''<«this.get_object_field_type_name»>(this, «ereference_instance»)'''
 		return this.default_value
 	}
 }

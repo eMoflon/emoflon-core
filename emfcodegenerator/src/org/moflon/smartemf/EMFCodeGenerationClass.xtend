@@ -1,4 +1,4 @@
-package emfcodegenerator
+package org.moflon.smartemf
 
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference

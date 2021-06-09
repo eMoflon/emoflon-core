@@ -1,4 +1,4 @@
-package emfcodegenerator.creators.util
+package org.moflon.smartemf.creators.templates
 
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EPackage

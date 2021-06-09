@@ -1,4 +1,4 @@
-package emfcodegenerator.util.collections;
+package org.moflon.smartemf.util.collections;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -7,8 +7,7 @@ import java.util.ListIterator;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-
-import emfcodegenerator.notification.SmartEMFNotification;
+import org.moflon.smartemf.notification.SmartEMFNotification;
 
 public class LinkedSmartEList<T> extends SmartCollection<T, LinkedList<T>> {
 

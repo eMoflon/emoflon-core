@@ -1,21 +1,13 @@
-package emfcodegenerator.inspectors
+package org.moflon.smartemf.inspectors
 
 import java.util.HashSet
 import org.eclipse.emf.ecore.EStructuralFeature
-import emfcodegenerator.util.collections.EListTypeEnum
 import org.eclipse.emf.ecore.EPackage
 
 /**
  * interface for how EAttribute- and EReference-Inspector shall look like
  */
 interface ObjectFieldInspector extends FeatureInspector{
-	
-	/**
-	 * returns the needed EList-type for implementation
-	 * @retuen EListTypeEnum
-	 * @author Adrian Zwenger
-	 */
-	def EListTypeEnum get_needed_elist_type_enum()
 	
 	/**
 	 * gets the type-name of an object field. Example: java.lang.String -> String

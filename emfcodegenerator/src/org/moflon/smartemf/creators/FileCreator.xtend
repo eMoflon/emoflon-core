@@ -1,4 +1,4 @@
-package emfcodegenerator.creators
+package org.moflon.smartemf.creators
 
 /**
  * Common methods for all classes which generate a file.

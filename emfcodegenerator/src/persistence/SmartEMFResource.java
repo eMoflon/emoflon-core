@@ -1,10 +1,5 @@
 package persistence;
 
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Iterators;
-import emfcodegenerator.util.SmartObject;
-import emfcodegenerator.util.collections.LinkedESet;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +16,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -35,7 +29,6 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
-//import org.eclipse.emf.ecore.resource.impl.ResourceImpl.ContentsEList;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.xmi.DOMHandler;
 import org.eclipse.emf.ecore.xmi.DOMHelper;
@@ -47,9 +40,13 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMISaveImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLHelperImpl;
 import org.eclipse.emf.ecore.xml.type.AnyType;
+import org.moflon.smartemf.util.collections.DefaultSmartEList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
+
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterators;
 
 /**
  * A simplified resource implementation that serializes to XMI. Ignores save options. Can enable notification cascading for its contents.
@@ -70,7 +67,7 @@ public class SmartEMFResource extends ResourceImpl implements XMIResource {
 	private Map<Object, Object> defaultLoadOptions = new HashMap<>();
 	private Map<Object, Object> defaultSaveOptions = new HashMap<>();
 	
-    private EList<EObject> contents = new LinkedESet<>();
+    private EList<EObject> contents = new DefaultSmartEList<>();
 	
     private String xmiVersion = XMIResource.VERSION_VALUE;
     private String xmiNamespace = XMIResource.XMI_URI;

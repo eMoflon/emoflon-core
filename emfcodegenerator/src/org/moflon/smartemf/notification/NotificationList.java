@@ -1,4 +1,4 @@
-package emfcodegenerator.notification;
+package org.moflon.smartemf.notification;
 
 import java.util.LinkedList;
 
