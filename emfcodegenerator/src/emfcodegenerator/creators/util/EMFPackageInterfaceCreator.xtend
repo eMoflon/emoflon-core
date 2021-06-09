@@ -44,6 +44,8 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 	 */
 	var boolean is_initialized = false
 	
+	var featureCounter = 0;
+	
 	new(PackageInspector package_inspector, HashMap<EPackage,PackageInspector> e_pak_map, EcoreGenmodelParser gen_model){
 		super(gen_model)
 		e_pak = package_inspector
@@ -55,6 +57,9 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 		
 		import org.eclipse.emf.ecore.EAttribute;
 		import org.eclipse.emf.ecore.EClass;
+		«IF !e_pak.get_all_eenums_in_package.empty»
+		import org.eclipse.emf.ecore.EEnum;
+		«ENDIF»
 		import org.eclipse.emf.ecore.EPackage;
 		import org.eclipse.emf.ecore.EReference;
 		
@@ -69,19 +74,28 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
 			int «SmartEMFObjectCreator.getLiteral(clazz)» = «clazz.classifierID»;
 			«FOR feature : clazz.EStructuralFeatures»
-			int «SmartEMFObjectCreator.getLiteral(feature)» = «feature.featureID + countSuperFeatures(clazz)»;
+«««			int «SmartEMFObjectCreator.getLiteral(feature)» = «feature.featureID + countSuperFeatures(clazz)»;
+			int «SmartEMFObjectCreator.getLiteral(feature)» = «featureCounter++»;
 			«ENDFOR»
 			int «SmartEMFObjectCreator.getLiteral(clazz)»_FEATURE_COUNT = «clazz.EStructuralFeatures.size + countSuperFeatures(clazz)»;
 			int «SmartEMFObjectCreator.getLiteral(clazz)»_OPERATION_COUNT = «clazz.EOperations.size + countSuperOperations(clazz)»;
 			
 			«ENDFOR»
+			«FOR clazz : e_pak.get_all_eenums_in_package»
+			int «SmartEMFObjectCreator.getLiteral(clazz)» = «clazz.classifierID»;
+			
+			«ENDFOR»
 
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
-			EClass get«clazz.name»();
+			EClass get«clazz.name.toFirstUpper»();
 			«FOR feature : clazz.EStructuralFeatures»
 			«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» get«clazz.name»_«feature.name.toFirstUpper»();
 			«ENDFOR»
 			
+			«ENDFOR»
+			
+			«FOR clazz : e_pak.get_all_eenums_in_package»
+			EEnum get«clazz.name.toFirstUpper»();
 			«ENDFOR»
 			
 			«e_pak.get_emf_e_package.name.toFirstUpper»Factory get«e_pak.get_emf_e_package.name.toFirstUpper»Factory();
@@ -95,6 +109,10 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 				«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» «SmartEMFObjectCreator.getLiteral(feature).toUpperCase» = eINSTANCE.get«clazz.name.toFirstUpper»_«feature.name.toFirstUpper»();
 				
 				«ENDFOR»
+				«ENDFOR»
+				
+				«FOR clazz : e_pak.get_all_eenums_in_package»
+				EEnum «SmartEMFObjectCreator.getLiteral(clazz)» = eINSTANCE.get«clazz.name.toFirstUpper»();
 				«ENDFOR»
 			}
 		
