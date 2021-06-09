@@ -10,11 +10,11 @@ import org.moflon.smartemf.creators.templates.EMFPackageFactoryInterfaceCreator
 import org.moflon.smartemf.creators.templates.EMFPackageFactorySourceCreator
 import org.moflon.smartemf.creators.templates.EMFPackageInterfaceCreator
 import org.moflon.smartemf.creators.templates.EMFPackageSourceCreator
-import org.moflon.smartemf.creators.templates.InterfaceCreator
-import org.moflon.smartemf.creators.templates.SmartEMFObjectCreator
+import org.moflon.smartemf.creators.templates.SmartEMFObjectTemplate
 import org.moflon.smartemf.inspectors.util.PackageInspector
 
 import static org.moflon.smartemf.EMFCodeGenerationClass.*
+import org.moflon.smartemf.creators.templates.SmartEMFInterfaceTemplate
 
 /**
  * Class which generates the code
@@ -31,12 +31,12 @@ class EMFCodeGenerator{
 	/**
 	 * HashMap mapping InterfaceCreator to PackageInspector
 	 */	
-	var HashSet<InterfaceCreator> interfaces = new HashSet()
+	var HashSet<SmartEMFInterfaceTemplate> interfaces = new HashSet()
 	
 	/**
 	 * HashMap mapping InterfaceCreator to PackageInspector
 	 */
-	var HashSet<SmartEMFObjectCreator> implementations = new HashSet()
+	var HashSet<SmartEMFObjectTemplate> implementations = new HashSet()
 
 	/**
 	 * HashMap storing EPackages and their PackagInspectors
@@ -68,17 +68,11 @@ class EMFCodeGenerator{
 
 			//create the FileCreators for the EClasses
 			for(EClass e_cl : e_pak_inspector.get_all_eclasses_in_package){
-				var i_creator = new InterfaceCreator(
-									e_cl,
-									EMFCodeGenerationClass.emf_model,
-									e_pak_inspector.get_object_field_inspectors_for_class(e_cl),
-									e_pak_inspector.get_eoperation_inspector_for_class(e_cl),
-									e_pak_inspector
-									)
+				var i_creator = new SmartEMFInterfaceTemplate(e_cl)
 
 				interfaces.add(i_creator)
 
-				var c_creator = new SmartEMFObjectCreator(e_cl)
+				var c_creator = new SmartEMFObjectTemplate(e_cl)
 //				var c_creator = new SourceCodeCreator(
 //									e_cl,
 //									EMFCodeGenerationClass.emf_model,
@@ -97,12 +91,10 @@ class EMFCodeGenerator{
 	 * generates all interface files for the EClasses specified in the EMF-model
 	 */
 	def void generate_interfaces(){
-		for(InterfaceCreator new_interface : interfaces){
+		for(SmartEMFInterfaceTemplate new_interface : interfaces){
 			//initialise a file-writer
-			var path = packages.get(new_interface.get_package).get_path_to_folder + "/" +
-					   new_interface.get_name + ".java"
-			new_interface.initialize_creator(path, IDENTION)
-			new_interface.write_to_file()
+			var path = packages.get(new_interface.package).get_path_to_folder
+			new_interface.writeToFile(path)
 		}
 	}
 
@@ -110,7 +102,7 @@ class EMFCodeGenerator{
 	 * generates all implementation files for the EClasses specified in the EMF-model
 	 */
 	def void generate_implementation(){
-		for(SmartEMFObjectCreator new_source : implementations){
+		for(SmartEMFObjectTemplate new_source : implementations){
 			//initialise a file-writer
 			var path = packages.get(new_source.package).get_path_to_folder 
 			new_source.writeToFile(path)

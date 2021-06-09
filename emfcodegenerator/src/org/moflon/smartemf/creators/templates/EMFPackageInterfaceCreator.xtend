@@ -59,17 +59,17 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 			«e_pak.get_emf_package_class_name» eINSTANCE = «e_pak.get_package_declaration_name».impl.«e_pak.get_emf_package_class_name»Impl.init();
 		
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
-			int «SmartEMFObjectCreator.getLiteral(clazz)» = «clazz.classifierID»;
+			int «SmartEMFObjectTemplate.getLiteral(clazz)» = «clazz.classifierID»;
 			«FOR feature : clazz.EStructuralFeatures»
 «««			int «SmartEMFObjectCreator.getLiteral(feature)» = «feature.featureID + countSuperFeatures(clazz)»;
-			int «SmartEMFObjectCreator.getLiteral(feature)» = «featureCounter++»;
+			int «SmartEMFObjectTemplate.getLiteral(feature)» = «featureCounter++»;
 			«ENDFOR»
-			int «SmartEMFObjectCreator.getLiteral(clazz)»_FEATURE_COUNT = «clazz.EStructuralFeatures.size + countSuperFeatures(clazz)»;
-			int «SmartEMFObjectCreator.getLiteral(clazz)»_OPERATION_COUNT = «clazz.EOperations.size + countSuperOperations(clazz)»;
+			int «SmartEMFObjectTemplate.getLiteral(clazz)»_FEATURE_COUNT = «clazz.EStructuralFeatures.size + countSuperFeatures(clazz)»;
+			int «SmartEMFObjectTemplate.getLiteral(clazz)»_OPERATION_COUNT = «clazz.EOperations.size + countSuperOperations(clazz)»;
 			
 			«ENDFOR»
 			«FOR clazz : e_pak.get_all_eenums_in_package»
-			int «SmartEMFObjectCreator.getLiteral(clazz)» = «clazz.classifierID»;
+			int «SmartEMFObjectTemplate.getLiteral(clazz)» = «clazz.classifierID»;
 			
 			«ENDFOR»
 
@@ -90,16 +90,16 @@ class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileC
 			interface Literals {
 				
 				«FOR clazz : e_pak.get_all_eclasses_in_package»
-				EClass «SmartEMFObjectCreator.getLiteral(clazz)» = eINSTANCE.get«clazz.name.toFirstUpper»();
+				EClass «SmartEMFObjectTemplate.getLiteral(clazz)» = eINSTANCE.get«clazz.name.toFirstUpper»();
 				
 				«FOR feature : clazz.EStructuralFeatures»
-				«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» «SmartEMFObjectCreator.getLiteral(feature).toUpperCase» = eINSTANCE.get«clazz.name.toFirstUpper»_«feature.name.toFirstUpper»();
+				«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» «SmartEMFObjectTemplate.getLiteral(feature).toUpperCase» = eINSTANCE.get«clazz.name.toFirstUpper»_«feature.name.toFirstUpper»();
 				
 				«ENDFOR»
 				«ENDFOR»
 				
 				«FOR clazz : e_pak.get_all_eenums_in_package»
-				EEnum «SmartEMFObjectCreator.getLiteral(clazz)» = eINSTANCE.get«clazz.name.toFirstUpper»();
+				EEnum «SmartEMFObjectTemplate.getLiteral(clazz)» = eINSTANCE.get«clazz.name.toFirstUpper»();
 				«ENDFOR»
 			}
 		

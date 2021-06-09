@@ -12,7 +12,7 @@ import java.io.FileWriter
 import java.util.LinkedList
 import org.eclipse.emf.ecore.ENamedElement
 
-class SmartEMFObjectCreator {
+class SmartEMFObjectTemplate {
 	
 	var EClass eClass = null
 	
@@ -37,7 +37,7 @@ class SmartEMFObjectCreator {
 		import «getFQName(featureType)».«featureType.name»;
 		«ENDFOR»
 		import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
-		import org.moflon.smartemf.runtime.SmartObject;
+		import org.moflon.smartemf.runtime.*;
 		import org.moflon.smartemf.runtime.collections.*;
 		
 		import org.eclipse.emf.common.util.EList;
@@ -60,22 +60,17 @@ class SmartEMFObjectCreator {
 			
 		    «FOR feature : eClass.EAllStructuralFeatures»
 		    @Override
-		    public «getFieldTypeName(feature)» «getOrIs(feature)»«feature.name.toFirstUpper»() {
+		    public «IF feature.isMany»EList<«feature.EType.name»>«ELSE»«SmartEMFObjectTemplate.getFieldTypeName(feature)»«ENDIF» «getOrIs(feature)»«feature.name.toFirstUpper»() {
 		    	return «getValidName(feature.name)»;
 		    }
 		    
-«««		    @Override
+		    «IF !feature.isUnsettable»
+		    @Override
 		    public void set«feature.name.toFirstUpper»(«getFieldTypeName(feature)» value) {
 		    	«getSetterMethod(eClass, feature, FQPackagePath, packageClassName)»
 		    }
+		    «ENDIF»
 		    «ENDFOR»
-		
-		    @Override
-		    public boolean eIsSet(int featureID){
-		        switch(featureID) {
-		        }
-		        return super.eIsSet(featureID);
-		    }
 		
 		    @Override
 		    public void eSet(EStructuralFeature eFeature, Object newValue){
@@ -85,30 +80,34 @@ class SmartEMFObjectCreator {
 		    	 	return;
 		    	 }
 		    	«ENDFOR»
-		        super.eSet(eFeature, newValue);
 		    }
-		
+		    
 		    @Override
-		    public void eSet(int featureID, Object newValue){
-		        switch(featureID) {
-		    		«FOR feature : eClass.EAllStructuralFeatures»
-		    		case «getPackageClassName(feature)».«getLiteralID(feature)»:
-		    			set«feature.name.toFirstUpper»((«getFieldTypeName(feature)») newValue); 
-		    			return;
-	        		«ENDFOR»
-		        }
-		        super.eSet(featureID, newValue);
+		    public void eUnset(EStructuralFeature eFeature){
+		    	«FOR feature : eClass.EAllStructuralFeatures»
+		    	 if («FQPackagePath».«getPackageClassName(feature)».Literals.«getLiteral(feature)».equals(eFeature)) {
+		    	 	«IF feature.isMany»
+		    	 	get«feature.name.toFirstUpper»().clear(); 
+		    	 	«ELSE»
+		    	 	set«feature.name.toFirstUpper»(null); 
+		    	 	«ENDIF»
+		    	 	return;
+		    	 }
+		    	«ENDFOR»
 		    }
 		
 		    @Override
 		    public String toString(){
 		        StringBuilder result = new StringBuilder(super.toString() + "(name: «className») ");
 		        result.append(" (");
-	    		«FOR feature : eClass.EAllStructuralFeatures SEPARATOR '''
+	    		«FOR feature : eClass.EAllStructuralFeatures SEPARATOR 
+	    		'''
 	    		result.append(", ");
 	    		'''»
-				result.append("«feature.name»:");
-	    		result.append(SmartObject.toStringIfNotNull(«getValidName(feature.name)»));
+	    		if(«feature.name» != null) {
+					result.append("«feature.name»:");
+					result.append(«getValidName(feature.name)»);
+				}
 		        «ENDFOR»
 		        return result.toString();
 		    }
@@ -119,7 +118,7 @@ class SmartEMFObjectCreator {
 		    	 if («getPackageClassName(feature)».Literals.«getLiteral(feature)».equals(eFeature))
 		    	 	return «getOrIs(feature)»«feature.name.toFirstUpper»();
 		    	«ENDFOR»
-		        return super.eGet(eFeature);
+		        return null;
 		    }
 		
 		    @Override
@@ -130,16 +129,8 @@ class SmartEMFObjectCreator {
 	    				return «getOrIs(feature)»«feature.name.toFirstUpper»();
 					«ENDFOR»
 		        }
-		        return super.eGet(featureID, resolve, coreType);
+		        return null;
 		    }
-		
-		    @Override
-		    public void eUnset(int featureID){
-		        switch(featureID) {
-		        }
-		        super.eUnset(featureID);
-		    }
-		
 		}
 		
 		
@@ -180,7 +171,7 @@ class SmartEMFObjectCreator {
 			Object oldValue = «getValidName(feature.name)»;
 	        «IF feature.containment»
 			if(«getValidName(feature.name)» != null) {
-				((emfcodegenerator.util.MinimalSObjectContainer) «getValidName(feature.name)»).reset_containment();
+				((MinimalSObjectContainer) «getValidName(feature.name)»).resetContainment();
 			}
 	        «ENDIF»
 	        «getValidName(feature.name)» = value;
@@ -194,14 +185,14 @@ class SmartEMFObjectCreator {
 	        «ENDIF»
 
 			«IF feature.containment»
-			((emfcodegenerator.util.MinimalSObjectContainer) «getValidName(feature.name)»).set_containment(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)»);
+			((MinimalSObjectContainer) «getValidName(feature.name)»).setContainment(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)»);
 			«ENDIF»
 
         	sendNotification(SmartEMFNotification.createSetNotification(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)», oldValue, value, -1));'''
 		}
 	}
 	
-	def getListTypeName(EStructuralFeature feature) {
+	static def getListTypeName(EStructuralFeature feature) {
 		val isOrdered = feature.ordered
 		val isUnique = feature.unique
 		if(isOrdered && isUnique)
@@ -211,7 +202,7 @@ class SmartEMFObjectCreator {
 		return '''SmartEList'''
 	}
 	
-	def getFieldTypeName(EStructuralFeature feature) {
+	static def getFieldTypeName(EStructuralFeature feature) {
 		if(!feature.isMany) {
 			switch feature.EType.name {
 				case "EString" : return "String"
@@ -243,7 +234,7 @@ class SmartEMFObjectCreator {
 	}
 	
 	// ids are always generated for the current eClass
-	def getLiteralID(ENamedElement feature) {
+	static def getLiteralID(ENamedElement feature) {
 		val containingClass = feature.eContainer as EClassifier
 		if(feature instanceof EStructuralFeature)
 			return '''«FOR part : splitNameAtUppercases(containingClass.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»__«FOR part : splitNameAtUppercases(feature.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''		
@@ -260,7 +251,7 @@ class SmartEMFObjectCreator {
 		}
 	}
 	
-	def getFQName(EPackage ePackage) {
+	static def getFQName(EPackage ePackage) {
 		var currentPackage = ePackage
 		var FQPackagePath = currentPackage.name
 		while(currentPackage.eContainer !== null) {
@@ -271,7 +262,7 @@ class SmartEMFObjectCreator {
 		return FQPackagePath
 	}
 	
-	def getFQName(EClassifier eClass) {
+	static def getFQName(EClassifier eClass) {
 		return getFQName(eClass.EPackage)
 	}
 	
@@ -287,19 +278,19 @@ class SmartEMFObjectCreator {
 		return eClass.EPackage
 	}
 	
-	def getPackageClassName(EPackage pkg) {
+	static def getPackageClassName(EPackage pkg) {
 		return pkg.name.toFirstUpper + "Package"
 	}
 	
-	def getPackageClassName(EClassifier c) {
+	static def getPackageClassName(EClassifier c) {
 		return getPackageClassName(c.EPackage)
 	}
 	
-	def getPackageClassName(EStructuralFeature f) {
+	static def getPackageClassName(EStructuralFeature f) {
 		return getPackageClassName(f.eContainer as EClassifier)
 	}
 	
-	def getValidName(String name) {
+	static def getValidName(String name) {
 		val keywords = newLinkedList("package", "class", "public", "private", "protected", "int", "double", "char", "boolean", "import")
 		if(keywords.contains(name)) {
 			return "__" + name

@@ -180,4 +180,6 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 			}
 		}
 	}
+	
+    public abstract Object eGet(int featureID, boolean resolve, boolean coreType);
 }

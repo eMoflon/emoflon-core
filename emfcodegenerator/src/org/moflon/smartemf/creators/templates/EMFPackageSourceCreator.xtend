@@ -130,15 +130,15 @@ class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreat
 		
 				// Create classes and their features
 				«FOR clazz : e_pak.get_all_eclasses_in_package»
-				«clazz.name.toFirstLower»EClass = createEClass(«SmartEMFObjectCreator.getLiteral(clazz)»);
+				«clazz.name.toFirstLower»EClass = createEClass(«SmartEMFObjectTemplate.getLiteral(clazz)»);
 				«FOR feature : clazz.EStructuralFeatures»
-				«IF feature instanceof EReference»createEReference«ELSE»createEAttribute«ENDIF»(«clazz.name.toFirstLower»EClass, «SmartEMFObjectCreator.getLiteral(feature)»);
+				«IF feature instanceof EReference»createEReference«ELSE»createEAttribute«ENDIF»(«clazz.name.toFirstLower»EClass, «SmartEMFObjectTemplate.getLiteral(feature)»);
 				«ENDFOR»
 				
 				«ENDFOR»
 				// Create enums
 				«FOR clazz : e_pak.get_all_eenums_in_package»
-				«clazz.name.toFirstLower»EEnum = createEEnum(«SmartEMFObjectCreator.getLiteral(clazz)»);
+				«clazz.name.toFirstLower»EEnum = createEEnum(«SmartEMFObjectTemplate.getLiteral(clazz)»);
 								
 				«ENDFOR»
 			}

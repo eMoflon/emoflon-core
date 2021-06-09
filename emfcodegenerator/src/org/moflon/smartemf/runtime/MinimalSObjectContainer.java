@@ -6,7 +6,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 /**
  * Interface which all SmartEMF classes which need to support the containment-feature must implement
  */
-interface MinimalSObjectContainer {
+public interface MinimalSObjectContainer {
 
 	/**
 	 * Returns the containing object, or null.
