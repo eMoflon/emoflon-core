@@ -45,7 +45,7 @@ class SmartEMFInterfaceTemplate {
 		import org.eclipse.emf.ecore.EObject;
 		import org.eclipse.emf.ecore.EStructuralFeature;
 		
-		public interface «className» extends EObject {
+		public interface «className» extends EObject«getSuperTypes()» {
 			
 		    «FOR feature : eClass.EAllStructuralFeatures»
 		    public «IF feature.isMany»EList<«feature.EType.name»>«ELSE»«SmartEMFObjectTemplate.getFieldTypeName(feature)»«ENDIF» «getOrIs(feature)»«feature.name.toFirstUpper»();
@@ -60,6 +60,10 @@ class SmartEMFInterfaceTemplate {
 		
 		
 		'''
+	}
+	
+	def getSuperTypes() {
+		return '''«FOR s : eClass.ESuperTypes», «s.name»«ENDFOR»'''
 	}
 	
 	def writeToFile(String path) {

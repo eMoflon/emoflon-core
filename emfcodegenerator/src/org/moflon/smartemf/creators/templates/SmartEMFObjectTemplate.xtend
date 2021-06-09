@@ -11,6 +11,8 @@ import java.io.File
 import java.io.FileWriter
 import java.util.LinkedList
 import org.eclipse.emf.ecore.ENamedElement
+import org.eclipse.emf.ecore.EEnum
+import org.eclipse.emf.ecore.EEnumLiteral
 
 class SmartEMFObjectTemplate {
 	
@@ -47,11 +49,7 @@ class SmartEMFObjectTemplate {
 		public class «className»Impl extends SmartObject implements «className» {
 		
 		    «FOR feature : eClass.EAllStructuralFeatures»
-		    «IF feature.isMany»
-		    protected «getFieldTypeName(feature)» «getValidName(feature.name)» = new «getFieldTypeName(feature)»(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)»);
-			«ELSE»
-		    protected «getFieldTypeName(feature)» «getValidName(feature.name)»;
-			«ENDIF»
+		    protected «getFieldTypeName(feature)» «getValidName(feature.name)» = «getDefaultValue(feature)»;
 			«ENDFOR»
 			
 			protected «eClass.name»Impl() {
@@ -85,11 +83,11 @@ class SmartEMFObjectTemplate {
 		    @Override
 		    public void eUnset(EStructuralFeature eFeature){
 		    	«FOR feature : eClass.EAllStructuralFeatures»
-		    	 if («FQPackagePath».«getPackageClassName(feature)».Literals.«getLiteral(feature)».equals(eFeature)) {
+		    	 if («getPackageClassName(feature)».Literals.«getLiteral(feature)».equals(eFeature)) {
 		    	 	«IF feature.isMany»
 		    	 	get«feature.name.toFirstUpper»().clear(); 
 		    	 	«ELSE»
-		    	 	set«feature.name.toFirstUpper»(null); 
+		    	 	set«feature.name.toFirstUpper»(«getDefaultValue(feature)»); 
 		    	 	«ENDIF»
 		    	 	return;
 		    	 }
@@ -102,12 +100,12 @@ class SmartEMFObjectTemplate {
 		        result.append(" (");
 	    		«FOR feature : eClass.EAllStructuralFeatures SEPARATOR 
 	    		'''
-	    		result.append(", ");
+	    		result.append(",\n");
 	    		'''»
-	    		if(«feature.name» != null) {
-					result.append("«getValidName(feature.name)»:");
-					result.append(«getValidName(feature.name)»);
-				}
+	    		«IF feature.EType.defaultValue === null»
+	    		if(«getValidName(feature.name)» != null)
+	    		«ENDIF»
+				result.append("«feature.name»: «getValidName(feature.name)»");
 		        «ENDFOR»
 		        return result.toString();
 		    }
@@ -135,6 +133,20 @@ class SmartEMFObjectTemplate {
 		
 		
 		'''
+	}
+	
+	def getDefaultValue(EStructuralFeature feature) {
+		if(feature.isMany)
+			return '''new «getListTypeName(feature)»<«feature.EType.name»>(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)»);'''
+			
+		val value = feature.defaultValue
+		if(value === null)
+			return "null"
+		
+		if(value instanceof EEnumLiteral)
+			return value.EEnum.name + "." + value.literal
+			
+		return value
 	}
 	
 	def getOrIs(EStructuralFeature feature) {
