@@ -16,8 +16,9 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
-import emfcodegenerator.util.collections.HashESet;
-import emfcodegenerator.util.collections.LinkedEList;
+import emfcodegenerator.util.collections.DefaultSmartEList;
+import emfcodegenerator.util.collections.HashSmartESet;
+import emfcodegenerator.util.collections.LinkedSmartEList;
 
 public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 
@@ -77,7 +78,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 	@SuppressWarnings("unchecked")
 	@Override
 	public EList<EObject> eContents() {
-		EList<EObject> contents = new LinkedEList<>();
+		EList<EObject> contents = new DefaultSmartEList<>();
 		for(EReference ref : staticClass.getEAllContainments()) {
 			if(ref.isMany()) {
 				contents.addAll((Collection<? extends EObject>) eGet(ref));
@@ -103,7 +104,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 	@SuppressWarnings("unchecked")
 	@Override
 	public EList<EObject> eCrossReferences() {
-		EList<EObject> contents = new HashESet<>();
+		EList<EObject> contents = new DefaultSmartEList<EObject>();
 		for(EReference ref : staticClass.getEAllReferences()) {
 			if(ref.isContainment())
 				continue;
@@ -174,5 +175,12 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 	public boolean isContainmentObject() {
 		return eContainer != null;
 	}
-
+	
+	protected void sendNotification(Notification n) {
+		if(resource != null) {
+			for(Adapter a : resource.eAdapters()) {
+				a.notifyChanged(n);
+			}
+		}
+	}
 }

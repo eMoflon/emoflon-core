@@ -1,12 +1,12 @@
-package emfcodegenerator.util
+package emfcodegenerator.util;
 
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
  * Interface which all SmartEMF classes which need to support the containment-feature must implement
  */
-abstract interface MinimalSObjectContainer {
+interface MinimalSObjectContainer {
 
 	/**
 	 * Returns the containing object, or null.
@@ -14,7 +14,7 @@ abstract interface MinimalSObjectContainer {
 	 * The object will be contained by a containment feature of the containing object.
 	 * @return EObject which contains this MinimalSObjectContainer
 	 */
-	abstract def EObject eContainer()
+	EObject eContainer();
 
 	/**
 	 * Description copied from interface: EObject
@@ -24,14 +24,14 @@ abstract interface MinimalSObjectContainer {
 	 * containment feature of an entry in the map, i.e., the eContainmentFeature.
 	 * @return EStructuralFeature
 	 */
-	abstract def EStructuralFeature eContainingFeature()
+	EStructuralFeature eContainingFeature();
 
 	/**
 	 * sets the eContainer and eContainingFeature back to null. Call this method if the object is
 	 * not in a containment relationship anymore
 	 * @author Adrian Zwenger
 	 */
-	def abstract void resetContainment()
+	void resetContainment();
 
 	/**
 	 * Sets the containment to the newly given arguements.
@@ -39,12 +39,12 @@ abstract interface MinimalSObjectContainer {
 	 * @param feature EStructuralFeature
 	 * @author Adrian Zwenger
 	 */
-	def abstract void setContainment(EObject container, EStructuralFeature feature)
+	void setContainment(EObject container, EStructuralFeature feature);
 	
 	/**
 	 * returns true if this object is currently in a containment relationship
 	 * @param boolean
 	 * @author Adrian Zwenger
 	 */
-	def abstract boolean isContainmentObject()
+	boolean isContainmentObject();
 }
