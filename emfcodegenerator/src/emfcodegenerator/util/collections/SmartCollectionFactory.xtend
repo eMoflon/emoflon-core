@@ -42,7 +42,7 @@ class SmartCollectionFactory {
 	
 	def static <E> EList<E> createCollection(EObject eContainer, EReference containment_feature){
 		var EList<E> e = automatically_determine_and_create_collection(containment_feature)
-		(e as MinimalSObjectContainerCollection<E>).set_containment(eContainer, containment_feature)
+		(e as MinimalSObjectContainerCollection<E>).setContainment(eContainer, containment_feature)
 		return e
 	}
 	

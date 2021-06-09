@@ -12,9 +12,5 @@ public interface NotificationChainWorkaround extends NotificationChain {
 	 * Dispatches each notification to the appropriate notifier via 
 	 * {@link org.eclipse.emf.common.notify.Notifier#eNotify Notifier.eNotify}.
 	 */
-	void _dispatch();
-	
-	default void dispatch() {
-		_dispatch();
-	}
+	void dispatch();
 }

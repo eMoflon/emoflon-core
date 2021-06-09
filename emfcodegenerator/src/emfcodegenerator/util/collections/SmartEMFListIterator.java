@@ -57,7 +57,7 @@ public class SmartEMFListIterator<E> implements ListIterator<E> {
 	@Override
 	public void remove() {
 		backingIterator.remove();
-		if (backingEList.is_containment_object()) {
+		if (backingEList.isContainmentObject()) {
 			backingEList.remove_containment_to_passed_object(currentObject);
 		}
 	}

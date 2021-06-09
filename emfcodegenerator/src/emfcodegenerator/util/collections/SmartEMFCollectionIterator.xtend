@@ -24,7 +24,7 @@ class SmartEMFCollectionIterator<E, B extends MinimalSObjectContainerCollection<
 
 	override remove(){
 		this.base_itr.remove()
-		if(this.the_collection.is_containment_object)
+		if(this.the_collection.isContainmentObject)
 			this.the_collection.remove_containment_to_passed_object(this.current_object)
 	}
 }

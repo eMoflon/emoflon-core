@@ -133,13 +133,13 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 		return this.the_econtaining_feature
 	}
 	
-	override reset_containment() {
+	override resetContainment() {
 		this.is_containment_object = false
 		this.the_eContainer = null
 		this.the_econtaining_feature = null
 		for(E object : this){
 			try{
-				(object as MinimalSObjectContainer).reset_containment()
+				(object as MinimalSObjectContainer).resetContainment()
 			} catch (Exception e){
 				throw new IllegalArgumentException(
 			"The contents of this list do not implement MinimalSObjectContainer. Containments cannot be handled.", e
@@ -148,13 +148,13 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 		}
 	}
 
-	override set_containment(EObject container, EStructuralFeature feature) {
+	override setContainment(EObject container, EStructuralFeature feature) {
 		this.is_containment_object = true
 		this.the_eContainer = container
 		this.the_econtaining_feature = feature
 		for(E object : this){
 			try{
-				(object as MinimalSObjectContainer).set_containment(container, feature)
+				(object as MinimalSObjectContainer).setContainment(container, feature)
 			} catch (Exception e){
 				throw new IllegalArgumentException(
 			"The contents of this list do not implement MinimalSObjectContainer. Containments cannot be handled.", e
@@ -163,14 +163,14 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 		}
 	}
 
-	override is_containment_object(){
+	override isContainmentObject(){
 		return is_containment_object
 	}
 
 	override E set_containment_to_passed_object(E obj){
 		if(is_containment_object){
 			try{
-				(obj as MinimalSObjectContainer).set_containment(this.the_eContainer, this.the_econtaining_feature)
+				(obj as MinimalSObjectContainer).setContainment(this.the_eContainer, this.the_econtaining_feature)
 			} catch (Exception e){
 				throw new IllegalArgumentException(
 			"The contents of this list do not implement MinimalSObjectContainer. Containments cannot be handled.", e
@@ -187,7 +187,7 @@ class DefaultEList<E> extends ArrayList<E> implements MinimalSObjectContainerCol
 	override E remove_containment_to_passed_object(E obj){
 		if(is_containment_object){
 			try{
-				(obj as MinimalSObjectContainer).reset_containment()
+				(obj as MinimalSObjectContainer).resetContainment()
 			} catch (Exception e){
 				throw new IllegalArgumentException(
 			"The contents of this list do not implement MinimalSObjectContainer. Containments cannot be handled.", e

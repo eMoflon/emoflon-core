@@ -15,7 +15,7 @@ import org.eclipse.emf.common.util.EList
  * All notifications that the generated classes send are of this type.
  * It supports notification merging and chaining.
  */
-class SmartEMFNotification implements Notification, NotificationChainWorkaround {
+class SmartEMFNotification2 implements Notification {
 	
 	int eventType	
 	int position

@@ -31,7 +31,7 @@ abstract interface MinimalSObjectContainer {
 	 * not in a containment relationship anymore
 	 * @author Adrian Zwenger
 	 */
-	def abstract void reset_containment()
+	def abstract void resetContainment()
 
 	/**
 	 * Sets the containment to the newly given arguements.
@@ -39,12 +39,12 @@ abstract interface MinimalSObjectContainer {
 	 * @param feature EStructuralFeature
 	 * @author Adrian Zwenger
 	 */
-	def abstract void set_containment(EObject container, EStructuralFeature feature)
+	def abstract void setContainment(EObject container, EStructuralFeature feature)
 	
 	/**
 	 * returns true if this object is currently in a containment relationship
 	 * @param boolean
 	 * @author Adrian Zwenger
 	 */
-	def abstract boolean is_containment_object()
+	def abstract boolean isContainmentObject()
 }
