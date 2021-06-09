@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.emf.ecore.util.InternalEList
-import persistence.XtendXMIResource
+import persistence.SmartEMFResource
 
 /**
  * SmartEMF base-class for all generated objects.
@@ -322,11 +322,11 @@ class SmartObject implements MinimalSObjectContainer, EObject {
 	 */
 	def boolean getCascade() {
 		val res = eResource
-		if (res !== null && res instanceof XtendXMIResource) {
-			return (res as XtendXMIResource).getCascade
+		if (res !== null && res instanceof SmartEMFResource) {
+			return (res as SmartEMFResource).getCascade
 		} else {
 			return false
-		}	
+		}	 
 	}
 	
 	private def Notification childNotifications(Iterator<EObject> children, int eventType) {
