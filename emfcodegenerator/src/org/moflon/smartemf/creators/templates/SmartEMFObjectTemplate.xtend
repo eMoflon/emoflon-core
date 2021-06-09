@@ -105,7 +105,7 @@ class SmartEMFObjectTemplate {
 	    		result.append(", ");
 	    		'''»
 	    		if(«feature.name» != null) {
-					result.append("«feature.name»:");
+					result.append("«getValidName(feature.name)»:");
 					result.append(«getValidName(feature.name)»);
 				}
 		        «ENDFOR»
