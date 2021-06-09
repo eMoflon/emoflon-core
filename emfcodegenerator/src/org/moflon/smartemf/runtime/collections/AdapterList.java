@@ -1,4 +1,4 @@
-package org.moflon.smartemf.util.collections;
+package org.moflon.smartemf.runtime.collections;
 
 import java.util.Collection;
 import java.util.Iterator;

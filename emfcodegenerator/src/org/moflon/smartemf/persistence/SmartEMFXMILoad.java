@@ -1,4 +1,4 @@
-package persistence;
+package org.moflon.smartemf.persistence;
 
 import org.eclipse.emf.ecore.xmi.XMLHelper;
 import org.eclipse.emf.ecore.xmi.impl.XMILoadImpl;

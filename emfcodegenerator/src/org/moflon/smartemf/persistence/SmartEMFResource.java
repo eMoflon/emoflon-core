@@ -1,4 +1,4 @@
-package persistence;
+package org.moflon.smartemf.persistence;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -40,7 +40,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMISaveImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLHelperImpl;
 import org.eclipse.emf.ecore.xml.type.AnyType;
-import org.moflon.smartemf.util.collections.DefaultSmartEList;
+import org.moflon.smartemf.runtime.collections.DefaultSmartEList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;

@@ -1,4 +1,4 @@
-package persistence;
+package org.moflon.smartemf.persistence;
 
 import java.util.List;
 

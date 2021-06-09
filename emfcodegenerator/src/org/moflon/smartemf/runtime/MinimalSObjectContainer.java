@@ -1,4 +1,4 @@
-package org.moflon.smartemf.util;
+package org.moflon.smartemf.runtime;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;

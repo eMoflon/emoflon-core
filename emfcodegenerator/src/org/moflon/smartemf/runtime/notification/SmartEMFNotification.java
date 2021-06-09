@@ -1,4 +1,4 @@
-package org.moflon.smartemf.notification;
+package org.moflon.smartemf.runtime.notification;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;

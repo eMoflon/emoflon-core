@@ -19,18 +19,18 @@ Export-Package: org.moflon.smartemf,
  org.moflon.smartemf.creators.templates,
  org.moflon.smartemf.inspectors,
  org.moflon.smartemf.inspectors.util,
- org.moflon.smartemf.notification;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util,org.eclipse.emf.common.notify",
- org.moflon.smartemf.util;
-  uses:="org.eclipse.emf.ecore,
-   org.eclipse.emf.common.util,
-   org.eclipse.emf.ecore.resource,
-   org.eclipse.emf.common.notify",
- org.moflon.smartemf.util.collections;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util,com.google.common.collect",
- persistence;
+ org.moflon.smartemf.persistence;
   uses:="org.eclipse.emf.ecore,
    org.eclipse.emf.common.util,
    org.w3c.dom,
    org.eclipse.emf.ecore.resource.impl,
    org.xml.sax,
    org.eclipse.emf.ecore.resource,
-   org.eclipse.emf.ecore.xmi"
+   org.eclipse.emf.ecore.xmi",
+ org.moflon.smartemf.runtime;
+  uses:="org.eclipse.emf.ecore,
+   org.eclipse.emf.common.util,
+   org.eclipse.emf.ecore.resource,
+   org.eclipse.emf.common.notify",
+ org.moflon.smartemf.runtime.collections;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util,com.google.common.collect",
+ org.moflon.smartemf.runtime.notification;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util,org.eclipse.emf.common.notify"

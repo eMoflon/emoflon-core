@@ -1,4 +1,4 @@
-package org.moflon.smartemf.util.collections;
+package org.moflon.smartemf.runtime.collections;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;

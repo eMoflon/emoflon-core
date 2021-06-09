@@ -1,4 +1,4 @@
-package org.moflon.smartemf.util.collections;
+package org.moflon.smartemf.runtime.collections;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,7 +10,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.moflon.smartemf.notification.SmartEMFNotification;
+import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
 public abstract class SmartCollection<T, L extends Collection<T>> implements EList<T>{
 

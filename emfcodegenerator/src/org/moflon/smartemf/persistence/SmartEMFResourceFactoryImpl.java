@@ -1,4 +1,4 @@
-package persistence;
+package org.moflon.smartemf.persistence;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
