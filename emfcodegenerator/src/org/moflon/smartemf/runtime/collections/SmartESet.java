@@ -8,9 +8,9 @@ import java.util.ListIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 
-public class HashSmartESet<T> extends SmartCollection<T, HashSet<T>> {
+public class SmartESet<T> extends SmartCollection<T, HashSet<T>> {
 
-	public HashSmartESet(EObject eContainer, EReference feature) {
+	public SmartESet(EObject eContainer, EReference feature) {
 		super(eContainer, feature);
 	}
 

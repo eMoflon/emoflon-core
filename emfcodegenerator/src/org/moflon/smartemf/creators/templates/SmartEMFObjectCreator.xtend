@@ -36,9 +36,10 @@ class SmartEMFObjectCreator {
 		«FOR featureType : getImportTypes()»
 		import «getFQName(featureType)».«featureType.name»;
 		«ENDFOR»
-		import emfcodegenerator.notification.SmartEMFNotification;
-		import emfcodegenerator.util.SmartObject;
-		import emfcodegenerator.util.collections.LinkedESet;
+		import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
+		import org.moflon.smartemf.runtime.SmartObject;
+		import org.moflon.smartemf.runtime.collections.*;
+		
 		import org.eclipse.emf.common.util.EList;
 		import org.eclipse.emf.ecore.EClass;
 		import org.eclipse.emf.ecore.EStructuralFeature;
@@ -172,35 +173,31 @@ class SmartEMFObjectCreator {
 	        Object oldValue = «getValidName(feature.name)»;
 	        «getValidName(feature.name)» = value;
 
-	        if (eNotificationRequired()) 
-	        	eNotify(SmartEMFNotification.set(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)», oldValue, value, -1));'''
+        	sendNotification(SmartEMFNotification.createSetNotification(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)», oldValue, value, -1));'''
 		}
 		if(feature instanceof EReference) {
 			return '''
 			Object oldValue = «getValidName(feature.name)»;
 	        «IF feature.containment»
-	        if(«getValidName(feature.name)» != null) 
+			if(«getValidName(feature.name)» != null) {
 				((emfcodegenerator.util.MinimalSObjectContainer) «getValidName(feature.name)»).reset_containment();
+			}
 	        «ENDIF»
 	        «getValidName(feature.name)» = value;
 			
 	        «IF feature.isMany»
-	        if(value instanceof «getListTypeName(feature)»){
+			if(value instanceof «getListTypeName(feature)»){
 	        	«getValidName(feature.name)» = («getFieldTypeName(feature)») value;
-	        } else {
-	        	throw new IllegalArgumentException();
-	        }
+			} else {
+			    throw new IllegalArgumentException();
+			}
 	        «ENDIF»
 
 			«IF feature.containment»
-			((emfcodegenerator.util.MinimalSObjectContainer) «getValidName(feature.name)»).set_containment(
-				this,
-	            «getPackageClassName(feature)».Literals.«getLiteral(feature)»
-			);
+			((emfcodegenerator.util.MinimalSObjectContainer) «getValidName(feature.name)»).set_containment(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)»);
 			«ENDIF»
 
-			if (eNotificationRequired()) 
-				eNotify(SmartEMFNotification.set(this, «packageClassName».Literals.«getLiteral(feature)», oldValue, value, -1));'''
+        	sendNotification(SmartEMFNotification.createSetNotification(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)», oldValue, value, -1));'''
 		}
 	}
 	
@@ -208,10 +205,10 @@ class SmartEMFObjectCreator {
 		val isOrdered = feature.ordered
 		val isUnique = feature.unique
 		if(isOrdered && isUnique)
-			return '''LinkedESet'''
+			return '''LinkedSmartESet'''
 		if(isUnique)
-			return '''HashESet'''
-		return '''LinkedEList'''
+			return '''SmartESet'''
+		return '''SmartEList'''
 	}
 	
 	def getFieldTypeName(EStructuralFeature feature) {
@@ -266,7 +263,7 @@ class SmartEMFObjectCreator {
 	def getFQName(EPackage ePackage) {
 		var currentPackage = ePackage
 		var FQPackagePath = currentPackage.name
-		while(currentPackage.eContainer != null) {
+		while(currentPackage.eContainer !== null) {
 			currentPackage = currentPackage.eContainer as EPackage
 			FQPackagePath = currentPackage.name + "." + FQPackagePath
 		}

@@ -9,9 +9,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
-public class LinkedSmartEList<T> extends SmartCollection<T, LinkedList<T>> {
+public class SmartEList<T> extends SmartCollection<T, LinkedList<T>> {
 
-	public LinkedSmartEList(EObject eContainer, EReference feature) {
+	public SmartEList(EObject eContainer, EReference feature) {
 		super(eContainer, feature);
 	}
 
