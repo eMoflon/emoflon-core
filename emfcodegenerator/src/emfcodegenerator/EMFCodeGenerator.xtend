@@ -3,7 +3,6 @@ package emfcodegenerator
 import emfcodegenerator.creators.util.EMFPackageInterfaceCreator
 import emfcodegenerator.creators.util.EMFPackageSourceCreator
 import emfcodegenerator.creators.util.InterfaceCreator
-import emfcodegenerator.creators.util.SourceCodeCreator
 import emfcodegenerator.inspectors.util.PackageInspector
 import java.util.HashMap
 import java.util.HashSet
