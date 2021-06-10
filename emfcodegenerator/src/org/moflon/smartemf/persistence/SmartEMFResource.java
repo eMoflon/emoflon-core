@@ -410,6 +410,12 @@ public class SmartEMFResource extends ResourceImpl implements XMIResource {
 		if (feat != null) {
 			String name = feat.getName();
 			char first = name.charAt(0);
+			
+			if(name.length()<1)
+				return "";
+			if(name.length()<2)
+				return "" + Character.toLowerCase(first);
+			
 			return name = Character.toLowerCase(first) + name.substring(1, name.length()-1);
 		} else {
 			return rootName(object);

@@ -135,7 +135,7 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 				«clazz.name.toFirstLower»EClass = createEClass(«SmartEMFObjectTemplate.getLiteral(clazz)»);
 				«FOR feature : clazz.EStructuralFeatures»
 				«IF feature instanceof EReference»createEReference«ELSE»createEAttribute«ENDIF»(«clazz.name.toFirstLower»EClass, «SmartEMFObjectTemplate.getLiteral(feature)»);
-				«clazz.name.toFirstLower»_«feature.name.toFirstLower»«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» = («IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF») «clazz.name.toFirstLower»EClass.getEStructuralFeatures().get(«clazz.EStructuralFeatures.indexOf(feature)»);
+				«clazz.name.toFirstLower»_«feature.name.toFirstLower»«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» = («IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF») «clazz.name.toFirstLower»EClass.getEStructuralFeature(«SmartEMFObjectTemplate.getLiteral(feature)»);
 				«ENDFOR»
 				
 				«ENDFOR»
