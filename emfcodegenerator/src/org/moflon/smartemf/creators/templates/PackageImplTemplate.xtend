@@ -50,6 +50,9 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 					
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
 				private EClass «clazz.name.toFirstLower»EClass = null;
+				«FOR feature : clazz.EStructuralFeatures»
+				private «IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» «clazz.name.toFirstLower»_«feature.name.toFirstLower»«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» = null;
+				«ENDFOR»
 			«ENDFOR»
 			
 			«FOR clazz : e_pak.get_all_eenums_in_package»
@@ -100,8 +103,7 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 			«FOR feature : clazz.EStructuralFeatures»
 			@Override
 			public «IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» get«clazz.name»_«feature.name.toFirstUpper»() {
-«««				return («IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF») «clazz.name.toFirstLower»EClass.getEStructuralFeatures().get(«feature.featureID + EMFPackageInterfaceCreator.countSuperFeatures(clazz)»);
-			return («IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF») «clazz.name.toFirstLower»EClass.getEStructuralFeatures().get(«featureCounter++»);	
+			return «clazz.name.toFirstLower»_«feature.name.toFirstLower»«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF»;	
 			}
 			«ENDFOR»
 			«ENDFOR»
@@ -133,6 +135,7 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 				«clazz.name.toFirstLower»EClass = createEClass(«SmartEMFObjectTemplate.getLiteral(clazz)»);
 				«FOR feature : clazz.EStructuralFeatures»
 				«IF feature instanceof EReference»createEReference«ELSE»createEAttribute«ENDIF»(«clazz.name.toFirstLower»EClass, «SmartEMFObjectTemplate.getLiteral(feature)»);
+				«clazz.name.toFirstLower»_«feature.name.toFirstLower»«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» = («IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF») «clazz.name.toFirstLower»EClass.getEStructuralFeatures().get(«clazz.EStructuralFeatures.indexOf(feature)»);
 				«ENDFOR»
 				
 				«ENDFOR»

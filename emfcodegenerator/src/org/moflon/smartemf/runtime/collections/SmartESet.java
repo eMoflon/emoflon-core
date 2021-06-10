@@ -9,7 +9,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.moflon.smartemf.runtime.SmartObject;
 
-public class SmartESet<T extends SmartObject> extends SmartCollection<T, HashSet<T>> {
+public class SmartESet<T> extends SmartCollection<T, HashSet<T>> {
 
 	public SmartESet(EObject eContainer, EReference feature) {
 		super(eContainer, feature);

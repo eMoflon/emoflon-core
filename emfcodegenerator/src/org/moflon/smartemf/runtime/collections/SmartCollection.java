@@ -13,7 +13,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
-public abstract class SmartCollection<T extends SmartObject, L extends Collection<T>> implements EList<T>{
+public abstract class SmartCollection<T, L extends Collection<T>> implements EList<T>{
 
 	protected final EObject eContainer;
 	protected final EReference feature;
@@ -64,8 +64,8 @@ public abstract class SmartCollection<T extends SmartObject, L extends Collectio
 	}
 	
 	protected boolean addWithoutNotification(T e) {
-		e.setContainment(eContainer, feature);
-		e.setResource(eContainer.eResource());
+		((SmartObject) e).setContainment(eContainer, feature);
+		((SmartObject) e).setResource(eContainer.eResource());
 		return elements.add(e);
 	}
 

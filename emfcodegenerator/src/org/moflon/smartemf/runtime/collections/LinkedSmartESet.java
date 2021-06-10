@@ -4,7 +4,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.moflon.smartemf.runtime.SmartObject;
 
-public class LinkedSmartESet<T extends SmartObject> extends SmartEList<T> {
+public class LinkedSmartESet<T> extends SmartEList<T> {
 
 	public LinkedSmartESet(EObject eContainer, EReference feature) {
 		super(eContainer, feature);
