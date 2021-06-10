@@ -27,7 +27,7 @@ public class LinkedSmartESet<T> extends SmartEList<T> {
 
 	@Override
 	public void add(int index, T element) {
-		if(!elements.get(index).equals(element))
+		if(!elements.contains(element))
 			super.add(index, element);
 	}
 

@@ -139,7 +139,7 @@ class SmartEMFObjectTemplate {
 		    */
 		    public void setResource(Resource r) {
 		    	// stop if we encounter the same resource already
-	    		if(eResource().equals(r)) 
+	    		if(eResource() == null && r == null || eResource().equals(r)) 
 	    			return;
 	    			
 				// send remove messages to old adapters

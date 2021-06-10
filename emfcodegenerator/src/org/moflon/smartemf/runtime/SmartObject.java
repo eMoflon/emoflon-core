@@ -179,12 +179,12 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 	public void setContainment(EObject eContainer, EStructuralFeature feature) {
 		// clean up old containment
 		// we don't use resetContainment here to optimize the number of generated notifications
-		if(eContainer != null) {
+		if(this.eContainer != null) {
 			if(eContainingFeature.isMany()) {
-				((Collection<?>) eContainer.eGet(eContainingFeature)).remove(this);
+				((Collection<?>) this.eContainer.eGet(eContainingFeature)).remove(this);
 			}
 			else {
-				eContainer.eUnset(eContainingFeature);
+				this.eContainer.eUnset(eContainingFeature);
 			}
 		}
 		
