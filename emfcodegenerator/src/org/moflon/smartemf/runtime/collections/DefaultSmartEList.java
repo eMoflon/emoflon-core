@@ -14,72 +14,50 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
-public final class ResourceContentSmartEList<T> extends LinkedList<T> implements EList<T>, InternalEList<T>{
+public final class DefaultSmartEList<T> extends LinkedList<T> implements EList<T>, InternalEList<T>{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 188149705186560304L;
 
-	private Resource resource;
-	
-	public ResourceContentSmartEList(Resource r) {
-		this.resource = r;
-	}
-	
 	@Override
 	public boolean add(T e) {
-		((SmartObject) e).setResource(resource);
 		return super.add(e);
 	}
 	
 	@Override
 	public void add(int index, T element) {
-		((SmartObject) element).setResource(resource);
 		super.add(index, element);
 	}
 	
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
-		for(T t : c) {
-			((SmartObject) t).setResource(resource);
-		}
 		return super.addAll(c);
 	}
 	
 	@Override
 	public boolean addAll(int index, Collection<? extends T> c) {
-		for(T t : c) {
-			((SmartObject) t).setResource(resource);
-		}
 		return super.addAll(index, c);
 	}
 	
 	@Override
 	public void clear() {
-		for(T t : this) {
-			((SmartObject) t).setResource(null);
-		}
 		super.clear();
 	}
 	
 	@Override
 	public T remove(int index) {
-		((SmartObject) get(index)).setResource(null);
 		return super.remove(index);
 	}
 	
 	@Override
 	public boolean remove(Object o) {
-		((SmartObject) o).setResource(null);
 		return super.remove(o);
 	}
 	
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		for(Object t : c) {
-			((SmartObject) t).setResource(null);
-		}
 		return super.removeAll(c);
 	}
 	

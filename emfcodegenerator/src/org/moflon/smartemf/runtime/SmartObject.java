@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.collections.DefaultSmartEList;
-import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
 public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 

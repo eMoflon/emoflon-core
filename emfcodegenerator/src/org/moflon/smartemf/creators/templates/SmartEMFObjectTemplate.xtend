@@ -140,8 +140,11 @@ class SmartEMFObjectTemplate {
 		    */
 		    public void setResource(Resource r) {
 		    	// stop if we encounter the same resource already
-	    		if(eResource() == null && r == null || eResource().equals(r)) 
-	    			return;
+	    		if(eResource() == null && r == null) 
+			    	return;
+			    
+			    if(eResource() != null && eResource().equals(r))
+			    	return;
 	    			
 				// send remove messages to old adapters
 				// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
@@ -165,7 +168,8 @@ class SmartEMFObjectTemplate {
 		    		setResourceCall.accept(((SmartObject) obj));
 	    		}
 	    		«ELSE»
-	    		setResourceCall.accept((SmartObject) get«feature.name.toFirstUpper»());
+	    		if(get«feature.name.toFirstUpper»() != null)
+	    			setResourceCall.accept((SmartObject) get«feature.name.toFirstUpper»());
 	    		«ENDIF»
 		    	«ENDFOR»
 	    	}
@@ -176,8 +180,11 @@ class SmartEMFObjectTemplate {
 	    	*/
 		    public void setResourceSilently(Resource r) {
 		    	// stop if we encounter the same resource already
-	    		if(eResource().equals(r)) 
-	    			return;
+	    		if(eResource() == null && r == null) 
+			    	return;
+			    
+			    if(eResource() != null && eResource().equals(r))
+			    	return;
 	    			
     			// send remove messages to old adapters
 				// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
@@ -193,7 +200,8 @@ class SmartEMFObjectTemplate {
 		    		((SmartObject) obj).setResourceSilently(r);
 	    		}
 	    		«ELSE»
-	    		((SmartObject) get«feature.name.toFirstUpper»()).setResourceSilently(r);
+	    		if(get«feature.name.toFirstUpper»() != null)
+	    		    ((SmartObject) get«feature.name.toFirstUpper»()).setResourceSilently(r);
 	    		«ENDIF»
 		    	«ENDFOR»
 	    	}

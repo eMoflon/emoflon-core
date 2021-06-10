@@ -40,7 +40,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMISaveImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLHelperImpl;
 import org.eclipse.emf.ecore.xml.type.AnyType;
-import org.moflon.smartemf.runtime.collections.DefaultSmartEList;
+import org.moflon.smartemf.runtime.collections.ResourceContentSmartEList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -67,7 +67,7 @@ public class SmartEMFResource extends ResourceImpl implements XMIResource {
 	private Map<Object, Object> defaultLoadOptions = new HashMap<>();
 	private Map<Object, Object> defaultSaveOptions = new HashMap<>();
 	
-    private EList<EObject> contents = new DefaultSmartEList<>();
+    private EList<EObject> contents = new ResourceContentSmartEList<>(this);
 	
     private String xmiVersion = XMIResource.VERSION_VALUE;
     private String xmiNamespace = XMIResource.XMI_URI;
@@ -369,6 +369,10 @@ public class SmartEMFResource extends ResourceImpl implements XMIResource {
 	 */
 	private CharSequence crossReference(EObject object, EReference ref) {
 		Object target = object.eGet(ref);
+		
+		if(target == null)
+			return "";
+					
 		if (target instanceof EObject) {
 			return tagName(null, ref) + "=\"" + getID((EObject)target) + "\"";
 		} else {
