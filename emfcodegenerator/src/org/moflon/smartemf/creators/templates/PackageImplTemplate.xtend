@@ -32,6 +32,10 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 		«FOR clazz : e_pak.get_all_eclasses_in_package»
 		import «e_pak.get_package_declaration_name».«clazz.name»;
 		«ENDFOR»
+		«FOR clazz : e_pak.get_all_eenums_in_package»
+		import «e_pak.get_package_declaration_name».«clazz.name»;
+		«ENDFOR»
+		
 		import «e_pak.get_package_declaration_name».«e_pak.get_emf_e_package.name.toFirstUpper»Factory;
 		import «e_pak.get_package_declaration_name».«e_pak.get_emf_e_package.name.toFirstUpper»Package;
 
@@ -142,7 +146,6 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 				// Create enums
 				«FOR clazz : e_pak.get_all_eenums_in_package»
 				«clazz.name.toFirstLower»EEnum = createEEnum(«SmartEMFObjectTemplate.getLiteral(clazz)»);
-								
 				«ENDFOR»
 			}
 		
@@ -178,12 +181,20 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 					"«ref.name»", «(ref.defaultValue === null)?"null":ref.defaultValue», «ref.lowerBound», «ref.upperBound», «clazz.name».class, «(ref.isTransient)?"":"!"»IS_TRANSIENT, «(ref.isVolatile)?"":"!"»IS_VOLATILE, «(ref.isChangeable)?"":"!"»IS_CHANGEABLE, «(ref.isContainer)?"":"!"»IS_COMPOSITE, «(ref.isResolveProxies)?"":"!"»IS_RESOLVE_PROXIES,
 					«(ref.isUnsettable)?"":"!"»IS_UNSETTABLE, «(ref.isUnique)?"":"!"»IS_UNIQUE, «(ref.isDerived)?"":"!"»IS_DERIVED, «(ref.isOrdered)?"":"!"»IS_ORDERED);
 				«ELSE»«val atr = feature as EAttribute»
-				initEAttribute(get«clazz.name»_«atr.name.toFirstUpper»(), «IF atr.EType.EPackage.name.equals("ecore")»ecorePackage.get«atr.EType.name»()«ELSE»«atr.EType.EPackage.name.toFirstUpper»Package.eINSTANCE.get«atr.EType.name.toFirstUpper»()«ENDIF»,
+				initEAttribute(get«clazz.name»_«atr.name.toFirstUpper»(), «IF atr.EType.EPackage.name.equals("ecore")»ecorePackage.get«atr.EType.name»()«ELSE»this.get«atr.EType.name.toFirstUpper»()«ENDIF»,
 					"«atr.name»", «(atr.defaultValue === null)?"null":"\""+atr.defaultValue+"\""», «atr.lowerBound», «atr.upperBound», «clazz.name».class, «(atr.isTransient)?"":"!"»IS_TRANSIENT, «(atr.isVolatile)?"":"!"»IS_VOLATILE, «(atr.isChangeable)?"":"!"»IS_CHANGEABLE, «(atr.isUnsettable)?"":"!"»IS_UNSETTABLE, «(atr.isUnique)?"":"!"»IS_ID, IS_UNIQUE,
 					«(atr.isDerived)?"":"!"»IS_DERIVED, «(atr.isOrdered)?"":"!"»IS_ORDERED);
 				«ENDIF»
 				«ENDFOR»
 								
+				«ENDFOR»
+				
+				// Initialize enums and add enum literals
+				«FOR clazz : e_pak.get_all_eenums_in_package»
+				initEEnum(«clazz.name.toFirstLower»EEnum, «clazz.name».class, "«clazz.name»");
+				«FOR literal : clazz.ELiterals»
+				addEEnumLiteral(«clazz.name.toFirstLower»EEnum, «clazz.name».«literal.name»);
+				«ENDFOR»
 				«ENDFOR»
 				
 				// Create resource
