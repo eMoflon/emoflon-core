@@ -158,6 +158,9 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 	 * revokes current containment relationship
 	 */
 	public void resetContainment() {
+		if(eContainingFeature != null)
+			return;
+		
 		if(eContainingFeature.isMany()) {
 			((Collection<?>) eContainer.eGet(eContainingFeature)).remove(this);
 		}
@@ -166,12 +169,28 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 		}
 		eContainer = null;
 		eContainingFeature = null;
+		setResource(null);
 	}
 
 	@Override
+	/**
+	 * sets new containment and cleans up the old
+	 */
 	public void setContainment(EObject eContainer, EStructuralFeature feature) {
+		// clean up old containment
+		// we don't use resetContainment here to optimize the number of generated notifications
+		if(eContainer != null) {
+			if(eContainingFeature.isMany()) {
+				((Collection<?>) eContainer.eGet(eContainingFeature)).remove(this);
+			}
+			else {
+				eContainer.eUnset(eContainingFeature);
+			}
+		}
+		
 		this.eContainer = eContainer;
 		this.eContainingFeature = feature;
+		setResource(eContainer.eResource());
 	}
 
 	@Override

@@ -10,9 +10,10 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
-public abstract class SmartCollection<T, L extends Collection<T>> implements EList<T>{
+public abstract class SmartCollection<T extends SmartObject, L extends Collection<T>> implements EList<T>{
 
 	protected final EObject eContainer;
 	protected final EReference feature;
@@ -63,6 +64,8 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	}
 	
 	protected boolean addWithoutNotification(T e) {
+		e.setContainment(eContainer, feature);
+		e.setResource(eContainer.eResource());
 		return elements.add(e);
 	}
 
@@ -88,6 +91,7 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	}
 
 	protected boolean removeWithoutNotification(Object o) {
+		((SmartObject) o).resetContainment();
 		return elements.remove(o);
 	}
 
@@ -132,6 +136,10 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	}
 
 	protected void sendNotification(Notification n) {
+		// if the feature is a containment, then notifications are handled when setting the resource
+		if(feature.isContainment())
+			return;
+			
 		Resource r = eContainer.eResource();
 		if(r != null) {
 			for(Adapter a : r.eAdapters()) {
