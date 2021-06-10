@@ -280,9 +280,9 @@ public class SmartEMFResource extends ResourceImpl implements XMIResource {
 		} else {
 			EObject eobj = null; 	
 			if (root.contents().isEmpty()) {
-				getContents().iterator().next();
+				eobj = getContents().iterator().next();
 			} else {
-				root.rootObject();
+				eobj = root.rootObject();
 			}
 			rootTagName = rootName(eobj);
 			rootAttributes += " " + xmiAttributes(eobj);
@@ -322,7 +322,7 @@ public class SmartEMFResource extends ResourceImpl implements XMIResource {
 			return new XMIRoot() {
 				@Override
 				public List<EObject> contents() {
-					return getContents().iterator().next().eContents();
+					return getContents();
 				}
 			};
 		} else {

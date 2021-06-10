@@ -13,6 +13,6 @@ public interface XMIRoot {
 	List<EObject> contents();
 	
 	default EObject rootObject() {
-		return contents().iterator().next().eContainer();
+		return contents().iterator().next();
 	}
 }
