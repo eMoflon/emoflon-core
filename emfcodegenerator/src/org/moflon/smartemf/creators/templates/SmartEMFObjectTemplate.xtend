@@ -124,13 +124,14 @@ class SmartEMFObjectTemplate {
 		
 		    @Override
 		    public Object eGet(int featureID, boolean resolve, boolean coreType){
-		        switch(featureID) {
-	    			«FOR feature : eClass.EAllStructuralFeatures»
-	    			case «getPackageClassName(feature)».«getLiteralID(feature)»:
-	    				return «getOrIs(feature)»«feature.name.toFirstUpper»();
-					«ENDFOR»
-		        }
-		        return null;
+		    	throw new UnsupportedOperationException("This method has been deactivated since it is not always safe to use.");
+«««		        switch(featureID) {
+«««	    			«FOR feature : eClass.EAllStructuralFeatures»
+«««	    			case «getPackageClassName(feature)».«getLiteralID(feature)»:
+«««	    				return «getOrIs(feature)»«feature.name.toFirstUpper»();
+«««					«ENDFOR»
+«««		        }
+«««		        return null;
 		    }
 		    
 		    @Override
