@@ -14,7 +14,7 @@ import org.moflon.smartemf.inspectors.util.PackageInspector
 /**
  * Creator-class which generates the class-file for the SmartEMF-package-class.
  */
-class EMFPackageSourceCreator extends EGenericTypeProcessor implements FileCreator{
+class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 	
 	var boolean isInitialized = false
 	var String fqFileName

@@ -5,16 +5,16 @@ import java.util.HashMap
 import java.util.HashSet
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EPackage
-import org.moflon.smartemf.creators.templates.EEnumCreator
 import org.moflon.smartemf.creators.templates.EMFPackageFactoryInterfaceCreator
 import org.moflon.smartemf.creators.templates.EMFPackageFactorySourceCreator
-import org.moflon.smartemf.creators.templates.EMFPackageInterfaceCreator
-import org.moflon.smartemf.creators.templates.EMFPackageSourceCreator
 import org.moflon.smartemf.creators.templates.SmartEMFObjectTemplate
 import org.moflon.smartemf.inspectors.util.PackageInspector
 
 import static org.moflon.smartemf.EMFCodeGenerationClass.*
 import org.moflon.smartemf.creators.templates.SmartEMFInterfaceTemplate
+import org.moflon.smartemf.creators.templates.PackageInterfaceTemplate
+import org.moflon.smartemf.creators.templates.PackageImplTemplate
+import org.moflon.smartemf.creators.templates.EEnumTemplate
 
 /**
  * Class which generates the code
@@ -111,7 +111,7 @@ class EMFCodeGenerator{
 	
 	def void generate_package_interfaces(){
 		for(package_inspector : packages.values){
-			var creator = new EMFPackageInterfaceCreator(
+			var creator = new PackageInterfaceTemplate(
 				package_inspector, packages, EMFCodeGenerationClass.emf_model
 			)
 			var path = package_inspector.get_path_to_folder + "/" +
@@ -121,7 +121,7 @@ class EMFCodeGenerator{
 			creator.write_to_file()
 			
 			for(eenum : package_inspector.get_all_eenums_in_package){
-				var eenum_creator = new EEnumCreator(eenum, package_inspector)
+				var eenum_creator = new EEnumTemplate(eenum, package_inspector)
 				eenum_creator.initialize_creator(
 					'''«package_inspector.get_path_to_folder»/«eenum.name».java'''.toString,
 					"    "
@@ -133,7 +133,7 @@ class EMFCodeGenerator{
 	
 	def void generate_package_implementations(){
 		for(package_inspector : packages.values){
-			var creator = new EMFPackageSourceCreator(
+			var creator = new PackageImplTemplate(
 				package_inspector, packages, EMFCodeGenerationClass.emf_model
 			)
 			var path = package_inspector.get_path_to_folder + "/impl/" +

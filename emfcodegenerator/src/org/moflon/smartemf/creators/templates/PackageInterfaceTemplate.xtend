@@ -14,7 +14,7 @@ import org.moflon.smartemf.inspectors.util.PackageInspector
 /**
  * This class generates the interface for the EMF-package class
  */
-class EMFPackageInterfaceCreator extends EMFCodeGenerationClass implements FileCreator{
+class PackageInterfaceTemplate extends EMFCodeGenerationClass implements FileCreator{
 	
 	/**
 	 * The inspector for the package
