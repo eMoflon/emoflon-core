@@ -2,6 +2,7 @@ package org.moflon.smartemf.runtime;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
 
 /**
  * Interface which all SmartEMF classes which need to support the containment-feature must implement

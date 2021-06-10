@@ -42,9 +42,12 @@ class SmartEMFObjectTemplate {
 		import org.moflon.smartemf.runtime.*;
 		import org.moflon.smartemf.runtime.collections.*;
 		
+		import java.util.function.Consumer;
+		
 		import org.eclipse.emf.common.util.EList;
 		import org.eclipse.emf.ecore.EClass;
 		import org.eclipse.emf.ecore.EStructuralFeature;
+		import org.eclipse.emf.ecore.resource.Resource;
 		
 		public class «className»Impl extends SmartObject implements «className» {
 		
@@ -129,9 +132,61 @@ class SmartEMFObjectTemplate {
 		        }
 		        return null;
 		    }
+		    
+		    @Override
+		    public void setResource(Resource r) {
+		    	// stop if we encounter the same resource already
+	    		if(eResource().equals(r)) 
+	    			return;
+	    			
+	    		super.setResource(r);
+	    		
+	    		Consumer<SmartObject> setResourceCall = null;
+	    		
+	    		// if resource is set to null, we have to generate remove adapters recursively
+	    		if(r == null) {
+	    			sendNotification(SmartEMFNotification.createRemovingAdapterNotification(null, null, this, -1));
+	    			setResourceCall = (o) -> o.setResource(r);
+    			}
+				else {
+					sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
+					// if cascading is activated, we recursively generate add messages; else just this once
+					if(smartResource().getCascade())
+	    				setResourceCall = (o) -> o.setResource(r);
+	    			else
+	    				setResourceCall = (o) -> o.setResourceSilently(r);
+				}
+	    		
+		    	«FOR feature : eClass.EAllContainments»
+		    	«IF feature.isMany»
+		    	for(Object obj : get«feature.name.toFirstUpper»()) {
+		    		setResourceCall.apply(((SmartObject) obj));
+	    		}
+	    		«ELSE»
+	    		setResourceCall.apply((SmartObject) get«feature.name.toFirstUpper»());
+	    		«ENDIF»
+		    	«ENDFOR»
+	    	}
+	    	
+	    	@Override
+		    public void setResourceSilently(Resource r) {
+		    	// stop if we encounter the same resource already
+	    		if(eResource().equals(r)) 
+	    			return;
+	    			
+	    		super.setResource(r);
+	    		
+		    	«FOR feature : eClass.EAllContainments»
+		    	«IF feature.isMany»
+		    	for(Object obj : get«feature.name.toFirstUpper»()) {
+		    		((SmartObject) obj).setResourceSilently(r);
+	    		}
+	    		«ELSE»
+	    		((SmartObject) get«feature.name.toFirstUpper»()).setResourceSilently(r);
+	    		«ENDIF»
+		    	«ENDFOR»
+	    	}
 		}
-		
-		
 		'''
 	}
 	

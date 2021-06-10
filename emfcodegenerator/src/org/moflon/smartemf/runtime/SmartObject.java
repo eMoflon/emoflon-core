@@ -15,11 +15,13 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.collections.DefaultSmartEList;
+import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
 public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 
-	private Resource resource;
+	private SmartEMFResource resource;
 	private EObject eContainer;
 	private EStructuralFeature eContainingFeature;
 	private EClass staticClass;
@@ -67,6 +69,10 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 		return resource;
 	}
 
+	public SmartEMFResource smartResource() {
+		return resource;
+	}
+	
 	@Override
 	public EReference eContainmentFeature() {
 		throw new UnsupportedOperationException();
@@ -180,6 +186,12 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 			}
 		}
 	}
+	
+	public void setResource(Resource resource) {
+		this.resource = (SmartEMFResource) resource;
+	}
+	
+    public abstract void setResourceSilently(Resource r);
 	
     public abstract Object eGet(int featureID, boolean resolve, boolean coreType);
 }
