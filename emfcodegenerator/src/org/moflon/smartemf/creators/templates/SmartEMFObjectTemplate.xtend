@@ -134,45 +134,55 @@ class SmartEMFObjectTemplate {
 		    }
 		    
 		    @Override
+		    /**
+		    * This method sets the resource and generates REMOVING_ADAPTER and ADD notifications
+		    */
 		    public void setResource(Resource r) {
 		    	// stop if we encounter the same resource already
 	    		if(eResource().equals(r)) 
 	    			return;
 	    			
+				// send remove messages to old adapters
+				// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
+				if (eResource() != null)
+					sendNotification(SmartEMFNotification.createRemovingAdapterNotification(null, null, this, -1));
+	    			
 	    		super.setResource(r);
 	    		
-	    		Consumer<SmartObject> setResourceCall = null;
+	    		Consumer<SmartObject> setResourceCall = (o) -> o.setResource(r);
 	    		
-	    		// if resource is set to null, we have to generate remove adapters recursively
-	    		if(r == null) {
-	    			sendNotification(SmartEMFNotification.createRemovingAdapterNotification(null, null, this, -1));
-	    			setResourceCall = (o) -> o.setResource(r);
-    			}
-				else {
+	    		if(r != null) {
 					sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
 					// if cascading is activated, we recursively generate add messages; else just this once
-					if(smartResource().getCascade())
-	    				setResourceCall = (o) -> o.setResource(r);
-	    			else
+					if(!smartResource().getCascade())
 	    				setResourceCall = (o) -> o.setResourceSilently(r);
 				}
 	    		
 		    	«FOR feature : eClass.EAllContainments»
 		    	«IF feature.isMany»
 		    	for(Object obj : get«feature.name.toFirstUpper»()) {
-		    		setResourceCall.apply(((SmartObject) obj));
+		    		setResourceCall.accept(((SmartObject) obj));
 	    		}
 	    		«ELSE»
-	    		setResourceCall.apply((SmartObject) get«feature.name.toFirstUpper»());
+	    		setResourceCall.accept((SmartObject) get«feature.name.toFirstUpper»());
 	    		«ENDIF»
 		    	«ENDFOR»
 	    	}
 	    	
 	    	@Override
+	    	/**
+	    	* This method sets the resource and only generates REMOVING_ADAPTER notifications (no ADD messages)
+	    	*/
 		    public void setResourceSilently(Resource r) {
 		    	// stop if we encounter the same resource already
 	    		if(eResource().equals(r)) 
 	    			return;
+	    			
+    			// send remove messages to old adapters
+				// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
+				if (eResource() != null)
+					sendNotification(SmartEMFNotification.createRemovingAdapterNotification(null, null, this, -1));
+	    		
 	    			
 	    		super.setResource(r);
 	    		
