@@ -7,13 +7,13 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 public final class SmartEMFNotification implements Notification {
 
 	private int eventType;
-	private EObject notifier;
+	private Object notifier;
 	private EStructuralFeature feature;
 	private Object oldValue;
 	private Object newValue;
 	private int position;
 	
-	private SmartEMFNotification(int eventType, EObject notifier, EStructuralFeature feature, Object oldValue, Object newValue, int position) {
+	private SmartEMFNotification(int eventType, Object notifier, EStructuralFeature feature, Object oldValue, Object newValue, int position) {
 		this.eventType = eventType;
 		this.notifier = notifier;
 		this.feature = feature;
@@ -22,35 +22,35 @@ public final class SmartEMFNotification implements Notification {
 		this.position = position;
 	}
 	
-	public static Notification createAddNotification(EObject notifier, EStructuralFeature feature, Object newValue, int index) {
+	public static Notification createAddNotification(Object notifier, EStructuralFeature feature, Object newValue, int index) {
 		return new SmartEMFNotification(ADD, notifier, feature, null, newValue, index);
 	}
 	
-	public static Notification createAddManyNotification(EObject notifier, EStructuralFeature feature, Object newValue, int index) {
+	public static Notification createAddManyNotification(Object notifier, EStructuralFeature feature, Object newValue, int index) {
 		return new SmartEMFNotification(ADD_MANY, notifier, feature, null, newValue, index);
 	}
 	
-	public static Notification createSetNotification(EObject notifier, EStructuralFeature feature, Object oldValue, Object newValue, int index) {
+	public static Notification createSetNotification(Object notifier, EStructuralFeature feature, Object oldValue, Object newValue, int index) {
 		return new SmartEMFNotification(SET, notifier, feature, oldValue, newValue, index);
 	}
 	
-	public static Notification createUnSetNotification(EObject notifier, EStructuralFeature feature, Object oldValue, int index) {
+	public static Notification createUnSetNotification(Object notifier, EStructuralFeature feature, Object oldValue, int index) {
 		return new SmartEMFNotification(UNSET, notifier, feature, oldValue, null, index);
 	}
 	
-	public static Notification createRemoveNotification(EObject notifier, EStructuralFeature feature, Object oldValue, int index) {
+	public static Notification createRemoveNotification(Object notifier, EStructuralFeature feature, Object oldValue, int index) {
 		return new SmartEMFNotification(REMOVE, notifier, feature, oldValue, null, index);
 	}
 	
-	public static Notification createRemoveManyNotification(EObject notifier, EStructuralFeature feature, Object oldValue, int index) {
+	public static Notification createRemoveManyNotification(Object notifier, EStructuralFeature feature, Object oldValue, int index) {
 		return new SmartEMFNotification(REMOVE_MANY, notifier, feature, oldValue, null, index);
 	}
 	
-	public static Notification createRemovingAdapterNotification(EObject notifier, EStructuralFeature feature, Object oldValue, int index) {
+	public static Notification createRemovingAdapterNotification(Object notifier, EStructuralFeature feature, Object oldValue, int index) {
 		return new SmartEMFNotification(REMOVING_ADAPTER, notifier, feature, oldValue, null, index);
 	}
 	
-	public static Notification createMoveNotification(EObject notifier, EStructuralFeature feature, Object value, int oldIndex, int newIndex) {
+	public static Notification createMoveNotification(Object notifier, EStructuralFeature feature, Object value, int oldIndex, int newIndex) {
 		return new SmartEMFNotification(MOVE, notifier, feature, oldIndex, value, newIndex);
 	}
 	
@@ -256,6 +256,6 @@ public final class SmartEMFNotification implements Notification {
 	
 	@Override
 	public String toString() {
-		return "Notification { \n" + "		eventType: " + getEventTypeAstring() + "\n		feature: " + feature + "\n		oldValue: " + oldValue + "\n		newValue: " + newValue + "\n}";
+		return "Notification { \n" + "		eventType: " + getEventTypeAstring() + "\n		notifier: " + notifier + "\n		feature: " + feature + "\n		oldValue: " + oldValue + "\n		newValue: " + newValue + "\n}";
 	}
 }

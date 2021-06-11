@@ -33,4 +33,5 @@ Export-Package: org.moflon.smartemf,
    org.eclipse.emf.ecore.resource,
    org.eclipse.emf.common.notify",
  org.moflon.smartemf.runtime.collections;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util,com.google.common.collect",
- org.moflon.smartemf.runtime.notification;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util,org.eclipse.emf.common.notify"
+ org.moflon.smartemf.runtime.notification;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util,org.eclipse.emf.common.notify",
+ org.moflon.smartemf.runtime.util

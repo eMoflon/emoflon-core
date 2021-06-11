@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.collections.DefaultSmartEList;
+import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
 public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 
@@ -34,7 +35,10 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 	 * returns the adapters of the containing resource
 	 */
 	public EList<Adapter> eAdapters() {
-		return eResource().eAdapters();
+		if(resource == null)
+			return new DefaultSmartEList<>();
+		else
+			return resource.eAdapters();
 	}
 
 	@Override
@@ -157,7 +161,8 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 	 * revokes current containment relationship
 	 */
 	public void resetContainment() {
-		if(eContainingFeature != null)
+		setResource(null);
+		if(eContainingFeature == null)
 			return;
 		
 		if(eContainingFeature.isMany()) {
@@ -168,7 +173,6 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 		}
 		eContainer = null;
 		eContainingFeature = null;
-		setResource(null);
 	}
 
 	@Override
@@ -201,6 +205,14 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 		if(resource != null) {
 			for(Adapter a : resource.eAdapters()) {
 				a.notifyChanged(n);
+			}
+		}
+	}
+	
+	protected void sendRemoveAdapterNotification(EObject obj) {
+		if(resource != null) {
+			for(Adapter a : resource.eAdapters()) {
+				a.notifyChanged(SmartEMFNotification.createRemovingAdapterNotification(this, null, a, -1));
 			}
 		}
 	}

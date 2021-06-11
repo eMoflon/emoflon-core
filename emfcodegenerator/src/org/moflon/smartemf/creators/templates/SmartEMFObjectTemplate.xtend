@@ -148,8 +148,7 @@ class SmartEMFObjectTemplate {
 	    			
 				// send remove messages to old adapters
 				// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
-				if (eResource() != null)
-					sendNotification(SmartEMFNotification.createRemovingAdapterNotification(null, null, this, -1));
+				sendRemoveAdapterNotification(this);
 	    			
 	    		super.setResource(r);
 	    		
@@ -188,9 +187,7 @@ class SmartEMFObjectTemplate {
 	    			
     			// send remove messages to old adapters
 				// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
-				if (eResource() != null)
-					sendNotification(SmartEMFNotification.createRemovingAdapterNotification(null, null, this, -1));
-	    		
+				sendRemoveAdapterNotification(this);
 	    			
 	    		super.setResource(r);
 	    		
@@ -271,7 +268,8 @@ class SmartEMFObjectTemplate {
 	        «ENDIF»
 
 			«IF feature.containment»
-			((MinimalSObjectContainer) «getValidName(feature.name)»).setContainment(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)»);
+			if(value != null)
+				((MinimalSObjectContainer) «getValidName(feature.name)»).setContainment(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)»);
 			«ENDIF»
 
         	sendNotification(SmartEMFNotification.createSetNotification(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)», oldValue, value, -1));'''
