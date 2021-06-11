@@ -65,8 +65,10 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	}
 	
 	protected boolean addWithoutNotification(T e) {
-		((SmartObject) e).setContainment(eContainer, feature);
-		((SmartObject) e).setResource(eContainer.eResource());
+		if(feature.isContainment()) {
+			((SmartObject) e).setContainment(eContainer, feature);
+			((SmartObject) e).setResource(eContainer.eResource());
+		}
 		return elements.add(e);
 	}
 
@@ -92,7 +94,9 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	}
 
 	protected boolean removeWithoutNotification(Object o) {
-		((SmartObject) o).resetContainment();
+		if(feature.isContainment()) {
+			((SmartObject) o).resetContainment();
+		}
 		return elements.remove(o);
 	}
 
