@@ -5,8 +5,6 @@ import java.util.HashMap
 import java.util.HashSet
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EPackage
-import org.moflon.smartemf.creators.templates.EMFPackageFactoryInterfaceCreator
-import org.moflon.smartemf.creators.templates.EMFPackageFactorySourceCreator
 import org.moflon.smartemf.creators.templates.SmartEMFObjectTemplate
 import org.moflon.smartemf.inspectors.util.PackageInspector
 
@@ -15,6 +13,8 @@ import org.moflon.smartemf.creators.templates.SmartEMFInterfaceTemplate
 import org.moflon.smartemf.creators.templates.PackageInterfaceTemplate
 import org.moflon.smartemf.creators.templates.PackageImplTemplate
 import org.moflon.smartemf.creators.templates.EEnumTemplate
+import org.moflon.smartemf.creators.templates.FactoryInterfaceTemplate
+import org.moflon.smartemf.creators.templates.FactoryImplTemplate
 
 /**
  * Class which generates the code
@@ -146,7 +146,7 @@ class EMFCodeGenerator{
 	
 	def void generate_package_factory_interfaces(){
 		for(package_inspector : packages.values){
-			var creator = new EMFPackageFactoryInterfaceCreator(
+			var creator = new FactoryInterfaceTemplate(
 				EMFCodeGenerationClass.emf_model, package_inspector
 			)
 			var path = package_inspector.get_path_to_folder + "/" +
@@ -159,7 +159,7 @@ class EMFCodeGenerator{
 	
 	def void generate_package_factory_implementations(){
 		for(package_inspector : packages.values){
-			var creator =new EMFPackageFactorySourceCreator(
+			var creator =new FactoryImplTemplate(
 				EMFCodeGenerationClass.emf_model, package_inspector
 			)
 			var path = package_inspector.get_path_to_folder + "/impl/" +

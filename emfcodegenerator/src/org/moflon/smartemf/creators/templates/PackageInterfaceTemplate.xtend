@@ -61,7 +61,6 @@ class PackageInterfaceTemplate extends EMFCodeGenerationClass implements FileCre
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
 			int «SmartEMFObjectTemplate.getLiteral(clazz)» = «clazz.classifierID»;
 			«FOR feature : clazz.EStructuralFeatures»
-«««			int «SmartEMFObjectCreator.getLiteral(feature)» = «feature.featureID + countSuperFeatures(clazz)»;
 			int «SmartEMFObjectTemplate.getLiteral(feature)» = «featureCounter++»;
 			«ENDFOR»
 			int «SmartEMFObjectTemplate.getLiteral(clazz)»_FEATURE_COUNT = «clazz.EStructuralFeatures.size + countSuperFeatures(clazz)»;
