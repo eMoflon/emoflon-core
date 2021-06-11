@@ -125,7 +125,7 @@ class FactoryImplTemplate extends EMFCodeGenerationClass implements FileCreator 
 			
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
 			@Override
-			public «clazz.name» create«clazz.name.toFirstUpper»() {
+			public «"Container".equals(clazz.name)?package_declaration+"."+clazz.name:clazz.name» create«clazz.name.toFirstUpper»() {
 				«clazz.name»Impl «clazz.name.toFirstLower» = new «clazz.name»Impl();
 				return «clazz.name.toFirstLower»;
 			}
