@@ -26,7 +26,7 @@ class EMFCodeGenerator{
 	/**
 	 * String used to indent code
 	 */
-	var String IDENTION = "    "
+	var String INDENTATION = "    "
 
 	/**
 	 * HashMap mapping InterfaceCreator to PackageInspector
@@ -117,7 +117,7 @@ class EMFCodeGenerator{
 			var path = package_inspector.get_path_to_folder + "/" +
 					   package_inspector.get_emf_package_class_name + ".java"
 
-			creator.initialize_creator(path, this.IDENTION)
+			creator.initialize_creator(path, this.INDENTATION)
 			creator.write_to_file()
 			
 			for(eenum : package_inspector.get_all_eenums_in_package){
@@ -139,7 +139,7 @@ class EMFCodeGenerator{
 			var path = package_inspector.get_path_to_folder + "/impl/" +
 					   package_inspector.get_emf_package_class_name + "Impl.java"
 
-			creator.initialize_creator(path, this.IDENTION)
+			creator.initialize_creator(path, this.INDENTATION)
 			creator.write_to_file()
 		}
 	}
@@ -152,7 +152,7 @@ class EMFCodeGenerator{
 			var path = package_inspector.get_path_to_folder + "/" +
 					   package_inspector.get_emf_package_factory_class_name + ".java"
 
-			creator.initialize_creator(path, this.IDENTION)
+			creator.initialize_creator(path, this.INDENTATION)
 			creator.write_to_file()
 		}
 	}
@@ -165,7 +165,7 @@ class EMFCodeGenerator{
 			var path = package_inspector.get_path_to_folder + "/impl/" +
 					   package_inspector.get_emf_package_factory_class_name + "Impl.java"
 
-			creator.initialize_creator(path, this.IDENTION)
+			creator.initialize_creator(path, this.INDENTATION)
 			creator.write_to_file()
 		}
 	}

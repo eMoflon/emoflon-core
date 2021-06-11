@@ -420,7 +420,7 @@ public class SmartEMFResource extends ResourceImpl implements XMIResource {
 			if(name.length()<2)
 				return "" + Character.toLowerCase(first);
 			
-			return name = Character.toLowerCase(first) + name.substring(1, name.length()-1);
+			return name = Character.toLowerCase(first) + name.substring(1, name.length());
 		} else {
 			return rootName(object);
 		}
