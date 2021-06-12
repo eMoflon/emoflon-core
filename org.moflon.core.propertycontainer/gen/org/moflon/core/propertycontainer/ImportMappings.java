@@ -2,8 +2,6 @@
  */
 package org.moflon.core.propertycontainer;
 
-import org.eclipse.emf.ecore.EObject;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Import Mappings</b></em>'.
@@ -20,7 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface ImportMappings extends EObject, PropertiesMapping {
+public interface ImportMappings extends PropertiesMapping {
 	/**
 	 * Returns the value of the '<em><b>Description</b></em>' attribute.
 	 * The default value is <code>"[Used to correct prefixes in imports for code generation]"</code>.

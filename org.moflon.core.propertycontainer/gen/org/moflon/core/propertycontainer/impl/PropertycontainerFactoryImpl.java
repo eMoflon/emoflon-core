@@ -94,6 +94,8 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 		switch (eDataType.getClassifierID()) {
 		case PropertycontainerPackage.BUILD_MODE:
 			return createBuildModeFromString(eDataType, initialValue);
+		case PropertycontainerPackage.USED_CODE_GEN:
+			return createUsedCodeGenFromString(eDataType, initialValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -109,6 +111,8 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 		switch (eDataType.getClassifierID()) {
 		case PropertycontainerPackage.BUILD_MODE:
 			return convertBuildModeToString(eDataType, instanceValue);
+		case PropertycontainerPackage.USED_CODE_GEN:
+			return convertUsedCodeGenToString(eDataType, instanceValue);
 		default:
 			throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -254,6 +258,28 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * @generated
 	 */
 	public String convertBuildModeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public UsedCodeGen createUsedCodeGenFromString(EDataType eDataType, String initialValue) {
+		UsedCodeGen result = UsedCodeGen.get(initialValue);
+		if (result == null)
+			throw new IllegalArgumentException(
+					"The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertUsedCodeGenToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

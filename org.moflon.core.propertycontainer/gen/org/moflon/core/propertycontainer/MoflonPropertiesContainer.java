@@ -3,7 +3,6 @@
 package org.moflon.core.propertycontainer;
 
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -25,6 +24,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getAdditionalUsedGenPackages <em>Additional Used Gen Packages</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getDescription <em>Description</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getProjectName <em>Project Name</em>}</li>
+ *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getUsedCodeGen <em>Used Code Gen</em>}</li>
  * </ul>
  *
  * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer()
@@ -202,5 +202,30 @@ public interface MoflonPropertiesContainer extends EObject {
 	 * @generated
 	 */
 	void setProjectName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Used Code Gen</b></em>' attribute.
+	 * The literals are from the enumeration {@link org.moflon.core.propertycontainer.UsedCodeGen}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Used Code Gen</em>' attribute.
+	 * @see org.moflon.core.propertycontainer.UsedCodeGen
+	 * @see #setUsedCodeGen(UsedCodeGen)
+	 * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer_UsedCodeGen()
+	 * @model
+	 * @generated
+	 */
+	UsedCodeGen getUsedCodeGen();
+
+	/**
+	 * Sets the value of the '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getUsedCodeGen <em>Used Code Gen</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Used Code Gen</em>' attribute.
+	 * @see org.moflon.core.propertycontainer.UsedCodeGen
+	 * @see #getUsedCodeGen()
+	 * @generated
+	 */
+	void setUsedCodeGen(UsedCodeGen value);
 
 } // MoflonPropertiesContainer

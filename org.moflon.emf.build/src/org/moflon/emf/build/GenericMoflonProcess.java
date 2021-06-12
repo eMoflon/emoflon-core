@@ -80,8 +80,7 @@ public abstract class GenericMoflonProcess implements ITask {
 		try {
 			// (1) Loads moflon.properties file
 			final IProject project = getEcoreFile().getProject();
-			this.moflonProperties = MoflonPropertiesContainerHelper.loadOrCreatePropertiesContainer(getProject(),
-					MoflonConventions.getDefaultMoflonPropertiesFile(project));
+			this.moflonProperties = new MoflonPropertiesContainerHelper(getProject(), subMon).load();
 
 			subMon.worked(1);
 			if (subMon.isCanceled()) {

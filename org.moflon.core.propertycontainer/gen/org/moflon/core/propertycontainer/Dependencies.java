@@ -2,8 +2,6 @@
  */
 package org.moflon.core.propertycontainer;
 
-import org.eclipse.emf.ecore.EObject;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Dependencies</b></em>'.
@@ -20,7 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface Dependencies extends EObject, PropertiesValue {
+public interface Dependencies extends PropertiesValue {
 	/**
 	 * Returns the value of the '<em><b>Description</b></em>' attribute.
 	 * The default value is <code>"[Automatically derived dependencies of this project]"</code>.

@@ -489,13 +489,22 @@ public interface PropertycontainerPackage extends EPackage {
 	int MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME = 9;
 
 	/**
+	 * The feature id for the '<em><b>Used Code Gen</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOFLON_PROPERTIES_CONTAINER__USED_CODE_GEN = 10;
+
+	/**
 	 * The number of structural features of the '<em>Moflon Properties Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER_FEATURE_COUNT = 10;
+	int MOFLON_PROPERTIES_CONTAINER_FEATURE_COUNT = 11;
 
 	/**
 	 * The number of operations of the '<em>Moflon Properties Container</em>' class.
@@ -653,6 +662,16 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 */
 	int BUILD_MODE = 11;
+
+	/**
+	 * The meta object id for the '{@link org.moflon.core.propertycontainer.UsedCodeGen <em>Used Code Gen</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.moflon.core.propertycontainer.UsedCodeGen
+	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getUsedCodeGen()
+	 * @generated
+	 */
+	int USED_CODE_GEN = 12;
 
 	/**
 	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.Dependencies <em>Dependencies</em>}'.
@@ -912,6 +931,17 @@ public interface PropertycontainerPackage extends EPackage {
 	EAttribute getMoflonPropertiesContainer_ProjectName();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getUsedCodeGen <em>Used Code Gen</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Used Code Gen</em>'.
+	 * @see org.moflon.core.propertycontainer.MoflonPropertiesContainer#getUsedCodeGen()
+	 * @see #getMoflonPropertiesContainer()
+	 * @generated
+	 */
+	EAttribute getMoflonPropertiesContainer_UsedCodeGen();
+
+	/**
 	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.ReplaceGenModel <em>Replace Gen Model</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1037,6 +1067,16 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 */
 	EEnum getBuildMode();
+
+	/**
+	 * Returns the meta object for enum '{@link org.moflon.core.propertycontainer.UsedCodeGen <em>Used Code Gen</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Used Code Gen</em>'.
+	 * @see org.moflon.core.propertycontainer.UsedCodeGen
+	 * @generated
+	 */
+	EEnum getUsedCodeGen();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1274,6 +1314,14 @@ public interface PropertycontainerPackage extends EPackage {
 		EAttribute MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME = eINSTANCE.getMoflonPropertiesContainer_ProjectName();
 
 		/**
+		 * The meta object literal for the '<em><b>Used Code Gen</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MOFLON_PROPERTIES_CONTAINER__USED_CODE_GEN = eINSTANCE.getMoflonPropertiesContainer_UsedCodeGen();
+
+		/**
 		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.impl.ReplaceGenModelImpl <em>Replace Gen Model</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1378,6 +1426,16 @@ public interface PropertycontainerPackage extends EPackage {
 		 * @generated
 		 */
 		EEnum BUILD_MODE = eINSTANCE.getBuildMode();
+
+		/**
+		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.UsedCodeGen <em>Used Code Gen</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.moflon.core.propertycontainer.UsedCodeGen
+		 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getUsedCodeGen()
+		 * @generated
+		 */
+		EEnum USED_CODE_GEN = eINSTANCE.getUsedCodeGen();
 
 	}
 

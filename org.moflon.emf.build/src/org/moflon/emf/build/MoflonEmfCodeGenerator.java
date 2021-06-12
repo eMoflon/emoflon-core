@@ -8,37 +8,36 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.BasicMonitor;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EGenericType;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.moflon.core.preferences.EMoflonPreferencesStorage;
+import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
+import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
+import org.moflon.core.propertycontainer.UsedCodeGen;
 import org.moflon.core.utilities.LogUtils;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.emf.codegen.CodeGenerator;
-import org.moflon.emf.codegen.MoflonGenModelBuilder;
-
 import org.moflon.smartemf.EMFCodeGenerator;
 
 
 
 public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 	private static final Logger logger = Logger.getLogger(MoflonEmfCodeGenerator.class);
-
+	
 	private GenModel genModel;
 
 	public MoflonEmfCodeGenerator(final IFile ecoreFile, final ResourceSet resourceSet,
@@ -84,48 +83,57 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 			subMon.subTask("Generating code for project " + getProjectName());
 			
 			//TODO:be able to change between SmartEMF and normal EMF
-			boolean istSmartEmf = true;
+//			boolean istSmartEmf = !this.getGenModel().getRootExtendsClass().equals("org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container");
 			//for testing purposes: if the genmodel name is of a specific model, then just create the old emf
-			if(genModelBuilderJob.getGenModel().getModelName().equals("SimpleEMFEcoreModel")) istSmartEmf = false;
-			if(!istSmartEmf) {
+//			if(genModelBuilderJob.getGenModel().getModelName().equals("SimpleEMFEcoreModel")) istSmartEmf = false;
+			
+			MoflonPropertiesContainerHelper helper = new MoflonPropertiesContainerHelper(getProject(), new NullProgressMonitor());
+			MoflonPropertiesContainer container = helper.load();
+			// choose metamodel code generator
+			switch(container.getUsedCodeGen()) {
+				case EMF: {
+					//old emf model creation
+					final CodeGenerator codeGenerator = new CodeGenerator();
+					final IStatus codeGenerationStatus = codeGenerator.generateCode(genModel,
+							new BasicMonitor.EclipseSubProgress(subMon, 30));
+					if (subMon.isCanceled()) {
+						return Status.CANCEL_STATUS;
+					}
+					if (codeGenerationStatus.matches(IStatus.ERROR)) {
+						return codeGenerationStatus;
+					}
+					subMon.worked(5);	
+					break;
+				}
+				case SMART_EMF: {
+					//smartemf is used for model generation
 					
-				//old emf model creation
-				final CodeGenerator codeGenerator = new CodeGenerator();
-				final IStatus codeGenerationStatus = codeGenerator.generateCode(genModel,
-						new BasicMonitor.EclipseSubProgress(subMon, 30));
-				if (subMon.isCanceled()) {
-					return Status.CANCEL_STATUS;
+					//Find the current workspace
+					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();			
+		
+					IResource model = root.findMember(getEcoreFile().getFullPath().toString().replace(".ecore", ".genmodel"));
+		
+					File genmodelFile = new File(model.getLocationURI());
+					File ecoreFile = new File(root.findMember(getEcoreFile().getFullPath().toString()).getLocationURI());
+					
+					String genModelPath = genmodelFile.getAbsolutePath();
+					String ecorePath = ecoreFile.getAbsolutePath();
+		
+					if(genmodelFile.exists() && !genmodelFile.isDirectory() && ecoreFile.exists() && !ecoreFile.isDirectory()) {
+						//paths of the files necessary for smartEMF extension
+						final EMFCodeGenerator codeGenerator = new EMFCodeGenerator(ecorePath,genModelPath);
+						codeGenerator.generate_all_model_code();				
+					} else {
+						logger.warn("Problem when generating code: the genmodel file needs to be in the same folder as the ecore file.");
+					}	
+					
+					//because of smartemf: the gen folder needs to be refreshed automatically; 
+					//else the user will need to do this manually 
+					getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+					
+					break;
 				}
-				if (codeGenerationStatus.matches(IStatus.ERROR)) {
-					return codeGenerationStatus;
-				}
-				subMon.worked(5);				
-			} else {
-				//smartemf is used for model generation
-				
-				//Find the current workspace
-	
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();			
-	
-				IResource model = root.findMember(getEcoreFile().getFullPath().toString().replace(".ecore", ".genmodel"));
-	
-				File genmodelFile = new File(model.getLocationURI());
-				File ecoreFile = new File(root.findMember(getEcoreFile().getFullPath().toString()).getLocationURI());
-				
-				String genModelPath = genmodelFile.getAbsolutePath();
-				String ecorePath = ecoreFile.getAbsolutePath();
-	
-				if(genmodelFile.exists() && !genmodelFile.isDirectory() && ecoreFile.exists() && !ecoreFile.isDirectory()) {
-					//paths of the files necessary for smartEMF extension
-					final EMFCodeGenerator codeGenerator = new EMFCodeGenerator(ecorePath,genModelPath);
-					codeGenerator.generate_all_model_code();				
-				} else {
-					logger.warn("Problem when generating code: the genmodel file needs to be in the same folder as the ecore file.");
-				}	
-				
-				//because of smartemf: the gen folder needs to be refreshed automatically; 
-				//else the user will need to do this manually 
-				getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+				default: throw new RuntimeException("Cannot generate code for " + getGenModel().getRootExtendsClass());
 			}
 					
 			final long tic = System.nanoTime();

@@ -1,4 +1,48 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="URIPreferenceExtension" name="URIPreferenceExtension" schema="schema/URIPreferenceExtension.exsd"/>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.moflon.ide.ui.moflon?after=moflonGroupResources">
+         <command
+               commandId="org.moflon.ide.ui.commands.SwitchCodeGeneratorCommand"
+               label="Switch Code Generator"
+               style="push"
+               tooltip="Switches between SmartEMF and EMF">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeMenuSelection">
+                  <iterate>
+                     <or>
+                        <adapt
+                              type="org.eclipse.core.resources.IProject">
+                           <or>
+                              <test
+                                    property="org.eclipse.core.resources.projectNature"
+                                    value="org.moflon.emf.build.MoflonEmfNature">
+                              </test>
+                              <test
+                                    property="org.eclipse.core.resources.projectNature"
+                                    value="org.emoflon.ibex.tgg.ide.nature">
+                              </test>
+                           </or>
+                        </adapt>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.moflon.emf.codegen.handler.SwitchCodeGeneratorHandler"
+            id="org.moflon.ide.ui.commands.SwitchCodeGeneratorCommand"
+            name="Switch Code Generator">
+      </command>
+   </extension>
 </plugin>

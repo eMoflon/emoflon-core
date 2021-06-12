@@ -6,8 +6,8 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EReference;
 
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.moflon.core.propertycontainer.AdditionalDependencies;
@@ -24,6 +24,7 @@ import org.moflon.core.propertycontainer.PropertycontainerFactory;
 import org.moflon.core.propertycontainer.PropertycontainerPackage;
 import org.moflon.core.propertycontainer.ReplaceGenModel;
 import org.moflon.core.propertycontainer.TGGBuildMode;
+import org.moflon.core.propertycontainer.UsedCodeGen;
 
 /**
  * <!-- begin-user-doc -->
@@ -115,6 +116,13 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	private EEnum buildModeEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum usedCodeGenEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -426,6 +434,16 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	@Override
+	public EAttribute getMoflonPropertiesContainer_UsedCodeGen() {
+		return (EAttribute) moflonPropertiesContainerEClass.getEStructuralFeatures().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getReplaceGenModel() {
 		return replaceGenModelEClass;
 	}
@@ -546,6 +564,16 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	@Override
+	public EEnum getUsedCodeGen() {
+		return usedCodeGenEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public PropertycontainerFactory getPropertycontainerFactory() {
 		return (PropertycontainerFactory) getEFactoryInstance();
 	}
@@ -600,6 +628,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES);
 		createEAttribute(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__DESCRIPTION);
 		createEAttribute(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME);
+		createEAttribute(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__USED_CODE_GEN);
 
 		replaceGenModelEClass = createEClass(REPLACE_GEN_MODEL);
 		createEAttribute(replaceGenModelEClass, REPLACE_GEN_MODEL__BOOL);
@@ -618,6 +647,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 
 		// Create enums
 		buildModeEEnum = createEEnum(BUILD_MODE);
+		usedCodeGenEEnum = createEEnum(USED_CODE_GEN);
 	}
 
 	/**
@@ -730,6 +760,9 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 		initEAttribute(getMoflonPropertiesContainer_ProjectName(), ecorePackage.getEString(), "projectName", null, 1, 1,
 				MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
 				IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEAttribute(getMoflonPropertiesContainer_UsedCodeGen(), this.getUsedCodeGen(), "usedCodeGen", null, 0, 1,
+				MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(replaceGenModelEClass, ReplaceGenModel.class, "ReplaceGenModel", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);
@@ -774,6 +807,10 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 		addEEnumLiteral(buildModeEEnum, BuildMode.BACKWARD);
 		addEEnumLiteral(buildModeEEnum, BuildMode.FORWARD);
 		addEEnumLiteral(buildModeEEnum, BuildMode.FORWARD_AND_BACKWARD);
+
+		initEEnum(usedCodeGenEEnum, UsedCodeGen.class, "UsedCodeGen");
+		addEEnumLiteral(usedCodeGenEEnum, UsedCodeGen.EMF);
+		addEEnumLiteral(usedCodeGenEEnum, UsedCodeGen.SMART_EMF);
 
 		// Create resource
 		createResource(eNS_URI);

@@ -109,7 +109,7 @@ public class GenModelBuilder {
 
 			GenModel genModel = importer.getGenModel();
 			
-			genModel.setModelDirectory("/gen/");
+			genModel.setModelDirectory(projectName + "/gen/");
 			
 		    Set<GenPackage> removals = genModel.getGenPackages().stream().filter(pkg -> !pkg.getEcorePackage().getName().equals(ePackage.getName())).collect(Collectors.toSet());
 			removals.forEach(pkg -> genModel.getGenPackages().remove(pkg));

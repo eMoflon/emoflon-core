@@ -56,6 +56,7 @@
         defaultValueLiteral="[Properties to configure code generation]"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="projectName" ordered="false"
         lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="usedCodeGen" eType="#//UsedCodeGen"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ReplaceGenModel">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="bool" ordered="false" lowerBound="1"
@@ -88,5 +89,9 @@
         defaultValueLiteral="[Name of the corresponding metamodel project in the current workspace]"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="MetaModelProjectName" ordered="false"
         lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="UsedCodeGen">
+    <eLiterals name="EMF"/>
+    <eLiterals name="SMART_EMF" value="1"/>
   </eClassifiers>
 </ecore:EPackage>

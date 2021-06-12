@@ -23,7 +23,6 @@
     </definition>
     <definition id="org.moflon.ide.ui.definitions.isInGenFolder">
       <adapt type="org.eclipse.core.resources.IResource">
-        <test property="org.eclipse.core.resources.path" value="*/gen/*"/>
       </adapt>
     </definition>
     <definition id="org.moflon.ide.ui.definitions.isXmiFile">
@@ -74,6 +73,16 @@
       <with variable="activePartId">
         <equals value="org.eclipse.jdt.ui.PackageExplorer"/>
       </with>
+    </definition>
+    <definition
+          id="org.moflon.ide.ui.definitions.isGenmodelFile">
+       <adapt
+             type="org.eclipse.core.resources.IResource">
+          <test
+                property="org.eclipse.core.resources.extension"
+                value="genmodel">
+          </test>
+       </adapt>
     </definition>
   </extension>
   <extension point="org.eclipse.ui.newWizards">

@@ -53,7 +53,7 @@ public final class MonitoredGenModelBuilder implements ITask {
 		subMon.worked(5);
 
 		if (this.moflonProperties == null) {
-			this.moflonProperties = MoflonPropertiesContainerHelper.load(project, subMon.split(5));
+			this.moflonProperties = new MoflonPropertiesContainerHelper(project, subMon.split(5)).load();
 		}
 			
 		subMon.setWorkRemaining(90);
