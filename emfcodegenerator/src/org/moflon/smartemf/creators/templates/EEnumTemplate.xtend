@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.EEnum
 import org.moflon.smartemf.EMFCodeGenerationClass
 import org.moflon.smartemf.creators.FileCreator
 import org.moflon.smartemf.inspectors.util.PackageInspector
+import org.moflon.smartemf.creators.templates.util.TemplateUtil
 
 /**
  * This Creator can be used to generate the source-code of an
@@ -58,13 +59,13 @@ class EEnumTemplate extends EMFCodeGenerationClass implements FileCreator {
 		
 		public enum «e_enum.name» implements Enumerator {
 			
-			«FOR literal : e_enum.ELiterals SEPARATOR ','» «literal.name»(«literal.value», "«literal.name»", "«literal.literal»")«ENDFOR»«IF e_enum.ELiterals !== null &&  !e_enum.ELiterals.empty»;«ENDIF»
+			«FOR literal : e_enum.ELiterals SEPARATOR ','» «TemplateUtil.getLiteral(literal)»(«literal.value», "«literal.name»", "«literal.literal»")«ENDFOR»«IF e_enum.ELiterals !== null &&  !e_enum.ELiterals.empty»;«ENDIF»
 			
 			«FOR literal : e_enum.ELiterals»
 			public static final int «literal.name»_VALUE = «literal.value»;
 			«ENDFOR»
 			
-			private static final «e_enum.name»[] VALUES_ARRAY = new «e_enum.name»[] {«FOR literal : e_enum.ELiterals SEPARATOR ','»«literal.name»«ENDFOR»};
+			private static final «e_enum.name»[] VALUES_ARRAY = new «e_enum.name»[] {«FOR literal : e_enum.ELiterals SEPARATOR ','»«TemplateUtil.getLiteral(literal)»«ENDFOR»};
 
 			public static final List<«e_enum.name»> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
@@ -92,7 +93,7 @@ class EEnumTemplate extends EMFCodeGenerationClass implements FileCreator {
 				switch (value) {
 				«FOR literal : e_enum.ELiterals»
 				case «literal.name»_VALUE:
-					return «literal.name»;
+					return «TemplateUtil.getLiteral(literal)»;
 				«ENDFOR»
 				}
 				return null;

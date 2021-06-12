@@ -36,7 +36,8 @@ class TemplateUtil {
 		var splittedName = new LinkedList
 		var from = 0
 		for(var i=1; i<name.length; i++) {
-			if(Character.isUpperCase(name.charAt(i))) {
+			// only split if the last character was not also an uppercase letter
+			if(!Character.isUpperCase(name.charAt(i-1)) && Character.isUpperCase(name.charAt(i))) {
 				splittedName.add(name.substring(from, i))
 				from = i;
 			}

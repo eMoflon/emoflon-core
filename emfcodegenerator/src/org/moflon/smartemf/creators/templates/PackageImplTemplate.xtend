@@ -194,7 +194,7 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 				«FOR clazz : e_pak.get_all_eenums_in_package»
 				initEEnum(«clazz.name.toFirstLower»EEnum, «clazz.name».class, "«clazz.name»");
 				«FOR literal : clazz.ELiterals»
-				addEEnumLiteral(«clazz.name.toFirstLower»EEnum, «clazz.name».«literal.name»);
+				addEEnumLiteral(«clazz.name.toFirstLower»EEnum, «clazz.name».«TemplateUtil.getLiteral(literal)»);
 				«ENDFOR»
 				«ENDFOR»
 				

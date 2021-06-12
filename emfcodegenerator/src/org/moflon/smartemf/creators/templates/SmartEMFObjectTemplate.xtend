@@ -216,7 +216,7 @@ class SmartEMFObjectTemplate {
 			return "null"
 		
 		if(value instanceof EEnumLiteral)
-			return value.EEnum.name + "." + value.literal
+			return value.EEnum.name + "." + TemplateUtil.getLiteral(value)
 			
 		return value
 	}
