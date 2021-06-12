@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.EReference
 import org.moflon.smartemf.EGenericTypeProcessor
 import org.moflon.smartemf.EcoreGenmodelParser
 import org.moflon.smartemf.creators.FileCreator
+import org.moflon.smartemf.creators.templates.util.TemplateUtil
 import org.moflon.smartemf.inspectors.util.PackageInspector
 
 /**
@@ -136,16 +137,16 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 		
 				// Create classes and their features
 				«FOR clazz : e_pak.get_all_eclasses_in_package»
-				«clazz.name.toFirstLower»EClass = createEClass(«SmartEMFObjectTemplate.getLiteral(clazz)»);
+				«clazz.name.toFirstLower»EClass = createEClass(«TemplateUtil.getLiteral(clazz)»);
 				«FOR feature : clazz.EStructuralFeatures»
-				«IF feature instanceof EReference»createEReference«ELSE»createEAttribute«ENDIF»(«clazz.name.toFirstLower»EClass, «SmartEMFObjectTemplate.getLiteral(feature)»);
+				«IF feature instanceof EReference»createEReference«ELSE»createEAttribute«ENDIF»(«clazz.name.toFirstLower»EClass, «TemplateUtil.getLiteral(feature)»);
 				«clazz.name.toFirstLower»_«feature.name.toFirstLower»«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» = («IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF») «clazz.name.toFirstLower»EClass.getEStructuralFeatures().get(«clazz.EStructuralFeatures.indexOf(feature)»);
 				«ENDFOR»
 				
 				«ENDFOR»
 				// Create enums
 				«FOR clazz : e_pak.get_all_eenums_in_package»
-				«clazz.name.toFirstLower»EEnum = createEEnum(«SmartEMFObjectTemplate.getLiteral(clazz)»);
+				«clazz.name.toFirstLower»EEnum = createEEnum(«TemplateUtil.getLiteral(clazz)»);
 				«ENDFOR»
 			}
 		

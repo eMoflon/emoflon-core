@@ -2,10 +2,11 @@ package org.moflon.smartemf.creators.templates
 
 import java.io.File
 import java.io.FileWriter
-import org.moflon.smartemf.EcoreGenmodelParser
-import org.moflon.smartemf.inspectors.util.PackageInspector
 import org.moflon.smartemf.EMFCodeGenerationClass
+import org.moflon.smartemf.EcoreGenmodelParser
 import org.moflon.smartemf.creators.FileCreator
+import org.moflon.smartemf.creators.templates.util.TemplateUtil
+import org.moflon.smartemf.inspectors.util.PackageInspector
 
 /**
  * creates the implementation for the package factory
@@ -89,7 +90,7 @@ class FactoryImplTemplate extends EMFCodeGenerationClass implements FileCreator 
 			public EObject create(EClass eClass) {
 				switch (eClass.getClassifierID()) {
 				«FOR clazz : e_pak.get_all_eclasses_in_package»
-				case «e_pak.get_emf_e_package.name.toFirstUpper»Package.«SmartEMFObjectTemplate.getLiteral(clazz)»:
+				case «e_pak.get_emf_e_package.name.toFirstUpper»Package.«TemplateUtil.getLiteral(clazz)»:
 					return create«clazz.name.toFirstUpper»();
 				«ENDFOR»
 				default:
@@ -102,7 +103,7 @@ class FactoryImplTemplate extends EMFCodeGenerationClass implements FileCreator 
 			public Object createFromString(EDataType eDataType, String initialValue) {
 				switch (eDataType.getClassifierID()) {
 				«FOR clazz : e_pak.get_all_eenums_in_package»
-				case «e_pak.get_emf_e_package.name.toFirstUpper»Package.«SmartEMFObjectTemplate.getLiteral(clazz)»:
+				case «e_pak.get_emf_e_package.name.toFirstUpper»Package.«TemplateUtil.getLiteral(clazz)»:
 					return create«clazz.name.toFirstUpper»FromString(eDataType, initialValue);
 				«ENDFOR»
 				default:
@@ -114,7 +115,7 @@ class FactoryImplTemplate extends EMFCodeGenerationClass implements FileCreator 
 			public String convertToString(EDataType eDataType, Object instanceValue) {
 				switch (eDataType.getClassifierID()) {
 				«FOR clazz : e_pak.get_all_eenums_in_package»
-				case «e_pak.get_emf_e_package.name.toFirstUpper»Package.«SmartEMFObjectTemplate.getLiteral(clazz)»:
+				case «e_pak.get_emf_e_package.name.toFirstUpper»Package.«TemplateUtil.getLiteral(clazz)»:
 					return convert«clazz.name.toFirstUpper»ToString(eDataType, instanceValue);
 				«ENDFOR»
 				default:
@@ -126,8 +127,8 @@ class FactoryImplTemplate extends EMFCodeGenerationClass implements FileCreator 
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
 			@Override
 			public «"Container".equals(clazz.name)?package_declaration+"."+clazz.name:clazz.name» create«clazz.name.toFirstUpper»() {
-				«clazz.name»Impl «clazz.name.toFirstLower» = new «clazz.name»Impl();
-				return «clazz.name.toFirstLower»;
+				«clazz.name»Impl «TemplateUtil.getValidName(clazz.name.toFirstLower)» = new «clazz.name»Impl();
+				return «TemplateUtil.getValidName(clazz.name.toFirstLower)»;
 			}
 			«ENDFOR»
 			

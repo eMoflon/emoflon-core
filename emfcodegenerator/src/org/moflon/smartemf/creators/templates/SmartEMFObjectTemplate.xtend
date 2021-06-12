@@ -13,6 +13,7 @@ import java.util.LinkedList
 import org.eclipse.emf.ecore.ENamedElement
 import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EEnumLiteral
+import org.moflon.smartemf.creators.templates.util.TemplateUtil;
 
 class SmartEMFObjectTemplate {
 	
@@ -26,17 +27,17 @@ class SmartEMFObjectTemplate {
 		val className = eClass.name
 		val ePackage = eClass.EPackage
 		val packageClassName = ePackage.name.toFirstUpper + "Package"
-		val FQPackagePath = getFQName(ePackage)
+		val FQPackagePath = TemplateUtil.getFQName(ePackage)
 		
 		return '''
 		package «FQPackagePath».impl;
 		
 		«FOR packages : getImportPackages()»
-		import «getFQName(packages)».«packages.name.toFirstUpper»Package;
+		import «TemplateUtil.getFQName(packages)».«packages.name.toFirstUpper»Package;
 		«ENDFOR»
 		
 		«FOR featureType : getImportTypes()»
-		import «getFQName(featureType)».«featureType.name»;
+		import «TemplateUtil.getFQName(featureType)».«featureType.name»;
 		«ENDFOR»
 		import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 		import org.moflon.smartemf.runtime.*;
@@ -52,22 +53,22 @@ class SmartEMFObjectTemplate {
 		public class «className»Impl extends SmartObject implements «className» {
 		
 		    «FOR feature : eClass.EAllStructuralFeatures»
-		    protected «getFieldTypeName(feature)» «getValidName(feature.name)» = «getDefaultValue(feature)»;
+		    protected «TemplateUtil.getFieldTypeName(feature)» «TemplateUtil.getValidName(feature.name)» = «getDefaultValue(feature)»;
 			«ENDFOR»
 			
 			protected «eClass.name»Impl() {
-				super(«packageClassName».Literals.«getLiteral(eClass)»);
+				super(«packageClassName».Literals.«TemplateUtil.getLiteral(eClass)»);
 			}
 			
 		    «FOR feature : eClass.EAllStructuralFeatures»
 		    @Override
-		    public «IF feature.isMany»EList<«feature.EType.name»>«ELSE»«SmartEMFObjectTemplate.getFieldTypeName(feature)»«ENDIF» «getOrIs(feature)»«feature.name.toFirstUpper»() {
-		    	return «getValidName(feature.name)»;
+		    public «IF feature.isMany»EList<«feature.EType.name»>«ELSE»«TemplateUtil.getFieldTypeName(feature)»«ENDIF» «getOrIs(feature)»«feature.name.toFirstUpper»() {
+		    	return «TemplateUtil.getValidName(feature.name)»;
 		    }
 		    
 		    «IF !feature.isUnsettable»
 		    @Override
-		    public void set«feature.name.toFirstUpper»(«getFieldTypeName(feature)» value) {
+		    public void set«feature.name.toFirstUpper»(«TemplateUtil.getFieldTypeName(feature)» value) {
 		    	«getSetterMethod(eClass, feature, FQPackagePath, packageClassName)»
 		    }
 		    «ENDIF»
@@ -76,8 +77,8 @@ class SmartEMFObjectTemplate {
 		    @Override
 		    public void eSet(EStructuralFeature eFeature, Object newValue){
 		    	«FOR feature : eClass.EAllStructuralFeatures»
-		    	 if («FQPackagePath».«getPackageClassName(feature)».Literals.«getLiteral(feature)».equals(eFeature)) {
-		    	 	set«feature.name.toFirstUpper»((«getFieldTypeName(feature)») newValue); 
+		    	 if («FQPackagePath».«TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».equals(eFeature)) {
+		    	 	set«feature.name.toFirstUpper»((«TemplateUtil.getFieldTypeName(feature)») newValue); 
 		    	 	return;
 		    	 }
 		    	«ENDFOR»
@@ -86,7 +87,7 @@ class SmartEMFObjectTemplate {
 		    @Override
 		    public void eUnset(EStructuralFeature eFeature){
 		    	«FOR feature : eClass.EAllStructuralFeatures»
-		    	 if («getPackageClassName(feature)».Literals.«getLiteral(feature)».equals(eFeature)) {
+		    	 if («TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».equals(eFeature)) {
 		    	 	«IF feature.isMany»
 		    	 	get«feature.name.toFirstUpper»().clear(); 
 		    	 	«ELSE»
@@ -106,9 +107,9 @@ class SmartEMFObjectTemplate {
 	    		result.append(",\n");
 	    		'''»
 	    		«IF feature.EType.defaultValue === null»
-	    		if(«getValidName(feature.name)» != null)
+	    		if(«TemplateUtil.getValidName(feature.name)» != null)
 	    		«ENDIF»
-				result.append("«feature.name»: «getValidName(feature.name)»");
+				result.append("«feature.name»: «TemplateUtil.getValidName(feature.name)»");
 		        «ENDFOR»
 		        return result.toString();
 		    }
@@ -116,7 +117,7 @@ class SmartEMFObjectTemplate {
 		 	@Override
 		    public Object eGet(EStructuralFeature eFeature){
 		    	«FOR feature : eClass.EAllStructuralFeatures»
-		    	 if («getPackageClassName(feature)».Literals.«getLiteral(feature)».equals(eFeature))
+		    	 if («TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».equals(eFeature))
 		    	 	return «getOrIs(feature)»«feature.name.toFirstUpper»();
 		    	«ENDFOR»
 		        return null;
@@ -208,7 +209,7 @@ class SmartEMFObjectTemplate {
 	
 	def getDefaultValue(EStructuralFeature feature) {
 		if(feature.isMany)
-			return '''new «getListTypeName(feature)»<«feature.EType.name»>(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)»);'''
+			return '''new «TemplateUtil.getListTypeName(feature)»<«feature.EType.name»>(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)»);'''
 			
 		val value = feature.defaultValue
 		if(value === null)
@@ -244,24 +245,24 @@ class SmartEMFObjectTemplate {
 	def getSetterMethod(EClass eClass, EStructuralFeature feature, String FQPackagePath, String packageClassName) {
 		if(feature instanceof EAttribute) {
 			return '''
-	        Object oldValue = «getValidName(feature.name)»;
-	        «getValidName(feature.name)» = value;
+	        Object oldValue = «TemplateUtil.getValidName(feature.name)»;
+	        «TemplateUtil.getValidName(feature.name)» = value;
 
-        	sendNotification(SmartEMFNotification.createSetNotification(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)», oldValue, value, -1));'''
+        	sendNotification(SmartEMFNotification.createSetNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», oldValue, value, -1));'''
 		}
 		if(feature instanceof EReference) {
 			return '''
-			Object oldValue = «getValidName(feature.name)»;
+			Object oldValue = «TemplateUtil.getValidName(feature.name)»;
 	        «IF feature.containment»
-			if(«getValidName(feature.name)» != null) {
-				((MinimalSObjectContainer) «getValidName(feature.name)»).resetContainment();
+			if(«TemplateUtil.getValidName(feature.name)» != null) {
+				((MinimalSObjectContainer) «TemplateUtil.getValidName(feature.name)»).resetContainment();
 			}
 	        «ENDIF»
-	        «getValidName(feature.name)» = value;
+	        «TemplateUtil.getValidName(feature.name)» = value;
 			
 	        «IF feature.isMany»
-			if(value instanceof «getListTypeName(feature)»){
-	        	«getValidName(feature.name)» = («getFieldTypeName(feature)») value;
+			if(value instanceof «TemplateUtil.getListTypeName(feature)»){
+	        	«TemplateUtil.getValidName(feature.name)» = («TemplateUtil.getFieldTypeName(feature)») value;
 			} else {
 			    throw new IllegalArgumentException();
 			}
@@ -269,85 +270,11 @@ class SmartEMFObjectTemplate {
 
 			«IF feature.containment»
 			if(value != null)
-				((MinimalSObjectContainer) «getValidName(feature.name)»).setContainment(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)»);
+				((MinimalSObjectContainer) «TemplateUtil.getValidName(feature.name)»).setContainment(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)»);
 			«ENDIF»
 
-        	sendNotification(SmartEMFNotification.createSetNotification(this, «getPackageClassName(feature)».Literals.«getLiteral(feature)», oldValue, value, -1));'''
+        	sendNotification(SmartEMFNotification.createSetNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», oldValue, value, -1));'''
 		}
-	}
-	
-	static def getListTypeName(EStructuralFeature feature) {
-		val isOrdered = feature.ordered
-		val isUnique = feature.unique
-		if(isOrdered && isUnique)
-			return '''LinkedSmartESet'''
-		if(isUnique)
-			return '''SmartESet'''
-		return '''SmartEList'''
-	}
-	
-	static def getFieldTypeName(EStructuralFeature feature) {
-		if(!feature.isMany) {
-			switch feature.EType.name {
-				case "EString" : return "String"
-				case "EInt" : return "int"
-				case "EBoolean" : return "boolean"
-				case "EChar" : return "char"
-				case "EDouble" : return "double"
-			}
-			return feature.EType.name
-		}
-		
-		return '''«getListTypeName(feature)»<«feature.EType.name»>'''
-	}
-	
-	static def splitNameAtUppercases(String name) {
-		var splittedName = new LinkedList
-		var from = 0
-		for(var i=1; i<name.length; i++) {
-			if(Character.isUpperCase(name.charAt(i))) {
-				splittedName.add(name.substring(from, i))
-				from = i;
-			}
-		}
-		
-		// add last segment
-		splittedName.add(name.substring(from, name.length))
-			
-		return splittedName
-	}
-	
-	// ids are always generated for the current eClass
-	static def getLiteralID(ENamedElement feature) {
-		val containingClass = feature.eContainer as EClassifier
-		if(feature instanceof EStructuralFeature)
-			return '''«FOR part : splitNameAtUppercases(containingClass.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»__«FOR part : splitNameAtUppercases(feature.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''		
-		else {
-			return '''«FOR part : splitNameAtUppercases(feature.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''
-		}
-	}
-	
-	static def getLiteral(ENamedElement elt) {
-		if(elt instanceof EStructuralFeature)
-			return '''«FOR part : splitNameAtUppercases(elt.EContainingClass.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»__«FOR part : splitNameAtUppercases(elt.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''		
-		else {
-			return '''«FOR part : splitNameAtUppercases(elt.name) SEPARATOR "_"»«part.toUpperCase»«ENDFOR»'''
-		}
-	}
-	
-	static def getFQName(EPackage ePackage) {
-		var currentPackage = ePackage
-		var FQPackagePath = currentPackage.name
-		while(currentPackage.eContainer !== null) {
-			currentPackage = currentPackage.eContainer as EPackage
-			FQPackagePath = currentPackage.name + "." + FQPackagePath
-		}
-		
-		return FQPackagePath
-	}
-	
-	static def getFQName(EClassifier eClass) {
-		return getFQName(eClass.EPackage)
 	}
 	
 	def writeToFile(String path) {
@@ -360,26 +287,5 @@ class SmartEMFObjectTemplate {
 	
 	def getPackage() {
 		return eClass.EPackage
-	}
-	
-	static def getPackageClassName(EPackage pkg) {
-		return pkg.name.toFirstUpper + "Package"
-	}
-	
-	static def getPackageClassName(EClassifier c) {
-		return getPackageClassName(c.EPackage)
-	}
-	
-	static def getPackageClassName(EStructuralFeature f) {
-		return getPackageClassName(f.eContainer as EClassifier)
-	}
-	
-	static def getValidName(String name) {
-		val keywords = newLinkedList("package", "class", "public", "private", "protected", "int", "double", "char", "boolean", "import")
-		if(keywords.contains(name)) {
-			return "__" + name
-		}
-		else
-			return name
 	}
 }

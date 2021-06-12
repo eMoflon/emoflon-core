@@ -1,16 +1,11 @@
 package org.moflon.smartemf.creators.templates
 
-import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.emf.ecore.EAttribute
-import org.eclipse.emf.ecore.EReference
-import org.eclipse.emf.ecore.EcorePackage
-import org.eclipse.emf.ecore.EClassifier
 import java.io.File
 import java.io.FileWriter
-import java.util.LinkedList
-import org.eclipse.emf.ecore.ENamedElement
+import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.EcorePackage
+import org.moflon.smartemf.creators.templates.util.TemplateUtil
 
 class SmartEMFInterfaceTemplate {
 	
@@ -24,17 +19,17 @@ class SmartEMFInterfaceTemplate {
 		val className = eClass.name
 		val ePackage = eClass.EPackage
 		val packageClassName = ePackage.name.toFirstUpper + "Package"
-		val FQPackagePath = SmartEMFObjectTemplate.getFQName(ePackage)
+		val FQPackagePath = TemplateUtil.getFQName(ePackage)
 		
 		return '''
 		package «FQPackagePath»;
 		
 		«FOR packages : getImportPackages()»
-		import «SmartEMFObjectTemplate.getFQName(packages)».«packages.name.toFirstUpper»Package;
+		import «TemplateUtil.getFQName(packages)».«packages.name.toFirstUpper»Package;
 		«ENDFOR»
 		
 		«FOR featureType : getImportTypes()»
-		import «SmartEMFObjectTemplate.getFQName(featureType)».«featureType.name»;
+		import «TemplateUtil.getFQName(featureType)».«featureType.name»;
 		«ENDFOR»
 		import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 		import org.moflon.smartemf.runtime.SmartObject;
@@ -48,10 +43,10 @@ class SmartEMFInterfaceTemplate {
 		public interface «className» extends EObject«getSuperTypes()» {
 			
 		    «FOR feature : eClass.EAllStructuralFeatures»
-		    public «IF feature.isMany»EList<«feature.EType.name»>«ELSE»«SmartEMFObjectTemplate.getFieldTypeName(feature)»«ENDIF» «getOrIs(feature)»«feature.name.toFirstUpper»();
+		    public «IF feature.isMany»EList<«feature.EType.name»>«ELSE»«TemplateUtil.getFieldTypeName(feature)»«ENDIF» «getOrIs(feature)»«feature.name.toFirstUpper»();
 		    
 		    «IF !feature.isUnsettable»
-		    public void set«feature.name.toFirstUpper»(«SmartEMFObjectTemplate.getFieldTypeName(feature)» value);
+		    public void set«feature.name.toFirstUpper»(«TemplateUtil.getFieldTypeName(feature)» value);
 		    
 			«ENDIF»
 		    «ENDFOR»
