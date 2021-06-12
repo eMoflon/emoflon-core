@@ -90,7 +90,9 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
 				contents.addAll((Collection<? extends EObject>) eGet(ref));
 			}
 			else {
-				contents.add((EObject) eGet(ref));
+				Object obj = eGet(ref);
+				if(obj != null)
+					contents.add((EObject) obj);
 			}
 		}
 		return contents;
