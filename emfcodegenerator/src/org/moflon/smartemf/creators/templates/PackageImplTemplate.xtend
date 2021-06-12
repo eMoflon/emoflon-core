@@ -3,9 +3,13 @@ package org.moflon.smartemf.creators.templates
 import java.io.File
 import java.io.FileWriter
 import java.util.HashMap
+import java.util.HashSet
 import org.eclipse.emf.ecore.EAttribute
+import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.EcorePackage
 import org.moflon.smartemf.EGenericTypeProcessor
 import org.moflon.smartemf.EcoreGenmodelParser
 import org.moflon.smartemf.creators.FileCreator
@@ -20,10 +24,12 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 	var boolean isInitialized = false
 	var String fqFileName
 	var featureCounter = 0
+	val HashSet<EPackage> dependentPackages
 	
 	new(PackageInspector package_inspector, HashMap<EPackage,PackageInspector> e_pak_map, EcoreGenmodelParser gen_model){
 		super(gen_model, "generic_bound_", package_inspector)
 		e_pak = package_inspector
+		dependentPackages = getDependentPackages()
 	}
 	
 	def String createSrcCode() {
@@ -39,6 +45,10 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 		
 		import «e_pak.get_package_declaration_name».«e_pak.get_emf_e_package.name.toFirstUpper»Factory;
 		import «e_pak.get_package_declaration_name».«e_pak.get_emf_e_package.name.toFirstUpper»Package;
+
+		«FOR dependency : dependentPackages»
+		import «TemplateUtil.getFQName(dependency)».«dependency.name.toFirstUpper»Package;
+		«ENDFOR»
 
 		import org.eclipse.emf.ecore.EAttribute;
 		import org.eclipse.emf.ecore.EClass;
@@ -159,6 +169,11 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 				setName(eNAME);
 				setNsPrefix(eNS_PREFIX);
 				setNsURI(eNS_URI);
+				
+				// Obtain other dependent packages
+				«FOR ePackage : dependentPackages»
+				«ePackage.name.toFirstUpper»Package the«ePackage.name»Package = («ePackage.name.toFirstUpper»Package) EPackage.Registry.INSTANCE.getEPackage(«ePackage.name.toFirstUpper»Package.eNS_URI);
+				«ENDFOR»
 		
 				// Create type parameters
 		
@@ -178,11 +193,11 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 					IS_GENERATED_INSTANCE_CLASS);
 				«FOR feature : clazz.EStructuralFeatures»
 				«IF feature instanceof EReference»«val ref = feature as EReference»
-				initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), this.get«ref.EType.name.toFirstUpper»(), «IF ref.EOpposite !== null»this.get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
+				initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «getPackageName(ref)».get«ref.EType.name.toFirstUpper»(), «IF ref.EOpposite !== null»«getPackageName(ref)».get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
 					"«ref.name»", «(ref.defaultValue === null)?"null":ref.defaultValue», «ref.lowerBound», «ref.upperBound», «clazz.name».class, «(ref.isTransient)?"":"!"»IS_TRANSIENT, «(ref.isVolatile)?"":"!"»IS_VOLATILE, «(ref.isChangeable)?"":"!"»IS_CHANGEABLE, «(ref.isContainer)?"":"!"»IS_COMPOSITE, «(ref.isResolveProxies)?"":"!"»IS_RESOLVE_PROXIES,
 					«(ref.isUnsettable)?"":"!"»IS_UNSETTABLE, «(ref.isUnique)?"":"!"»IS_UNIQUE, «(ref.isDerived)?"":"!"»IS_DERIVED, «(ref.isOrdered)?"":"!"»IS_ORDERED);
 				«ELSE»«val atr = feature as EAttribute»
-				initEAttribute(get«clazz.name»_«atr.name.toFirstUpper»(), «IF atr.EType.EPackage.name.equals("ecore")»ecorePackage.get«atr.EType.name»()«ELSE»this.get«atr.EType.name.toFirstUpper»()«ENDIF»,
+				initEAttribute(get«clazz.name»_«atr.name.toFirstUpper»(), «IF atr.EType.EPackage.name.equals("ecore")»ecorePackage.get«atr.EType.name»()«ELSE»«getPackageName(atr)».get«atr.EType.name.toFirstUpper»()«ENDIF»,
 					"«atr.name»", «(atr.defaultValue === null)?"null":"\""+atr.defaultValue+"\""», «atr.lowerBound», «atr.upperBound», «clazz.name».class, «(atr.isTransient)?"":"!"»IS_TRANSIENT, «(atr.isVolatile)?"":"!"»IS_VOLATILE, «(atr.isChangeable)?"":"!"»IS_CHANGEABLE, «(atr.isUnsettable)?"":"!"»IS_UNSETTABLE, «(atr.isUnique)?"":"!"»IS_ID, IS_UNIQUE,
 					«(atr.isDerived)?"":"!"»IS_DERIVED, «(atr.isOrdered)?"":"!"»IS_ORDERED);
 				«ENDIF»
@@ -205,6 +220,34 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 		} //«e_pak.get_emf_e_package.name.toFirstUpper»PackageImpl
 		
 		'''
+	}
+	
+	def getPackageName(EStructuralFeature feature) {
+		if(feature.EType.EPackage.equals(e_pak.get_emf_e_package)) {
+			return "this"
+		}
+		else {
+			return '''the«feature.EType.EPackage.name»Package'''
+		}
+	}
+	
+	def getDependentPackages() {
+		val dependentPackages = new HashSet
+		val ePackage = e_pak.get_emf_e_package
+		for(classes : ePackage.EClassifiers.filter[c|c instanceof EClass].map[c|c as EClass]) {
+			for(feature : classes.EAllStructuralFeatures) {
+				if(feature instanceof EAttribute) {
+					dependentPackages.add(feature.EType.EPackage)
+				}
+				if(feature instanceof EReference) {
+					dependentPackages.add(feature.EType.EPackage)
+				}
+			}
+		}
+		// remove the current package from this list
+		dependentPackages.remove(ePackage)
+		dependentPackages.remove(EcorePackage.eINSTANCE)
+		return dependentPackages
 	}
 	
 	override initialize_creator(String fq_file_path, String IDENTION) {
