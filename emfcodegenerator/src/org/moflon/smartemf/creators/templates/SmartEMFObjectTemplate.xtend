@@ -46,6 +46,8 @@ class SmartEMFObjectTemplate {
 		import java.util.function.Consumer;
 		
 		import org.eclipse.emf.common.util.EList;
+		import org.eclipse.emf.ecore.EcoreFactory;
+		import org.eclipse.emf.ecore.EcorePackage;
 		import org.eclipse.emf.ecore.EClass;
 		import org.eclipse.emf.ecore.EStructuralFeature;
 		import org.eclipse.emf.ecore.resource.Resource;
@@ -217,6 +219,10 @@ class SmartEMFObjectTemplate {
 		
 		if(value instanceof EEnumLiteral)
 			return value.EEnum.name + "." + TemplateUtil.getLiteral(value)
+			
+		if(feature.EType.equals(EcorePackage.Literals.EDATE)) {
+			return '''(java.util.Date) EcoreFactory.eINSTANCE.createFromString(EcorePackage.eINSTANCE.getEDate(), "«feature.defaultValueLiteral»")'''
+		}
 			
 		return value
 	}

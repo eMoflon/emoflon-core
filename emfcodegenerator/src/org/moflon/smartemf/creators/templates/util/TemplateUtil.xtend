@@ -25,6 +25,7 @@ class TemplateUtil {
 				case "EBoolean" : return "boolean"
 				case "EChar" : return "char"
 				case "EDouble" : return "double"
+				case "EDate" : return "java.util.Date"
 			}
 			return feature.EType.name
 		}
