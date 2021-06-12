@@ -80,7 +80,7 @@ public final class MonitoredGenModelBuilder implements ITask {
 		final boolean isNewGenModelConstructed = genModelBuilder.isNewGenModelRequired(genModelURI);
 		try {
 			this.genModel = genModelBuilder.buildGenModel(genModelURI);
-		} catch (final RuntimeException e) {
+		} catch (final Exception e) {
 			return handleExceptionDuringGenmodelProcessing(e);
 		}
 

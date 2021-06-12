@@ -32,7 +32,7 @@ import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.emf.codegen.CodeGenerator;
 import org.moflon.emf.codegen.MoflonGenModelBuilder;
 
-import emfcodegenerator.EMFCodeGenerator;
+import org.moflon.smartemf.EMFCodeGenerator;
 
 
 
@@ -134,6 +134,7 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 
 			return Status.OK_STATUS;
 		} catch (final Exception e) {
+			e.printStackTrace();
 			return reportExceptionDuringCodeGeneration(e);
 		}
 	}
