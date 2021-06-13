@@ -29,20 +29,23 @@ public final class ResourceContentSmartEList<T> extends LinkedList<T> implements
 	
 	@Override
 	public boolean add(T e) {
-		((SmartObject) e).setResource(resource);
+		if(e instanceof SmartObject)
+			((SmartObject) e).setResource(resource);
 		return super.add(e);
 	}
 	
 	@Override
 	public void add(int index, T element) {
-		((SmartObject) element).setResource(resource);
+		if(element instanceof SmartObject)
+			((SmartObject) element).setResource(resource);
 		super.add(index, element);
 	}
 	
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
 		for(T t : c) {
-			((SmartObject) t).setResource(resource);
+			if(t instanceof SmartObject)
+				((SmartObject) t).setResource(resource);
 		}
 		return super.addAll(c);
 	}
@@ -50,7 +53,8 @@ public final class ResourceContentSmartEList<T> extends LinkedList<T> implements
 	@Override
 	public boolean addAll(int index, Collection<? extends T> c) {
 		for(T t : c) {
-			((SmartObject) t).setResource(resource);
+			if(t instanceof SmartObject)
+				((SmartObject) t).setResource(resource);
 		}
 		return super.addAll(index, c);
 	}
@@ -58,20 +62,24 @@ public final class ResourceContentSmartEList<T> extends LinkedList<T> implements
 	@Override
 	public void clear() {
 		for(T t : this) {
-			((SmartObject) t).setResource(null);
+			if(t instanceof SmartObject)
+				((SmartObject) t).setResource(null);
 		}
 		super.clear();
 	}
 	
 	@Override
 	public T remove(int index) {
-		((SmartObject) get(index)).setResource(null);
+		Object o =  get(index);
+		if(o instanceof SmartObject)
+			((SmartObject) o).setResource(null);
 		return super.remove(index);
 	}
 	
 	@Override
 	public boolean remove(Object o) {
-		((SmartObject) o).setResource(null);
+		if(o instanceof SmartObject)
+			((SmartObject) o).setResource(null);
 		return super.remove(o);
 	}
 	
