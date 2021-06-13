@@ -456,10 +456,15 @@ public class SmartEMFResource extends ResourceImpl implements XMIResource, Resou
 	 */
 	private String createRootAttributes(XMIRoot root) {
 		EPackage pkg = getPackage(root);
+		if(pkg == null)
+			return "xmi:version=\"" + xmiVersion + "\" xmlns:xmi=\"" + xmiNamespace + "\"";
+
 		return "xmi:version=\"" + xmiVersion + "\" xmlns:xmi=\"" + xmiNamespace + "\" xmlns:" + pkg.getNsPrefix() + "=\"" + pkg.getNsURI() + "\"";
 	}
 	
 	private EPackage getPackage(XMIRoot root) {
+		if(root.contents().isEmpty())
+			return null;
 		return root.contents().iterator().next().eClass().getEPackage();
 	}
 	
