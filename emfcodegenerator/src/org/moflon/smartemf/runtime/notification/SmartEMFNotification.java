@@ -1,8 +1,8 @@
 package org.moflon.smartemf.runtime.notification;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.InternalEObject;
 
 public final class SmartEMFNotification implements Notification {
 
@@ -66,7 +66,11 @@ public final class SmartEMFNotification implements Notification {
 
 	@Override
 	public int getFeatureID(Class<?> expectedClass) {
-		return feature.getFeatureID();
+		if (feature != null)
+	    {
+	     return feature.getFeatureID();
+	    }
+	    return NO_FEATURE_ID;
 	}
 
 	@Override

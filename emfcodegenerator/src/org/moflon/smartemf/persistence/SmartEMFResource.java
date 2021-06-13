@@ -51,7 +51,7 @@ import com.google.common.collect.Iterators;
 /**
  * A simplified resource implementation that serializes to XMI. Ignores save options. Can enable notification cascading for its contents.
  */
-public class SmartEMFResource extends ResourceImpl implements XMIResource {
+public class SmartEMFResource extends ResourceImpl implements XMIResource, Resource.Internal {
 	
 	public static Resource.Factory FACTORY = new XMIResourceFactoryImpl();
 	

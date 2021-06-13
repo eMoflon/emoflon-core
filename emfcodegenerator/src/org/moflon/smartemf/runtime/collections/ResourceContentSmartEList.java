@@ -7,63 +7,101 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.InternalEList;
+import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
-public final class ResourceContentSmartEList<T> extends LinkedList<T> implements EList<T>, InternalEList<T>{
+public final class ResourceContentSmartEList<T extends EObject> extends LinkedList<T> implements EList<T>, InternalEList<T>{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 188149705186560304L;
 
-	private Resource resource;
+	private SmartEMFResource resource;
 	
-	public ResourceContentSmartEList(Resource r) {
-		this.resource = r;
+	public ResourceContentSmartEList(SmartEMFResource r) {
+		this.resource = (SmartEMFResource) r;
 	}
 	
 	@Override
 	public boolean add(T e) {
-		if(e instanceof SmartObject)
+		if(e instanceof SmartObject) {
 			((SmartObject) e).setResource(resource);
-		return super.add(e);
+			return super.add(e);
+		} else {
+			e.eAdapters().addAll(resource.eAdapters());
+			((InternalEObject) e).eSetResource(resource, null);
+			boolean success = super.add(e);
+			sendAddNotification(e);
+			return success;
+		}
 	}
 	
 	@Override
 	public void add(int index, T element) {
-		if(element instanceof SmartObject)
+		if(element instanceof SmartObject) {
 			((SmartObject) element).setResource(resource);
-		super.add(index, element);
+			super.add(index, element);
+
+		} else  {
+			element.eAdapters().addAll(resource.eAdapters());
+			((InternalEObject) element).eSetResource(resource, null);
+			super.add(index, element);
+			sendAddNotification(element);
+		}
 	}
 	
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
+		Collection<T> iObjs = new LinkedList<>();
 		for(T t : c) {
-			if(t instanceof SmartObject)
+			if(t instanceof SmartObject) {
 				((SmartObject) t).setResource(resource);
+			} else {
+				t.eAdapters().addAll(resource.eAdapters());
+				iObjs.add(t);
+			}
 		}
-		return super.addAll(c);
+		iObjs.forEach(t -> ((InternalEObject) t).eSetResource(resource, null));
+		boolean success = super.addAll(c) || super.addAll(iObjs);
+		iObjs.forEach(this::sendAddNotification);
+		return success;
 	}
 	
 	@Override
 	public boolean addAll(int index, Collection<? extends T> c) {
+		Collection<T> iObjs = new LinkedList<>();
 		for(T t : c) {
-			if(t instanceof SmartObject)
+			if(t instanceof SmartObject) {
 				((SmartObject) t).setResource(resource);
+			} else { 
+				t.eAdapters().addAll(resource.eAdapters());
+				iObjs.add(t);
+			}
 		}
-		return super.addAll(index, c);
+		iObjs.forEach(t -> ((InternalEObject) t).eSetResource(resource, null));
+		boolean success =  super.addAll(index, c) || super.addAll(index, iObjs);
+		iObjs.forEach(this::sendAddNotification);
+		return success;
 	}
 	
 	@Override
 	public void clear() {
 		for(T t : this) {
-			if(t instanceof SmartObject)
+			if(t instanceof SmartObject) {
 				((SmartObject) t).setResource(null);
+			} else {
+				t.eAdapters().removeAll(resource.eAdapters());
+				((InternalEObject) t).eSetResource(null, null);
+			}
 		}
 		super.clear();
 	}
@@ -71,22 +109,35 @@ public final class ResourceContentSmartEList<T> extends LinkedList<T> implements
 	@Override
 	public T remove(int index) {
 		Object o =  get(index);
-		if(o instanceof SmartObject)
+		if(o instanceof SmartObject) {
 			((SmartObject) o).setResource(null);
+		} else {
+			((EObject) o).eAdapters().removeAll(resource.eAdapters());
+			((InternalEObject) o).eSetResource(null, null);
+		}
 		return super.remove(index);
 	}
 	
 	@Override
 	public boolean remove(Object o) {
-		if(o instanceof SmartObject)
+		if(o instanceof SmartObject) {
 			((SmartObject) o).setResource(null);
+		} else {
+			((EObject) o).eAdapters().removeAll(resource.eAdapters());
+			((InternalEObject) o).eSetResource(null, null);
+		}
 		return super.remove(o);
 	}
 	
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		for(Object t : c) {
-			((SmartObject) t).setResource(null);
+			if(t instanceof SmartObject) {
+				((SmartObject) t).setResource(null);
+			} else {
+				((EObject) t).eAdapters().removeAll(resource.eAdapters());
+				((InternalEObject) t).eSetResource(null, null);
+			}
 		}
 		return super.removeAll(c);
 	}
@@ -148,12 +199,14 @@ public final class ResourceContentSmartEList<T> extends LinkedList<T> implements
 
 	@Override
 	public NotificationChain basicRemove(Object object, NotificationChain notifications) {
-		throw new UnsupportedOperationException();
+		remove(object);
+		return notifications;
 	}
 
 	@Override
 	public NotificationChain basicAdd(T object, NotificationChain notifications) {
-		throw new UnsupportedOperationException();
+		add(object);
+		return notifications;
 	}
 
 	@Override
@@ -191,6 +244,12 @@ public final class ResourceContentSmartEList<T> extends LinkedList<T> implements
 		T t = remove(oldPosition);
 		add(newPosition, t);
 		return t;
+	}
+	
+	protected void sendAddNotification(EObject obj) {
+		for(Adapter a : resource.eAdapters()) {
+			a.notifyChanged(SmartEMFNotification.createAddNotification(resource, null, obj, -1));
+		}
 	}
 
 }
