@@ -112,7 +112,7 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 		
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
 			@Override
-			public EClass get«clazz.name.toFirstUpper»() {
+			public EClass get«clazz.name»() {
 				return «clazz.name.toFirstLower»EClass;
 			}
 			«FOR feature : clazz.EStructuralFeatures»
@@ -193,7 +193,7 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 					IS_GENERATED_INSTANCE_CLASS);
 				«FOR feature : clazz.EStructuralFeatures»
 				«IF feature instanceof EReference»«val ref = feature as EReference»
-				initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «getPackageName(ref)».get«ref.EType.name.toFirstUpper»(), «IF ref.EOpposite !== null»«getPackageName(ref)».get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
+				initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «getPackageName(ref)».get«ref.EType.name»(), «IF ref.EOpposite !== null»«getPackageName(ref)».get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
 					"«ref.name»", «(ref.defaultValue === null)?"null":ref.defaultValue», «ref.lowerBound», «ref.upperBound», «clazz.name».class, «(ref.isTransient)?"":"!"»IS_TRANSIENT, «(ref.isVolatile)?"":"!"»IS_VOLATILE, «(ref.isChangeable)?"":"!"»IS_CHANGEABLE, «(ref.isContainer)?"":"!"»IS_COMPOSITE, «(ref.isResolveProxies)?"":"!"»IS_RESOLVE_PROXIES,
 					«(ref.isUnsettable)?"":"!"»IS_UNSETTABLE, «(ref.isUnique)?"":"!"»IS_UNIQUE, «(ref.isDerived)?"":"!"»IS_DERIVED, «(ref.isOrdered)?"":"!"»IS_ORDERED);
 				«ELSE»«val atr = feature as EAttribute»
@@ -242,6 +242,9 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 				if(feature instanceof EReference) {
 					dependentPackages.add(feature.EType.EPackage)
 				}
+			}
+			for(superclasses : classes.ESuperTypes) {
+				dependentPackages.add(superclasses.EPackage)
 			}
 		}
 		// remove the current package from this list

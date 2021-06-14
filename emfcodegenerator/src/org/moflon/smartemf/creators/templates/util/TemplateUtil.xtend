@@ -36,7 +36,7 @@ class TemplateUtil {
 	static def splitNameAtUppercases(String name) {
 		var splittedName = new LinkedList
 		var from = 0
-		for(var i=0; i<name.length-1; i++) {
+		for(var i=1; i<name.length-1; i++) {
 			// only split if current char is uppercase and the next lowercase
 			if(Character.isUpperCase(name.charAt(i)) && !Character.isUpperCase(name.charAt(i+1))) {
 				splittedName.add(name.substring(from, i))

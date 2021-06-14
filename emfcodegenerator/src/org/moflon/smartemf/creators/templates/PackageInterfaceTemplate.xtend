@@ -74,7 +74,7 @@ class PackageInterfaceTemplate extends EMFCodeGenerationClass implements FileCre
 			«ENDFOR»
 
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
-			EClass get«clazz.name.toFirstUpper»();
+			EClass get«clazz.name»();
 			«FOR feature : clazz.EStructuralFeatures»
 			«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» get«clazz.name»_«feature.name.toFirstUpper»();
 			«ENDFOR»
@@ -90,10 +90,10 @@ class PackageInterfaceTemplate extends EMFCodeGenerationClass implements FileCre
 			interface Literals {
 				
 				«FOR clazz : e_pak.get_all_eclasses_in_package»
-				EClass «TemplateUtil.getLiteral(clazz)» = eINSTANCE.get«clazz.name.toFirstUpper»();
+				EClass «TemplateUtil.getLiteral(clazz)» = eINSTANCE.get«clazz.name»();
 				
 				«FOR feature : clazz.EStructuralFeatures»
-				«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» «TemplateUtil.getLiteral(feature).toUpperCase» = eINSTANCE.get«clazz.name.toFirstUpper»_«feature.name.toFirstUpper»();
+				«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» «TemplateUtil.getLiteral(feature).toUpperCase» = eINSTANCE.get«clazz.name»_«feature.name.toFirstUpper»();
 				
 				«ENDFOR»
 				«ENDFOR»
