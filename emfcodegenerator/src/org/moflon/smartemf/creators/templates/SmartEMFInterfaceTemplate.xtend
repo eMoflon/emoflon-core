@@ -89,6 +89,7 @@ class SmartEMFInterfaceTemplate {
 	def getImportTypes() {
 		// estructural feature types
 		val types = eClass.EAllStructuralFeatures.map[c|c.EType].filter[c|!c.EPackage.equals(EcorePackage.eINSTANCE)].toSet
+		types.addAll(eClass.ESuperTypes)
 		// add this eclass
 		types.add(eClass)
 		return types

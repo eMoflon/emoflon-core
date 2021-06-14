@@ -79,7 +79,7 @@ class SmartEMFObjectTemplate {
 		    @Override
 		    public void eSet(EStructuralFeature eFeature, Object newValue){
 		    	«FOR feature : eClass.EAllStructuralFeatures»
-		    	 if («FQPackagePath».«TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».equals(eFeature)) {
+		    	 if («TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».equals(eFeature)) {
 		    	 	set«feature.name.toFirstUpper»((«TemplateUtil.getFieldTypeName(feature)») newValue); 
 		    	 	return;
 		    	 }

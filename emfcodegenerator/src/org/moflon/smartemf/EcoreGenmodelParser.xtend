@@ -33,7 +33,6 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
 import org.moflon.smartemf.inspectors.util.AbstractObjectFieldInspector
 import org.moflon.smartemf.inspectors.util.AttributeInspector
 import org.moflon.smartemf.inspectors.util.PackageInspector
-import org.moflon.smartemf.inspectors.util.ReferenceInspector
 
 /**
  * Wrapper for parsing Ecore- and GenModel-XMI files. All
@@ -294,10 +293,6 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 ''')
 								}
 							}
-							struct_features_to_inspector_map.put(
-								feature as EReference,
-								new ReferenceInspector(feature as EReference, this.super_package_name)
-							)
 						}
 					}
 				}

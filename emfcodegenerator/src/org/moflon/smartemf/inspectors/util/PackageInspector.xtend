@@ -242,33 +242,6 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 				this.efeature_to_inspector_map.put(attr, new_inspector)
 			}
 			
-			//register EReferences
-			for(EReference e_ref : references_lookup){
-				var ReferenceInspector new_inspector
-				if(
-					PackageInspector.emf_model.get_struct_features_to_inspector_map.containsKey(
-						e_ref
-					)
-				){
-					new_inspector =
-						PackageInspector.emf_model
-										.get_struct_features_to_inspector_map
-								        .get(e_ref) as ReferenceInspector
-				} else {
-					new_inspector = new ReferenceInspector(e_ref, PackageInspector.emf_model)
-				}
-
-				if(!new_inspector.type_init_commands_are_generated)
-						new_inspector.generate_init_code_for_package_class(
-							PackageInspector.emf_model
-						)
-				this.package_dependency_set.addAll(
-					new_inspector.get_meta_model_package_dependencies()
-				)
-				object_fields.add(new_inspector)
-				this.efeature_to_inspector_map.put(e_ref, new_inspector)
-			}
-
 			//register inherited Attributes
 			for(EAttribute attr : e_class.EAllAttributes){
 				if(!attributes_lookup.contains(attr)){
@@ -297,36 +270,6 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 
 					even_inherited_object_fields.add(new_inspector)
 					this.efeature_to_inspector_map.put(attr, new_inspector)
-				}
-			}
-
-			//register inherited References			
-			for(EReference e_ref : e_class.EAllReferences){
-				if(!references_lookup.contains(e_ref)){
-					var ReferenceInspector new_inspector
-					if(
-						PackageInspector.emf_model.get_struct_features_to_inspector_map.containsKey(
-							e_ref
-						)
-					){
-						new_inspector = PackageInspector.emf_model
-														.get_struct_features_to_inspector_map
-														.get(e_ref) as ReferenceInspector
-					} else {
-						new_inspector = new ReferenceInspector(e_ref, PackageInspector.emf_model)
-					}
-
-					if(!new_inspector.type_init_commands_are_generated)
-						new_inspector.generate_init_code_for_package_class(
-							PackageInspector.emf_model
-						)
-
-					this.package_dependency_set.addAll(
-						new_inspector.get_meta_model_package_dependencies()
-					)
-
-					even_inherited_object_fields.add(new_inspector)
-					this.efeature_to_inspector_map.put(e_ref, new_inspector)
 				}
 			}
 

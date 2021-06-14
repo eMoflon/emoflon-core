@@ -182,7 +182,7 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 				// Add supertypes to classes
 				«FOR clazz : e_pak.get_all_eclasses_in_package»
 				«FOR superClazz : clazz.EAllSuperTypes»
-				«clazz.name.toFirstLower»EClass.getESuperTypes().add(this.get«superClazz.name.toFirstUpper»());
+				«clazz.name.toFirstLower»EClass.getESuperTypes().add(«IF superClazz.EPackage.equals(e_pak.get_emf_e_package)»this«ELSE»«TemplateUtil.getPackageClassName(superClazz.EPackage)».eINSTANCE«ENDIF».get«superClazz.name.toFirstUpper»());
 				«ENDFOR»
 				
 				«ENDFOR»
