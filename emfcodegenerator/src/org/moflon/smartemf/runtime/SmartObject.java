@@ -6,20 +6,25 @@ import java.util.Collections;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EStructuralFeature.Setting;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Internal;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.collections.DefaultSmartEList;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
-public abstract class SmartObject implements MinimalSObjectContainer, EObject {
+public abstract class SmartObject implements MinimalSObjectContainer, InternalEObject {
 
 	private SmartEMFResource resource;
 	private EObject eContainer;
@@ -226,4 +231,139 @@ public abstract class SmartObject implements MinimalSObjectContainer, EObject {
     public abstract void setResourceSilently(Resource r);
 	
     public abstract Object eGet(int featureID, boolean resolve, boolean coreType);
+
+	@Override
+	public boolean eNotificationRequired() {
+		return true;
+	}
+
+	@Override
+	public String eURIFragmentSegment(EStructuralFeature eFeature, EObject eObject) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public EObject eObjectForURIFragmentSegment(String uriFragmentSegment) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public void eSetClass(EClass eClass) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public Setting eSetting(EStructuralFeature feature) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public int eContainerFeatureID() {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public NotificationChain eSetResource(Internal resource, NotificationChain notifications) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, Class<?> baseClass,
+			NotificationChain notifications) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+
+	}
+
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, Class<?> baseClass,
+			NotificationChain notifications) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+
+	}
+
+	@Override
+	public NotificationChain eBasicSetContainer(InternalEObject newContainer, int newContainerFeatureID,
+			NotificationChain notifications) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public NotificationChain eBasicRemoveFromContainer(NotificationChain notifications) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public URI eProxyURI() {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public void eSetProxyURI(URI uri) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public EObject eResolveProxy(InternalEObject proxy) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public InternalEObject eInternalContainer() {
+		return (InternalEObject) eContainer;
+	}
+
+	@Override
+	public Internal eInternalResource() {
+		return resource;
+	}
+
+	@Override
+	public Internal eDirectResource() {
+		return resource;
+	}
+
+	@Override
+	public EStore eStore() {
+		return null;
+	}
+
+	@Override
+	public void eSetStore(EStore store) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public void eSet(int featureID, Object newValue) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public void eUnset(int featureID) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public boolean eIsSet(int featureID) {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
+
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+	}
 }

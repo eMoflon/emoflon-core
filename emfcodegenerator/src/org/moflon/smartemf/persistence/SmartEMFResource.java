@@ -40,6 +40,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMISaveImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLHelperImpl;
 import org.eclipse.emf.ecore.xml.type.AnyType;
+import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.collections.ResourceContentSmartEList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -638,7 +639,7 @@ public class SmartEMFResource extends ResourceImpl implements XMIResource, Resou
 	
 	//adapted from org.eclipse.emf.ecore.impl.BasicEObjectImpl#eObjectForURIFragmentSegment
 	private EObject eObjectForURIFragmentSegment(EObject obj, String segment) {
-		if (obj instanceof InternalEObject) {
+		if (!(obj instanceof SmartObject)) {
 			return ((InternalEObject) obj).eObjectForURIFragmentSegment(segment);
 		} else {
 			int lastIndex = segment.length() - 1;
