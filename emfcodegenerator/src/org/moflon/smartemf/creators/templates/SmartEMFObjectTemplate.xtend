@@ -106,7 +106,7 @@ class SmartEMFObjectTemplate {
 		        result.append(" (");
 	    		«FOR feature : eClass.EAllStructuralFeatures SEPARATOR 
 	    		'''
-	    		result.append(",\n");
+	    		result.append(", ");
 	    		'''»
 	    		«IF feature.EType.defaultValue === null»
 	    		if(«TemplateUtil.getValidName(feature.name)» != null)
