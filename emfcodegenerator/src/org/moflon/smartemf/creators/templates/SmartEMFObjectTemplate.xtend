@@ -147,7 +147,10 @@ class SmartEMFObjectTemplate {
 	    		Consumer<SmartObject> setResourceCall = (o) -> o.setResource(r);
 	    		
 	    		if(r != null) {
-					sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
+	    			// if container is null, then this element is a root element within a resource and notifications are handled there
+	    			if(eContainer() == null)
+						sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
+						
 					// if cascading is activated, we recursively generate add messages; else just this once
 					if(!smartResource().getCascade())
 	    				setResourceCall = (o) -> o.setResourceSilently(r);
@@ -212,7 +215,7 @@ class SmartEMFObjectTemplate {
 		if(firstStringAttribute == null)
 			return '''super.toString();'''
 		if(nameAttribute != null)
-			return '''super.toString() + "(name=\"" + getName() + "\")";'''
+			return '''super.toString() + "(name " + getName() + ")";'''
 	}
 	
 	def getDefaultValue(EStructuralFeature feature) {
