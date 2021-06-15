@@ -43,6 +43,8 @@ class PackageInterfaceTemplate extends EMFCodeGenerationClass implements FileCre
 		return '''
 		package «e_pak.get_package_declaration_name»;
 		
+		import java.lang.String;
+		
 		import org.eclipse.emf.ecore.EAttribute;
 		import org.eclipse.emf.ecore.EClass;
 		«IF !e_pak.get_all_eenums_in_package.empty»

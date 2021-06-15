@@ -20,7 +20,7 @@ class TemplateUtil {
 	static def getFieldTypeName(EStructuralFeature feature) {
 		if(!feature.isMany) {
 			switch feature.EType.name {
-				case "EString" : return "String"
+				case "EString" : return "java.lang.String"
 				case "EInt" : return "int"
 				case "EBoolean" : return "boolean"
 				case "EChar" : return "char"
