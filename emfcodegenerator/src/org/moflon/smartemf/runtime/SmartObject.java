@@ -172,14 +172,19 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		if(eContainingFeature == null)
 			return;
 		
-		if(eContainingFeature.isMany()) {
-			((Collection<?>) eContainer.eGet(eContainingFeature)).remove(this);
-		}
-		else {
-			eContainer.eUnset(eContainingFeature);
-		}
+		EObject oldContainer = eContainer;
+		EStructuralFeature oldFeature = eContainingFeature;
+		
 		eContainer = null;
 		eContainingFeature = null;
+		
+		if(oldFeature.isMany()) {
+			((Collection<?>) oldContainer.eGet(oldFeature)).remove(this);
+		}
+		else {
+			oldContainer.eUnset(oldFeature);
+		}
+
 	}
 
 	@Override
@@ -314,7 +319,6 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 	@Override
 	public void eSetProxyURI(URI uri) {
-		throw new UnsupportedOperationException("Unsupported by SmartEMF");
 	}
 
 	@Override

@@ -142,8 +142,8 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 
 	protected void sendNotification(Notification n) {
 		// if the feature is a containment, then notifications are handled when setting the resource
-		if(feature.isContainment())
-			return;
+//		if(feature.isContainment())
+//			return;
 		
 		Resource r = eContainer.eResource();
 		if(r != null) {
