@@ -366,4 +366,9 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		throw new UnsupportedOperationException("Unsupported by SmartEMF");
 	}
+	
+	@Override
+	public Object eGet(EStructuralFeature eFeature, boolean resolve, boolean coreType) {
+		return eGet(eFeature);
+	}
 }
