@@ -102,18 +102,7 @@ class SmartEMFObjectTemplate {
 		
 		    @Override
 		    public String toString(){
-		        StringBuilder result = new StringBuilder(super.toString() + "(name: «className») ");
-		        result.append(" (");
-	    		«FOR feature : eClass.EAllStructuralFeatures SEPARATOR 
-	    		'''
-	    		result.append(", ");
-	    		'''»
-	    		«IF feature.EType.defaultValue === null»
-	    		if(«TemplateUtil.getValidName(feature.name)» != null)
-	    		«ENDIF»
-				result.append("«feature.name»: «TemplateUtil.getValidName(feature.name)»");
-		        «ENDFOR»
-		        return result.toString();
+				return «getToString()»
 		    }
 		
 		 	@Override
@@ -207,6 +196,23 @@ class SmartEMFObjectTemplate {
 	    	}
 		}
 		'''
+	}
+	
+	def getToString() {
+		var EAttribute nameAttribute = null
+		var EAttribute firstStringAttribute = null
+		for(attr : eClass.EAllAttributes) {
+			if(attr.EType.equals(EcorePackage.eINSTANCE.EString)) {
+				firstStringAttribute = attr
+				if(attr.name.equals("name")) {
+					nameAttribute = attr
+				}
+			}
+		}
+		if(firstStringAttribute == null)
+			return '''super.toString();'''
+		if(nameAttribute != null)
+			return '''super.toString() + "(name=\"" + getName() + "\")";'''
 	}
 	
 	def getDefaultValue(EStructuralFeature feature) {
