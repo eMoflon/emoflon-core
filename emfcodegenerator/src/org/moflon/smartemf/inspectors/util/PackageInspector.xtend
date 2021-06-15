@@ -230,7 +230,7 @@ class PackageInspector extends EMFCodeGenerationClass implements Inspector{
 
 				//generate the init commands if they were not beforehand
 				if(!new_inspector.type_init_commands_are_generated)
-					new_inspector.generate_init_code_for_package_class(PackageInspector.emf_model)
+//					new_inspector.generate_init_code_for_package_class(PackageInspector.emf_model)
 
 				//register all cross-dependencies
 				this.package_dependency_set.addAll(

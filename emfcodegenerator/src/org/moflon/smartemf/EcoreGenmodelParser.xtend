@@ -3,9 +3,7 @@ package org.moflon.smartemf
 /*
  * @author Adrian Zwenger
  */
-
 //java.util
-
 import java.util.Arrays
 import java.util.HashMap
 import java.util.HashSet
@@ -41,16 +39,15 @@ import org.moflon.smartemf.inspectors.util.PackageInspector
  * previously processed data from this wrapper without the need to have the XMI-files reprocessed.
  */
 class EcoreGenmodelParser {
-	
-	/**########################Attributes########################*/
 
+	/**########################Attributes########################*/
 	/**
 	 * maps all GenClasses found in genmodel-xmi to their URI-name.<br>
 	 * Used to verify the ecore and genmodel
 	 * xmi files by comparing the uri's with each other.<br>
 	 * Take a look as {@link #ecoreclass_name_map ecoreclass_name_map}.
 	 */
-	var HashMap<String,GenClass> genclass_name_map = new HashMap<String,GenClass>()
+	var HashMap<String, GenClass> genclass_name_map = new HashMap<String, GenClass>()
 
 	/**
 	 * maps all EClasses found in ecore-xmi to their URI-name.<br>
@@ -60,33 +57,30 @@ class EcoreGenmodelParser {
 	 * package- and class-hierarchy.<br>
 	 * Take a look at {@link #genclass_name_map genclass_name_map}.
 	 */
-	var HashMap<String,EClass> ecoreclass_name_map = new HashMap<String,EClass>()
+	var HashMap<String, EClass> ecoreclass_name_map = new HashMap<String, EClass>()
 
 	/**
 	 * Reverse mapping of {@link #ecoreclass_name_map ecoreclass_name_map}.
 	 */
-	var HashMap<EClass,String> reverse_ecoreclass_name_map = new HashMap<EClass,String>()
+	var HashMap<EClass, String> reverse_ecoreclass_name_map = new HashMap<EClass, String>()
 
 	/**
 	 * Maps the parsed {@link EPackage EPackages} to the
 	 * {@link EClass EClasses} directly contained in said package.
 	 */
-	var HashMap<EPackage,HashSet<EClass>> epackage_and_contained_classes =
-		new HashMap<EPackage,HashSet<EClass>>()
-	
+	var HashMap<EPackage, HashSet<EClass>> epackage_and_contained_classes = new HashMap<EPackage, HashSet<EClass>>()
+
 	/**
 	 * Maps the parsed {@link EPackage EPackages} to the
 	 * {@link EDataType EDataTypes} directly contained in said package.
 	 */
-	var HashMap<EPackage,HashSet<EDataType>> epackage_and_contained_edatatypes =
-		new HashMap<EPackage,HashSet<EDataType>>()
-	
+	var HashMap<EPackage, HashSet<EDataType>> epackage_and_contained_edatatypes = new HashMap<EPackage, HashSet<EDataType>>()
+
 	/**
 	 * Maps the parsed {@link EPackage EPackages} to the
 	 * {@link EEnum EEnums} directly contained in said package.
 	 */
-	var HashMap<EPackage,HashSet<EEnum>> epackage_and_contained_eenums =
-		new HashMap<EPackage,HashSet<EEnum>>()
+	var HashMap<EPackage, HashSet<EEnum>> epackage_and_contained_eenums = new HashMap<EPackage, HashSet<EEnum>>()
 
 	/**
 	 * the GenModel-XMI can specify a top-layer package (-hierarchy) name which will be stored here
@@ -109,15 +103,13 @@ class EcoreGenmodelParser {
 	 * {@link emfcodegenerator.inspectors.util.AbstractObjectFieldInspector
 	 * AbstractObjectFieldInspector} for said feature.
 	 */
-	var HashMap<EStructuralFeature,AbstractObjectFieldInspector> struct_features_to_inspector_map =
-		new HashMap<EStructuralFeature,AbstractObjectFieldInspector>()
+	var HashMap<EStructuralFeature, AbstractObjectFieldInspector> struct_features_to_inspector_map = new HashMap<EStructuralFeature, AbstractObjectFieldInspector>()
 
 	/**
 	 * maps found {@link EPackage EPackage} to its respective
 	 * {@link emfcodegenerator.inspectors.util.PackageInspector PackageInspector}.
 	 */
-	var HashMap<EPackage, PackageInspector> packages_to_package_inspector_map =
-		new HashMap<EPackage, PackageInspector>()
+	var HashMap<EPackage, PackageInspector> packages_to_package_inspector_map = new HashMap<EPackage, PackageInspector>()
 
 	/**
 	 * stores all EClasses as key and a HashMap as value which stores all the EClasses
@@ -126,72 +118,68 @@ class EcoreGenmodelParser {
 	 * Needed by {@link emfcodegenerator.creators.util.EMFPackageSourceCreator
 	 * EMFPackageSourceCreator}
 	 */
-	var HashMap<EClass,HashMap<ETypeParameter,String>> eclass_to_etypeparam_to_var_name_map = 
-		new HashMap<EClass,HashMap<ETypeParameter,String>>()
+	var HashMap<EClass, HashMap<ETypeParameter, String>> eclass_to_etypeparam_to_var_name_map = new HashMap<EClass, HashMap<ETypeParameter, String>>()
 
 	/**########################Constructors########################*/
-
 	/**
 	 * constructs a new EcoreGenmodelParser
 	 * @param ecore_path String path to the ecore-xmi
 	 * @param genmodel_path String path to the genmodel-xmi
 	 * @author Adrian Zwenger
 	 */
-	new(String ecore_path, String genmodel_path){
-		//store the path to GenModel-xmi. It is needed by parse_genmodel
+	new(String ecore_path, String genmodel_path) {
+		// store the path to GenModel-xmi. It is needed by parse_genmodel
 		this.genmodel_xmi_fq_path = genmodel_path
 		this.parse_genmodel(genmodel_path)
-		//this.super_package =
+		// this.super_package =
 		parse_ecore(ecore_path)
-		//verify that ecore and genmodel contain the same classes
-		if(!this.genclass_name_map.keySet().equals(ecoreclass_name_map.keySet())){
+		// verify that ecore and genmodel contain the same classes
+		if (!this.genclass_name_map.keySet().equals(ecoreclass_name_map.keySet())) {
 //			println("1 " + genclass_name_map.keySet())
 //			println("2 " + ecoreclass_name_map.keySet())
 //			println(super_package_name)
-			//TODO: checking depends on getgenmodelclasses, but the method does not work properly
+			// TODO: checking depends on getgenmodelclasses, but the method does not work properly
 //			throw new UnsupportedOperationException("genmodel and ecore do not specify same classes")
 		}
-		//create the PackageInspectors
-		for(EPackage e_pak : this.get_epackage_and_contained_classes_map.keySet){
+		// create the PackageInspectors
+		for (EPackage e_pak : this.get_epackage_and_contained_classes_map.keySet) {
 			var e_pak_inspector = new PackageInspector(e_pak as EPackage, this)
 			this.packages_to_package_inspector_map.put(e_pak, e_pak_inspector)
 		}
 	}
 
 	/**########################Parsers########################*/
-
 	/**
 	 * parses the defined classes from the ecore-xmi and populates following object attributes:<br>
 	 * <ul> 
 	 * 	<li>{@link #super_package super_package}</li>
-	 *	<li>{@link #ecoreclass_name_map ecoreclass_name_map}</li>
-	 *	<li>{@link #reverse_ecoreclass_name_map reverse_ecoreclass_name_map}</li>
+	 * <li>{@link #ecoreclass_name_map ecoreclass_name_map}</li>
+	 * <li>{@link #reverse_ecoreclass_name_map reverse_ecoreclass_name_map}</li>
 	 * </ul>
 	 * Calls {@link #get_ecore_classes get_ecore_classes()}.
-	 *
+	 * 
 	 * @param ecore_path String path to ecore-xmi
 	 * @author Adrian Zwenger
 	 */
-	def void parse_ecore(String ecore_path){
-		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap()
-				.put("ecore", new XMIResourceFactoryImpl());
-		//register "ecore" as valid file extension
-		this.super_package =
-			(new ResourceSetImpl()).getResource(
-				URI.createFileURI(ecore_path), true
-			).getContents().get(0) as EPackage
+	def void parse_ecore(String ecore_path) {
+		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new XMIResourceFactoryImpl());
+		// register "ecore" as valid file extension
+		this.super_package = (new ResourceSetImpl()).getResource(
+			URI.createFileURI(ecore_path),
+			true
+		).getContents().get(0) as EPackage
 
-		//create the prefix for all class-names contained in the Ecore
-	  	var classname_prefix = this.super_package.getName() + "/"
-	  	classname_prefix = (super_package_name === null || super_package_name.isEmpty) ?
-	  					classname_prefix : super_package_name + "/" + classname_prefix
+		// create the prefix for all class-names contained in the Ecore
+		var classname_prefix = this.super_package.getName() + "/"
+		classname_prefix = (super_package_name === null || super_package_name.isEmpty)
+			? classname_prefix
+			: super_package_name + "/" + classname_prefix
 		this.ecoreclass_name_map = this.get_ecore_classes(this.super_package, classname_prefix)
 
-		//register all classes with the proper prefix
-		//by preserving the prefix a direct comparison of all class names contained in the 
-		//GenModel-XMI and Ecore-XMI is sufficient to check if both have the same classes registered
-
-		for(String key : ecoreclass_name_map.keySet){
+		// register all classes with the proper prefix
+		// by preserving the prefix a direct comparison of all class names contained in the 
+		// GenModel-XMI and Ecore-XMI is sufficient to check if both have the same classes registered
+		for (String key : ecoreclass_name_map.keySet) {
 			this.reverse_ecoreclass_name_map.put(ecoreclass_name_map.get(key), key)
 		}
 	}
@@ -209,74 +197,73 @@ class EcoreGenmodelParser {
 	 * @return HashMap<String,EClass>
 	 * @author Adrian Zwenger
 	 */
-	def private HashMap<String,EClass> get_ecore_classes(EPackage epak, String package_path){
-		var e_classes = new HashMap<String,EClass>()
+	def private HashMap<String, EClass> get_ecore_classes(EPackage epak, String package_path) {
+		var e_classes = new HashMap<String, EClass>()
 		var e_data_types = new HashSet<EDataType>()
 		var e_enums = new HashSet<EEnum>()
 
-		//exit recursion as soon as a package has no content at all
-		if(epak.eContents().isEmpty()){
+		// exit recursion as soon as a package has no content at all
+		if (epak.eContents().isEmpty()) {
 			epackage_and_contained_classes.put(epak, new HashSet<EClass>())
 			epackage_and_contained_edatatypes.put(epak, e_data_types)
-			return e_classes	
+			return e_classes
 		}
 
-		//iterate over all objects
-		for(EObject e_obj: epak.eContents()){
-			if(e_obj instanceof EClass){
+		// iterate over all objects
+		for (EObject e_obj : epak.eContents()) {
+			if (e_obj instanceof EClass) {
 				var e_class = e_obj as EClass
 
-				//register all classes in package
+				// register all classes in package
 				e_classes.put(package_path + (e_class).getName(), e_class)
-				
-				for(EStructuralFeature feature : e_class.EAllStructuralFeatures){
-					//register all structural features
-					if(!struct_features_to_inspector_map.containsKey(feature)){
-						//prevent double creation of Inspectors
-						if(feature instanceof EAttribute){
+
+				for (EStructuralFeature feature : e_class.EAllStructuralFeatures) {
+					// register all structural features
+					if (!struct_features_to_inspector_map.containsKey(feature)) {
+						// prevent double creation of Inspectors
+						if (feature instanceof EAttribute) {
 							struct_features_to_inspector_map.put(
 								feature as EAttribute,
 								new AttributeInspector(
-									feature as EAttribute, this.super_package_name
+									feature as EAttribute,
+									this.super_package_name
 								)
 							)
-						} else if(feature instanceof EReference){
+						} else if (feature instanceof EReference) {
 							/*
 							 * EReferences to non SmartEMF class is not permitted.
 							 * Thus validity of the EReference has to be checked
 							 */
 							var reference = feature as EReference
-							if(reference.EGenericType === null)
-								throw new IllegalArgumentException('''
+							if (reference.EGenericType === null)
+								throw new IllegalArgumentException(
+									'''
 ERROR! The target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»" has not been specified.'''
 								)
 
-							if(
-								reference.EGenericType.EClassifier === null &&
-								reference.EGenericType.ETypeParameter !== null
-							){
+							if (reference.EGenericType.EClassifier === null &&
+								reference.EGenericType.ETypeParameter !== null) {
 								/* generics are permitted. However, the user must make sure that all
 								 * runtime instances inherit from the SmartObject class.
 								 * In other words it needs to be a SmartEMF object
 								 */
-
 								println(
-'''Warning!! Target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»" is a generic type-parameter.
+									'''Warning!! Target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»" is a generic type-parameter.
 «"\t"»Please do take care, that the runtime instance inherits from emfcodegenerator.util.SmartObject.'''
 								)
 
-							} else if(reference.EGenericType.EClassifier !== null) {
-								//the EReference points to a specific class
+							} else if (reference.EGenericType.EClassifier !== null) {
+								// the EReference points to a specific class
 								var the_classifier = reference.EGenericType.EClassifier
-								if(the_classifier.EPackage.equals(EcorePackage.eINSTANCE)){
-									//the reference type is an EMF-class which are not supported
-									throw new IllegalArgumentException('''
-ERROR! The target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»"is not supported as it is en Eclipse-EMF class.'''
-								)
-								} else if(
-									!the_classifier.EPackage.equals(EcorePackage.eINSTANCE) &&
-									!this.super_package.eAllContents.contains(the_classifier)
-								){
+//								if (the_classifier.EPackage.equals(EcorePackage.eINSTANCE)) {
+//									// the reference type is an EMF-class which are not supported
+//									throw new IllegalArgumentException(
+//										'''
+//ERROR! The target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»"is not supported as it is en Eclipse-EMF class.'''
+//									)
+//								} 
+								if (!the_classifier.EPackage.equals(EcorePackage.eINSTANCE) &&
+									!this.super_package.eAllContents.contains(the_classifier)) {
 									/*
 									 * the classifier is not contained in Eclipse-EMF or the
 									 * given XMI-s.
@@ -298,35 +285,34 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 				}
 
 				var generic_type_params_map = new HashMap<ETypeParameter, String>()
-				for(ETypeParameter e_param : e_class.ETypeParameters){
-					//register the type parameters for the e_class and create a var-name for it
-					var generic_name = e_class.name.substring(0,1).toLowerCase +
-								   	   e_class.name.substring(1) + "EClass_" + e_param.name
-			   	    generic_type_params_map.put(e_param, generic_name)
+				for (ETypeParameter e_param : e_class.ETypeParameters) {
+					// register the type parameters for the e_class and create a var-name for it
+					var generic_name = e_class.name.substring(0, 1).toLowerCase +
+						e_class.name.substring(1) + "EClass_" + e_param.name
+					generic_type_params_map.put(e_param, generic_name)
 				}
 				eclass_to_etypeparam_to_var_name_map.put(e_class, generic_type_params_map)
-			}
-			else if(e_obj instanceof EDataType && !(e_obj instanceof EEnum)) {
-				//register EDataTypes
+			} else if (e_obj instanceof EDataType && !(e_obj instanceof EEnum)) {
+				// register EDataTypes
 				e_data_types.add(e_obj as EDataType)
-			} else if(e_obj instanceof EEnum){
-				//register EEnums
+			} else if (e_obj instanceof EEnum) {
+				// register EEnums
 				e_enums.add(e_obj as EEnum)
 			}
 		}
-		
+
 		epackage_and_contained_eenums.put(epak, e_enums)
-		
+
 		epackage_and_contained_edatatypes.put(epak, e_data_types)
-		
+
 		epackage_and_contained_classes.put(epak, new HashSet<EClass>(e_classes.values))
-		
-		//check if there are subpackages to be scanned as well
+
+		// check if there are subpackages to be scanned as well
 		if(epak.getESubpackages().isEmpty()) return e_classes
-		//exit recursion if package does not have any sub_packages
-		for(EPackage sub_epak : epak.getESubpackages()){
-			//repeat process for all subpackages recursively and add all classes to register
-			e_classes.putAll(get_ecore_classes(sub_epak, package_path +  sub_epak.getName() + "/"))
+		// exit recursion if package does not have any sub_packages
+		for (EPackage sub_epak : epak.getESubpackages()) {
+			// repeat process for all subpackages recursively and add all classes to register
+			e_classes.putAll(get_ecore_classes(sub_epak, package_path + sub_epak.getName() + "/"))
 		}
 		return e_classes
 	}
@@ -335,7 +321,7 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * parses the defined classes from the genmodel-xmi and populates following object attributes:<br>
 	 * <ul> 
 	 * 	<li>{@link #super_package_name super_package_name}</li>
-	 *	<li>{@link #genclass_name_map genclass_name_map}</li>
+	 * <li>{@link #genclass_name_map genclass_name_map}</li>
 	 * </ul>
 	 * Calls {@link #get_genmodel_classes(GenPackage) get_genmodel_classes()}.<br>
 	 * Make sure, that this method is called before calling
@@ -343,27 +329,25 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * @param genmodel_path String path to genmodel-xmi
 	 * @author Adrian Zwenger
 	 */
-	def void parse_genmodel(String genmodel_path){
-		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap()
-				.put("genmodel", new XMIResourceFactoryImpl())
+	def void parse_genmodel(String genmodel_path) {
+		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("genmodel", new XMIResourceFactoryImpl())
 
 		var res_impl = new ResourceSetImpl()
 
-		//add genmodel-file-suffix to registry
-		res_impl.getResourceFactoryRegistry().getExtensionToFactoryMap()
-				.put("genmodel", new EcoreResourceFactoryImpl())
+		// add genmodel-file-suffix to registry
+		res_impl.getResourceFactoryRegistry().getExtensionToFactoryMap().put("genmodel", new EcoreResourceFactoryImpl())
 
-		//add the package to the registry
+		// add the package to the registry
 		res_impl.getPackageRegistry().put(GenModelPackage.eNS_URI, GenModelPackage.eINSTANCE)
 
-		//get a package instance
-		var gen_model =
-			res_impl.getResource(
-				URI.createFileURI(genmodel_path), true
-			).getContents().get(0) as GenModel
+		// get a package instance
+		var gen_model = res_impl.getResource(
+			URI.createFileURI(genmodel_path),
+			true
+		).getContents().get(0) as GenModel
 
 		this.super_package_name = gen_model.getGenPackages().get(0).basePackage
-		//register all classes found in the genmodel-xmi
+		// register all classes found in the genmodel-xmi
 		this.genclass_name_map = get_genmodel_classes(gen_model.getGenPackages().get(0))
 	}
 
@@ -376,42 +360,40 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * @return HashMap<String,GenClass>
 	 * @author Adrian Zwenger
 	 */
-	def private HashMap<String,GenClass> get_genmodel_classes(GenPackage gp){
+	def private HashMap<String, GenClass> get_genmodel_classes(GenPackage gp) {
 		var gn_path_array = URI.createFileURI(genmodel_xmi_fq_path).toString().split("/")
-		var genmodel_folder = String.join("/", Arrays.copyOfRange(gn_path_array, 0 , gn_path_array.length -1)) + "/"
-		var gen_classes = new HashMap<String,GenClass>()
+		var genmodel_folder = String.join("/", Arrays.copyOfRange(gn_path_array, 0, gn_path_array.length - 1)) + "/"
+		var gen_classes = new HashMap<String, GenClass>()
 		if(gp.eContents().isEmpty()) return gen_classes
-		//exit if package is empty
-		for(GenClass gc : gp.getGenClasses()){
+		// exit if package is empty
+		for (GenClass gc : gp.getGenClasses()) {
 			var eproxy_uri = (gc.getEcoreClassifier() as EClassifierImpl).eProxyURI()
 			var String fq_classname
-			if(eproxy_uri == null) {
-				//TODO: do something
-			}
-			else if(!eproxy_uri.isFile()){
-				 fq_classname = eproxy_uri.toString().replaceAll(".ecore#//", "/")
+			if (eproxy_uri == null) {
+				// TODO: do something
+			} else if (!eproxy_uri.isFile()) {
+				fq_classname = eproxy_uri.toString().replaceAll(".ecore#//", "/")
 			} else {
-				//if the genmodel file is not in working directory, the whole path is added in front
-				//of package hierarchy. It needs to be stripped away to be able to use it
-				fq_classname = eproxy_uri.toString().replace(genmodel_folder, "")
-				 									.replaceAll(".ecore#//", "/")
+				// if the genmodel file is not in working directory, the whole path is added in front
+				// of package hierarchy. It needs to be stripped away to be able to use it
+				fq_classname = eproxy_uri.toString().replace(genmodel_folder, "").replaceAll(".ecore#//", "/")
 			}
-			fq_classname = (super_package_name === null || super_package_name.isEmpty) ?
-						   fq_classname : super_package_name + "/" + fq_classname
+			fq_classname = (super_package_name === null || super_package_name.isEmpty)
+				? fq_classname
+				: super_package_name + "/" + fq_classname
 			gen_classes.put(fq_classname, gc)
-			//register all genclasses with their full path
+		// register all genclasses with their full path
 		}
 		if(gp.getSubGenPackages().isEmpty()) return gen_classes
-		//exit if there are no subpackages
-		for(GenPackage gp_sub : gp.getSubGenPackages()){
+		// exit if there are no subpackages
+		for (GenPackage gp_sub : gp.getSubGenPackages()) {
 			gen_classes.putAll(get_genmodel_classes(gp_sub))
-			//repeat process for all subpackages
+		// repeat process for all subpackages
 		}
 		return gen_classes
 	}
 
 	/**########################Getters########################*/
-
 	/**
 	 * The GenModel-XMI can specify a package in which the contained meta-model is contained.<br>
 	 * This getter returns the fqdn-package name stored in
@@ -431,7 +413,7 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * @return HashMap<EClass, String>
 	 * @author Adrian Zwenger
 	 */
-	def HashMap<EClass, String> get_object_to_class_name_map(){
+	def HashMap<EClass, String> get_object_to_class_name_map() {
 		return reverse_ecoreclass_name_map
 	}
 
@@ -442,7 +424,7 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * @return boolean
 	 * @author Adrian Zwenger
 	 */
-	def boolean eclass_is_registered(EClassifier e_class){
+	def boolean eclass_is_registered(EClassifier e_class) {
 		return this.ecoreclass_name_map.containsValue(e_class)
 	}
 
@@ -454,7 +436,7 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * @return HashMap<EPackage,HashSet<EClass>>
 	 * @author Adrian Zwenger
 	 */
-	def HashMap<EPackage,HashSet<EClass>> get_epackage_and_contained_classes_map(){
+	def HashMap<EPackage, HashSet<EClass>> get_epackage_and_contained_classes_map() {
 		return epackage_and_contained_classes
 	}
 
@@ -466,10 +448,10 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * @return HashMap<EPackage,HashSet<EDataType>>
 	 * @author Adrian Zwenger
 	 */
-	def HashMap<EPackage,HashSet<EDataType>> get_epackage_and_contained_e_data_types_map(){
+	def HashMap<EPackage, HashSet<EDataType>> get_epackage_and_contained_e_data_types_map() {
 		return epackage_and_contained_edatatypes
 	}
-	
+
 	/**
 	 * Returns a HashMap with EPackages specified by the Ecore and GenModel XMI-files and the
 	 * EEnums which the package contains as value.<br>
@@ -478,7 +460,7 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * @return HashMap<EPackage,HashSet<EEnum>>
 	 * @author Adrian Zwenger
 	 */
-	def HashMap<EPackage,HashSet<EEnum>> get_epackage_and_contained_eenums_map(){
+	def HashMap<EPackage, HashSet<EEnum>> get_epackage_and_contained_eenums_map() {
 		return epackage_and_contained_eenums
 	}
 
@@ -491,7 +473,7 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * @return HashMap<EStructuralFeature,AbstractObjectFieldInspector>
 	 * @author Adrian Zwenger
 	 */
-	def get_struct_features_to_inspector_map(){
+	def get_struct_features_to_inspector_map() {
 		return this.struct_features_to_inspector_map
 	}
 
@@ -502,10 +484,10 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * @return HashMap<EPackage, PackageInspector>
 	 * @author Adrian Zwenger 
 	 */
-	def get_packages_to_package_inspector_map(){
+	def get_packages_to_package_inspector_map() {
 		return packages_to_package_inspector_map
 	}
-	
+
 	/**
 	 * returns a HashMap<ETypeParameter,String> which contains the ETypeParameters of the passed
 	 * class as value and the designated variable name to be used in the Package-class 
@@ -516,34 +498,33 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * @return HashMap<ETypeParameter, String>
 	 * @author Adrian Zwenger
 	 */
-	def get_generic_type_to_var_name_map_for_eclass(EClass e_class){
+	def get_generic_type_to_var_name_map_for_eclass(EClass e_class) {
 		return this.eclass_to_etypeparam_to_var_name_map.get(e_class)
 	}
 
 	/**########################Overridden methods########################*/
-
 	/**
 	 * Returns the Hash-Code of this object
 	 * @return int
 	 * @author Adrian Zwenger
 	 */
-	override int hashCode(){
+	override int hashCode() {
 		return this.packages_to_package_inspector_map.hashCode
 	}
-	
+
 	/**
 	 * checks given object for equality
 	 * @param o Object
 	 * @return boolean
 	 * @author Adrian Zwenger
 	 */
-	override boolean equals(Object o){
+	override boolean equals(Object o) {
 		if(!(o instanceof EcoreGenmodelParser)) return false
-		return (o as EcoreGenmodelParser).packages_to_package_inspector_map.equals(this.packages_to_package_inspector_map)
+		return (o as EcoreGenmodelParser).packages_to_package_inspector_map.equals(
+			this.packages_to_package_inspector_map)
 	}
 
 	/**########################Updater methods########################*/
-
 	/**
 	 * Always call this method when making changes to a PackageInspector which was gotten from
 	 * this ECoreGenmodelParser. If not done so other class will not profit from those changes.
@@ -551,13 +532,13 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * @param e_pak_inspector PackageInspector
 	 * @author Adrian Zwenger
 	 */
-	def update_package_inspector(EPackage e_pak, PackageInspector e_pak_inspector){
-		if(!e_pak_inspector.equals(e_pak))
+	def update_package_inspector(EPackage e_pak, PackageInspector e_pak_inspector) {
+		if (!e_pak_inspector.equals(e_pak))
 			throw new IllegalArgumentException(
 				"The given Inspector does not inspect the given EPackage"
 			)
 
-		if(this.packages_to_package_inspector_map.containsKey(e_pak))
+		if (this.packages_to_package_inspector_map.containsKey(e_pak))
 			this.packages_to_package_inspector_map.put(e_pak, e_pak_inspector)
 		return this.packages_to_package_inspector_map
 	}
