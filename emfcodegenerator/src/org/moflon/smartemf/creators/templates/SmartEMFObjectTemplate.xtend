@@ -61,7 +61,7 @@ class SmartEMFObjectTemplate {
 			
 		    «FOR feature : eClass.EAllStructuralFeatures»
 		    @Override
-		    public «IF feature.isMany»EList<«TemplateUtil.getFQName(feature.EType)»>«ELSE»«TemplateUtil.getFieldTypeName(feature)»«ENDIF» «getOrIs(feature)»«feature.name.toFirstUpper»() {
+		    public «TemplateUtil.getFieldTypeName(feature)» «getOrIs(feature)»«feature.name.toFirstUpper»() {
 		    	return «TemplateUtil.getValidName(feature.name)»;
 		    }
 		    
@@ -218,6 +218,13 @@ class SmartEMFObjectTemplate {
 	}
 	
 	def getDefaultValue(EStructuralFeature feature) {
+		if("EFeatureMapEntry".equals(feature.EType.name))
+			return "new java.util.HashMap<Object, Object>()"
+			
+		
+		if(feature.EType.name.contains("MapEntry"))
+			return "new java.util.HashMap<Object, Object>()"
+			
 		if(feature.isMany)
 			return '''new «TemplateUtil.getFieldTypeName(feature)»(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)»);'''
 			

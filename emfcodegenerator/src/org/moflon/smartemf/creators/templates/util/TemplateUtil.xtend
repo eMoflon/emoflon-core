@@ -18,6 +18,15 @@ class TemplateUtil {
 	}
 	
 	static def getFieldTypeName(EStructuralFeature feature) {
+		if("EFeatureMapEntry".equals(feature.EType.name))
+//			return "org.eclipse.emf.ecore.util.FeatureMap"
+			return "java.util.HashMap<Object, Object>"
+			
+		
+		if(feature.EType.name.contains("MapEntry"))
+//			return "org.eclipse.emf.common.util.EMap<Object, Object>"
+			return "java.util.HashMap<Object, Object>"
+			
 		if(!feature.isMany) {
 			switch feature.EType.name {
 				case "EString" : return "java.lang.String"
@@ -29,7 +38,7 @@ class TemplateUtil {
 			}
 			return getFQName(feature.EType)
 		}
-		
+			
 		return '''«getListTypeName(feature)»<«getFQName(feature.EType)»>'''
 	}
 	
@@ -80,7 +89,14 @@ class TemplateUtil {
 	}
 	
 	static def getFQName(EClassifier eClass) {
-		return getFQName(eClass.EPackage) + "." + eClass.name
+		if(eClass.instanceClassName !== null) {
+//			val pkgIdx = ePackage.eClass.instanceClassName.lastIndexOf("EPackage")
+//			return ePackage.eClass.instanceClassName.substring(0, pkgIdx-1)
+			return eClass.instanceClassName
+		} else {
+			return getFQName(eClass.EPackage) + "." + eClass.name
+		}
+		
 	}
 	
 	static def getPackageClassName(EPackage pkg) {
