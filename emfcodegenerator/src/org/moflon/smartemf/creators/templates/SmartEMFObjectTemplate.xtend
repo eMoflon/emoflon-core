@@ -146,6 +146,8 @@ class SmartEMFObjectTemplate {
 	    		if(r != null) {
 	    			// if container is null, then this element is a root element within a resource and notifications are handled there
 	    			if(eContainer() == null)
+						sendNotification(SmartEMFNotification.createAddNotification(r, null, this, -1));
+					else
 						sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
 						
 					// if cascading is activated, we recursively generate add messages; else just this once
