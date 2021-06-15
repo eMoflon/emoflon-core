@@ -28,9 +28,6 @@ class SmartEMFInterfaceTemplate {
 		import «TemplateUtil.getFQName(packages)».«packages.name.toFirstUpper»Package;
 		«ENDFOR»
 		
-		«FOR featureType : getImportTypes()»
-		import «TemplateUtil.getFQName(featureType)».«featureType.name»;
-		«ENDFOR»
 		import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 		import org.moflon.smartemf.runtime.SmartObject;
 		import org.moflon.smartemf.runtime.collections.*;
@@ -58,7 +55,7 @@ class SmartEMFInterfaceTemplate {
 	}
 	
 	def getSuperTypes() {
-		return '''«FOR s : eClass.ESuperTypes», «s.name»«ENDFOR»'''
+		return '''«FOR s : eClass.ESuperTypes», «TemplateUtil.getFQName(s)»«ENDFOR»'''
 	}
 	
 	def writeToFile(String path) {

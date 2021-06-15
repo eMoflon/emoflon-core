@@ -27,10 +27,10 @@ class TemplateUtil {
 				case "EDouble" : return "double"
 				case "EDate" : return "java.util.Date"
 			}
-			return feature.EType.name
+			return getFQName(feature.EType)
 		}
 		
-		return '''«getListTypeName(feature)»<«feature.EType.name»>'''
+		return '''«getListTypeName(feature)»<«getFQName(feature.EType)»>'''
 	}
 	
 	static def splitNameAtUppercases(String name) {
@@ -80,7 +80,7 @@ class TemplateUtil {
 	}
 	
 	static def getFQName(EClassifier eClass) {
-		return getFQName(eClass.EPackage)
+		return getFQName(eClass.EPackage) + "." + eClass.name
 	}
 	
 	static def getPackageClassName(EPackage pkg) {

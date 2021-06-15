@@ -36,9 +36,6 @@ class SmartEMFObjectTemplate {
 		import «TemplateUtil.getFQName(packages)».«packages.name.toFirstUpper»Package;
 		«ENDFOR»
 		
-		«FOR featureType : getImportTypes()»
-		import «TemplateUtil.getFQName(featureType)».«featureType.name»;
-		«ENDFOR»
 		import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 		import org.moflon.smartemf.runtime.*;
 		import org.moflon.smartemf.runtime.collections.*;
@@ -52,7 +49,7 @@ class SmartEMFObjectTemplate {
 		import org.eclipse.emf.ecore.EStructuralFeature;
 		import org.eclipse.emf.ecore.resource.Resource;
 		
-		public class «className»Impl extends SmartObject implements «className» {
+		public class «className»Impl extends SmartObject implements «TemplateUtil.getFQName(eClass)» {
 		
 		    «FOR feature : eClass.EAllStructuralFeatures»
 		    protected «TemplateUtil.getFieldTypeName(feature)» «TemplateUtil.getValidName(feature.name)» = «getDefaultValue(feature)»;
@@ -64,7 +61,7 @@ class SmartEMFObjectTemplate {
 			
 		    «FOR feature : eClass.EAllStructuralFeatures»
 		    @Override
-		    public «IF feature.isMany»EList<«feature.EType.name»>«ELSE»«TemplateUtil.getFieldTypeName(feature)»«ENDIF» «getOrIs(feature)»«feature.name.toFirstUpper»() {
+		    public «IF feature.isMany»EList<«TemplateUtil.getFQName(feature.EType)»>«ELSE»«TemplateUtil.getFieldTypeName(feature)»«ENDIF» «getOrIs(feature)»«feature.name.toFirstUpper»() {
 		    	return «TemplateUtil.getValidName(feature.name)»;
 		    }
 		    
@@ -216,11 +213,13 @@ class SmartEMFObjectTemplate {
 			return '''super.toString();'''
 		if(nameAttribute != null)
 			return '''super.toString() + "(name " + getName() + ")";'''
+		return '''super.toString() + "(name " + get«firstStringAttribute.name.toFirstUpper»() + ")";'''
+			
 	}
 	
 	def getDefaultValue(EStructuralFeature feature) {
 		if(feature.isMany)
-			return '''new «TemplateUtil.getListTypeName(feature)»<«feature.EType.name»>(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)»);'''
+			return '''new «TemplateUtil.getFieldTypeName(feature)»(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)»);'''
 			
 		val value = feature.defaultValue
 		if(value === null)
