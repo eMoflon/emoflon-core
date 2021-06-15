@@ -1,4 +1,4 @@
-package org.moflon.emf.codegen.handler;
+package org.moflon.core.ui.handler;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,8 +28,6 @@ import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
 import org.moflon.core.propertycontainer.UsedCodeGen;
 import org.moflon.core.ui.AbstractCommandHandler;
-import org.moflon.emf.codegen.CodeGenerator;
-import org.moflon.smartemf.EMFCodeGenerator;
 
 public class SwitchCodeGeneratorHandler extends AbstractCommandHandler{
 
@@ -49,7 +47,8 @@ public class SwitchCodeGeneratorHandler extends AbstractCommandHandler{
 			}
 		}
 		
-		return AbstractCommandHandler.DEFAULT_HANDLER_RESULT;
+		// after changing codegen -> build 
+		return new BuildHandler().execute(event);
 	}
 
 	
