@@ -40,7 +40,7 @@ class SmartEMFInterfaceTemplate {
 		public interface «className» extends EObject«getSuperTypes()» {
 			
 		    «FOR feature : eClass.EAllStructuralFeatures»
-		    public «IF feature.isMany»EList<«feature.EType.name»>«ELSE»«TemplateUtil.getFieldTypeName(feature)»«ENDIF» «getOrIs(feature)»«feature.name.toFirstUpper»();
+		    public «IF feature.isMany»EList<«TemplateUtil.getFQName(feature.EType)»>«ELSE»«TemplateUtil.getFieldTypeName(feature)»«ENDIF» «getOrIs(feature)»«feature.name.toFirstUpper»();
 		    
 		    «IF !feature.isUnsettable»
 		    public void set«feature.name.toFirstUpper»(«TemplateUtil.getFieldTypeName(feature)» value);

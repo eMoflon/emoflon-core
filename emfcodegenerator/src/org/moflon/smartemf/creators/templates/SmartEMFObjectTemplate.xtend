@@ -226,7 +226,7 @@ class SmartEMFObjectTemplate {
 			return "null"
 		
 		if(value instanceof EEnumLiteral)
-			return value.EEnum.name + "." + TemplateUtil.getLiteral(value)
+			return TemplateUtil.getFQName(value.EEnum.EPackage) + "." + value.EEnum.name + "." + TemplateUtil.getLiteral(value)
 			
 		if(feature.EType.equals(EcorePackage.Literals.EDATE)) {
 			return '''(java.util.Date) EcoreFactory.eINSTANCE.createFromString(EcorePackage.eINSTANCE.getEDate(), "«feature.defaultValueLiteral»")'''
