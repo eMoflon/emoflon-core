@@ -15,6 +15,8 @@ import org.moflon.smartemf.creators.templates.PackageImplTemplate
 import org.moflon.smartemf.creators.templates.EEnumTemplate
 import org.moflon.smartemf.creators.templates.FactoryInterfaceTemplate
 import org.moflon.smartemf.creators.templates.FactoryImplTemplate
+import java.util.Collections
+import java.util.Set
 
 /**
  * Class which generates the code
@@ -31,12 +33,12 @@ class EMFCodeGenerator{
 	/**
 	 * HashMap mapping InterfaceCreator to PackageInspector
 	 */	
-	var HashSet<SmartEMFInterfaceTemplate> interfaces = new HashSet()
+	var Set<SmartEMFInterfaceTemplate> interfaces = Collections.synchronizedSet(new HashSet)
 	
 	/**
 	 * HashMap mapping InterfaceCreator to PackageInspector
 	 */
-	var HashSet<SmartEMFObjectTemplate> implementations = new HashSet()
+	var Set<SmartEMFObjectTemplate> implementations = Collections.synchronizedSet(new HashSet)
 
 	/**
 	 * HashMap storing EPackages and their PackagInspectors
@@ -82,6 +84,13 @@ class EMFCodeGenerator{
 //									)
 				implementations.add(c_creator)
 			}
+			
+//			e_pak_inspector.get_all_eclasses_in_package.parallelStream.forEach([e_cl | {
+//				val i_creator = new SmartEMFInterfaceTemplate(e_cl)
+//				val c_creator = new SmartEMFObjectTemplate(e_cl)
+//				interfaces.add(i_creator)
+//				implementations.add(c_creator)
+//			}])
 		}
 	}
 
@@ -96,6 +105,9 @@ class EMFCodeGenerator{
 			var path = packages.get(new_interface.package).get_path_to_folder
 			new_interface.writeToFile(path)
 		}
+//		interfaces.parallelStream.forEach( interface | {
+//			interface.writeToFile(packages.get(interface.package).get_path_to_folder)
+//		})
 	}
 
 	/**
@@ -107,6 +119,9 @@ class EMFCodeGenerator{
 			var path = packages.get(new_source.package).get_path_to_folder 
 			new_source.writeToFile(path)
 		}
+//		implementations.parallelStream.forEach( implementation | {
+//			implementation.writeToFile(packages.get(implementation.package).get_path_to_folder)
+//		})
 	}
 	
 	def void generate_package_interfaces(){
@@ -129,6 +144,26 @@ class EMFCodeGenerator{
 				eenum_creator.write_to_file()
 			}
 		}
+
+//		packages.values.parallelStream.forEach( package_inspector | {
+//			val creator = new PackageInterfaceTemplate(
+//				package_inspector, packages, EMFCodeGenerationClass.emf_model
+//			)
+//			val path = package_inspector.get_path_to_folder + "/" +
+//					   package_inspector.get_emf_package_class_name + ".java"
+//
+//			creator.initialize_creator(path, this.INDENTATION)
+//			creator.write_to_file()
+//			
+//			for(eenum : package_inspector.get_all_eenums_in_package){
+//				val eenum_creator = new EEnumTemplate(eenum, package_inspector)
+//				eenum_creator.initialize_creator(
+//					'''«package_inspector.get_path_to_folder»/«eenum.name».java'''.toString,
+//					"    "
+//				)
+//				eenum_creator.write_to_file()
+//			}
+//		})
 	}
 	
 	def void generate_package_implementations(){
@@ -142,6 +177,17 @@ class EMFCodeGenerator{
 			creator.initialize_creator(path, this.INDENTATION)
 			creator.write_to_file()
 		}
+		
+//		packages.values.parallelStream.forEach( package_inspector | {
+//			val creator = new PackageImplTemplate(
+//				package_inspector, packages, EMFCodeGenerationClass.emf_model
+//			)
+//			val path = package_inspector.get_path_to_folder + "/impl/" +
+//					   package_inspector.get_emf_package_class_name + "Impl.java"
+//
+//			creator.initialize_creator(path, this.INDENTATION)
+//			creator.write_to_file()
+//		})
 	}
 	
 	def void generate_package_factory_interfaces(){
@@ -155,6 +201,17 @@ class EMFCodeGenerator{
 			creator.initialize_creator(path, this.INDENTATION)
 			creator.write_to_file()
 		}
+		
+//		packages.values.parallelStream.forEach( package_inspector | {
+//			val creator = new FactoryInterfaceTemplate(
+//				EMFCodeGenerationClass.emf_model, package_inspector
+//			)
+//			val path = package_inspector.get_path_to_folder + "/" +
+//					   package_inspector.get_emf_package_factory_class_name + ".java"
+//
+//			creator.initialize_creator(path, this.INDENTATION)
+//			creator.write_to_file()
+//		})
 	}
 	
 	def void generate_package_factory_implementations(){
@@ -168,6 +225,17 @@ class EMFCodeGenerator{
 			creator.initialize_creator(path, this.INDENTATION)
 			creator.write_to_file()
 		}
+		
+//		packages.values.parallelStream.forEach( package_inspector | {
+//			val creator =new FactoryImplTemplate(
+//				EMFCodeGenerationClass.emf_model, package_inspector
+//			)
+//			val path = package_inspector.get_path_to_folder + "/impl/" +
+//					   package_inspector.get_emf_package_factory_class_name + "Impl.java"
+//
+//			creator.initialize_creator(path, this.INDENTATION)
+//			creator.write_to_file()
+//		})
 	}
 
 	/**
@@ -175,6 +243,15 @@ class EMFCodeGenerator{
 	 * @author Adrian Zwenger
 	 */
 	def void generate_all_model_code(){
+//		val generators = new LinkedList
+//		generators.add([generate_interfaces])
+//		generators.add([generate_implementation])
+//		generators.add([generate_package_factory_interfaces])
+//		generators.add([generate_package_factory_implementations])
+//		generators.add([generate_package_interfaces()])
+//		generators.add([generate_package_implementations])
+//		generators.parallelStream.forEach([])
+		
 		generate_interfaces()
 		generate_implementation()
 		generate_package_factory_interfaces()
