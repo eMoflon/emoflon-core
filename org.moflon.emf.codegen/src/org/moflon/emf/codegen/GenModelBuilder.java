@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -102,6 +103,16 @@ public class GenModelBuilder {
 			for(IProject project : workspace.getRoot().getProjects()) {
 				if(project.getName().equalsIgnoreCase(projectName) && !project.getName().equals(projectName)) {
 					projectName = project.getName();
+					break;
+				}
+				
+				if(!project.getName().equalsIgnoreCase(projectName)) {
+					String fileName = ePackage.eResource().getURI().lastSegment();
+					IFile file = project.getFile("model/"+fileName);
+					if(file.exists()) {
+						projectName = project.getName();
+						break;
+					}
 				}
 			}
 			
