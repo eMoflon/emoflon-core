@@ -92,6 +92,7 @@ class SmartEMFInterfaceTemplate {
 		types.addAll(eClass.ESuperTypes)
 		// add this eclass
 		types.add(eClass)
+		types.remove(eClass)
 		return types
 	}
 }
