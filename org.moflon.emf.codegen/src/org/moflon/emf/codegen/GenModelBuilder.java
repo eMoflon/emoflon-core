@@ -7,6 +7,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.codegen.ecore.genmodel.GenJDKLevel;
@@ -93,7 +96,15 @@ public class GenModelBuilder {
 			importer.computeEPackages(monitor);
 			importer.adjustEPackages(monitor);
 			
+			//Find the correct corresponding project name
 			String projectName = Character.toUpperCase(ePackage.getName().charAt(0)) + ePackage.getName().substring(1, ePackage.getName().length());
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			for(IProject project : workspace.getRoot().getProjects()) {
+				if(project.getName().equalsIgnoreCase(projectName) && !project.getName().equals(projectName)) {
+					projectName = project.getName();
+				}
+			}
+			
 			
 			for(EPackage ePack : importer.getEPackages()) {
 				if(ePack.getName().equals(ePackage.getName())) {
