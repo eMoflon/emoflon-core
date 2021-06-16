@@ -6,10 +6,21 @@ import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EcorePackage
 import org.moflon.smartemf.creators.templates.util.TemplateUtil
+import org.moflon.smartemf.creators.FileCreator
 
-class SmartEMFInterfaceTemplate {
+class SmartEMFInterfaceTemplate implements FileCreator{
 	
-	var EClass eClass = null
+	public val EClass eClass
+	
+	/**
+	 * stores the fq-file name to which this interface shall be written to.
+	 */
+	var String file_path
+	
+	/**
+	 * stores if this Creator was properly initialized
+	 */
+	var boolean is_initialized = false
 	
 	new(EClass eClass) {
 		this.eClass = eClass
@@ -58,14 +69,6 @@ class SmartEMFInterfaceTemplate {
 		return '''«FOR s : eClass.ESuperTypes», «TemplateUtil.getFQName(s)»«ENDFOR»'''
 	}
 	
-	def writeToFile(String path) {
-		var class_file = new File('''«path»/«eClass.name».java''')
-		class_file.getParentFile().mkdirs()
-		var class_fw = new FileWriter(class_file , false)
-		class_fw.write(createCode)
-		class_fw.close
-	} 
-	
 	def getPackage() {
 		return eClass.EPackage
 	}
@@ -92,4 +95,22 @@ class SmartEMFInterfaceTemplate {
 		types.remove(eClass)
 		return types
 	}
+	
+	override initialize_creator(String fq_file_path) {
+		file_path = fq_file_path
+		is_initialized = true;
+	}
+	
+	override write_to_file() {
+		if(!is_initialized)
+			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
+			
+//		var class_file = new File('''«path»/«eClass.name».java''')
+		var class_file = new File(file_path)
+		class_file.getParentFile().mkdirs()
+		var class_fw = new FileWriter(class_file , false)
+		class_fw.write(createCode)
+		class_fw.close
+	}
+	
 }

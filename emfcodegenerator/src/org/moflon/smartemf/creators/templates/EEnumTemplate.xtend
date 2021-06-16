@@ -4,21 +4,20 @@ import java.io.File
 import java.io.FileWriter
 import java.util.ArrayList
 import org.eclipse.emf.ecore.EEnum
-import org.moflon.smartemf.EMFCodeGenerationClass
 import org.moflon.smartemf.creators.FileCreator
-import org.moflon.smartemf.inspectors.util.PackageInspector
 import org.moflon.smartemf.creators.templates.util.TemplateUtil
+import org.moflon.smartemf.creators.templates.util.PackageInformation
 
 /**
  * This Creator can be used to generate the source-code of an
  * {@link EEnum EEnum} implementation.
  */
-class EEnumTemplate extends EMFCodeGenerationClass implements FileCreator {
+class EEnumTemplate implements FileCreator {
 	
 	/**
 	 * The inspector for the EPackage which contains the EEnum
 	 */
-	var PackageInspector e_pak
+	var PackageInformation e_pak
 	
 	/**
 	 * The EEnum for which the code shall be generated
@@ -41,8 +40,7 @@ class EEnumTemplate extends EMFCodeGenerationClass implements FileCreator {
 	 * @param e_pak PackageInspector of the EPackage in which the EEnum is contained.
 	 * @author Adrian Zwenger
 	 */
-	new(EEnum eenum, PackageInspector e_pak) {
-		super(PackageInspector.emf_model)
+	new(EEnum eenum, PackageInformation e_pak, String generatedFileDir) {
 		this.e_enum = eenum
 		this.e_pak = e_pak
 	}
@@ -141,7 +139,7 @@ class EEnumTemplate extends EMFCodeGenerationClass implements FileCreator {
 	/**
 	 * @inheritDoc
 	 */
-	override initialize_creator(String fq_file_path, String IDENTION) {
+	override initialize_creator(String fq_file_path) {
 		file_path = fq_file_path
 		is_initialized = true
 	}

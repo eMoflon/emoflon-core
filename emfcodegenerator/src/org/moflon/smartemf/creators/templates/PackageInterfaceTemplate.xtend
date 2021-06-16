@@ -6,21 +6,20 @@ import java.util.HashMap
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
-import org.moflon.smartemf.EMFCodeGenerationClass
 import org.moflon.smartemf.EcoreGenmodelParser
 import org.moflon.smartemf.creators.FileCreator
 import org.moflon.smartemf.creators.templates.util.TemplateUtil
-import org.moflon.smartemf.inspectors.util.PackageInspector
+import org.moflon.smartemf.creators.templates.util.PackageInformation
 
 /**
  * This class generates the interface for the EMF-package class
  */
-class PackageInterfaceTemplate extends EMFCodeGenerationClass implements FileCreator{
+class PackageInterfaceTemplate implements FileCreator{
 	
 	/**
 	 * The inspector for the package
 	 */
-	var PackageInspector e_pak
+	var PackageInformation e_pak
 	
 	/**
 	 * stores the fq-file name to which this interface shall be written to.
@@ -34,8 +33,7 @@ class PackageInterfaceTemplate extends EMFCodeGenerationClass implements FileCre
 	
 	var featureCounter = 0;
 	
-	new(PackageInspector package_inspector, HashMap<EPackage,PackageInspector> e_pak_map, EcoreGenmodelParser gen_model){
-		super(gen_model)
+	new(PackageInformation package_inspector, HashMap<EPackage,PackageInformation> e_pak_map, EcoreGenmodelParser gen_model, String generatedFileDir){
 		e_pak = package_inspector
 	}
 	
@@ -137,15 +135,16 @@ class PackageInterfaceTemplate extends EMFCodeGenerationClass implements FileCre
 
 	}
 	
-	override initialize_creator(String fq_file_path, String IDENTION) {
+	override initialize_creator(String fq_file_path) {
 		file_path = fq_file_path
 		is_initialized = true
 	}
 	
 	override write_to_file() {	
-		if(!this.is_initialized)
+		if(!is_initialized)
 			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
-		var package_file = new File(this.file_path)
+			
+		var package_file = new File(file_path)
 		package_file.getParentFile().mkdirs()
 		var package_fw = new FileWriter(package_file , false)
 		package_fw.write(createSrcCode())

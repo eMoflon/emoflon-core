@@ -2,19 +2,18 @@ package org.moflon.smartemf.creators.templates
 
 import java.io.File
 import java.io.FileWriter
-import org.moflon.smartemf.EMFCodeGenerationClass
 import org.moflon.smartemf.EcoreGenmodelParser
 import org.moflon.smartemf.creators.FileCreator
-import org.moflon.smartemf.inspectors.util.PackageInspector
+import org.moflon.smartemf.creators.templates.util.PackageInformation
 
 /**
  * creates the interface for the package factory
  */
-class FactoryInterfaceTemplate extends EMFCodeGenerationClass implements FileCreator{
+class FactoryInterfaceTemplate implements FileCreator{
 	/**
 	 * The EPackages Inspector for which this factory-interface shall be created
 	 */
-	var protected PackageInspector e_pak
+	var protected PackageInformation e_pak
 
 	/**
 	 * The name which this interface will have
@@ -36,8 +35,7 @@ class FactoryInterfaceTemplate extends EMFCodeGenerationClass implements FileCre
 	 */
 	var protected String file_path
 
-	new(EcoreGenmodelParser gen_model, PackageInspector package_inspector){
-		super(gen_model)
+	new(EcoreGenmodelParser gen_model, PackageInformation package_inspector, String generatedFileDir){
 		e_pak = package_inspector
 		interface_name = e_pak.get_emf_package_factory_class_name()
 		package_declaration = e_pak.get_package_declaration_name()
@@ -65,7 +63,7 @@ class FactoryInterfaceTemplate extends EMFCodeGenerationClass implements FileCre
 		'''
 	}
 
-	override initialize_creator(String fq_file_path, String IDENTION) {
+	override initialize_creator(String fq_file_path) {
 		this.is_initialized = true
 		this.file_path = fq_file_path
 	}

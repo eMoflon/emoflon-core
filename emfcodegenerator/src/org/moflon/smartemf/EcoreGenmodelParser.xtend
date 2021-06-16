@@ -12,25 +12,19 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenModel
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
 import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.EReference
-import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.ETypeParameter
-import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.impl.EClassifierImpl
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
-import org.moflon.smartemf.inspectors.util.AbstractObjectFieldInspector
-import org.moflon.smartemf.inspectors.util.AttributeInspector
-import org.moflon.smartemf.inspectors.util.PackageInspector
+import org.moflon.smartemf.creators.templates.util.PackageInformation
 
 /**
  * Wrapper for parsing Ecore- and GenModel-XMI files. All
@@ -99,17 +93,10 @@ class EcoreGenmodelParser {
 	var String genmodel_xmi_fq_path
 
 	/**
-	 * maps found {@link EStructuralFeature EStructuralFeature} to an
-	 * {@link emfcodegenerator.inspectors.util.AbstractObjectFieldInspector
-	 * AbstractObjectFieldInspector} for said feature.
-	 */
-	var HashMap<EStructuralFeature, AbstractObjectFieldInspector> struct_features_to_inspector_map = new HashMap<EStructuralFeature, AbstractObjectFieldInspector>()
-
-	/**
 	 * maps found {@link EPackage EPackage} to its respective
 	 * {@link emfcodegenerator.inspectors.util.PackageInspector PackageInspector}.
 	 */
-	var HashMap<EPackage, PackageInspector> packages_to_package_inspector_map = new HashMap<EPackage, PackageInspector>()
+	var HashMap<EPackage, PackageInformation> packages_to_package_inspector_map = new HashMap<EPackage, PackageInformation>()
 
 	/**
 	 * stores all EClasses as key and a HashMap as value which stores all the EClasses
@@ -127,7 +114,7 @@ class EcoreGenmodelParser {
 	 * @param genmodel_path String path to the genmodel-xmi
 	 * @author Adrian Zwenger
 	 */
-	new(String ecore_path, String genmodel_path) {
+	new(String ecore_path, String genmodel_path, String generatedFileDir) {
 		// store the path to GenModel-xmi. It is needed by parse_genmodel
 		this.genmodel_xmi_fq_path = genmodel_path
 		this.parse_genmodel(genmodel_path)
@@ -143,7 +130,8 @@ class EcoreGenmodelParser {
 		}
 		// create the PackageInspectors
 		for (EPackage e_pak : this.get_epackage_and_contained_classes_map.keySet) {
-			var e_pak_inspector = new PackageInspector(e_pak as EPackage, this)
+			println("genFileDir: "+generatedFileDir+"/gen/")
+			var e_pak_inspector = new PackageInformation(e_pak as EPackage, this, generatedFileDir+"/gen/")
 			this.packages_to_package_inspector_map.put(e_pak, e_pak_inspector)
 		}
 	}
@@ -216,73 +204,6 @@ class EcoreGenmodelParser {
 
 				// register all classes in package
 				e_classes.put(package_path + (e_class).getName(), e_class)
-
-				for (EStructuralFeature feature : e_class.EAllStructuralFeatures) {
-					// register all structural features
-					if (!struct_features_to_inspector_map.containsKey(feature)) {
-						// prevent double creation of Inspectors
-						if (feature instanceof EAttribute) {
-							struct_features_to_inspector_map.put(
-								feature as EAttribute,
-								new AttributeInspector(
-									feature as EAttribute,
-									this.super_package_name
-								)
-							)
-						} else if (feature instanceof EReference) {
-							/*
-							 * EReferences to non SmartEMF class is not permitted.
-							 * Thus validity of the EReference has to be checked
-							 */
-							var reference = feature as EReference
-							if (reference.EGenericType === null)
-								throw new IllegalArgumentException(
-									'''
-ERROR! The target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»" has not been specified.'''
-								)
-
-							if (reference.EGenericType.EClassifier === null &&
-								reference.EGenericType.ETypeParameter !== null) {
-								/* generics are permitted. However, the user must make sure that all
-								 * runtime instances inherit from the SmartObject class.
-								 * In other words it needs to be a SmartEMF object
-								 */
-								println(
-									'''Warning!! Target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»" is a generic type-parameter.
-«"\t"»Please do take care, that the runtime instance inherits from emfcodegenerator.util.SmartObject.'''
-								)
-
-							} else if (reference.EGenericType.EClassifier !== null) {
-								// the EReference points to a specific class
-								var the_classifier = reference.EGenericType.EClassifier
-//								if (the_classifier.EPackage.equals(EcorePackage.eINSTANCE)) {
-//									// the reference type is an EMF-class which are not supported
-//									throw new IllegalArgumentException(
-//										'''
-//ERROR! The target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»"is not supported as it is en Eclipse-EMF class.'''
-//									)
-//								} 
-								if (!the_classifier.EPackage.equals(EcorePackage.eINSTANCE) &&
-									!this.super_package.eAllContents.contains(the_classifier)) {
-									/*
-									 * the classifier is not contained in Eclipse-EMF or the
-									 * given XMI-s.
-									 * In this case the user must make sure, that the type which is
-									 * being referenced implements
-									 * {@link emfcodegenerator.util.MinimalSObjectContainer
-									 * MinimalSObjectContainer} or
-									 * inherit from {{@link emfcodegenerator.util.SmartObject 
-									 * SmartObject}
-									 */
-									println('''
-Warning!! Target of EReference "«reference.name»" contained in class "«package_path.replace("/", ".") + (e_class).getName()»" is not an Eclipse-EMF and was not registered in the given XMI-files.
-«"\t"»Please do take care, that the runtime instances inherit from emfcodegenerator.util.SmartObject.
-''')
-								}
-							}
-						}
-					}
-				}
 
 				var generic_type_params_map = new HashMap<ETypeParameter, String>()
 				for (ETypeParameter e_param : e_class.ETypeParameters) {
@@ -369,7 +290,7 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 		for (GenClass gc : gp.getGenClasses()) {
 			var eproxy_uri = (gc.getEcoreClassifier() as EClassifierImpl).eProxyURI()
 			var String fq_classname
-			if (eproxy_uri == null) {
+			if (eproxy_uri === null) {
 				// TODO: do something
 			} else if (!eproxy_uri.isFile()) {
 				fq_classname = eproxy_uri.toString().replaceAll(".ecore#//", "/")
@@ -465,19 +386,6 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	}
 
 	/**
-	 * Returns a HashMap with ESructuralFeatures specified by Ecore and GenModel XMI-files
-	 * as key and a corresponding
-	 * AbstractObjectFieldInspector as value.<br>
-	 * Returns the value of
-	 * {@link #struct_features_to_inspector_map struct_features_to_inspector_map}.
-	 * @return HashMap<EStructuralFeature,AbstractObjectFieldInspector>
-	 * @author Adrian Zwenger
-	 */
-	def get_struct_features_to_inspector_map() {
-		return this.struct_features_to_inspector_map
-	}
-
-	/**
 	 * Returns a mapping of EPackages to their corresponding PackageInspector.<br>
 	 * Returns value of
 	 * {@link #packages_to_package_inspector_map packages_to_package_inspector_map}.
@@ -532,7 +440,7 @@ Warning!! Target of EReference "«reference.name»" contained in class "«packag
 	 * @param e_pak_inspector PackageInspector
 	 * @author Adrian Zwenger
 	 */
-	def update_package_inspector(EPackage e_pak, PackageInspector e_pak_inspector) {
+	def update_package_inspector(EPackage e_pak, PackageInformation e_pak_inspector) {
 		if (!e_pak_inspector.equals(e_pak))
 			throw new IllegalArgumentException(
 				"The given Inspector does not inspect the given EPackage"

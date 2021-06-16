@@ -10,24 +10,22 @@ import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EcorePackage
-import org.moflon.smartemf.EGenericTypeProcessor
 import org.moflon.smartemf.EcoreGenmodelParser
 import org.moflon.smartemf.creators.FileCreator
 import org.moflon.smartemf.creators.templates.util.TemplateUtil
-import org.moflon.smartemf.inspectors.util.PackageInspector
+import org.moflon.smartemf.creators.templates.util.PackageInformation
 
 /**
  * Creator-class which generates the class-file for the SmartEMF-package-class.
  */
-class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
+class PackageImplTemplate implements FileCreator{
 	
+	val PackageInformation e_pak
 	var boolean isInitialized = false
 	var String fqFileName
-	var featureCounter = 0
 	val HashSet<EPackage> dependentPackages
-	
-	new(PackageInspector package_inspector, HashMap<EPackage,PackageInspector> e_pak_map, EcoreGenmodelParser gen_model){
-		super(gen_model, "generic_bound_", package_inspector)
+
+	new(PackageInformation package_inspector, HashMap<EPackage,PackageInformation> e_pak_map, EcoreGenmodelParser gen_model, String generatedFileDir){
 		e_pak = package_inspector
 		dependentPackages = getDependentPackages()
 	}
@@ -253,7 +251,7 @@ class PackageImplTemplate extends EGenericTypeProcessor implements FileCreator{
 		return dependentPackages
 	}
 	
-	override initialize_creator(String fq_file_path, String IDENTION) {
+	override initialize_creator(String fq_file_path) {
 		fqFileName = fq_file_path
 		isInitialized = true
 	}

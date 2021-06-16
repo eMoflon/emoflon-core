@@ -2,20 +2,19 @@ package org.moflon.smartemf.creators.templates
 
 import java.io.File
 import java.io.FileWriter
-import org.moflon.smartemf.EMFCodeGenerationClass
 import org.moflon.smartemf.EcoreGenmodelParser
 import org.moflon.smartemf.creators.FileCreator
 import org.moflon.smartemf.creators.templates.util.TemplateUtil
-import org.moflon.smartemf.inspectors.util.PackageInspector
+import org.moflon.smartemf.creators.templates.util.PackageInformation
 
 /**
  * creates the implementation for the package factory
  */
-class FactoryImplTemplate extends EMFCodeGenerationClass implements FileCreator {
+class FactoryImplTemplate implements FileCreator {
 	/**
 	 * The EPackages Inspector for which this factory-interface shall be created
 	 */
-	var protected PackageInspector e_pak
+	var protected PackageInformation e_pak
 
 	/**
 	 * stores the package declaration for the interface
@@ -36,8 +35,7 @@ class FactoryImplTemplate extends EMFCodeGenerationClass implements FileCreator 
 	 */
 	var String class_name
 
-	new(EcoreGenmodelParser gen_model, PackageInspector package_inspector){
-		super(gen_model)
+	new(EcoreGenmodelParser gen_model, PackageInformation package_inspector, String generatedFileDir){
 		e_pak = package_inspector
 		class_name = e_pak.get_emf_package_factory_class_name()+"Impl"
 		package_declaration = e_pak.get_package_declaration_name()
@@ -162,7 +160,7 @@ class FactoryImplTemplate extends EMFCodeGenerationClass implements FileCreator 
 		'''
 	}
 
-	override initialize_creator(String fq_file_path, String IDENTION) {
+	override initialize_creator(String fq_file_path) {
 		is_initialized = true
 		file_path = fq_file_path
 	}
