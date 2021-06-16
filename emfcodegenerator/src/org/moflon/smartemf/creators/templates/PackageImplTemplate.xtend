@@ -170,7 +170,7 @@ class PackageImplTemplate implements FileCreator{
 				
 				// Obtain other dependent packages
 				«FOR ePackage : dependentPackages»
-				«ePackage.name.toFirstUpper»Package the«ePackage.name»Package = («ePackage.name.toFirstUpper»Package) EPackage.Registry.INSTANCE.getEPackage(«ePackage.name.toFirstUpper»Package.eNS_URI);
+				«ePackage.name.toFirstUpper»Package the«ePackage.name»Package = «ePackage.name.toFirstUpper»Package.eINSTANCE;
 				«ENDFOR»
 		
 				// Create type parameters
