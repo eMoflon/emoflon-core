@@ -83,7 +83,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	
 	@Override
 	public EReference eContainmentFeature() {
-		throw new UnsupportedOperationException();
+		return (EReference) eContainingFeature;
 	}
 
 	@SuppressWarnings("unchecked")
