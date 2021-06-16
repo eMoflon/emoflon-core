@@ -31,7 +31,7 @@ import org.moflon.core.propertycontainer.UsedCodeGen;
 import org.moflon.core.utilities.LogUtils;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.emf.codegen.CodeGenerator;
-import org.moflon.smartemf.EMFCodeGenerator;
+import org.moflon.smartemf.SmartEMFGenerator;
 
 
 
@@ -121,8 +121,8 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 		
 					if(genmodelFile.exists() && !genmodelFile.isDirectory() && ecoreFile.exists() && !ecoreFile.isDirectory()) {
 						//paths of the files necessary for smartEMF extension
-						final EMFCodeGenerator codeGenerator = new EMFCodeGenerator(ecorePath,genModelPath);
-						codeGenerator.generate_all_model_code();				
+						final SmartEMFGenerator codeGenerator = new SmartEMFGenerator(ecorePath,genModelPath);
+						codeGenerator.generate_all_model_code();
 					} else {
 						logger.warn("Problem when generating code: the genmodel file needs to be in the same folder as the ecore file.");
 					}	
