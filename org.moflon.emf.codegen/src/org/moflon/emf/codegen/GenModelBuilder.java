@@ -101,6 +101,11 @@ public class GenModelBuilder {
 			String projectName = Character.toUpperCase(ePackage.getName().charAt(0)) + ePackage.getName().substring(1, ePackage.getName().length());
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			for(IProject project : workspace.getRoot().getProjects()) {
+				if(project.getName().equals(projectName)) {
+					projectName = project.getName();
+					break;
+				}
+				
 				if(project.getName().equalsIgnoreCase(projectName) && !project.getName().equals(projectName)) {
 					projectName = project.getName();
 					break;
