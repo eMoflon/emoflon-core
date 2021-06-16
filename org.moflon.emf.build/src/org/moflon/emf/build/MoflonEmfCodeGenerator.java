@@ -20,14 +20,16 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.BasicMonitor;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.moflon.core.preferences.EMoflonPreferencesStorage;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
-import org.moflon.core.propertycontainer.UsedCodeGen;
 import org.moflon.core.utilities.LogUtils;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.emf.codegen.CodeGenerator;
@@ -110,18 +112,13 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 					
 					//Find the current workspace
 					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();			
-		
-					IResource model = root.findMember(getEcoreFile().getFullPath().toString().replace(".ecore", ".genmodel"));
-		
-					File genmodelFile = new File(model.getLocationURI());
 					File ecoreFile = new File(root.findMember(getEcoreFile().getFullPath().toString()).getLocationURI());
-					
-					String genModelPath = genmodelFile.getAbsolutePath();
 					String ecorePath = ecoreFile.getAbsolutePath();
+					EPackage ePack = (EPackage) (new ResourceSetImpl()).getResource(URI.createFileURI(ecorePath), true).getContents().get(0);
 		
-					if(genmodelFile.exists() && !genmodelFile.isDirectory() && ecoreFile.exists() && !ecoreFile.isDirectory()) {
+					if(ecoreFile.exists() && !ecoreFile.isDirectory()) {
 						//paths of the files necessary for smartEMF extension
-						final SmartEMFGenerator codeGenerator = new SmartEMFGenerator(ecorePath,genModelPath);
+						final SmartEMFGenerator codeGenerator = new SmartEMFGenerator(ePack, genModel, ecorePath);
 						codeGenerator.generate_all_model_code();
 					} else {
 						logger.warn("Problem when generating code: the genmodel file needs to be in the same folder as the ecore file.");
