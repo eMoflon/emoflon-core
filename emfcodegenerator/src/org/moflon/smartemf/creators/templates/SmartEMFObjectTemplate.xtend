@@ -322,7 +322,6 @@ class SmartEMFObjectTemplate implements FileCreator{
 //		var class_file = new File('''«path»/impl/«eClass.name»Impl.java''')
 		var class_file = new File(file_path)
 		class_file.getParentFile().mkdirs()
-		println(class_file.absolutePath)
 		var class_fw = new FileWriter(class_file , false)
 		class_fw.write(createCode)
 		class_fw.close

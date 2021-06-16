@@ -42,18 +42,6 @@ class PackageInformation {
 	
 	val String targetDirectory 
 	
-	/**
-	 * stores the GenModel-XMI specified super package for the EMF code.
-	 */
-	var String super_package_name = null
-	
-	/**
-	 * stores if this object was created with an String or an EcoreGenmodelParser instance and is
-	 * used to determine if the String is used as the name for the super-package, or if it should be
-	 * inquired from the parser.
-	 */
-	var boolean initialised_with_emf_model = true
-	
 		/**
 	 * a Set containing strings of modules which need to be imported
 	 * by using a TreeSet, the imports are sorted alphabetically
@@ -388,15 +376,19 @@ class PackageInformation {
 			path = e_package.name + "/" + path
 			declaration = e_package.name + "." + declaration
 		}
-		var super_package = genmodel.get_super_package_name
-		if (super_package === null) {
-			package_declaration = declaration
-			path_to_folder = targetDirectory + path
-			return
-		}
-		var buffer = genmodel.get_super_package_name.split("\\.").join("/")
-		path_to_folder = targetDirectory + buffer + "/" + path
-		package_declaration = super_package + "." + declaration
+		
+		package_declaration = declaration
+		path_to_folder = targetDirectory + path
+		
+//		var super_package = genmodel.get_super_package_name
+//		if (super_package === null) {
+//			package_declaration = declaration
+//			path_to_folder = targetDirectory + path
+//			return
+//		}
+//		var buffer = genmodel.get_super_package_name.split("\\.").join("/")
+//		path_to_folder = targetDirectory + buffer + "/" + path
+//		package_declaration = super_package + "." + declaration
 	}
 
 	/**########################Getters########################*/
@@ -763,9 +755,10 @@ class PackageInformation {
 		// The super-layer package specified in the genmodel-xmi is not stored in the ECLass structure
 		// thus needs to be added manually
 		//var super_package_name_string = (emf_model.get_super_package_name === null) emf_model.get_super_package_name ? this.
-		var package_prefix = (initialised_with_emf_model) ? genmodel.get_super_package_name : this.super_package_name
-		return (package_prefix === null ||
-				package_prefix.isEmpty) ? 
-				fqdn : package_prefix + "." + fqdn
+//		var package_prefix = (initialised_with_emf_model) ? genmodel.get_super_package_name : this.super_package_name
+		return fqdn
+//		return (package_prefix === null ||
+//				package_prefix.isEmpty) ? 
+//				fqdn : package_prefix + "." + fqdn
 	}
 }

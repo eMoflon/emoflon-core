@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.moflon.smartemf.creators.templates.SmartEMFObjectTemplate;
 
 import org.moflon.smartemf.creators.templates.SmartEMFInterfaceTemplate;
@@ -49,16 +50,16 @@ public class SmartEMFGenerator{
 	 * @param ecore_xmi_path String to file
 	 * @param genmodel_xmi_path String to file
 	 */ 
-	public SmartEMFGenerator(String ecore_xmi_path, String genmodel_xmi_path){
+	public SmartEMFGenerator(EPackage ePackage, GenModel genmodel, String ecore_xmi_path){
 		generatedFileDir = ((new File(ecore_xmi_path)).getParentFile().getParent());
-		genmodel = new EcoreGenmodelParser(ecore_xmi_path, genmodel_xmi_path, generatedFileDir);
-		packages = genmodel.get_packages_to_package_inspector_map();
+		this.genmodel = new EcoreGenmodelParser(ePackage, genmodel, generatedFileDir);
+		packages = this.genmodel.get_packages_to_package_inspector_map();
 		
 		for(EPackage e_pak : packages.keySet()){
 			PackageInformation e_pak_inspector = packages.get(e_pak);
 			if(!e_pak_inspector.is_initialized()) {
 				e_pak_inspector.initialize();
-				packages = genmodel.update_package_inspector(e_pak, e_pak_inspector);
+				packages = this.genmodel.update_package_inspector(e_pak, e_pak_inspector);
 			}
 
 			//create the FileCreators for the EClasses

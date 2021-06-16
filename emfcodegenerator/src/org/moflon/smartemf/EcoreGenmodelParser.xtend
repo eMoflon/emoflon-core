@@ -3,15 +3,10 @@ package org.moflon.smartemf
 /*
  * @author Adrian Zwenger
  */
-//java.util
-import java.util.Arrays
+ 
 import java.util.HashMap
 import java.util.HashSet
-import org.eclipse.emf.codegen.ecore.genmodel.GenClass
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
-import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
-import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
-import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EDataType
@@ -19,11 +14,6 @@ import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.ETypeParameter
-import org.eclipse.emf.ecore.impl.EClassifierImpl
-import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
 import org.moflon.smartemf.creators.templates.util.PackageInformation
 
 /**
@@ -33,16 +23,6 @@ import org.moflon.smartemf.creators.templates.util.PackageInformation
  * previously processed data from this wrapper without the need to have the XMI-files reprocessed.
  */
 class EcoreGenmodelParser {
-
-	/**########################Attributes########################*/
-	/**
-	 * maps all GenClasses found in genmodel-xmi to their URI-name.<br>
-	 * Used to verify the ecore and genmodel
-	 * xmi files by comparing the uri's with each other.<br>
-	 * Take a look as {@link #ecoreclass_name_map ecoreclass_name_map}.
-	 */
-	var HashMap<String, GenClass> genclass_name_map = new HashMap<String, GenClass>()
-
 	/**
 	 * maps all EClasses found in ecore-xmi to their URI-name.<br>
 	 * used to verify the ecore and genmodel
@@ -75,22 +55,10 @@ class EcoreGenmodelParser {
 	 * {@link EEnum EEnums} directly contained in said package.
 	 */
 	var HashMap<EPackage, HashSet<EEnum>> epackage_and_contained_eenums = new HashMap<EPackage, HashSet<EEnum>>()
-
-	/**
-	 * the GenModel-XMI can specify a top-layer package (-hierarchy) name which will be stored here
-	 * or null if none was specified
-	 */
-	var String super_package_name
-
-	/**
-	 * top-layer {@link EPackage EPackage} in hierarchy
-	 */
-	var EPackage super_package
-
-	/**
-	 * stores the path to the genmodel-xmi-file as String
-	 */
-	var String genmodel_xmi_fq_path
+	
+	val EPackage ePackage
+	
+	val GenModel genmodel
 
 	/**
 	 * maps found {@link EPackage EPackage} to its respective
@@ -114,24 +82,16 @@ class EcoreGenmodelParser {
 	 * @param genmodel_path String path to the genmodel-xmi
 	 * @author Adrian Zwenger
 	 */
-	new(String ecore_path, String genmodel_path, String generatedFileDir) {
+	new(EPackage ePackage, GenModel genmodel, String generatedFileDir) {
 		// store the path to GenModel-xmi. It is needed by parse_genmodel
-		this.genmodel_xmi_fq_path = genmodel_path
-		this.parse_genmodel(genmodel_path)
-		// this.super_package =
-		parse_ecore(ecore_path)
-		// verify that ecore and genmodel contain the same classes
-		if (!this.genclass_name_map.keySet().equals(ecoreclass_name_map.keySet())) {
-//			println("1 " + genclass_name_map.keySet())
-//			println("2 " + ecoreclass_name_map.keySet())
-//			println(super_package_name)
-			// TODO: checking depends on getgenmodelclasses, but the method does not work properly
-//			throw new UnsupportedOperationException("genmodel and ecore do not specify same classes")
-		}
+		this.ePackage = ePackage
+		this.genmodel = genmodel
+		parse_ecore()
+		val slashIdx = this.genmodel.modelDirectory.indexOf("/");
+		val genFolder = this.genmodel.modelDirectory.substring(slashIdx, genmodel.modelDirectory.length)
 		// create the PackageInspectors
 		for (EPackage e_pak : this.get_epackage_and_contained_classes_map.keySet) {
-			println("genFileDir: "+generatedFileDir+"/gen/")
-			var e_pak_inspector = new PackageInformation(e_pak as EPackage, this, generatedFileDir+"/gen/")
+			var e_pak_inspector = new PackageInformation(e_pak as EPackage, this, generatedFileDir+genFolder)
 			this.packages_to_package_inspector_map.put(e_pak, e_pak_inspector)
 		}
 	}
@@ -149,20 +109,10 @@ class EcoreGenmodelParser {
 	 * @param ecore_path String path to ecore-xmi
 	 * @author Adrian Zwenger
 	 */
-	def void parse_ecore(String ecore_path) {
-		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new XMIResourceFactoryImpl());
-		// register "ecore" as valid file extension
-		this.super_package = (new ResourceSetImpl()).getResource(
-			URI.createFileURI(ecore_path),
-			true
-		).getContents().get(0) as EPackage
-
+	def void parse_ecore() {
 		// create the prefix for all class-names contained in the Ecore
-		var classname_prefix = this.super_package.getName() + "/"
-		classname_prefix = (super_package_name === null || super_package_name.isEmpty)
-			? classname_prefix
-			: super_package_name + "/" + classname_prefix
-		this.ecoreclass_name_map = this.get_ecore_classes(this.super_package, classname_prefix)
+//		var classname_prefix = ePackage.getName() + "/"
+		ecoreclass_name_map = get_ecore_classes(ePackage, "")
 
 		// register all classes with the proper prefix
 		// by preserving the prefix a direct comparison of all class names contained in the 
@@ -236,94 +186,6 @@ class EcoreGenmodelParser {
 			e_classes.putAll(get_ecore_classes(sub_epak, package_path + sub_epak.getName() + "/"))
 		}
 		return e_classes
-	}
-
-	/**
-	 * parses the defined classes from the genmodel-xmi and populates following object attributes:<br>
-	 * <ul> 
-	 * 	<li>{@link #super_package_name super_package_name}</li>
-	 * <li>{@link #genclass_name_map genclass_name_map}</li>
-	 * </ul>
-	 * Calls {@link #get_genmodel_classes(GenPackage) get_genmodel_classes()}.<br>
-	 * Make sure, that this method is called before calling
-	 * {@link #parse_ecore(String) parse_ecore()}.
-	 * @param genmodel_path String path to genmodel-xmi
-	 * @author Adrian Zwenger
-	 */
-	def void parse_genmodel(String genmodel_path) {
-		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("genmodel", new XMIResourceFactoryImpl())
-
-		var res_impl = new ResourceSetImpl()
-
-		// add genmodel-file-suffix to registry
-		res_impl.getResourceFactoryRegistry().getExtensionToFactoryMap().put("genmodel", new EcoreResourceFactoryImpl())
-
-		// add the package to the registry
-		res_impl.getPackageRegistry().put(GenModelPackage.eNS_URI, GenModelPackage.eINSTANCE)
-
-		// get a package instance
-		var gen_model = res_impl.getResource(
-			URI.createFileURI(genmodel_path),
-			true
-		).getContents().get(0) as GenModel
-
-		this.super_package_name = gen_model.getGenPackages().get(0).basePackage
-		// register all classes found in the genmodel-xmi
-		this.genclass_name_map = get_genmodel_classes(gen_model.getGenPackages().get(0))
-	}
-
-	/**
-	 * recursively registers all classes found in genmodel-xmi and creates a HashMap where the key
-	 * is a string which represents the classes position in the package hierarchy and the 
-	 * GenClass as a value itself.<br>
-	 * Called by {@link #parse_genmodel(String) parse_genmodel()}.
-	 * @param gp GenPackage top-level/root GenPackage specified by GenModel-XMI
-	 * @return HashMap<String,GenClass>
-	 * @author Adrian Zwenger
-	 */
-	def private HashMap<String, GenClass> get_genmodel_classes(GenPackage gp) {
-		var gn_path_array = URI.createFileURI(genmodel_xmi_fq_path).toString().split("/")
-		var genmodel_folder = String.join("/", Arrays.copyOfRange(gn_path_array, 0, gn_path_array.length - 1)) + "/"
-		var gen_classes = new HashMap<String, GenClass>()
-		if(gp.eContents().isEmpty()) return gen_classes
-		// exit if package is empty
-		for (GenClass gc : gp.getGenClasses()) {
-			var eproxy_uri = (gc.getEcoreClassifier() as EClassifierImpl).eProxyURI()
-			var String fq_classname
-			if (eproxy_uri === null) {
-				// TODO: do something
-			} else if (!eproxy_uri.isFile()) {
-				fq_classname = eproxy_uri.toString().replaceAll(".ecore#//", "/")
-			} else {
-				// if the genmodel file is not in working directory, the whole path is added in front
-				// of package hierarchy. It needs to be stripped away to be able to use it
-				fq_classname = eproxy_uri.toString().replace(genmodel_folder, "").replaceAll(".ecore#//", "/")
-			}
-			fq_classname = (super_package_name === null || super_package_name.isEmpty)
-				? fq_classname
-				: super_package_name + "/" + fq_classname
-			gen_classes.put(fq_classname, gc)
-		// register all genclasses with their full path
-		}
-		if(gp.getSubGenPackages().isEmpty()) return gen_classes
-		// exit if there are no subpackages
-		for (GenPackage gp_sub : gp.getSubGenPackages()) {
-			gen_classes.putAll(get_genmodel_classes(gp_sub))
-		// repeat process for all subpackages
-		}
-		return gen_classes
-	}
-
-	/**########################Getters########################*/
-	/**
-	 * The GenModel-XMI can specify a package in which the contained meta-model is contained.<br>
-	 * This getter returns the fqdn-package name stored in
-	 * {@link #super_package_name super_package_name}
-	 * @return String
-	 * @author Adrian Zwenger
-	 */
-	def String get_super_package_name() {
-		return super_package_name
 	}
 
 	/**
