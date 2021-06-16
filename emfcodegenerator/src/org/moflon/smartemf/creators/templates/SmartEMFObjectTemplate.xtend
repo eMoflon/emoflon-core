@@ -29,7 +29,7 @@ class SmartEMFObjectTemplate implements FileCreator{
 		this.eClass = eClass
 	}
 	
-	def createCode() {
+	def String createCode() {
 		val className = eClass.name
 		val ePackage = eClass.EPackage
 		val packageClassName = ePackage.name.toFirstUpper + "Package"
@@ -96,7 +96,7 @@ class SmartEMFObjectTemplate implements FileCreator{
 		    	 	«IF feature.isMany»
 		    	 	get«feature.name.toFirstUpper»().clear(); 
 		    	 	«ELSE»
-		    	 	set«feature.name.toFirstUpper»(«getDefaultValue(feature)»); 
+		    	 	set«feature.name.toFirstUpper»((«TemplateUtil.getFieldTypeName(feature)»)«getDefaultValue(feature)»); 
 		    	 	«ENDIF»
 		    	 	return;
 		    	 }
@@ -162,9 +162,13 @@ class SmartEMFObjectTemplate implements FileCreator{
 				}
 	    		
 		    	«FOR feature : eClass.EAllContainments»
-		    	«IF feature.isMany»
+		    	«IF feature.isMany && !"EFeatureMapEntry".equals(feature.EType.name) && !feature.EType.name.contains("MapEntry")»
 		    	for(Object obj : get«feature.name.toFirstUpper»()) {
 		    		setResourceCall.accept(((SmartObject) obj));
+	    		}
+	    		«ELSEIF "EFeatureMapEntry".equals(feature.EType.name) || feature.EType.name.contains("MapEntry")»
+	    		for(Object obj : get«feature.name.toFirstUpper»().entrySet()) {
+	    			setResourceCall.accept(((SmartObject) obj));
 	    		}
 	    		«ELSE»
 	    		if(get«feature.name.toFirstUpper»() != null)
@@ -192,9 +196,13 @@ class SmartEMFObjectTemplate implements FileCreator{
 	    		super.setResource(r);
 	    		
 		    	«FOR feature : eClass.EAllContainments»
-		    	«IF feature.isMany»
+		    	«IF feature.isMany && !"EFeatureMapEntry".equals(feature.EType.name) && !feature.EType.name.contains("MapEntry")»
 		    	for(Object obj : get«feature.name.toFirstUpper»()) {
 		    		((SmartObject) obj).setResourceSilently(r);
+	    		}
+	    		«ELSEIF "EFeatureMapEntry".equals(feature.EType.name) || feature.EType.name.contains("MapEntry")»
+	    		for(Object obj : get«feature.name.toFirstUpper»().entrySet()) {
+	    			((SmartObject) obj).setResourceSilently(r);
 	    		}
 	    		«ELSE»
 	    		if(get«feature.name.toFirstUpper»() != null)
@@ -246,8 +254,11 @@ class SmartEMFObjectTemplate implements FileCreator{
 		if(feature.EType.equals(EcorePackage.Literals.EDATE)) {
 			return '''(java.util.Date) EcoreFactory.eINSTANCE.createFromString(EcorePackage.eINSTANCE.getEDate(), "«feature.defaultValueLiteral»")'''
 		}
+		
+		if(feature.EType == EcorePackage.Literals.ESTRING)	
+			return '''"«value»"'''
 			
-		return value
+		return value;
 	}
 	
 	def getOrIs(EStructuralFeature feature) {
@@ -289,12 +300,15 @@ class SmartEMFObjectTemplate implements FileCreator{
 	        «ENDIF»
 	        «TemplateUtil.getValidName(feature.name)» = value;
 			
-	        «IF feature.isMany»
+	        «IF feature.isMany && !"EFeatureMapEntry".equals(feature.EType.name) && !feature.EType.name.contains("MapEntry")»
 			if(value instanceof «TemplateUtil.getListTypeName(feature)»){
 	        	«TemplateUtil.getValidName(feature.name)» = («TemplateUtil.getFieldTypeName(feature)») value;
 			} else {
 			    throw new IllegalArgumentException();
 			}
+	        «ENDIF»
+	        «IF "EFeatureMapEntry".equals(feature.EType.name) || feature.EType.name.contains("MapEntry")»
+	        «TemplateUtil.getValidName(feature.name)» = («TemplateUtil.getFieldTypeName(feature)») value;
 	        «ENDIF»
 
 			«IF feature.containment»

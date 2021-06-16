@@ -45,7 +45,7 @@ class PackageImplTemplate implements FileCreator{
 		import «e_pak.get_package_declaration_name».«e_pak.get_emf_e_package.name.toFirstUpper»Package;
 
 		«FOR dependency : dependentPackages»
-		import «TemplateUtil.getFQName(dependency)».«dependency.name.toFirstUpper»Package;
+		import «TemplateUtil.getFQName(dependency)».«TemplateUtil.getPackageClassName(dependency)»;
 		«ENDFOR»
 
 		import org.eclipse.emf.ecore.EAttribute;
@@ -170,7 +170,7 @@ class PackageImplTemplate implements FileCreator{
 				
 				// Obtain other dependent packages
 				«FOR ePackage : dependentPackages»
-				«ePackage.name.toFirstUpper»Package the«ePackage.name»Package = «ePackage.name.toFirstUpper»Package.eINSTANCE;
+				«TemplateUtil.getPackageClassName(ePackage)» the«ePackage.name»Package = «TemplateUtil.getPackageClassName(ePackage)».eINSTANCE;
 				«ENDFOR»
 		
 				// Create type parameters
@@ -191,7 +191,7 @@ class PackageImplTemplate implements FileCreator{
 					IS_GENERATED_INSTANCE_CLASS);
 				«FOR feature : clazz.EStructuralFeatures»
 				«IF feature instanceof EReference»«val ref = feature as EReference»
-				initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «getPackageName(ref)».get«ref.EType.name»(), «IF ref.EOpposite !== null»«getPackageName(ref)».get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
+				initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «IF ref.EType.EPackage.name.equals("ecore")»ecorePackage.get«ref.EType.name»()«ELSE»«getPackageName(ref)».get«ref.EType.name.toFirstUpper»()«ENDIF», «IF ref.EOpposite !== null»«getPackageName(ref)».get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
 					"«ref.name»", «(ref.defaultValue === null)?"null":ref.defaultValue», «ref.lowerBound», «ref.upperBound», «clazz.name».class, «(ref.isTransient)?"":"!"»IS_TRANSIENT, «(ref.isVolatile)?"":"!"»IS_VOLATILE, «(ref.isChangeable)?"":"!"»IS_CHANGEABLE, «(ref.isContainment)?"":"!"»IS_COMPOSITE, «(ref.isResolveProxies)?"":"!"»IS_RESOLVE_PROXIES,
 					«(ref.isUnsettable)?"":"!"»IS_UNSETTABLE, «(ref.isUnique)?"":"!"»IS_UNIQUE, «(ref.isDerived)?"":"!"»IS_DERIVED, «(ref.isOrdered)?"":"!"»IS_ORDERED);
 				«ELSE»«val atr = feature as EAttribute»

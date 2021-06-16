@@ -5,6 +5,7 @@ import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.ENamedElement
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EStructuralFeature
+import org.moflon.smartemf.creators.FileCreator
 
 class TemplateUtil {
 	static def getListTypeName(EStructuralFeature feature) {
@@ -78,6 +79,12 @@ class TemplateUtil {
 	}
 	
 	static def getFQName(EPackage ePackage) {
+		if(ePackage.EClassifiers.get(0).instanceClassName !== null) {
+			val someClazzFQN = getFQName(ePackage.EClassifiers.get(0))
+			val dotIdx = someClazzFQN.lastIndexOf(".")
+			return someClazzFQN.substring(0,dotIdx)
+		}
+		
 		var currentPackage = ePackage
 		var FQPackagePath = currentPackage.name
 		while(currentPackage.eContainer !== null) {
@@ -88,10 +95,8 @@ class TemplateUtil {
 		return FQPackagePath
 	}
 	
-	static def getFQName(EClassifier eClass) {
+	static def String getFQName(EClassifier eClass) {
 		if(eClass.instanceClassName !== null) {
-//			val pkgIdx = ePackage.eClass.instanceClassName.lastIndexOf("EPackage")
-//			return ePackage.eClass.instanceClassName.substring(0, pkgIdx-1)
 			return eClass.instanceClassName
 		} else {
 			return getFQName(eClass.EPackage) + "." + eClass.name
@@ -100,6 +105,11 @@ class TemplateUtil {
 	}
 	
 	static def getPackageClassName(EPackage pkg) {
+		if(!"EPackageImpl".equals(pkg.class.simpleName)) {
+			val className = pkg.class.simpleName
+			val implIdx = className.lastIndexOf("Impl")
+			return className.substring(0, implIdx)
+		}
 		return pkg.name.toFirstUpper + "Package"
 	}
 	
@@ -112,8 +122,7 @@ class TemplateUtil {
 	}
 	
 	static def getValidName(String name) {
-		val keywords = newLinkedList("import", "package", "class", "interface", "public", "private", "protected", "int", "double", "char", "boolean")
-		if(keywords.contains(name)) {
+		if(FileCreator.blacklist.contains(name)) {
 			return "__" + name
 		}
 		else

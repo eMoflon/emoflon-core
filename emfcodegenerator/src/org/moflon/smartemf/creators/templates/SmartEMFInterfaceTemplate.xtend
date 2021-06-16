@@ -26,7 +26,7 @@ class SmartEMFInterfaceTemplate implements FileCreator{
 		this.eClass = eClass
 	}
 	
-	def createCode() {
+	def String createCode() {
 		val className = eClass.name
 		val ePackage = eClass.EPackage
 		val packageClassName = ePackage.name.toFirstUpper + "Package"
