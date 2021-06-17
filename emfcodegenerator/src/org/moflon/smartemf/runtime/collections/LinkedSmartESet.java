@@ -12,9 +12,9 @@ public class LinkedSmartESet<T> extends SmartEList<T> {
 
 	// implements a duplicate-free list
 	@Override
-	protected boolean addWithoutNotification(T e) {
+	public boolean addWithoutNotification(T e, boolean addToEOpposite) {
 		if(!elements.contains(e))
-			return super.addWithoutNotification(e);
+			return super.addWithoutNotification(e, addToEOpposite);
 		return false;
 	}
 	

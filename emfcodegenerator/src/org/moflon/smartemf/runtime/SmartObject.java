@@ -291,8 +291,11 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, Class<?> baseClass,
 			NotificationChain notifications) {
 		throw new UnsupportedOperationException("Unsupported by SmartEMF");
-
 	}
+	
+	public abstract void eInverseAdd(Object otherEnd, EStructuralFeature feature);
+	
+	public abstract void eInverseRemove(Object otherEnd, EStructuralFeature feature);
 
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, Class<?> baseClass,

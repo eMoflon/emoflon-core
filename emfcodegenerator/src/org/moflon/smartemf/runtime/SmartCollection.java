@@ -1,8 +1,9 @@
-package org.moflon.smartemf.runtime.collections;
+package org.moflon.smartemf.runtime;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.function.Function;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -11,7 +12,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.InternalEList;
-import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
 public abstract class SmartCollection<T, L extends Collection<T>> implements EList<T>, InternalEList<T>{
@@ -27,7 +27,6 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	}
 	
 	protected abstract void initializeCollection(EObject eContainer, EReference feature);
-
 
 	@Override
 	public int size() {
@@ -64,17 +63,24 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		return elements.toArray(a);
 	}
 	
-	protected boolean addWithoutNotification(T e) {
+	public boolean addWithoutNotification(T e, boolean addToEOpposite) {
+		boolean success = elements.add(e);
+		if(!success)
+			return false;
+		
 		if(feature.isContainment()) {
 			((SmartObject) e).setContainment(eContainer, feature);
 			((SmartObject) e).setResource(eContainer.eResource());
 		}
-		return elements.add(e);
+		if(addToEOpposite) {
+			((SmartObject) e).eInverseAdd(eContainer, feature.getEOpposite());
+		}
+		return true;
 	}
 
 	@Override
 	public boolean add(T e) {
-		boolean success = addWithoutNotification(e);
+		boolean success = addWithoutNotification(e, true);
 		if(success) {
 			sendNotification(SmartEMFNotification.createAddNotification(eContainer, feature, e, 0));
 		}
@@ -86,24 +92,31 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		boolean success = false;
 		Collection<T> newList = new LinkedList<>();
 		for(T t : c) {
-			success = success || addWithoutNotification(t);
+			success = success || addWithoutNotification(t, true);
 			newList.add(t);
 		}
 		sendNotification(SmartEMFNotification.createAddManyNotification(eContainer, feature, newList, 0));
 		return success;
 	}
 
-	protected boolean removeWithoutNotification(Object o) {
+	public boolean removeWithoutNotification(Object o, boolean removeFromEOpposite) {
+		boolean success = elements.remove(o);
+		if(!success)
+			return false;
+		
 		if(feature.isContainment()) {
 			((SmartObject) o).resetContainment();
 		}
-		return elements.remove(o);
+		if(removeFromEOpposite) {
+			((SmartObject) o).eInverseRemove(eContainer, feature.getEOpposite());
+		}
+		return true;
 	}
 
 
 	@Override
 	public boolean remove(Object o) {
-		boolean success = removeWithoutNotification(o);
+		boolean success = removeWithoutNotification(o, true);
 		sendNotification(SmartEMFNotification.createRemoveNotification(eContainer, feature, o, -1));
 		return success;
 	}
@@ -113,7 +126,7 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	public boolean removeAll(Collection<?> c) {
 		Collection<Object> newList = new LinkedList<>();
 		for(Object t : c) {
-			if(removeWithoutNotification(t)) {
+			if(removeWithoutNotification(t, true)) {
 				newList.add(t);
 			}
 		}

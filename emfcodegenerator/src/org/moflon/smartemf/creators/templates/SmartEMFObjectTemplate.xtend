@@ -66,16 +66,38 @@ class SmartEMFObjectTemplate implements FileCreator{
 			}
 			
 		    «FOR feature : eClass.EAllStructuralFeatures»
+		    
 		    @Override
 		    public «TemplateUtil.getFieldTypeName(feature)» «getOrIs(feature)»«feature.name.toFirstUpper»() {
 		    	return «TemplateUtil.getValidName(feature.name)»;
 		    }
-		    
 		    «IF !feature.isUnsettable»
+		    
 		    @Override
 		    public void set«feature.name.toFirstUpper»(«TemplateUtil.getFieldTypeName(feature)» value) {
-		    	«getSetterMethod(eClass, feature, FQPackagePath, packageClassName)»
+		    	«getSetterMethod(eClass, feature, FQPackagePath, packageClassName, false)»
 		    }
+		    «ENDIF»
+		    «IF feature instanceof EReference»
+		    «IF feature.EOpposite !== null»
+		    «IF feature.many»
+		    private void add«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
+		    	if(«TemplateUtil.getValidName(feature.name)».addWithoutNotification(value, false)) {
+					sendNotification(SmartEMFNotification.createAddNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
+	    		} 
+	    	}
+	    	
+	    	private void remove«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
+		    	if(«TemplateUtil.getValidName(feature.name)».removeWithoutNotification(value, false)) {
+					sendNotification(SmartEMFNotification.createRemoveNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
+	    		} 
+	    	}
+		    «ELSE»
+		    private void set«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
+			    «getSetterMethod(eClass, feature, FQPackagePath, packageClassName, true)»
+	    	}
+		    «ENDIF»
+		    «ENDIF»
 		    «ENDIF»
 		    «ENDFOR»
 		
@@ -128,6 +150,40 @@ class SmartEMFObjectTemplate implements FileCreator{
 «««		        }
 «««		        return null;
 		    }
+		    
+		    @Override
+		    public void eInverseAdd(Object otherEnd, EStructuralFeature feature) {
+		    	«FOR ref : eClass.EAllReferences»
+		    	«IF ref.EOpposite != null»
+		    	if («TemplateUtil.getPackageClassName(ref)».Literals.«TemplateUtil.getLiteral(ref)».equals(feature)) {
+		    		«IF ref.isMany»
+		    		add«ref.name.toFirstUpper»AsInverse((«TemplateUtil.getFQName(ref.EType)») otherEnd);
+		    		«ELSE»
+		    	 	set«ref.name.toFirstUpper»AsInverse((«TemplateUtil.getFQName(ref.EType)») otherEnd); 
+		    	 	«ENDIF»
+		    	 	return;
+		        }
+		    	
+		    	«ENDIF»
+		    	«ENDFOR»
+	    	}
+		    	
+		    @Override
+	    	public void eInverseRemove(Object otherEnd, EStructuralFeature feature) {
+	    		«FOR ref : eClass.EAllReferences»
+		    	«IF ref.EOpposite != null»
+		    	if («TemplateUtil.getPackageClassName(ref)».Literals.«TemplateUtil.getLiteral(ref)».equals(feature)) {
+		    		«IF ref.isMany»
+		    		remove«ref.name.toFirstUpper»AsInverse((«TemplateUtil.getFQName(ref.EType)») otherEnd);
+		    		«ELSE»
+		    	 	set«ref.name.toFirstUpper»AsInverse(null); 
+		    	 	«ENDIF»
+		    	 	return;
+		        }
+		    	
+		    	«ENDIF»
+		    	«ENDFOR»
+	    	}
 		    
 		    @Override
 		    /**
@@ -282,7 +338,7 @@ class SmartEMFObjectTemplate implements FileCreator{
 		return types
 	}
 	
-	def getSetterMethod(EClass eClass, EStructuralFeature feature, String FQPackagePath, String packageClassName) {
+	def getSetterMethod(EClass eClass, EStructuralFeature feature, String FQPackagePath, String packageClassName, boolean inverse) {
 		if(feature instanceof EAttribute) {
 			return '''
 	        Object oldValue = «TemplateUtil.getValidName(feature.name)»;
@@ -294,13 +350,14 @@ class SmartEMFObjectTemplate implements FileCreator{
 			return '''
 			Object oldValue = «TemplateUtil.getValidName(feature.name)»;
 	        «IF feature.containment»
+	        
 			if(«TemplateUtil.getValidName(feature.name)» != null) {
 				((MinimalSObjectContainer) «TemplateUtil.getValidName(feature.name)»).resetContainment();
 			}
 	        «ENDIF»
 	        «TemplateUtil.getValidName(feature.name)» = value;
-			
 	        «IF feature.isMany && !"EFeatureMapEntry".equals(feature.EType.name) && !feature.EType.name.contains("MapEntry")»
+	        
 			if(value instanceof «TemplateUtil.getListTypeName(feature)»){
 	        	«TemplateUtil.getValidName(feature.name)» = («TemplateUtil.getFieldTypeName(feature)») value;
 			} else {
@@ -312,11 +369,21 @@ class SmartEMFObjectTemplate implements FileCreator{
 	        «ENDIF»
 
 			«IF feature.containment»
+			
 			if(value != null)
 				((MinimalSObjectContainer) «TemplateUtil.getValidName(feature.name)»).setContainment(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)»);
 			«ENDIF»
 
-        	sendNotification(SmartEMFNotification.createSetNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», oldValue, value, -1));'''
+        	sendNotification(SmartEMFNotification.createSetNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», oldValue, value, -1));
+        	«IF inverse && feature.EOpposite !== null»
+
+        	if(oldValue != null) {
+        		((SmartObject) oldValue).eInverseRemove(oldValue, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);
+        	}
+«««        	if(value != null) {
+«««        		((SmartObject) value).eInverseAdd(value, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);
+«««        	}
+        	«ENDIF»'''
 		}
 	}
 	
