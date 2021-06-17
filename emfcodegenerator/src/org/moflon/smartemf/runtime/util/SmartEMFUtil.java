@@ -10,9 +10,19 @@ import org.moflon.smartemf.runtime.SmartObject;
 
 public class SmartEMFUtil {
 
+	public static void deleteNode(EObject node, boolean recursive) {
+		Queue<EObject> queue = new LinkedBlockingDeque<>();
+		queue.add(node);
+		deleteNodes(queue, recursive);
+	}
+	
 	public static void deleteNodes(Collection<EObject> objs, boolean recursive) {
 		Queue<EObject> queue = new LinkedBlockingDeque<>();
 		queue.addAll(objs);
+		deleteNodes(queue, recursive);
+	}
+
+	private static void deleteNodes(Queue<EObject> queue, boolean recursive) {
 		while(!queue.isEmpty()) {
 			EObject obj = queue.poll();
 			((SmartObject) obj).resetContainment();

@@ -17,6 +17,7 @@ import org.moflon.smartemf.creators.templates.FactoryImplTemplate;
 import java.util.Collections;
 import java.util.Set;
 import org.moflon.smartemf.creators.templates.util.PackageInformation;
+import org.moflon.smartemf.creators.templates.util.TemplateUtil;
 
 /**
  * Class which generates the code
@@ -231,6 +232,8 @@ public class SmartEMFGenerator{
 	 * @author Adrian Zwenger
 	 */
 	public void generate_all_model_code(){
+		TemplateUtil.uriStringToGenModelMap.clear();
+		
 //		val generators = new LinkedList
 //		generators.add([generate_interfaces])
 //		generators.add([generate_implementation])

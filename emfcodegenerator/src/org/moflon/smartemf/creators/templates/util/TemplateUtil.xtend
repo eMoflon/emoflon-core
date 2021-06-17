@@ -1,13 +1,22 @@
 package org.moflon.smartemf.creators.templates.util
 
+import java.util.HashMap
 import java.util.LinkedList
+import java.util.Map
+import org.eclipse.emf.codegen.ecore.genmodel.GenModel
+import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.ENamedElement
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.moflon.smartemf.creators.FileCreator
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import java.util.Collections
 
 class TemplateUtil {
+	
+	public static Map<String, GenModel> uriStringToGenModelMap = Collections.synchronizedMap(new HashMap())
+	
 	static def getListTypeName(EStructuralFeature feature) {
 		val isOrdered = feature.ordered
 		val isUnique = feature.unique
@@ -78,6 +87,69 @@ class TemplateUtil {
 		}
 	}
 	
+	static def getPrefix(EPackage ePackage) {
+		val genModel = getGenModel(ePackage)
+		if(genModel === null)
+			return ""
+		
+		for(gp : genModel.allGenPackagesWithClassifiers) {
+			return gp.basePackage + "."
+		}
+	}
+	
+	static def getGenModel(EPackage ePackage) {
+		val pkgURI = ePackage.nsURI
+		val genModelURI = pkgURI.replace(".ecore", ".genmodel")
+		val resourceURI = genModelURI.replace("platform:/", "platform:/resource/")
+		val pluginURI = resourceURI.replace("/resource/", "/plugin/")
+		
+		if(uriStringToGenModelMap.containsKey(resourceURI)) {
+			return uriStringToGenModelMap.get(resourceURI)
+		}
+		
+		if(uriStringToGenModelMap.containsKey(pluginURI)) {
+			return uriStringToGenModelMap.get(pluginURI)
+		}
+		
+		val rs = new ResourceSetImpl
+		val r = rs.createResource(URI.createURI(resourceURI))
+		try {
+			r.load(null)
+			if(r.contents.isEmpty)
+				return null
+				
+			val content = r.contents.get(0)
+			if(content instanceof GenModel) {
+				uriStringToGenModelMap.put(resourceURI, content)
+				return content
+			}
+		}
+		catch(Exception e) {
+			
+		}
+		
+		val pluginResource = rs.createResource(URI.createURI(pluginURI))
+		try {
+			pluginResource.load(null)
+			if(pluginResource.contents.isEmpty)
+				return null
+				
+			val content = pluginResource.contents.get(0)
+			if(content instanceof GenModel) {
+				uriStringToGenModelMap.put(pluginURI, content)
+				return content
+			}
+		}
+		catch(Exception e) {
+			
+		}
+		
+		uriStringToGenModelMap.put(resourceURI, null)
+		uriStringToGenModelMap.put(pluginURI, null)
+		
+		return null
+	}
+	
 	static def getFQName(EPackage ePackage) {
 		if(ePackage.EClassifiers.get(0).instanceClassName !== null) {
 			val someClazzFQN = getFQName(ePackage.EClassifiers.get(0))
@@ -92,7 +164,7 @@ class TemplateUtil {
 			FQPackagePath = currentPackage.name + "." + FQPackagePath
 		}
 		
-		return FQPackagePath
+		return getPrefix(ePackage) + FQPackagePath
 	}
 	
 	static def String getFQName(EClassifier eClass) {
