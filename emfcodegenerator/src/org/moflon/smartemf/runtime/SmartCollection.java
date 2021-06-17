@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -132,6 +133,17 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		}
 		sendNotification(SmartEMFNotification.createRemoveManyNotification(eContainer, feature, newList, -1));
 		return !newList.isEmpty();
+	}
+	
+	@Override
+	public boolean removeIf(Predicate<? super T> filter) {
+		Collection<T> removed = new LinkedList<>();
+		for(T e : elements) {
+			if(filter.test(e)) {
+				removed.add(e);
+			}
+		}
+		return removeAll(removed);
 	}
 
 	@Override
