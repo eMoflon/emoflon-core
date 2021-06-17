@@ -30,6 +30,19 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	protected abstract void initializeCollection(EObject eContainer, EReference feature);
 
 	@Override
+	public T get(int index) {
+		Iterator<T> it = elements.iterator();
+		int counter = 0;
+		while(it.hasNext()) {
+			T elt = it.next();
+			if(counter == index) {
+				return elt;
+			}
+		}
+		throw new RuntimeException("No element found");
+	}
+	
+	@Override
 	public int size() {
 		return elements.size();
 	}
@@ -89,6 +102,11 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	}
 	
 	@Override
+	public void add(int index, T element) {
+		add(element);
+	}
+	
+	@Override
 	public boolean addAll(Collection<? extends T> c) {
 		boolean success = false;
 		Collection<T> newList = new LinkedList<>();
@@ -122,6 +140,22 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		return success;
 	}
 
+	@Override
+	public T remove(int index) {
+		if(index >= elements.size())
+			throw new IndexOutOfBoundsException(index);
+		Iterator<T> it = elements.iterator();
+		int counter = 0;
+		while(it.hasNext()) {
+			T elt = it.next();
+			if(counter == index) {
+				if(remove(elt))
+					return elt;
+				return null;
+			}
+		}
+		throw new RuntimeException();
+	}
 
 	@Override
 	public boolean removeAll(Collection<?> c) {

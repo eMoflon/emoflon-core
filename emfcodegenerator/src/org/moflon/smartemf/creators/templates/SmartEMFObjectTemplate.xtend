@@ -75,7 +75,7 @@ class SmartEMFObjectTemplate implements FileCreator{
 		    
 		    @Override
 		    public void set«feature.name.toFirstUpper»(«TemplateUtil.getFieldTypeName(feature)» value) {
-		    	«getSetterMethod(eClass, feature, FQPackagePath, packageClassName, false)»
+		    	«getSetterMethod(eClass, feature, FQPackagePath, packageClassName, true)»
 		    }
 		    «ENDIF»
 		    «IF feature instanceof EReference»
@@ -94,7 +94,7 @@ class SmartEMFObjectTemplate implements FileCreator{
 	    	}
 		    «ELSE»
 		    private void set«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
-			    «getSetterMethod(eClass, feature, FQPackagePath, packageClassName, true)»
+			    «getSetterMethod(eClass, feature, FQPackagePath, packageClassName, false)»
 	    	}
 		    «ENDIF»
 		    «ENDIF»

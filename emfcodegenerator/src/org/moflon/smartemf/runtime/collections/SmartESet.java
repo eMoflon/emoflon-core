@@ -34,22 +34,7 @@ public class SmartESet<T> extends SmartCollection<T, HashSet<T>> {
 	}
 
 	@Override
-	public T get(int index) {
-		throw new UnsupportedOperationException("Not supported for Sets");
-	}
-
-	@Override
 	public T set(int index, T element) {
-		throw new UnsupportedOperationException("Not supported for Sets");
-	}
-
-	@Override
-	public void add(int index, T element) {
-		throw new UnsupportedOperationException("Not supported for Sets");
-	}
-
-	@Override
-	public T remove(int index) {
 		throw new UnsupportedOperationException("Not supported for Sets");
 	}
 
