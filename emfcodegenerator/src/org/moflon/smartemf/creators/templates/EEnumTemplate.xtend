@@ -2,11 +2,11 @@ package org.moflon.smartemf.creators.templates
 
 import java.io.File
 import java.io.FileWriter
-import java.util.ArrayList
 import org.eclipse.emf.ecore.EEnum
 import org.moflon.smartemf.creators.FileCreator
-import org.moflon.smartemf.creators.templates.util.TemplateUtil
+import org.moflon.smartemf.creators.templates.util.CodeFormattingUtil
 import org.moflon.smartemf.creators.templates.util.PackageInformation
+import org.moflon.smartemf.creators.templates.util.TemplateUtil
 
 /**
  * This Creator can be used to generate the source-code of an
@@ -154,7 +154,7 @@ class EEnumTemplate implements FileCreator {
 		var file = new File(this.file_path)
 		file.getParentFile().mkdirs()
 		var fw = new FileWriter(file , false)
-		fw.write(createSrcCode())
+		fw.write(CodeFormattingUtil.format(createSrcCode))
 		fw.close()
 	}	
 }

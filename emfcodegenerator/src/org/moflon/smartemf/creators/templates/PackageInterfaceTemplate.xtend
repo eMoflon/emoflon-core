@@ -8,8 +8,9 @@ import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
 import org.moflon.smartemf.EcoreGenmodelParser
 import org.moflon.smartemf.creators.FileCreator
-import org.moflon.smartemf.creators.templates.util.TemplateUtil
+import org.moflon.smartemf.creators.templates.util.CodeFormattingUtil
 import org.moflon.smartemf.creators.templates.util.PackageInformation
+import org.moflon.smartemf.creators.templates.util.TemplateUtil
 
 /**
  * This class generates the interface for the EMF-package class
@@ -147,7 +148,7 @@ class PackageInterfaceTemplate implements FileCreator{
 		var package_file = new File(file_path)
 		package_file.getParentFile().mkdirs()
 		var package_fw = new FileWriter(package_file , false)
-		package_fw.write(createSrcCode())
+		package_fw.write(CodeFormattingUtil.format(createSrcCode))
 		package_fw.close()
 	}
 
