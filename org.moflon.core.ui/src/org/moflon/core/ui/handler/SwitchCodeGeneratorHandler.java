@@ -1,6 +1,5 @@
 package org.moflon.core.ui.handler;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,13 +11,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -29,54 +22,52 @@ import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
 import org.moflon.core.propertycontainer.UsedCodeGen;
 import org.moflon.core.ui.AbstractCommandHandler;
 
-public class SwitchCodeGeneratorHandler extends AbstractCommandHandler{
+public class SwitchCodeGeneratorHandler extends AbstractCommandHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		String currentState = event.getParameter("org.moflon.core.ui.codegenerator");
+		if (currentState == null)
+			logger.error("No code generator specified!");
+
+		UsedCodeGen choosedCodeGen = UsedCodeGen.get(currentState);
+		if (choosedCodeGen == null)
+			logger.error(currentState + " is not a valid code generator!");
+
 		Collection<Object> selections = extractFromSelection(event);
-		UsedCodeGen usedCodeGen = null;
-		for(Object o : selections) {
-			if(o instanceof IJavaProject) {
+		for (Object o : selections) {
+			if (o instanceof IJavaProject) {
 				IJavaProject project = (IJavaProject) o;
-				usedCodeGen = alterProperties(project.getProject(), usedCodeGen);
+				setProperties(project.getProject(), choosedCodeGen);
 			}
-			
-			if(o instanceof IFile) {
+
+			if (o instanceof IFile) {
 				IFile f = (IFile) o;
-				usedCodeGen = alterProperties(f.getProject(), usedCodeGen);
+				setProperties(f.getProject(), choosedCodeGen);
 			}
 		}
-		
-		// after changing codegen -> build 
+
+		// after changing codegen -> build
 		return new BuildHandler().execute(event);
 	}
 
-	
-	private UsedCodeGen alterProperties(IProject project, UsedCodeGen codeGen) {
-		UsedCodeGen usedCodeGen = codeGen;
+	private void setProperties(IProject project, UsedCodeGen codeGen) {
 		MoflonPropertiesContainerHelper helper = new MoflonPropertiesContainerHelper(project, new NullProgressMonitor());
 		MoflonPropertiesContainer container = helper.load();
-		
-		if(codeGen == null) {
-			UsedCodeGen currentCodeGen = container.getUsedCodeGen();
-			usedCodeGen = UsedCodeGen.get((currentCodeGen.getValue() + 1) % UsedCodeGen.VALUES.size());
-		}
-		
-		container.setUsedCodeGen(usedCodeGen);
+		container.setUsedCodeGen(codeGen);
 		helper.save();
-		
-		return usedCodeGen;
 	}
-	
+
 	/**
 	 * Retrieves the list of {@link IResource}s that are selected
 	 * 
-	 * Currently, supported selection types are {@link IStructuredSelection} and {@link TextSelection}.
+	 * Currently, supported selection types are {@link IStructuredSelection} and
+	 * {@link TextSelection}.
 	 * 
-	 * @param event
-	 *            the event
+	 * @param event the event
 	 * @return the list of resources
-	 * @throws ExecutionException if extracting the selection from the given event fails 
+	 * @throws ExecutionException if extracting the selection from the given event
+	 *                            fails
 	 */
 	private Collection<Object> extractFromSelection(final ExecutionEvent event) throws ExecutionException {
 		final ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
@@ -89,7 +80,7 @@ public class SwitchCodeGeneratorHandler extends AbstractCommandHandler{
 					final IResource resource = (IResource) element;
 					objects.add(resource);
 				}
-				if(element instanceof IJavaProject) {
+				if (element instanceof IJavaProject) {
 					objects.add(element);
 				}
 			}
