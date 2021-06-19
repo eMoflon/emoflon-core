@@ -45,6 +45,7 @@ class SmartEMFObjectTemplate implements FileCreator{
 		import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 		import org.moflon.smartemf.runtime.*;
 		import org.moflon.smartemf.runtime.collections.*;
+		import org.moflon.smartemf.persistence.SmartEMFResource;
 		
 		import java.util.function.Consumer;
 		
@@ -213,7 +214,8 @@ class SmartEMFObjectTemplate implements FileCreator{
 						sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
 						
 					// if cascading is activated, we recursively generate add messages; else just this once
-					if(!smartResource().getCascade())
+					SmartEMFResource smartResource = smartResource();
+					if(smartResource == null ||  smartResource.getCascade())
 	    				setResourceCall = (o) -> o.setResourceSilently(r);
 				}
 	    		
@@ -378,7 +380,7 @@ class SmartEMFObjectTemplate implements FileCreator{
         	«IF inverse && feature.EOpposite !== null»
 
         	if(oldValue != null) {
-        		((SmartObject) oldValue).eInverseRemove(oldValue, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);
+        		((SmartObject) oldValue).eInverseRemove(this, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);
         	}
 «««        	if(value != null) {
 «««        		((SmartObject) value).eInverseAdd(value, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);

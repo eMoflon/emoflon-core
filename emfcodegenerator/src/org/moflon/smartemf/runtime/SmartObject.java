@@ -26,10 +26,11 @@ import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
 public abstract class SmartObject implements MinimalSObjectContainer, InternalEObject {
 
-	private SmartEMFResource resource;
+	private Internal resource;
 	private EObject eContainer;
 	private EStructuralFeature eContainingFeature;
 	private EClass staticClass;
+	private URI proxyUri;
 	
 	public SmartObject(EClass staticClass) {
 		this.staticClass = staticClass;
@@ -78,7 +79,9 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	}
 
 	public SmartEMFResource smartResource() {
-		return resource;
+		if(resource instanceof SmartEMFResource)
+			return (SmartEMFResource) resource;
+		return null;
 	}
 	
 	@Override
@@ -230,7 +233,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	}
 	
 	public void setResource(Resource resource) {
-		this.resource = (SmartEMFResource) resource;
+		this.resource = (Internal) resource;
 	}
 	
     public abstract void setResourceSilently(Resource r);
@@ -315,7 +318,8 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 	@Override
 	public NotificationChain eSetResource(Internal resource, NotificationChain notifications) {
-		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+		setResource(resource);
+		return notifications;
 	}
 
 	@Override
@@ -348,11 +352,12 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 	@Override
 	public URI eProxyURI() {
-		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+		return proxyUri;
 	}
 
 	@Override
 	public void eSetProxyURI(URI uri) {
+		this.proxyUri = uri;
 	}
 
 	@Override
