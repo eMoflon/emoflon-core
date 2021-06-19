@@ -259,7 +259,38 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 	@Override
 	public Setting eSetting(EStructuralFeature feature) {
-		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+		return new Setting() {
+			
+			@Override
+			public void unset() {
+				eUnset(feature);
+			}
+			
+			@Override
+			public void set(Object newValue) {
+				eSet(feature, newValue);
+			}
+			
+			@Override
+			public boolean isSet() {
+				return true;
+			}
+			
+			@Override
+			public EStructuralFeature getEStructuralFeature() {
+				return feature;
+			}
+			
+			@Override
+			public EObject getEObject() {
+				return (EObject) this;
+			}
+			
+			@Override
+			public Object get(boolean resolve) {
+				return eGet(feature);
+			}
+		};
 	}
 
 	@Override
