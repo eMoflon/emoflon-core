@@ -3,6 +3,7 @@ package org.moflon.smartemf.runtime;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.moflon.smartemf.runtime.notification.NotifyStatus;
 
 /**
  * Interface which all SmartEMF classes which need to support the containment-feature must implement
@@ -31,8 +32,9 @@ public interface MinimalSObjectContainer {
 	 * sets the eContainer and eContainingFeature back to null. Call this method if the object is
 	 * not in a containment relationship anymore
 	 * @author Adrian Zwenger
+	 * @return 
 	 */
-	void resetContainment();
+	NotifyStatus resetContainment();
 
 	/**
 	 * Sets the containment to the newly given arguements.
@@ -40,7 +42,7 @@ public interface MinimalSObjectContainer {
 	 * @param feature EStructuralFeature
 	 * @author Adrian Zwenger
 	 */
-	void setContainment(EObject container, EStructuralFeature feature);
+	NotifyStatus setContainment(EObject container, EStructuralFeature feature);
 	
 	/**
 	 * returns true if this object is currently in a containment relationship

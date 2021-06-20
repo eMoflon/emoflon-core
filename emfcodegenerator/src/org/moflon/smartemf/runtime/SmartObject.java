@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.resource.Resource.Internal;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.collections.DefaultSmartEList;
+import org.moflon.smartemf.runtime.notification.NotifyStatus;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
 public abstract class SmartObject implements MinimalSObjectContainer, InternalEObject {
@@ -170,10 +171,10 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	/**
 	 * revokes current containment relationship
 	 */
-	public void resetContainment() {
-		setResource(null, true);
+	public NotifyStatus resetContainment() {
+		NotifyStatus status = setResource(null, true);
 		if(eContainingFeature == null)
-			return;
+			return status;
 		
 		EObject oldContainer = eContainer;
 		EStructuralFeature oldFeature = eContainingFeature;
@@ -188,13 +189,15 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 			oldContainer.eUnset(oldFeature);
 		}
 
+		return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
 	}
 
 	@Override
 	/**
 	 * sets new containment and cleans up the old
 	 */
-	public void setContainment(EObject eContainer, EStructuralFeature feature) {
+	public NotifyStatus setContainment(EObject eContainer, EStructuralFeature feature) {
+		NotifyStatus status = NotifyStatus.FAILURE_NO_NOTIFICATION;
 		// clean up old containment
 		// we don't use resetContainment here to optimize the number of generated notifications
 		if(this.eContainer != null) {
@@ -204,11 +207,15 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 			else {
 				this.eContainer.eUnset(eContainingFeature);
 			}
+			status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
 		}
+		else
+			status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
 		
 		this.eContainer = eContainer;
 		this.eContainingFeature = feature;
-		setResource(eContainer.eResource(), true);
+//		setResource(eContainer.eResource(), true);
+		return status;
 	}
 
 	@Override
@@ -232,8 +239,9 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		}
 	}
 	
-	public void setResource(Resource resource, boolean sendNotification) {
+	public NotifyStatus setResource(Resource resource, boolean sendNotification) {
 		this.resource = (Internal) resource;
+		return NotifyStatus.SUCCESS_NO_NOTIFICATION;
 	}
 	
     public abstract void setResourceSilently(Resource r);

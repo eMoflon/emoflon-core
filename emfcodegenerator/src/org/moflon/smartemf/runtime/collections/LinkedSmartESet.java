@@ -3,6 +3,7 @@ package org.moflon.smartemf.runtime.collections;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.moflon.smartemf.runtime.SmartObject;
+import org.moflon.smartemf.runtime.notification.NotifyStatus;
 
 public class LinkedSmartESet<T> extends SmartEList<T> {
 
@@ -12,10 +13,10 @@ public class LinkedSmartESet<T> extends SmartEList<T> {
 
 	// implements a duplicate-free list
 	@Override
-	public boolean addWithoutNotification(T e, boolean addToEOpposite) {
+	public NotifyStatus addInternal(T e, boolean addToEOpposite) {
 		if(!elements.contains(e))
-			return super.addWithoutNotification(e, addToEOpposite);
-		return false;
+			return super.addInternal(e, addToEOpposite);
+		return NotifyStatus.FAILURE_NO_NOTIFICATION;
 	}
 	
 	@Override

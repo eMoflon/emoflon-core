@@ -1,9 +1,8 @@
-package org.moflon.smartemf.runtime;
+package org.moflon.smartemf.runtime.collections;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.eclipse.emf.common.notify.Adapter;
@@ -13,6 +12,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.InternalEList;
+import org.moflon.smartemf.runtime.SmartObject;
+import org.moflon.smartemf.runtime.notification.NotifyStatus;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
 public abstract class SmartCollection<T, L extends Collection<T>> implements EList<T>, InternalEList<T>{
@@ -77,30 +78,35 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		return elements.toArray(a);
 	}
 	
-	public boolean addWithoutNotification(T e, boolean addToEOpposite) {
+	public NotifyStatus addInternal(T e, boolean addToEOpposite) {
 		boolean success = elements.add(e);
 		if(!success)
-			return false;
+			return NotifyStatus.FAILURE_NO_NOTIFICATION;
 		
+		NotifyStatus resultStatus;
 		if(feature.isContainment()) {
 			((SmartObject) e).setContainment(eContainer, feature);
-			((SmartObject) e).setResource(eContainer.eResource(), true);
+			resultStatus = ((SmartObject) e).setResource(eContainer.eResource(), true);
 		}
+		else 
+			resultStatus = NotifyStatus.SUCCESS_NO_NOTIFICATION;
+		
 		if(addToEOpposite) {
 			((SmartObject) e).eInverseAdd(eContainer, feature.getEOpposite());
 		}
-		return true;
+		return resultStatus;
 	}
 
 	@Override
 	public boolean add(T e) {
-		boolean success = addWithoutNotification(e, true);
-		if(success) {
+		NotifyStatus status = addInternal(e, true);
+		if(status == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
 			// if feature is containment then set resource should have sent this notification already
-			if(!feature.isContainment())
+			if(!feature.isContainment()) {
 				sendNotification(SmartEMFNotification.createAddNotification(eContainer, feature, e, 0));
+			}
 		}
-		return success;
+		return true;
 	}
 	
 	@Override
@@ -110,39 +116,44 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
-		boolean success = false;
+		NotifyStatus status = NotifyStatus.FAILURE_NO_NOTIFICATION;
 		Collection<T> newList = new LinkedList<>();
 		for(T t : c) {
-			success = success || addWithoutNotification(t, true);
+			NotifyStatus addStatus = addInternal(t, true);
+			if(addStatus != NotifyStatus.FAILURE_NO_NOTIFICATION)
+				status = addStatus;
 			newList.add(t);
 		}
 
 		// if feature is containment then set resource should have sent this notification already
 		if(!feature.isContainment())
 			sendNotification(SmartEMFNotification.createAddManyNotification(eContainer, feature, newList, 0));
-		return success;
+		
+		return status != NotifyStatus.FAILURE_NO_NOTIFICATION;
 	}
 
-	public boolean removeWithoutNotification(Object o, boolean removeFromEOpposite) {
+	public NotifyStatus removeInternal(Object o, boolean removeFromEOpposite) {
 		boolean success = elements.remove(o);
 		if(!success)
-			return false;
+			return NotifyStatus.FAILURE_NO_NOTIFICATION;
 		
+		NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
 		if(feature.isContainment()) {
-			((SmartObject) o).resetContainment();
+			status = ((SmartObject) o).resetContainment();
 		}
 		if(removeFromEOpposite) {
 			((SmartObject) o).eInverseRemove(eContainer, feature.getEOpposite());
 		}
-		return true;
+		return status;
 	}
 
 
 	@Override
 	public boolean remove(Object o) {
-		boolean success = removeWithoutNotification(o, true);
-		sendNotification(SmartEMFNotification.createRemoveNotification(eContainer, feature, o, -1));
-		return success;
+		NotifyStatus status = removeInternal(o, true);
+		if(status == NotifyStatus.SUCCESS_NO_NOTIFICATION)
+			sendNotification(SmartEMFNotification.createRemoveNotification(eContainer, feature, o, -1));
+		return status != NotifyStatus.FAILURE_NO_NOTIFICATION;
 	}
 
 	@Override
@@ -165,12 +176,16 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		Collection<Object> newList = new LinkedList<>();
+		NotifyStatus status = NotifyStatus.FAILURE_NO_NOTIFICATION;
 		for(Object t : c) {
-			if(removeWithoutNotification(t, true)) {
+			NotifyStatus removeStatus = removeInternal(t, true);
+			if(removeStatus != NotifyStatus.FAILURE_NO_NOTIFICATION) {
 				newList.add(t);
+				status = removeStatus;
 			}
 		}
-		sendNotification(SmartEMFNotification.createRemoveManyNotification(eContainer, feature, newList, -1));
+		if(status == NotifyStatus.SUCCESS_NO_NOTIFICATION)
+			sendNotification(SmartEMFNotification.createRemoveManyNotification(eContainer, feature, newList, -1));
 		return !newList.isEmpty();
 	}
 	

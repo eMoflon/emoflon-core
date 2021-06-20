@@ -42,10 +42,11 @@ class SmartEMFObjectTemplate implements FileCreator{
 		import «TemplateUtil.getFQName(packages)».«packages.name.toFirstUpper»Package;
 		«ENDFOR»
 		
-		import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 		import org.moflon.smartemf.runtime.*;
 		import org.moflon.smartemf.runtime.collections.*;
 		import org.moflon.smartemf.persistence.SmartEMFResource;
+		import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
+		import org.moflon.smartemf.runtime.notification.NotifyStatus;
 		
 		import java.util.function.Consumer;
 		
@@ -83,13 +84,13 @@ class SmartEMFObjectTemplate implements FileCreator{
 		    «IF feature.EOpposite !== null»
 		    «IF feature.many»
 		    private void add«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
-		    	if(«TemplateUtil.getValidName(feature.name)».addWithoutNotification(value, false)) {
+		    	if(«TemplateUtil.getValidName(feature.name)».addInternal(value, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
 					sendNotification(SmartEMFNotification.createAddNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
 	    		} 
 	    	}
 	    	
 	    	private void remove«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
-		    	if(«TemplateUtil.getValidName(feature.name)».removeWithoutNotification(value, false)) {
+		    	if(«TemplateUtil.getValidName(feature.name)».removeInternal(value, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
 					sendNotification(SmartEMFNotification.createRemoveNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
 	    		} 
 	    	}
@@ -190,13 +191,13 @@ class SmartEMFObjectTemplate implements FileCreator{
 		    /**
 		    * This method sets the resource and generates REMOVING_ADAPTER and ADD notifications
 		    */
-		    public void setResource(Resource r, boolean sendNotification) {
+		    public NotifyStatus setResource(Resource r, boolean sendNotification) {
 		    	// stop if we encounter the same resource already
 	    		if(eResource() == null && r == null) 
-			    	return;
+			    	return NotifyStatus.SUCCESS_NO_NOTIFICATION;
 			    
 			    if(eResource() != null && eResource().equals(r))
-			    	return;
+			    	return NotifyStatus.SUCCESS_NO_NOTIFICATION;
 	    			
 				// send remove messages to old adapters
 				// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
@@ -206,6 +207,7 @@ class SmartEMFObjectTemplate implements FileCreator{
 	    		
 	    		Consumer<SmartObject> setResourceCall = (o) -> o.setResource(r, true);
 	    		
+				NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
 	    		if(r != null) {
 	    			if(sendNotification) {
 		    			// if container is null, then this element is a root element within a resource and notifications are handled there
@@ -216,6 +218,8 @@ class SmartEMFObjectTemplate implements FileCreator{
 								sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
 							else
 								sendNotification(SmartEMFNotification.createSetNotification(eContainer(), eContainingFeature(), null, this, -1));
+		
+						status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
 					}
 					
 					// if cascading is activated, we recursively generate add messages; else just this once
@@ -238,6 +242,8 @@ class SmartEMFObjectTemplate implements FileCreator{
 	    			setResourceCall.accept((SmartObject) get«feature.name.toFirstUpper»());
 	    		«ENDIF»
 		    	«ENDFOR»
+		    	
+				return status;
 	    	}
 	    	
 	    	@Override
