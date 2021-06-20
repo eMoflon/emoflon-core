@@ -101,10 +101,7 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	public boolean add(T e) {
 		NotifyStatus status = addInternal(e, true);
 		if(status == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
-			// if feature is containment then set resource should have sent this notification already
-			if(!feature.isContainment()) {
-				sendNotification(SmartEMFNotification.createAddNotification(eContainer, feature, e, 0));
-			}
+			sendNotification(SmartEMFNotification.createAddNotification(eContainer, feature, e, 0));
 		}
 		return true;
 	}
