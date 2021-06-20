@@ -84,7 +84,7 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		
 		if(feature.isContainment()) {
 			((SmartObject) e).setContainment(eContainer, feature);
-			((SmartObject) e).setResource(eContainer.eResource());
+			((SmartObject) e).setResource(eContainer.eResource(), true);
 		}
 		if(addToEOpposite) {
 			((SmartObject) e).eInverseAdd(eContainer, feature.getEOpposite());
@@ -96,7 +96,9 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	public boolean add(T e) {
 		boolean success = addWithoutNotification(e, true);
 		if(success) {
-			sendNotification(SmartEMFNotification.createAddNotification(eContainer, feature, e, 0));
+			// if feature is containment then set resource should have sent this notification already
+			if(!feature.isContainment())
+				sendNotification(SmartEMFNotification.createAddNotification(eContainer, feature, e, 0));
 		}
 		return success;
 	}
@@ -114,7 +116,10 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 			success = success || addWithoutNotification(t, true);
 			newList.add(t);
 		}
-		sendNotification(SmartEMFNotification.createAddManyNotification(eContainer, feature, newList, 0));
+
+		// if feature is containment then set resource should have sent this notification already
+		if(!feature.isContainment())
+			sendNotification(SmartEMFNotification.createAddManyNotification(eContainer, feature, newList, 0));
 		return success;
 	}
 

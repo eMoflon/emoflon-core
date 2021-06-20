@@ -171,7 +171,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	 * revokes current containment relationship
 	 */
 	public void resetContainment() {
-		setResource(null);
+		setResource(null, true);
 		if(eContainingFeature == null)
 			return;
 		
@@ -208,7 +208,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		
 		this.eContainer = eContainer;
 		this.eContainingFeature = feature;
-		setResource(eContainer.eResource());
+		setResource(eContainer.eResource(), true);
 	}
 
 	@Override
@@ -232,7 +232,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		}
 	}
 	
-	public void setResource(Resource resource) {
+	public void setResource(Resource resource, boolean sendNotification) {
 		this.resource = (Internal) resource;
 	}
 	
@@ -318,7 +318,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 	@Override
 	public NotificationChain eSetResource(Internal resource, NotificationChain notifications) {
-		setResource(resource);
+		setResource(resource, true);
 		return notifications;
 	}
 

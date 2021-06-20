@@ -190,7 +190,7 @@ class SmartEMFObjectTemplate implements FileCreator{
 		    /**
 		    * This method sets the resource and generates REMOVING_ADAPTER and ADD notifications
 		    */
-		    public void setResource(Resource r) {
+		    public void setResource(Resource r, boolean sendNotification) {
 		    	// stop if we encounter the same resource already
 	    		if(eResource() == null && r == null) 
 			    	return;
@@ -202,17 +202,22 @@ class SmartEMFObjectTemplate implements FileCreator{
 				// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
 				sendRemoveAdapterNotification(this);
 	    			
-	    		super.setResource(r);
+	    		super.setResource(r, true);
 	    		
-	    		Consumer<SmartObject> setResourceCall = (o) -> o.setResource(r);
+	    		Consumer<SmartObject> setResourceCall = (o) -> o.setResource(r, true);
 	    		
 	    		if(r != null) {
-	    			// if container is null, then this element is a root element within a resource and notifications are handled there
-	    			if(eContainer() == null)
-						sendNotification(SmartEMFNotification.createAddNotification(r, null, this, -1));
-					else
-						sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
-						
+	    			if(sendNotification) {
+		    			// if container is null, then this element is a root element within a resource and notifications are handled there
+		    			if(eContainer() == null)
+							sendNotification(SmartEMFNotification.createAddNotification(r, null, this, -1));
+						else
+							if(eContainingFeature().isMany())
+								sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
+							else
+								sendNotification(SmartEMFNotification.createSetNotification(eContainer(), eContainingFeature(), null, this, -1));
+					}
+					
 					// if cascading is activated, we recursively generate add messages; else just this once
 					SmartEMFResource smartResource = smartResource();
 					if(smartResource == null ||  smartResource.getCascade())
@@ -251,7 +256,7 @@ class SmartEMFObjectTemplate implements FileCreator{
 				// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
 				sendRemoveAdapterNotification(this);
 	    			
-	    		super.setResource(r);
+	    		super.setResource(r, true);
 	    		
 		    	«FOR feature : eClass.EAllContainments»
 		    	«IF feature.isMany && !"EFeatureMapEntry".equals(feature.EType.name) && !feature.EType.name.contains("MapEntry")»

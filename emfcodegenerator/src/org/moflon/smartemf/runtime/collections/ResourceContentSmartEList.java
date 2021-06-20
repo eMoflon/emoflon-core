@@ -34,7 +34,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	@Override
 	public boolean add(T e) {
 		if(e instanceof SmartObject) {
-			((SmartObject) e).setResource(resource);
+			((SmartObject) e).setResource(resource, true);
 			return super.add(e);
 		} else {
 			e.eAdapters().addAll(resource.eAdapters());
@@ -48,7 +48,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	@Override
 	public void add(int index, T element) {
 		if(element instanceof SmartObject) {
-			((SmartObject) element).setResource(resource);
+			((SmartObject) element).setResource(resource, true);
 			super.add(index, element);
 
 		} else  {
@@ -64,7 +64,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 		Collection<T> iObjs = new LinkedList<>();
 		for(T t : c) {
 			if(t instanceof SmartObject) {
-				((SmartObject) t).setResource(resource);
+				((SmartObject) t).setResource(resource, true);
 			} else {
 				t.eAdapters().addAll(resource.eAdapters());
 				iObjs.add(t);
@@ -81,7 +81,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 		Collection<T> iObjs = new LinkedList<>();
 		for(T t : c) {
 			if(t instanceof SmartObject) {
-				((SmartObject) t).setResource(resource);
+				((SmartObject) t).setResource(resource, true);
 			} else { 
 				t.eAdapters().addAll(resource.eAdapters());
 				iObjs.add(t);
@@ -97,7 +97,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	public void clear() {
 		for(T t : this) {
 			if(t instanceof SmartObject) {
-				((SmartObject) t).setResource(null);
+				((SmartObject) t).setResource(null, true);
 			} else {
 				t.eAdapters().removeAll(resource.eAdapters());
 				((InternalEObject) t).eSetResource(null, null);
@@ -110,7 +110,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	public T remove(int index) {
 		Object o =  get(index);
 		if(o instanceof SmartObject) {
-			((SmartObject) o).setResource(null);
+			((SmartObject) o).setResource(null, true);
 		} else {
 			((EObject) o).eAdapters().removeAll(resource.eAdapters());
 			((InternalEObject) o).eSetResource(null, null);
@@ -121,7 +121,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	@Override
 	public boolean remove(Object o) {
 		if(o instanceof SmartObject) {
-			((SmartObject) o).setResource(null);
+			((SmartObject) o).setResource(null, true);
 		} else {
 			((EObject) o).eAdapters().removeAll(resource.eAdapters());
 			((InternalEObject) o).eSetResource(null, null);
@@ -133,7 +133,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	public boolean removeAll(Collection<?> c) {
 		for(Object t : c) {
 			if(t instanceof SmartObject) {
-				((SmartObject) t).setResource(null);
+				((SmartObject) t).setResource(null, true);
 			} else {
 				((EObject) t).eAdapters().removeAll(resource.eAdapters());
 				((InternalEObject) t).eSetResource(null, null);
