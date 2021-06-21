@@ -12,7 +12,7 @@ import org.moflon.smartemf.creators.FileCreator
 import org.moflon.smartemf.creators.templates.util.CodeFormattingUtil
 import org.moflon.smartemf.creators.templates.util.TemplateUtil
 
-class SmartEMFObjectTemplate implements FileCreator{
+class SmartEMFObjectTemplate implements FileCreator {
 	
 	public val EClass eClass
 	
@@ -29,7 +29,7 @@ class SmartEMFObjectTemplate implements FileCreator{
 	new(EClass eClass) {
 		this.eClass = eClass
 	}
-	
+
 	def String createCode() {
 		val className = eClass.name
 		val ePackage = eClass.EPackage
@@ -86,19 +86,19 @@ class SmartEMFObjectTemplate implements FileCreator{
 		    «IF feature.many»
 		    private void add«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
 		    	if(«TemplateUtil.getValidName(feature.name)».addInternal(value, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
-					sendNotification(SmartEMFNotification.createAddNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
-	    		} 
-	    	}
-	    	
-	    	private void remove«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
+		    sendNotification(SmartEMFNotification.createAddNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
+		    	} 
+		    }
+		    
+		    private void remove«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
 		    	if(«TemplateUtil.getValidName(feature.name)».removeInternal(value, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
-					sendNotification(SmartEMFNotification.createRemoveNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
-	    		} 
-	    	}
+		    		sendNotification(SmartEMFNotification.createRemoveNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
+		    	}
+		    }
 		    «ELSE»
 		    private void set«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
 			    «getSetterMethod(eClass, feature, FQPackagePath, packageClassName, false)»
-	    	}
+		    }
 		    «ENDIF»
 		    «ENDIF»
 		    «ENDIF»
@@ -157,7 +157,7 @@ class SmartEMFObjectTemplate implements FileCreator{
 		    @Override
 		    public void eInverseAdd(Object otherEnd, EStructuralFeature feature) {
 		    	«FOR ref : eClass.EAllReferences»
-		    	«IF ref.EOpposite != null»
+			«IF ref.EOpposite !== null »
 		    	if («TemplateUtil.getPackageClassName(ref)».Literals.«TemplateUtil.getLiteral(ref)».equals(feature)) {
 		    		«IF ref.isMany»
 		    		add«ref.name.toFirstUpper»AsInverse((«TemplateUtil.getFQName(ref.EType)») otherEnd);
@@ -295,11 +295,11 @@ class SmartEMFObjectTemplate implements FileCreator{
 				}
 			}
 		}
-		if(firstStringAttribute == null)
+		if(firstStringAttribute === null)
 			return '''super.toString();'''
-		if(nameAttribute != null)
-			return '''super.toString() + "(name " + getName() + ")";'''
-		return '''super.toString() + "(name " + get«firstStringAttribute.name.toFirstUpper»() + ")";'''
+		if(nameAttribute !== null)
+			return '''super.toString() + "(name: " + getName() + ")";'''
+		return '''super.toString() + "(name: " + get«firstStringAttribute.name.toFirstUpper»() + ")";'''
 			
 	}
 	

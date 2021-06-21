@@ -282,8 +282,6 @@ public final class SmartEMFNotification implements Notification {
 
 	@Override
 	public String toString() {
-//		return "Notification { \n" + "		eventType: " + getEventTypeAstring() + "\n		notifier: " + notifier + "\n		feature: " + feature + "\n		oldValue: " + oldValue + "\n		newValue: " + newValue + "\n}";
-
 		StringBuilder b = new StringBuilder();
 
 		b.append("SmartEMFNotification (");
