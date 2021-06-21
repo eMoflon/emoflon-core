@@ -4,6 +4,7 @@ import java.io.File
 import java.io.FileWriter
 import org.moflon.smartemf.EcoreGenmodelParser
 import org.moflon.smartemf.creators.FileCreator
+import org.moflon.smartemf.creators.templates.util.CodeFormattingUtil
 import org.moflon.smartemf.creators.templates.util.PackageInformation
 
 /**
@@ -77,7 +78,7 @@ class FactoryInterfaceTemplate implements FileCreator{
 		var factory_file = new File(this.file_path)
 		factory_file.getParentFile().mkdirs()
 		var factory_fw = new FileWriter(factory_file, false)
-		factory_fw.write(createSrcCode())
+		factory_fw.write(CodeFormattingUtil.format(createSrcCode))
 		factory_fw.close()
 	}
 

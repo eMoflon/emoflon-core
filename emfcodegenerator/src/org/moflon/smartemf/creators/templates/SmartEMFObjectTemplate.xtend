@@ -1,15 +1,16 @@
 package org.moflon.smartemf.creators.templates
 
-import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.ecore.EStructuralFeature
-import org.eclipse.emf.ecore.EAttribute
-import org.eclipse.emf.ecore.EReference
-import org.eclipse.emf.ecore.EcorePackage
 import java.io.File
 import java.io.FileWriter
+import org.eclipse.emf.ecore.EAttribute
+import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EEnumLiteral
-import org.moflon.smartemf.creators.templates.util.TemplateUtil;
+import org.eclipse.emf.ecore.EReference
+import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.EcorePackage
 import org.moflon.smartemf.creators.FileCreator
+import org.moflon.smartemf.creators.templates.util.CodeFormattingUtil
+import org.moflon.smartemf.creators.templates.util.TemplateUtil
 
 class SmartEMFObjectTemplate implements FileCreator{
 	
@@ -417,7 +418,7 @@ class SmartEMFObjectTemplate implements FileCreator{
 		var class_file = new File(file_path)
 		class_file.getParentFile().mkdirs()
 		var class_fw = new FileWriter(class_file , false)
-		class_fw.write(createCode)
+		class_fw.write(CodeFormattingUtil.format(createCode));
 		class_fw.close
 	}
 }
