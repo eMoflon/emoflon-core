@@ -53,14 +53,17 @@ public class SmartEList<T> extends SmartCollection<T , LinkedList<T>> {
 
 	@Override
 	public void add(int index, T element) {
-		elements.add(index, element);
-		sendNotification(SmartEMFNotification.createAddNotification(eContainer, feature, element, index));
+//		elements.add(index, element);
+//		sendNotification(SmartEMFNotification.createAddNotification(eContainer, feature, element, index));
+		add(element);
 	}
 
 	@Override
 	public T remove(int index) {
 		T t = elements.remove(index);
-		sendNotification(SmartEMFNotification.createRemoveNotification(eContainer, feature, t, index));
+//		sendNotification(SmartEMFNotification.createRemoveNotification(eContainer, feature, t, index));
+//		return t;
+		remove(t);
 		return t;
 	}
 
