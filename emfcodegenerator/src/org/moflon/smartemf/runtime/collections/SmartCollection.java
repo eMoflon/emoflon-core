@@ -85,8 +85,8 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		
 		NotifyStatus resultStatus;
 		if(feature.isContainment()) {
-			((SmartObject) e).setContainment(eContainer, feature);
-			resultStatus = ((SmartObject) e).setResource(eContainer.eResource(), true);
+			resultStatus = ((SmartObject) e).setContainment(eContainer, feature);
+//			 = ((SmartObject) e).setResource(eContainer.eResource(), true);
 		}
 		else 
 			resultStatus = NotifyStatus.SUCCESS_NO_NOTIFICATION;

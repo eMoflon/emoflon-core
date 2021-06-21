@@ -383,11 +383,12 @@ class SmartEMFObjectTemplate implements FileCreator {
 	        «ENDIF»
 
 			«IF feature.containment»
-			
+			NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
 			if(value != null)
-				((MinimalSObjectContainer) «TemplateUtil.getValidName(feature.name)»).setContainment(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)»);
+				status = ((MinimalSObjectContainer) «TemplateUtil.getValidName(feature.name)»).setContainment(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)»);
+			
+			if(status == NotifyStatus.SUCCESS_NO_NOTIFICATION)
 			«ENDIF»
-
         	sendNotification(SmartEMFNotification.createSetNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», oldValue, value, -1));
         	«IF inverse && feature.EOpposite !== null»
 
