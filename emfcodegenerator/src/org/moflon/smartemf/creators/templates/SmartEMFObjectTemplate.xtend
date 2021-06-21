@@ -361,6 +361,9 @@ class SmartEMFObjectTemplate implements FileCreator {
         	sendNotification(SmartEMFNotification.createSetNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», oldValue, value, -1));'''
 		}
 		if(feature instanceof EReference) {
+			if(feature.isMany)
+					return '''throw new UnsupportedOperationException("Set methods for SmartEMF collections are not supported.");'''
+			
 			return '''
 			Object oldValue = «TemplateUtil.getValidName(feature.name)»;
 	        «IF feature.containment»
@@ -395,9 +398,9 @@ class SmartEMFObjectTemplate implements FileCreator {
         	if(oldValue != null) {
         		((SmartObject) oldValue).eInverseRemove(this, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);
         	}
-«««        	if(value != null) {
-«««        		((SmartObject) value).eInverseAdd(value, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);
-«««        	}
+        	if(value != null) {
+        		((SmartObject) value).eInverseAdd(this, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);
+        	}
         	«ENDIF»'''
 		}
 	}
