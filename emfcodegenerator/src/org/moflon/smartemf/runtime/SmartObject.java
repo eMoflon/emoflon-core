@@ -233,12 +233,9 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	
 	protected void sendRemoveAdapterNotification(EObject obj) {
 		if(resource != null) {
-			if(eContainer == null)
-				for(Adapter a : resource.eAdapters()) {
-					a.notifyChanged(SmartEMFNotification.createRemovingAdapterNotification(this, null, a, -1));
-				}
-			else
-				sendNotification(SmartEMFNotification.createRemoveNotification(eContainer, eContainingFeature, this, -1));
+			for(Adapter a : resource.eAdapters()) {
+				a.notifyChanged(SmartEMFNotification.createRemovingAdapterNotification(this, null, a, -1));
+			}
 		}
 	}
 	
