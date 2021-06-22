@@ -186,7 +186,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 			((Collection<?>) oldContainer.eGet(oldFeature)).remove(this);
 		}
 		else {
-			oldContainer.eUnset(oldFeature);
+//			oldContainer.eUnset(oldFeature);
 		}
 
 		return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
@@ -197,6 +197,11 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	 * sets new containment and cleans up the old
 	 */
 	public NotifyStatus setContainment(EObject eContainer, EStructuralFeature feature) {
+		if(this.eContainer == null && eContainer == null)
+			return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
+		if(this.eContainer != null && this.eContainer.equals(eContainer) && this.eContainingFeature.equals(feature))
+			return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
+		
 		NotifyStatus status = NotifyStatus.FAILURE_NO_NOTIFICATION;
 		// clean up old containment
 		// we don't use resetContainment here to optimize the number of generated notifications

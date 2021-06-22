@@ -212,15 +212,18 @@ class SmartEMFObjectTemplate implements FileCreator {
 	    		if(r != null) {
 	    			if(sendNotification) {
 		    			// if container is null, then this element is a root element within a resource and notifications are handled there
-		    			if(eContainer() == null)
+		    			if(eContainer() == null) {
 							sendNotification(SmartEMFNotification.createAddNotification(r, null, this, -1));
+							status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
+						}
 						else
-							if(eContainingFeature().isMany())
+							if(eContainingFeature().isMany()) {
 								sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
-							else
-								sendNotification(SmartEMFNotification.createSetNotification(eContainer(), eContainingFeature(), null, this, -1));
+								status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
+							}
+«««							else
+«««								sendNotification(SmartEMFNotification.createSetNotification(eContainer(), eContainingFeature(), null, this, -1));
 		
-						status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
 					}
 					
 					// if cascading is activated, we recursively generate add messages; else just this once
@@ -365,17 +368,17 @@ class SmartEMFObjectTemplate implements FileCreator {
 					return '''throw new UnsupportedOperationException("Set methods for SmartEMF collections are not supported.");'''
 			
 			return '''
+			
 			Object oldValue = «TemplateUtil.getValidName(feature.name)»;
 	        «TemplateUtil.getValidName(feature.name)» = value;
+			if(value == null && oldValue == null)
+				return;
+				
+			if(value != null && value.equals(oldValue))
+				return;
+
 	        «IF feature.containment»
 	        NotifyStatus status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
-			if(oldValue != null && value == null) {
-				status = ((MinimalSObjectContainer) oldValue).resetContainment();
-				«IF inverse && feature.EOpposite !== null»
-        		((SmartObject) oldValue).eInverseRemove(this, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);
-				«ENDIF»
-				return;
-			}
 	        «ENDIF»
 	        «IF feature.isMany && !"EFeatureMapEntry".equals(feature.EType.name) && !feature.EType.name.contains("MapEntry")»
 	        
@@ -404,6 +407,15 @@ class SmartEMFObjectTemplate implements FileCreator {
         	if(value != null) {
         		((SmartObject) value).eInverseAdd(this, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);
         	}
+        	«ENDIF»
+        	«IF feature.containment»
+        	if(oldValue != null) {
+				status = ((MinimalSObjectContainer) oldValue).resetContainment();
+				«IF inverse && feature.EOpposite !== null»
+        		((SmartObject) oldValue).eInverseRemove(this, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);
+				«ENDIF»
+				return;
+			}
         	«ENDIF»'''
 		}
 	}
