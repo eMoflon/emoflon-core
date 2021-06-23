@@ -194,7 +194,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 ////			oldContainer.eUnset(oldFeature);
 //		}
 
-		return NotifyStatus.SUCCESS_NO_NOTIFICATION;
+		return status;
 	}
 
 	@Override
