@@ -177,20 +177,24 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		if(eContainingFeature == null)
 			return status;
 		
-		EObject oldContainer = eContainer;
-		EStructuralFeature oldFeature = eContainingFeature;
+//		EObject oldContainer = eContainer;
+//		EStructuralFeature oldFeature = eContainingFeature;
 		
 		eContainer = null;
 		eContainingFeature = null;
 		
-		if(oldFeature.isMany()) {
-			((Collection<?>) oldContainer.eGet(oldFeature)).remove(this);
-		}
-		else {
-//			oldContainer.eUnset(oldFeature);
-		}
+//		if(oldFeature.isMany()) {
+//			if(((Collection<?>) oldContainer.eGet(oldFeature)).remove(this)) {
+//				return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
+//			} else {
+//				return NotifyStatus.FAILURE_NO_NOTIFICATION;
+//			}
+//		}
+//		else {
+////			oldContainer.eUnset(oldFeature);
+//		}
 
-		return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
+		return NotifyStatus.SUCCESS_NO_NOTIFICATION;
 	}
 
 	@Override
