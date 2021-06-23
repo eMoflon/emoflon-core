@@ -145,13 +145,6 @@ class SmartEMFObjectTemplate implements FileCreator {
 		    @Override
 		    public Object eGet(int featureID, boolean resolve, boolean coreType){
 		    	throw new UnsupportedOperationException("This method has been deactivated since it is not always safe to use.");
-«««		        switch(featureID) {
-«««	    			«FOR feature : eClass.EAllStructuralFeatures»
-«««	    			case «getPackageClassName(feature)».«getLiteralID(feature)»:
-«««	    				return «getOrIs(feature)»«feature.name.toFirstUpper»();
-«««					«ENDFOR»
-«««		        }
-«««		        return null;
 		    }
 		    
 		    @Override
@@ -192,46 +185,7 @@ class SmartEMFObjectTemplate implements FileCreator {
 		    /**
 		    * This method sets the resource and generates REMOVING_ADAPTER and ADD notifications
 		    */
-		    public NotifyStatus setResource(Resource r, boolean sendNotification) {
-		    	// stop if we encounter the same resource already
-	    		if(eResource() == null && r == null) 
-			    	return NotifyStatus.SUCCESS_NO_NOTIFICATION;
-			    
-			    if(eResource() != null && eResource().equals(r))
-			    	return NotifyStatus.SUCCESS_NO_NOTIFICATION;
-	    			
-				// send remove messages to old adapters
-				// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
-				sendRemoveAdapterNotification(this);
-	    			
-	    		super.setResource(r, true);
-	    		
-	    		Consumer<SmartObject> setResourceCall = (o) -> o.setResource(r, true);
-	    		
-				NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
-	    		if(r != null) {
-	    			if(sendNotification) {
-		    			// if container is null, then this element is a root element within a resource and notifications are handled there
-		    			if(eContainer() == null) {
-							sendNotification(SmartEMFNotification.createAddNotification(r, null, this, -1));
-							status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
-						}
-						else
-							if(eContainingFeature().isMany()) {
-								sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
-								status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
-							}
-«««							else
-«««								sendNotification(SmartEMFNotification.createSetNotification(eContainer(), eContainingFeature(), null, this, -1));
-		
-					}
-					
-					// if cascading is activated, we recursively generate add messages; else just this once
-					SmartEMFResource smartResource = smartResource();
-					if(smartResource == null ||  smartResource.getCascade())
-	    				setResourceCall = (o) -> o.setResourceSilently(r);
-				}
-	    		
+		    protected void setResourceOfContainments(Consumer<SmartObject> setResourceCall) {
 		    	«FOR feature : eClass.EAllContainments»
 		    	«IF feature.isMany && !"EFeatureMapEntry".equals(feature.EType.name) && !feature.EType.name.contains("MapEntry")»
 		    	for(Object obj : get«feature.name.toFirstUpper»()) {
@@ -246,28 +200,13 @@ class SmartEMFObjectTemplate implements FileCreator {
 	    			setResourceCall.accept((SmartObject) get«feature.name.toFirstUpper»());
 	    		«ENDIF»
 		    	«ENDFOR»
-		    	
-				return status;
 	    	}
 	    	
 	    	@Override
 	    	/**
 	    	* This method sets the resource and only generates REMOVING_ADAPTER notifications (no ADD messages)
 	    	*/
-		    public void setResourceSilently(Resource r) {
-		    	// stop if we encounter the same resource already
-	    		if(eResource() == null && r == null) 
-			    	return;
-			    
-			    if(eResource() != null && eResource().equals(r))
-			    	return;
-	    			
-    			// send remove messages to old adapters
-				// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
-				sendRemoveAdapterNotification(this);
-	    			
-	    		super.setResource(r, true);
-	    		
+		    protected void setResourceOfContainmentsSilently(Resource r) { 		
 		    	«FOR feature : eClass.EAllContainments»
 		    	«IF feature.isMany && !"EFeatureMapEntry".equals(feature.EType.name) && !feature.EType.name.contains("MapEntry")»
 		    	for(Object obj : get«feature.name.toFirstUpper»()) {

@@ -3,6 +3,7 @@ package org.moflon.smartemf.runtime;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Consumer;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -245,11 +246,68 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	}
 	
 	public NotifyStatus setResource(Resource resource, boolean sendNotification) {
+		// stop if we encounter the same resource already
+		if(eResource() == null && resource == null) 
+	    	return NotifyStatus.SUCCESS_NO_NOTIFICATION;
+	    
+	    if(eResource() != null && eResource().equals(resource))
+	    	return NotifyStatus.SUCCESS_NO_NOTIFICATION;
+			
+		// send remove messages to old adapters
+		// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
+		sendRemoveAdapterNotification(this);
+		
 		this.resource = (Internal) resource;
-		return NotifyStatus.SUCCESS_NO_NOTIFICATION;
+		
+		Consumer<SmartObject> setResourceCall = (o) -> o.setResource(resource, true);
+		
+		NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
+		if(resource != null) {
+			if(sendNotification) {
+    			// if container is null, then this element is a root element within a resource and notifications are handled there
+    			if(eContainer() == null) {
+					sendNotification(SmartEMFNotification.createAddNotification(resource, null, this, -1));
+					status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
+				}
+				else
+					if(eContainingFeature().isMany()) {
+						sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
+						status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
+					}
+
+			}
+			
+			// if cascading is activated, we recursively generate add messages; else just this once
+			SmartEMFResource smartResource = smartResource();
+			if(smartResource == null ||  smartResource.getCascade())
+				setResourceCall = (o) -> o.setResourceSilently(resource);
+		}
+		
+		setResourceOfContainments(setResourceCall);
+		
+		return status;
 	}
 	
-    public abstract void setResourceSilently(Resource r);
+	protected abstract void setResourceOfContainments(Consumer<SmartObject> setResourceCall);
+	
+    public void setResourceSilently(Resource r) {
+    	// stop if we encounter the same resource already
+		if(eResource() == null && r == null) 
+	    	return;
+	    
+	    if(eResource() != null && eResource().equals(r))
+	    	return;
+			
+		// send remove messages to old adapters
+		// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
+		sendRemoveAdapterNotification(this);
+			
+		setResource(r, true);
+		
+		setResourceOfContainmentsSilently(r);
+    }
+    
+    protected abstract void setResourceOfContainmentsSilently(Resource r);
 	
     public abstract Object eGet(int featureID, boolean resolve, boolean coreType);
 
