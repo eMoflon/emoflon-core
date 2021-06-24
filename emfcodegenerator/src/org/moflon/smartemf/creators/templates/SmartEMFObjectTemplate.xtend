@@ -91,9 +91,10 @@ class SmartEMFObjectTemplate implements FileCreator {
 		    }
 		    
 		    private void remove«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
-		    	if(«TemplateUtil.getValidName(feature.name)».removeInternal(value, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
-		    		sendNotification(SmartEMFNotification.createRemoveNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
-		    	}
+		    	«TemplateUtil.getValidName(feature.name)».removeInternal(value, false, true);
+«««		    	if(«TemplateUtil.getValidName(feature.name)».removeInternal(value, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
+«««		    		sendNotification(SmartEMFNotification.createRemoveNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
+«««		    	}
 		    }
 		    «ELSE»
 		    private void set«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {

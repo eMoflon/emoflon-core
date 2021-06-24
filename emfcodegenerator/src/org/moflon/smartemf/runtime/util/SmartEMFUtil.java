@@ -25,7 +25,6 @@ public class SmartEMFUtil {
 	private static void deleteNodes(Queue<EObject> queue, boolean recursive) {
 		while(!queue.isEmpty()) {
 			EObject obj = queue.poll();
-			((SmartObject) obj).resetContainment();
 			
 			for(EReference ref : obj.eClass().getEAllReferences()) {
 				Object value = obj.eGet(ref);
@@ -42,6 +41,7 @@ public class SmartEMFUtil {
 					}
 				}
 			}
+			((SmartObject) obj).resetContainment();
 			if(recursive)
 				deleteNodes(obj.eContents(), recursive);
 		}

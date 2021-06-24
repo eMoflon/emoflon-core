@@ -9,6 +9,8 @@ import java.util.ListIterator;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.notify.impl.NotificationChainImpl;
+import org.eclipse.emf.common.notify.impl.NotifyingListImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -38,10 +40,25 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 			return super.add(e);
 		} else {
 			e.eAdapters().addAll(resource.eAdapters());
+			resetContainment(e);
+			
 			((InternalEObject) e).eSetResource(resource, null);
 			boolean success = super.add(e);
 			sendAddNotification(e);
 			return success;
+		}
+	}
+
+	private void resetContainment(T e) {
+		EObject oldContainer = e.eContainer();
+		if(oldContainer != null) {
+			if(e.eContainingFeature().isMany()) {
+				Object getResult = oldContainer.eGet(e.eContainingFeature());
+				((Collection<?>) getResult).remove(e);
+			}
+			else {
+				oldContainer.eUnset(e.eContainingFeature());
+			}
 		}
 	}
 	
@@ -53,6 +70,8 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 
 		} else  {
 			element.eAdapters().addAll(resource.eAdapters());
+			resetContainment(element);
+			
 			((InternalEObject) element).eSetResource(resource, null);
 			super.add(index, element);
 			sendAddNotification(element);
@@ -70,6 +89,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 				iObjs.add(t);
 			}
 		}
+		iObjs.forEach(this::resetContainment);
 		iObjs.forEach(t -> ((InternalEObject) t).eSetResource(resource, null));
 		boolean success = super.addAll(c) || super.addAll(iObjs);
 		iObjs.forEach(this::sendAddNotification);
@@ -87,6 +107,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 				iObjs.add(t);
 			}
 		}
+		iObjs.forEach(this::resetContainment);
 		iObjs.forEach(t -> ((InternalEObject) t).eSetResource(resource, null));
 		boolean success =  super.addAll(index, c) || super.addAll(index, iObjs);
 		iObjs.forEach(this::sendAddNotification);

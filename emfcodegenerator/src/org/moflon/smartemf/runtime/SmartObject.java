@@ -1,5 +1,6 @@
 package org.moflon.smartemf.runtime;
 
+import java.awt.Component.BaselineResizeBehavior;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
@@ -173,6 +174,11 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	 * revokes current containment relationship
 	 */
 	public NotifyStatus resetContainment() {
+		// if there is no eContainer, then this element is only contained within the resource and should be removed
+		if(eContainer == null && resource != null) {
+			resource.getContents().remove(this);
+		}
+		
 		NotifyStatus status = setResource(null, true);
 		if(eContainingFeature == null)
 			return status;
@@ -219,8 +225,13 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 			}
 			status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
 		}
-		else
+		else {
+			// if there is no eContainer, then this element is only contained within the resource and should be removed before setting the new eContainer
+			if(resource != null) {
+				resource.getContents().remove(this);
+			}
 			status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
+		}
 		
 		this.eContainer = eContainer;
 		this.eContainingFeature = feature;

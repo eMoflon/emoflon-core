@@ -128,10 +128,14 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		return status != NotifyStatus.FAILURE_NO_NOTIFICATION;
 	}
 
-	public NotifyStatus removeInternal(Object o, boolean removeFromEOpposite) {
+	public NotifyStatus removeInternal(Object o, boolean removeFromEOpposite, boolean sendRemoveNotification) {
 		boolean success = elements.remove(o);
 		if(!success)
 			return NotifyStatus.FAILURE_NO_NOTIFICATION;
+		
+		if(sendRemoveNotification) {
+			sendNotification(SmartEMFNotification.createRemoveNotification(eContainer, feature, o, -1));
+		}
 		
 		NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
 		if(feature.isContainment()) {
@@ -146,7 +150,7 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 
 	@Override
 	public boolean remove(Object o) {
-		NotifyStatus status = removeInternal(o, true);
+		NotifyStatus status = removeInternal(o, true, false);
 		if(status == NotifyStatus.SUCCESS_NO_NOTIFICATION)
 			sendNotification(SmartEMFNotification.createRemoveNotification(eContainer, feature, o, -1));
 		return status != NotifyStatus.FAILURE_NO_NOTIFICATION;
@@ -174,7 +178,7 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		Collection<Object> newList = new LinkedList<>();
 		NotifyStatus status = NotifyStatus.FAILURE_NO_NOTIFICATION;
 		for(Object t : c) {
-			NotifyStatus removeStatus = removeInternal(t, true);
+			NotifyStatus removeStatus = removeInternal(t, true, false);
 			if(removeStatus != NotifyStatus.FAILURE_NO_NOTIFICATION) {
 				newList.add(t);
 				status = removeStatus;
