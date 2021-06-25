@@ -113,6 +113,7 @@ class SmartEMFObjectTemplate implements FileCreator {
 		    	 	return;
 		    	 }
 		    	«ENDFOR»
+		    	eDynamicSet(eFeature, newValue);
 		    }
 		    
 		    @Override
@@ -127,6 +128,7 @@ class SmartEMFObjectTemplate implements FileCreator {
 		    	 	return;
 		    	 }
 		    	«ENDFOR»
+		    	eDynamicUnset(eFeature);
 		    }
 		
 		    @Override
@@ -140,7 +142,7 @@ class SmartEMFObjectTemplate implements FileCreator {
 		    	 if («TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».equals(eFeature))
 		    	 	return «getOrIs(feature)»«feature.name.toFirstUpper»();
 		    	«ENDFOR»
-		        return null;
+		    	return eDynamicGet(eFeature);
 		    }
 		
 		    @Override

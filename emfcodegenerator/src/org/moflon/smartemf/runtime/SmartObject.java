@@ -4,6 +4,8 @@ import java.awt.Component.BaselineResizeBehavior;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.eclipse.emf.common.notify.Adapter;
@@ -24,6 +26,7 @@ import org.eclipse.emf.ecore.resource.Resource.Internal;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.collections.DefaultSmartEList;
+import org.moflon.smartemf.runtime.collections.SmartESet;
 import org.moflon.smartemf.runtime.notification.NotifyStatus;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
@@ -34,6 +37,8 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	private EStructuralFeature eContainingFeature;
 	private EClass staticClass;
 	private URI proxyUri;
+	
+	private Map<EStructuralFeature,Object> feature2Value = new HashMap<>();
 	
 	public SmartObject(EClass staticClass) {
 		this.staticClass = staticClass;
@@ -141,6 +146,89 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	@Override
 	public Object eGet(EStructuralFeature feature, boolean resolve) {
 		return eGet(feature);
+	}
+	
+	protected Object eDynamicGet(EStructuralFeature feature) {
+		if(feature2Value.containsKey(feature)) {
+			return feature2Value.get(feature);
+		} else {
+			if(staticClass.getEAllStructuralFeatures().contains(feature)) {
+				if(feature.isMany()) {
+					EList<Object> emptyList = new SmartESet<Object>(this, (EReference) feature);
+					feature2Value.put(feature, emptyList);
+					return emptyList;
+				} else {
+					feature2Value.put(feature, null);
+					return null;
+				}
+			} else {
+				throw new RuntimeException("Feature <"+feature+"> is not present in objects of EClass <"+staticClass+">");
+			}
+		}
+	}
+	
+	protected void eDynamicSet(EStructuralFeature feature, Object value) {
+		Object oldValue = null;
+		if(feature2Value.containsKey(feature)) {
+			if(feature.isMany()) {
+				throw new RuntimeException("Feature <"+feature+"> represents a collection. Set can not be used on collection type attributes.");
+			} else {
+				oldValue = feature2Value.replace(feature, value);
+			}
+			
+		} else {
+			if(staticClass.getEAllStructuralFeatures().contains(feature)) {
+				if(feature.isMany()) {
+					throw new RuntimeException("Feature <"+feature+"> represents a collection. Set can not be used on collection type attributes.");
+				} else {
+					feature2Value.put(feature, value);
+				}
+			} else {
+				throw new RuntimeException("Feature <"+feature+"> is not present in objects of EClass <"+staticClass+">");
+			}
+		}
+		
+		if(oldValue == null && value == null)
+			return;
+		
+		if(oldValue == null && value != null) {
+			sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, value, -1));
+			return;
+		}
+			
+		if(!oldValue.equals(value))
+			sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, value, -1));
+					
+		
+	}
+	
+	protected void eDynamicUnset(EStructuralFeature feature) {
+		Object oldValue = null;
+		if(feature2Value.containsKey(feature)) {
+			if(feature.isMany()) {
+				((Collection<?>)feature2Value.get(feature)).clear();
+			} else {
+				oldValue = feature2Value.replace(feature, null);
+				if(oldValue == null)
+					return;
+
+				sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, null, -1));
+			}
+			
+		} else {
+			if(staticClass.getEAllStructuralFeatures().contains(feature)) {
+				if(feature.isMany()) {
+					EList<Object> emptyList = new SmartESet<Object>(this, (EReference) feature);
+					feature2Value.put(feature, emptyList);
+				} else {
+					feature2Value.put(feature, null);
+				}
+			} else {
+				throw new RuntimeException("Feature <"+feature+"> is not present in objects of EClass <"+staticClass+">");
+			}
+		}
+		
+		
 	}
 
 	@Override

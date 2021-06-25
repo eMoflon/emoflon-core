@@ -58,8 +58,10 @@ class PackageImplTemplate implements FileCreator{
 		import org.eclipse.emf.ecore.EReference;
 		
 		import org.eclipse.emf.ecore.impl.EPackageImpl;
+		
+		import org.moflon.smartemf.runtime.SmartPackageImpl;
 
-		public class «e_pak.get_emf_e_package.name.toFirstUpper»PackageImpl extends EPackageImpl
+		public class «e_pak.get_emf_e_package.name.toFirstUpper»PackageImpl extends SmartPackageImpl
 				implements «e_pak.get_emf_e_package.name.toFirstUpper»Package {
 					
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
@@ -99,6 +101,9 @@ class PackageImplTemplate implements FileCreator{
 		
 				// Initialize created meta-data
 				the«e_pak.get_emf_e_package.name.toFirstUpper»Package.initializePackageContents();
+				
+				// Inject external references into foreign packages
+				the«e_pak.get_emf_e_package.name.toFirstUpper»Package.injectExternalReferences();
 		
 				// Mark meta-data to indicate it can't be changed
 				the«e_pak.get_emf_e_package.name.toFirstUpper»Package.freeze();
