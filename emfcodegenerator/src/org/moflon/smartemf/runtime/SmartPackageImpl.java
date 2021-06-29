@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.impl.EReferenceImpl;
 public abstract class SmartPackageImpl extends EPackageImpl implements SmartPackage {
 	
 	private Map<EClass, Set<EStructuralFeature>> dynamicFeatures = new HashMap<>();
+	private Map<EClass, Set<EClass>> subClassesInPackage = new HashMap<>();
 	
 
 	public SmartPackageImpl(final String nsUri, final EFactory factory) {
@@ -41,12 +42,10 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 					((EReference) eFeature).isContainment(), ((EReference) eFeature).isResolveProxies(), eFeature.isUnsettable(), eFeature.isUnique(), eFeature.isDerived(), 
 					eFeature.isOrdered());
 			
-			Set<EStructuralFeature> currentFeatures = dynamicFeatures.get(eClass);
-			if(currentFeatures == null) {
-				currentFeatures = new HashSet<>();
-				dynamicFeatures.put(eClass, currentFeatures);
-			}
-			currentFeatures.add(createdERef);
+			insertClass2Feature(eClass, createdERef);
+			getSubClassesInPackage(eClass).forEach(subClass -> {
+				insertClass2Feature(subClass, createdERef);
+			});
 			
 			return createdERef;
 		} else if(eFeature instanceof EAttribute) {
@@ -58,12 +57,10 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 					eClass.getInstanceClass(), createdEAtr.isTransient(), createdEAtr.isVolatile(), createdEAtr.isChangeable(), createdEAtr.isUnsettable(), createdEAtr.isID(), createdEAtr.isUnique(),
 					createdEAtr.isDerived(), createdEAtr.isOrdered());
 			
-			Set<EStructuralFeature> currentFeatures = dynamicFeatures.get(eClass);
-			if(currentFeatures == null) {
-				currentFeatures = new HashSet<>();
-				dynamicFeatures.put(eClass, currentFeatures);
-			}
-			currentFeatures.add(createdEAtr);
+			insertClass2Feature(eClass, createdEAtr);
+			getSubClassesInPackage(eClass).forEach(subClass -> {
+				insertClass2Feature(subClass, createdEAtr);
+			});
 			
 			return createdEAtr;
 		} else {
@@ -137,6 +134,30 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 			.map(ref -> (EReference) ref)
 			.filter(ref -> !ownClasses.contains(ref.getEType()))
 			.collect(Collectors.toSet());
+	}
+	
+	private void insertClass2Feature(final EClass eClass, final EStructuralFeature eFeature) {
+		Set<EStructuralFeature> currentFeatures = dynamicFeatures.get(eClass);
+		if(currentFeatures == null) {
+			currentFeatures = new HashSet<>();
+			dynamicFeatures.put(eClass, currentFeatures);
+		}
+		currentFeatures.add(eFeature);
+	}
+	
+	protected Set<EClass> getSubClassesInPackage(final EClass eClass) {
+		if(subClassesInPackage.containsKey(eClass))
+			return subClassesInPackage.get(eClass);
+		
+		Set<EClass> subClasses = new HashSet<>();
+		subClassesInPackage.put(eClass, subClasses);
+		
+		for(EClass someClass : eContents().stream().filter(obj->(obj instanceof EClass)).map(ecls -> (EClass)ecls).filter(ecls -> ecls != eClass).collect(Collectors.toSet())) {
+			if(someClass.getEAllSuperTypes().contains(eClass)) {
+				subClasses.add(someClass);
+			}
+		}
+		return subClasses;
 	}
 
 }
