@@ -81,20 +81,18 @@ class SmartEMFObjectTemplate implements FileCreator {
 		    	«getSetterMethod(eClass, feature, FQPackagePath, packageClassName, true)»
 		    }
 		    «ENDIF»
+		    
 		    «IF feature instanceof EReference»
 		    «IF feature.EOpposite !== null»
 		    «IF feature.many»
 		    private void add«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
 		    	if(«TemplateUtil.getValidName(feature.name)».addInternal(value, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
-		    sendNotification(SmartEMFNotification.createAddNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
+		    		sendNotification(SmartEMFNotification.createAddNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
 		    	} 
 		    }
 		    
 		    private void remove«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
 		    	«TemplateUtil.getValidName(feature.name)».removeInternal(value, false, true);
-«««		    	if(«TemplateUtil.getValidName(feature.name)».removeInternal(value, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
-«««		    		sendNotification(SmartEMFNotification.createRemoveNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
-«««		    	}
 		    }
 		    «ELSE»
 		    private void set«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
@@ -152,36 +150,42 @@ class SmartEMFObjectTemplate implements FileCreator {
 		    
 		    @Override
 		    public void eInverseAdd(Object otherEnd, EStructuralFeature feature) {
-		    	«FOR ref : eClass.EAllReferences»
-			«IF ref.EOpposite !== null »
-		    	if («TemplateUtil.getPackageClassName(ref)».Literals.«TemplateUtil.getLiteral(ref)».equals(feature)) {
-		    		«IF ref.isMany»
-		    		add«ref.name.toFirstUpper»AsInverse((«TemplateUtil.getFQName(ref.EType)») otherEnd);
-		    		«ELSE»
-		    	 	set«ref.name.toFirstUpper»AsInverse((«TemplateUtil.getFQName(ref.EType)») otherEnd); 
-		    	 	«ENDIF»
-		    	 	return;
-		        }
-		    	
-		    	«ENDIF»
-		    	«ENDFOR»
+			    «FOR ref : eClass.EAllReferences»
+					«IF ref.EOpposite !== null»
+			    	if («TemplateUtil.getPackageClassName(ref)».Literals.«TemplateUtil.getLiteral(ref)».equals(feature)) {
+			    		«IF ref.isMany»
+			    		add«ref.name.toFirstUpper»AsInverse((«TemplateUtil.getFQName(ref.EType)») otherEnd);
+			    		«ELSE»
+			    	 	set«ref.name.toFirstUpper»AsInverse((«TemplateUtil.getFQName(ref.EType)») otherEnd); 
+			    		«ENDIF»
+			    	 	return;
+			        }	
+			    	«ENDIF»
+			    «ENDFOR»
+			    if(feature == null)
+			    	return;
+			    	
+		    	eDynamicInverseAdd(otherEnd, feature);
 	    	}
 		    	
 		    @Override
 	    	public void eInverseRemove(Object otherEnd, EStructuralFeature feature) {
-	    		«FOR ref : eClass.EAllReferences»
-		    	«IF ref.EOpposite != null»
-		    	if («TemplateUtil.getPackageClassName(ref)».Literals.«TemplateUtil.getLiteral(ref)».equals(feature)) {
-		    		«IF ref.isMany»
-		    		remove«ref.name.toFirstUpper»AsInverse((«TemplateUtil.getFQName(ref.EType)») otherEnd);
-		    		«ELSE»
-		    	 	set«ref.name.toFirstUpper»AsInverse(null); 
-		    	 	«ENDIF»
-		    	 	return;
-		        }
-		    	
-		    	«ENDIF»
-		    	«ENDFOR»
+		    	«FOR ref : eClass.EAllReferences»
+			    	«IF ref.EOpposite !== null»
+			    	if («TemplateUtil.getPackageClassName(ref)».Literals.«TemplateUtil.getLiteral(ref)».equals(feature)) {
+			    		«IF ref.isMany»
+			    		remove«ref.name.toFirstUpper»AsInverse((«TemplateUtil.getFQName(ref.EType)») otherEnd);
+			    		«ELSE»
+			    	 	set«ref.name.toFirstUpper»AsInverse(null); 
+			    	 	«ENDIF»
+			    	 	return;
+			        }
+			    	«ENDIF»
+			    «ENDFOR»
+			    if(feature == null)
+			    	return;
+			    		    		
+		    	eDynamicInverseRemove(otherEnd, feature);
 	    	}
 		    
 		    @Override
@@ -341,14 +345,25 @@ class SmartEMFObjectTemplate implements FileCreator {
 			if(status == NotifyStatus.SUCCESS_NO_NOTIFICATION)
 			«ENDIF»
         	sendNotification(SmartEMFNotification.createSetNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», oldValue, value, -1));
+        	
         	«IF inverse && feature.EOpposite !== null»
-
         	if(oldValue != null) {
         		((SmartObject) oldValue).eInverseRemove(this, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);
         	}
         	if(value != null) {
         		((SmartObject) value).eInverseAdd(this, «TemplateUtil.getPackageClassName(feature.EOpposite)».Literals.«TemplateUtil.getLiteral(feature.EOpposite)»);
         	}
+        	«ELSE»
+        	«IF feature instanceof EReference && inverse»
+        	if(«TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».getEOpposite() != null) {
+        		if(oldValue != null) {
+        			((SmartObject) oldValue).eInverseRemove(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».getEOpposite());
+        		}
+        		if(value != null) {
+        		    ((SmartObject) value).eInverseAdd(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».getEOpposite());
+        		}
+        	}
+        	«ENDIF»
         	«ENDIF»
         	«IF feature.containment»
         	if(oldValue != null) {

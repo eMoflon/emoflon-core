@@ -39,6 +39,7 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 			if(counter == index) {
 				return elt;
 			}
+			counter++;
 		}
 		throw new RuntimeException("No element found");
 	}
@@ -169,6 +170,7 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 					return elt;
 				return null;
 			}
+			counter++;
 		}
 		throw new RuntimeException();
 	}

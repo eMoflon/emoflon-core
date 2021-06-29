@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.resource.Resource.Internal;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.collections.DefaultSmartEList;
+import org.moflon.smartemf.runtime.collections.SmartCollection;
 import org.moflon.smartemf.runtime.collections.SmartESet;
 import org.moflon.smartemf.runtime.notification.NotifyStatus;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
@@ -193,12 +194,18 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		
 		if(oldValue == null && value != null) {
 			sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, value, -1));
+			if(feature instanceof EReference && ((EReference)feature).getEOpposite() != null) {
+				((SmartObject)value).eDynamicInverseAdd(this, ((EReference)feature).getEOpposite());
+			}
 			return;
 		}
 			
-		if(!oldValue.equals(value))
+		if(!oldValue.equals(value)) {
 			sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, value, -1));
-					
+			if(feature instanceof EReference && ((EReference)feature).getEOpposite() != null) {
+				((SmartObject)value).eDynamicInverseAdd(this, ((EReference)feature).getEOpposite());
+			}
+		}
 		
 	}
 	
@@ -213,6 +220,10 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 					return;
 
 				sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, null, -1));
+				
+				if(feature instanceof EReference && ((EReference)feature).getEOpposite() != null) {
+					((SmartObject)oldValue).eDynamicInverseRemove(this, ((EReference)feature).getEOpposite());
+				}
 			}
 			
 		} else {
@@ -229,6 +240,28 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		}
 		
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected void eDynamicInverseAdd(Object otherEnd, EStructuralFeature feature) {
+		if(feature.isMany()) {
+			SmartCollection<Object, Collection<Object>> list = (SmartCollection<Object, Collection<Object>>) eGet(feature);
+			if(list.addInternal(otherEnd, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
+	    		sendNotification(SmartEMFNotification.createAddNotification(this, feature, otherEnd, -1));
+	    	}
+		} else {
+			eSet(feature, otherEnd);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected void eDynamicInverseRemove(Object otherEnd, EStructuralFeature feature) {			
+		if(feature.isMany()) {
+			SmartCollection<Object, Collection<Object>> list = (SmartCollection<Object, Collection<Object>>) eGet(feature);
+			list.removeInternal(otherEnd, false, true);
+		} else {
+			eUnset(feature);
+		}
 	}
 
 	@Override
