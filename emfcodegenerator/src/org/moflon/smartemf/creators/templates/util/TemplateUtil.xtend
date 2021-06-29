@@ -23,7 +23,7 @@ class TemplateUtil {
 		if(isOrdered && isUnique)
 			return '''LinkedSmartESet'''
 		if(isUnique)
-			return '''SmartESet'''
+			return '''LinkedSmartESet'''
 		return '''SmartEList'''
 	}
 	
