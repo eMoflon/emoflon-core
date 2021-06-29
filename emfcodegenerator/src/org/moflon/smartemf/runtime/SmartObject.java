@@ -1,6 +1,5 @@
 package org.moflon.smartemf.runtime;
 
-import java.awt.Component.BaselineResizeBehavior;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
@@ -113,11 +112,6 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	public TreeIterator<EObject> eAllContents() {
 		return EcoreUtil.getAllContents(Collections.singleton(this))
 ;
-	}
-
-	@Override
-	public boolean eIsProxy() {
-		return false;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -444,6 +438,11 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	@Override
 	public void eSetProxyURI(URI uri) {
 		this.proxyUri = uri;
+	}
+
+	@Override
+	public boolean eIsProxy() {
+		return proxyUri != null;
 	}
 
 	@Override
