@@ -1,6 +1,9 @@
 package org.moflon.smartemf.runtime;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,6 +17,8 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.eclipse.emf.ecore.impl.EReferenceImpl;
 
 public abstract class SmartPackageImpl extends EPackageImpl implements SmartPackage {
+	
+	private Map<EClass, Set<EStructuralFeature>> dynamicFeatures = new HashMap<>();
 	
 
 	public SmartPackageImpl(final String nsUri, final EFactory factory) {
@@ -36,6 +41,13 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 					((EReference) eFeature).isContainment(), ((EReference) eFeature).isResolveProxies(), eFeature.isUnsettable(), eFeature.isUnique(), eFeature.isDerived(), 
 					eFeature.isOrdered());
 			
+			Set<EStructuralFeature> currentFeatures = dynamicFeatures.get(eClass);
+			if(currentFeatures == null) {
+				currentFeatures = new HashSet<>();
+				dynamicFeatures.put(eClass, currentFeatures);
+			}
+			currentFeatures.add(createdERef);
+			
 			return createdERef;
 		} else if(eFeature instanceof EAttribute) {
 			EAttributeImpl createdEAtr = (EAttributeImpl)ecoreFactory.createEAttribute();
@@ -46,11 +58,43 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 					eClass.getInstanceClass(), createdEAtr.isTransient(), createdEAtr.isVolatile(), createdEAtr.isChangeable(), createdEAtr.isUnsettable(), createdEAtr.isID(), createdEAtr.isUnique(),
 					createdEAtr.isDerived(), createdEAtr.isOrdered());
 			
+			Set<EStructuralFeature> currentFeatures = dynamicFeatures.get(eClass);
+			if(currentFeatures == null) {
+				currentFeatures = new HashSet<>();
+				dynamicFeatures.put(eClass, currentFeatures);
+			}
+			currentFeatures.add(createdEAtr);
+			
 			return createdEAtr;
 		} else {
 			throw new RuntimeException("Unsupported EStructuralFeature type: "+eFeature);
 		}
 
+	}
+	
+	@Override
+	public boolean isDynamicEStructuralFeature(final EClass eClass, final EStructuralFeature eFeature) {
+		if(!dynamicFeatures.containsKey(eClass))
+			return false;
+		
+		return dynamicFeatures.get(eClass).contains(eFeature);
+		
+	}
+	
+	@Override
+	public boolean hasDynamicEStructuralFeatures(final EClass eClass) {
+		if(!dynamicFeatures.containsKey(eClass))
+			return false;
+		
+		return true;
+	}
+	
+	@Override
+	public Collection<EStructuralFeature> getDynamicEStructuralFeatures(final EClass eClass) {
+		if(!dynamicFeatures.containsKey(eClass))
+			return new HashSet<>();
+		
+		return dynamicFeatures.get(eClass);
 	}
 	
 	protected void injectExternalReferences() {
