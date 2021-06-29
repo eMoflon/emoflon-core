@@ -37,12 +37,14 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	private EObject eContainer;
 	private EStructuralFeature eContainingFeature;
 	private EClass staticClass;
+	private SmartPackage staticPackage;
 	private URI proxyUri;
 	
 	private Map<EStructuralFeature,Object> feature2Value = new HashMap<>();
 	
 	public SmartObject(EClass staticClass) {
 		this.staticClass = staticClass;
+		this.staticPackage = (SmartPackage) staticClass.getEPackage();
 	}
 	
 	@Override
@@ -153,7 +155,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		if(feature2Value.containsKey(feature)) {
 			return feature2Value.get(feature);
 		} else {
-			if(staticClass.getEAllStructuralFeatures().contains(feature)) {
+			if(staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
 				if(feature.isMany()) {
 					EList<Object> emptyList = new SmartESet<Object>(this, (EReference) feature);
 					feature2Value.put(feature, emptyList);
@@ -178,7 +180,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 			}
 			
 		} else {
-			if(staticClass.getEAllStructuralFeatures().contains(feature)) {
+			if(staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
 				if(feature.isMany()) {
 					throw new RuntimeException("Feature <"+feature+"> represents a collection. Set can not be used on collection type attributes.");
 				} else {
@@ -227,7 +229,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 			}
 			
 		} else {
-			if(staticClass.getEAllStructuralFeatures().contains(feature)) {
+			if(staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
 				if(feature.isMany()) {
 					EList<Object> emptyList = new SmartESet<Object>(this, (EReference) feature);
 					feature2Value.put(feature, emptyList);

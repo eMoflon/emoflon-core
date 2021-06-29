@@ -111,6 +111,8 @@ class PackageImplTemplate implements FileCreator{
 				// Update the registry and return the package
 				EPackage.Registry.INSTANCE.put(«e_pak.get_emf_e_package.name.toFirstUpper»Package.eNS_URI,
 						the«e_pak.get_emf_e_package.name.toFirstUpper»Package);
+						
+				the«e_pak.get_emf_e_package.name.toFirstUpper»Package.fetchDynamicEStructuralFeaturesOfSuperTypes();
 				return the«e_pak.get_emf_e_package.name.toFirstUpper»Package;
 			}
 		

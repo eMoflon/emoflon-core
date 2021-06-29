@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -20,6 +21,7 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 	
 	private Map<EClass, Set<EStructuralFeature>> dynamicFeatures = new HashMap<>();
 	private Map<EClass, Set<EClass>> subClassesInPackage = new HashMap<>();
+	private Map<EClass, Set<BiConsumer<EClass, EStructuralFeature>>> foreignSubClassCallbacks = new HashMap<>();
 	
 
 	public SmartPackageImpl(final String nsUri, final EFactory factory) {
@@ -47,6 +49,10 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 				insertClass2Feature(subClass, createdERef);
 			});
 			
+			if(foreignSubClassCallbacks.containsKey(eClass)) {
+				foreignSubClassCallbacks.get(eClass).forEach(callback -> callback.accept(eClass, createdERef));
+			}
+			
 			return createdERef;
 		} else if(eFeature instanceof EAttribute) {
 			EAttributeImpl createdEAtr = (EAttributeImpl)ecoreFactory.createEAttribute();
@@ -61,6 +67,10 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 			getSubClassesInPackage(eClass).forEach(subClass -> {
 				insertClass2Feature(subClass, createdEAtr);
 			});
+			
+			if(foreignSubClassCallbacks.containsKey(eClass)) {
+				foreignSubClassCallbacks.get(eClass).forEach(callback -> callback.accept(eClass, createdEAtr));
+			}
 			
 			return createdEAtr;
 		} else {
@@ -94,7 +104,18 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 		return dynamicFeatures.get(eClass);
 	}
 	
+	@Override
+	public void registerDynamicFeatureUpdateCallback(final EClass eClass, final BiConsumer<EClass, EStructuralFeature> callback) {
+		Set<BiConsumer<EClass, EStructuralFeature>> currentCallbacks = foreignSubClassCallbacks.get(eClass);
+		if(currentCallbacks == null) {
+			currentCallbacks = new HashSet<>();
+			foreignSubClassCallbacks.put(eClass, currentCallbacks);
+		}
+		currentCallbacks.add(callback);
+	}
+	
 	protected void injectExternalReferences() {
+		// Insert own features
 		Collection<EReference> externalRefs = getExternalReferences();
 		for(EReference ref : externalRefs) {
 			if(! (ref.getEType().getEPackage() instanceof SmartPackage))
@@ -123,6 +144,31 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 		}
 	}
 	
+	protected void fetchDynamicEStructuralFeaturesOfSuperTypes() {
+		// Update dynamic feature collection with dynamic features from super classes
+		Set<EClass> ownClasses = eContents().parallelStream()
+				.filter(obj->(obj instanceof EClass))
+				.map(ecls -> (EClass)ecls)
+				.collect(Collectors.toSet());
+		
+		for(EClass ownClass : ownClasses) {
+			for(EClass foreignSuperClass : ownClass.getEAllSuperTypes().stream()
+					.filter(ecls -> (ecls instanceof EClass))
+					.map(ecls -> (EClass)ecls)
+					.filter(ecls -> ecls.eContainer()!=this && (ecls.eContainer() instanceof SmartPackage))
+					.collect(Collectors.toSet())) {
+				SmartPackage otherPkg = (SmartPackage)foreignSuperClass.eContainer();
+				// Register a callback -> super classes might be subject to change during runtime
+				otherPkg.registerDynamicFeatureUpdateCallback(foreignSuperClass, this::insertFeatureOfSuperType);
+				
+				if(!otherPkg.hasDynamicEStructuralFeatures(foreignSuperClass))
+					continue;
+				
+				otherPkg.getDynamicEStructuralFeatures(foreignSuperClass).forEach(feature -> insertClass2Feature(ownClass, feature));
+			}
+		}
+	}
+	
 	protected Collection<EReference> getExternalReferences() {
 		Set<EClass> ownClasses = eContents().parallelStream().filter(obj->(obj instanceof EClass)).map(ecls -> (EClass)ecls).collect(Collectors.toSet());
 		// Find all references that point to EClasses not defined in this package.
@@ -145,6 +191,19 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 		currentFeatures.add(eFeature);
 	}
 	
+	private void insertFeatureOfSuperType(final EClass superClass, final EStructuralFeature eFeature) {
+		Set<EClass> subClasses = eContents().parallelStream()
+				.filter(obj->(obj instanceof EClass))
+				.map(ecls -> (EClass)ecls)
+				.filter(ecls -> ecls.getEAllSuperTypes().contains(superClass))
+				.collect(Collectors.toSet());
+		
+		for(EClass subClass : subClasses) {
+			insertClass2Feature(subClass, eFeature);
+		}
+		
+	}
+	
 	protected Set<EClass> getSubClassesInPackage(final EClass eClass) {
 		if(subClassesInPackage.containsKey(eClass))
 			return subClassesInPackage.get(eClass);
@@ -159,5 +218,6 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 		}
 		return subClasses;
 	}
+
 
 }
