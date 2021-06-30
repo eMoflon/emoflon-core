@@ -342,6 +342,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 	@Override
 	public Setting eSetting(EStructuralFeature feature) {
+		EObject thisObj = this;
 		return new Setting() {
 			
 			@Override
@@ -366,7 +367,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 			
 			@Override
 			public EObject getEObject() {
-				return (EObject) this;
+				return thisObj;
 			}
 			
 			@Override
