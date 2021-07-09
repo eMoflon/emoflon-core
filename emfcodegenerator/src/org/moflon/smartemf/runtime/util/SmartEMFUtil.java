@@ -39,8 +39,12 @@ public class SmartEMFUtil {
 			EObject obj = queue.poll();
 
 			for (EReference ref : obj.eClass().getEAllReferences()) {
+				if (ref.isContainment() && !recursive)
+					continue;
+
 				Object value = obj.eGet(ref);
 				obj.eUnset(ref);
+
 				if (recursive && ref.isContainment()) {
 					if (value == null)
 						continue;

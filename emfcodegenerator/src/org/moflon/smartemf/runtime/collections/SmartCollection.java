@@ -195,10 +195,18 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 
 	@Override
 	public void clear() {
+		if (elements.isEmpty())
+			return;
+
 		Collection<Object> newList = new LinkedList<>();
 		newList.addAll(elements);
 		elements.clear();
 		sendNotification(SmartEMFNotification.createRemoveManyNotification(eContainer, feature, newList, -1));
+
+		if (feature.isContainment()) {
+			for (Object o : newList)
+				((SmartObject) o).resetContainment();
+		}
 	}
 
 	@Override
