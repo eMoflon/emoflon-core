@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -56,6 +57,18 @@ public class SmartEMFUtil {
 					}
 				}
 			}
+
+			// HOTFIX until default bidirectional edges works
+			EObject container = obj.eContainer();
+			EReference containmentFeature = obj.eContainmentFeature();
+			if (container != null && containmentFeature != null) {
+				if (containmentFeature.isMany())
+					((List<?>) container.eGet(containmentFeature)).remove(obj);
+				else
+					container.eUnset(containmentFeature);
+			}
+			// END HOTFIX
+
 			((SmartObject) obj).resetContainment();
 			if (recursive)
 				deleteNodes(obj.eContents(), recursive);
