@@ -79,9 +79,10 @@ public class ExportedPackagesInManifestUpdater extends WorkspaceTask {
 	
 					changed |= ManifestFileUpdater.updateDependencies(manifest, Arrays
 							.asList(new String[] {"emfcodegenerator"}));
-					//exported packages are only "model" and "model".impl; so the .util package needs to be removed				
+					//exported packages are only "model" and "model".impl; so the .util package needs to be removed
+					String atr = (String) manifest.getMainAttributes().get(PluginManifestConstants.EXPORT_PACKAGE);
 					List<String> exportsList = ManifestFileUpdater
-							.extractDependencies((String) manifest.getMainAttributes().get(PluginManifestConstants.EXPORT_PACKAGE));
+							.extractDependencies(atr);
 					exportsList.removeIf(s -> s.endsWith(".util"));
 					changed |= ManifestFileUpdater.changeExports(manifest, exportsList);
 					return changed;
