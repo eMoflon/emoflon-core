@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.SmartObject;
+import org.moflon.smartemf.runtime.notification.NotifyStatus;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
 public final class ResourceContentSmartEList<T extends EObject> extends LinkedList<T> implements EList<T>, InternalEList<T>{
@@ -36,6 +37,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	@Override
 	public boolean add(T e) {
 		if(e instanceof SmartObject) {
+			resetContainment(e);
 			((SmartObject) e).setResource(resource, true);
 			return super.add(e);
 		} else {
@@ -60,14 +62,20 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 				oldContainer.eUnset(e.eContainingFeature());
 			}
 		}
+		else {
+			// if there is no eContainer, then this element is only contained within the resource and should be removed before setting the new eContainer
+			if(resource != null) {
+				resource.getContents().remove(e);
+			}
+		}
 	}
 	
 	@Override
 	public void add(int index, T element) {
 		if(element instanceof SmartObject) {
+			resetContainment(element);
 			((SmartObject) element).setResource(resource, true);
 			super.add(index, element);
-
 		} else  {
 			element.eAdapters().addAll(resource.eAdapters());
 			resetContainment(element);
