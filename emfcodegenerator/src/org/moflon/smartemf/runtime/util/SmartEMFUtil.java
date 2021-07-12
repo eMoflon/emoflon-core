@@ -8,15 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moflon.smartemf.runtime.SmartObject;
+import org.moflon.smartemf.runtime.SmartPackage;
 import org.moflon.smartemf.runtime.collections.ReplacingIterator;
 import org.moflon.smartemf.runtime.collections.SmartCollection;
 
@@ -165,6 +168,19 @@ public class SmartEMFUtil {
 			List<Adapter> adapters = resource2adapters.get(resource);
 			resource.eAdapters().addAll(adapters);
 		}
+	}
+
+	public static List<EReference> getEAllNonDynamicReferences(EClass eClass) {
+		EList<EReference> refs = eClass.getEAllReferences();
+
+		if (eClass.getEPackage() instanceof SmartPackage) {
+			SmartPackage smartPackage = (SmartPackage) eClass.getEPackage();
+			return refs.stream() //
+					.filter(r -> !smartPackage.isDynamicEStructuralFeature(eClass, r)) //
+					.collect(Collectors.toList());
+		}
+
+		return refs;
 	}
 
 }
