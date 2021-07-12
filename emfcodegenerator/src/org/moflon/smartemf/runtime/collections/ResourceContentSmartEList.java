@@ -117,6 +117,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	@Override
 	public void clear() {
 		for(T t : this) {
+			sendRemoveNotification((EObject) t);
 			if(t instanceof SmartObject) {
 				((SmartObject) t).setResource(null, true);
 			} else {
@@ -130,6 +131,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	@Override
 	public T remove(int index) {
 		Object o =  get(index);
+		sendRemoveNotification((EObject) o);
 		if(o instanceof SmartObject) {
 			((SmartObject) o).setResource(null, true);
 		} else {
@@ -141,6 +143,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	
 	@Override
 	public boolean remove(Object o) {
+		sendRemoveNotification((EObject) o);
 		if(o instanceof SmartObject) {
 			((SmartObject) o).setResource(null, true);
 		} else {
@@ -153,6 +156,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		for(Object t : c) {
+			sendRemoveNotification((EObject) t);
 			if(t instanceof SmartObject) {
 				((SmartObject) t).setResource(null, true);
 			} else {
@@ -270,6 +274,12 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	protected void sendAddNotification(EObject obj) {
 		for(Adapter a : resource.eAdapters()) {
 			a.notifyChanged(SmartEMFNotification.createAddNotification(resource, null, obj, -1));
+		}
+	}
+	
+	protected void sendRemoveNotification(EObject obj) {
+		for(Adapter a : resource.eAdapters()) {
+			a.notifyChanged(SmartEMFNotification.createRemoveNotification(resource, null, obj, -1));
 		}
 	}
 

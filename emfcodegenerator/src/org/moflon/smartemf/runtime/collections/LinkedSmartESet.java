@@ -2,7 +2,6 @@ package org.moflon.smartemf.runtime.collections;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.notification.NotifyStatus;
 
 public class LinkedSmartESet<T> extends SmartEList<T> {

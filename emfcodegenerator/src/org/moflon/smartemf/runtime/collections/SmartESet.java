@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.moflon.smartemf.runtime.SmartObject;
 
 public class SmartESet<T> extends SmartCollection<T, HashSet<T>> {
 
@@ -156,4 +156,21 @@ public class SmartESet<T> extends SmartCollection<T, HashSet<T>> {
 	public T setUnique(int index, T object) {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public ReplacingIterator<T> replacingIterator() {
+		return new ReplacingIterator<T>(this) {
+
+			@Override
+			public void replace(T element) {
+				if (iteratorIndex <= 0)
+					throw new NoSuchElementException("There is no last element to replace! Please call method next(), first!");
+				elements.remove(copiedElements[iteratorIndex - 1]);
+				// since this SmartCollection behaves like a set, we do not have to insert the new element at the
+				// same position as the removed one
+				elements.add(element);
+			}
+		};
+	}
+
 }

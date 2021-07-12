@@ -5,14 +5,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
-public class SmartEList<T> extends SmartCollection<T , LinkedList<T>> {
+public class SmartEList<T> extends SmartCollection<T, LinkedList<T>> {
 
 	public SmartEList(EObject eContainer, EReference feature) {
 		super(eContainer, feature);
@@ -44,7 +44,7 @@ public class SmartEList<T> extends SmartCollection<T , LinkedList<T>> {
 	@Override
 	public T set(int index, T element) {
 		T t = elements.set(index, element);
-		if(!feature.isContainment()) {
+		if (!feature.isContainment()) {
 			sendNotification(SmartEMFNotification.createRemoveNotification(eContainer, feature, t, index));
 		}
 		sendNotification(SmartEMFNotification.createAddNotification(eContainer, feature, element, index));
@@ -94,7 +94,7 @@ public class SmartEList<T> extends SmartCollection<T , LinkedList<T>> {
 
 	@Override
 	public boolean addAll(int index, Collection<? extends T> c) {
-		for(T t : c) {
+		for (T t : c) {
 			elements.add(index, t);
 		}
 		sendNotification(SmartEMFNotification.createAddManyNotification(eContainer, feature, c, index));
@@ -190,4 +190,19 @@ public class SmartEList<T> extends SmartCollection<T , LinkedList<T>> {
 	public T setUnique(int index, T object) {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public ReplacingIterator<T> replacingIterator() {
+		return new ReplacingIterator<T>(this) {
+
+			@Override
+			public void replace(T element) {
+				if (iteratorIndex <= 0)
+					throw new NoSuchElementException("There is no last element to replace! Please call method next(), first!");
+				elements.set(iteratorIndex - 1, element);
+			}
+
+		};
+	}
+
 }
