@@ -1,7 +1,8 @@
 package org.moflon.emf.build;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -151,14 +152,14 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 	 * @return {@link IStatus} with {@link IStatus#ERROR} if a cycle exists
 	 */
 	private IStatus checkForCyclicInheritance() {
-		final List<EClass> eClassifiersWithCyclicInheritance = new ArrayList<>();
-		genModel.getGenPackages().stream()//
-				.flatMap(genPackage -> genPackage.getGenClassifiers().stream()).forEach(genClassifier -> {
+		final List<EClass> eClassifiersWithCyclicInheritance = Collections.synchronizedList(new LinkedList<>());
+		genModel.getGenPackages().parallelStream()//
+				.flatMap(genPackage -> genPackage.getGenClassifiers().parallelStream()).forEach(genClassifier -> {
 					final EClassifier eClassifier = genClassifier.getEcoreClassifier();
 					if (eClassifier instanceof EClass) {
 						final EClass eClass = (EClass) eClassifier;
 						final EList<EGenericType> superTypes = eClass.getEAllGenericSuperTypes();
-						if (superTypes.stream().map(EGenericType::getEClassifier)
+						if (superTypes.parallelStream().map(EGenericType::getEClassifier)
 								.anyMatch(superType -> eClass.equals(superType))) {
 							eClassifiersWithCyclicInheritance.add(eClass);
 						}
