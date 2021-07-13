@@ -1,7 +1,6 @@
 package org.moflon.smartemf.runtime.collections;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,16 +8,12 @@ import java.util.ListIterator;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.NotificationChain;
-import org.eclipse.emf.common.notify.impl.NotificationChainImpl;
-import org.eclipse.emf.common.notify.impl.NotifyingListImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.SmartObject;
-import org.moflon.smartemf.runtime.notification.NotifyStatus;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
 public final class ResourceContentSmartEList<T extends EObject> extends LinkedList<T> implements EList<T>, InternalEList<T>{
@@ -91,7 +86,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 		Collection<T> iObjs = new LinkedList<>();
 		for(T t : c) {
 			if(t instanceof SmartObject) {
-				resetContainment(e);
+				resetContainment(t);
 				((SmartObject) t).setResource(resource, true);
 			} else {
 				t.eAdapters().addAll(resource.eAdapters());
