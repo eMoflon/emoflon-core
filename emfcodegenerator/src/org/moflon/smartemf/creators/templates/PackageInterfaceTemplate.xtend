@@ -52,7 +52,9 @@ class PackageInterfaceTemplate implements FileCreator{
 		import org.eclipse.emf.ecore.EPackage;
 		import org.eclipse.emf.ecore.EReference;
 		
-		public interface «e_pak.get_emf_package_class_name» extends EPackage {
+		import org.moflon.smartemf.runtime.SmartPackage;
+		
+		public interface «e_pak.get_emf_package_class_name» extends SmartPackage {
 
 			String eNAME = "«e_pak.get_emf_package_class_name»";
 			String eNS_URI = "«e_pak.get_ens_uri»";

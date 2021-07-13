@@ -10,9 +10,8 @@ import org.eclipse.text.edits.TextEdit;
 
 public class CodeFormattingUtil {
 
-	private static final CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(null);
-
 	public static String format(String code) {
+		CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(null);
 		TextEdit textEdit = codeFormatter.format(CodeFormatter.K_UNKNOWN, code, 0, code.length(), 0, null);
 		IDocument doc = new Document(code);
 		try {

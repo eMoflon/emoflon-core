@@ -1,9 +1,10 @@
 package org.moflon.smartemf.runtime;
 
-import java.awt.Component.BaselineResizeBehavior;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.eclipse.emf.common.notify.Adapter;
@@ -24,6 +25,8 @@ import org.eclipse.emf.ecore.resource.Resource.Internal;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.collections.DefaultSmartEList;
+import org.moflon.smartemf.runtime.collections.SmartCollection;
+import org.moflon.smartemf.runtime.collections.SmartESet;
 import org.moflon.smartemf.runtime.notification.NotifyStatus;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
@@ -33,10 +36,14 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	private EObject eContainer;
 	private EStructuralFeature eContainingFeature;
 	private EClass staticClass;
+	private SmartPackage staticPackage;
 	private URI proxyUri;
+	
+	private Map<EStructuralFeature,Object> feature2Value = new HashMap<>();
 	
 	public SmartObject(EClass staticClass) {
 		this.staticClass = staticClass;
+		this.staticPackage = (SmartPackage) staticClass.getEPackage();
 	}
 	
 	@Override
@@ -115,11 +122,6 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 ;
 	}
 
-	@Override
-	public boolean eIsProxy() {
-		return false;
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public EList<EObject> eCrossReferences() {
@@ -141,6 +143,121 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	@Override
 	public Object eGet(EStructuralFeature feature, boolean resolve) {
 		return eGet(feature);
+	}
+	
+	protected Object eDynamicGet(EStructuralFeature feature) {
+		if(feature2Value.containsKey(feature)) {
+			return feature2Value.get(feature);
+		} else {
+			if(staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
+				if(feature.isMany()) {
+					EList<Object> emptyList = new SmartESet<Object>(this, (EReference) feature);
+					feature2Value.put(feature, emptyList);
+					return emptyList;
+				} else {
+					feature2Value.put(feature, null);
+					return null;
+				}
+			} else {
+				throw new RuntimeException("Feature <"+feature+"> is not present in objects of EClass <"+staticClass+">");
+			}
+		}
+	}
+	
+	protected void eDynamicSet(EStructuralFeature feature, Object value) {
+		Object oldValue = null;
+		if(feature2Value.containsKey(feature)) {
+			if(feature.isMany()) {
+				throw new RuntimeException("Feature <"+feature+"> represents a collection. Set can not be used on collection type attributes.");
+			} else {
+				oldValue = feature2Value.replace(feature, value);
+			}
+			
+		} else {
+			if(staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
+				if(feature.isMany()) {
+					throw new RuntimeException("Feature <"+feature+"> represents a collection. Set can not be used on collection type attributes.");
+				} else {
+					feature2Value.put(feature, value);
+				}
+			} else {
+				throw new RuntimeException("Feature <"+feature+"> is not present in objects of EClass <"+staticClass+">");
+			}
+		}
+		
+		if(oldValue == null && value == null)
+			return;
+		
+		if(oldValue == null && value != null) {
+			sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, value, -1));
+			if(feature instanceof EReference && ((EReference)feature).getEOpposite() != null) {
+				((SmartObject)value).eDynamicInverseAdd(this, ((EReference)feature).getEOpposite());
+			}
+			return;
+		}
+			
+		if(!oldValue.equals(value)) {
+			sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, value, -1));
+			if(feature instanceof EReference && ((EReference)feature).getEOpposite() != null) {
+				((SmartObject)value).eDynamicInverseAdd(this, ((EReference)feature).getEOpposite());
+			}
+		}
+		
+	}
+	
+	protected void eDynamicUnset(EStructuralFeature feature) {
+		Object oldValue = null;
+		if(feature2Value.containsKey(feature)) {
+			if(feature.isMany()) {
+				((Collection<?>)feature2Value.get(feature)).clear();
+			} else {
+				oldValue = feature2Value.replace(feature, null);
+				if(oldValue == null)
+					return;
+
+				sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, null, -1));
+				
+				if(feature instanceof EReference && ((EReference)feature).getEOpposite() != null) {
+					((SmartObject)oldValue).eDynamicInverseRemove(this, ((EReference)feature).getEOpposite());
+				}
+			}
+			
+		} else {
+			if(staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
+				if(feature.isMany()) {
+					EList<Object> emptyList = new SmartESet<Object>(this, (EReference) feature);
+					feature2Value.put(feature, emptyList);
+				} else {
+					feature2Value.put(feature, null);
+				}
+			} else {
+				throw new RuntimeException("Feature <"+feature+"> is not present in objects of EClass <"+staticClass+">");
+			}
+		}
+		
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected void eDynamicInverseAdd(Object otherEnd, EStructuralFeature feature) {
+		if(feature.isMany()) {
+			SmartCollection<Object, Collection<Object>> list = (SmartCollection<Object, Collection<Object>>) eGet(feature);
+			if(list.addInternal(otherEnd, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
+	    		sendNotification(SmartEMFNotification.createAddNotification(this, feature, otherEnd, -1));
+	    	}
+		} else {
+			eSet(feature, otherEnd);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected void eDynamicInverseRemove(Object otherEnd, EStructuralFeature feature) {			
+		if(feature.isMany()) {
+			SmartCollection<Object, Collection<Object>> list = (SmartCollection<Object, Collection<Object>>) eGet(feature);
+			list.removeInternal(otherEnd, false, true);
+		} else {
+			eUnset(feature);
+		}
 	}
 
 	@Override
@@ -348,6 +465,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 	@Override
 	public Setting eSetting(EStructuralFeature feature) {
+		EObject thisObj = this;
 		return new Setting() {
 			
 			@Override
@@ -372,7 +490,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 			
 			@Override
 			public EObject getEObject() {
-				return (EObject) this;
+				return thisObj;
 			}
 			
 			@Override
@@ -444,6 +562,11 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	@Override
 	public void eSetProxyURI(URI uri) {
 		this.proxyUri = uri;
+	}
+
+	@Override
+	public boolean eIsProxy() {
+		return proxyUri != null;
 	}
 
 	@Override
