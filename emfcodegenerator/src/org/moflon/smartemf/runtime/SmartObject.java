@@ -38,20 +38,20 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	private EClass staticClass;
 	private SmartPackage staticPackage;
 	private URI proxyUri;
-	
-	private Map<EStructuralFeature,Object> feature2Value = new HashMap<>();
-	
+
+	private Map<EStructuralFeature, Object> feature2Value = new HashMap<>();
+
 	public SmartObject(EClass staticClass) {
 		this.staticClass = staticClass;
 		this.staticPackage = (SmartPackage) staticClass.getEPackage();
 	}
-	
+
 	@Override
 	/**
 	 * returns the adapters of the containing resource
 	 */
 	public EList<Adapter> eAdapters() {
-		if(resource == null)
+		if (resource == null)
 			return new DefaultSmartEList<>();
 		else
 			return resource.eAdapters();
@@ -75,7 +75,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 	@Override
 	public void eNotify(Notification notification) {
-		
+
 	}
 
 	@Override
@@ -89,11 +89,11 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	}
 
 	public SmartEMFResource smartResource() {
-		if(resource instanceof SmartEMFResource)
+		if (resource instanceof SmartEMFResource)
 			return (SmartEMFResource) resource;
 		return null;
 	}
-	
+
 	@Override
 	public EReference eContainmentFeature() {
 		return (EReference) eContainingFeature;
@@ -103,13 +103,12 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	@Override
 	public EList<EObject> eContents() {
 		EList<EObject> contents = new DefaultSmartEList<>();
-		for(EReference ref : staticClass.getEAllContainments()) {
-			if(ref.isMany()) {
+		for (EReference ref : staticClass.getEAllContainments()) {
+			if (ref.isMany()) {
 				contents.addAll((Collection<? extends EObject>) eGet(ref));
-			}
-			else {
+			} else {
 				Object obj = eGet(ref);
-				if(obj != null)
+				if (obj != null)
 					contents.add((EObject) obj);
 			}
 		}
@@ -118,19 +117,18 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 	@Override
 	public TreeIterator<EObject> eAllContents() {
-		return EcoreUtil.getAllContents(Collections.singleton(this))
-;
+		return EcoreUtil.getAllContents(Collections.singleton(this));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public EList<EObject> eCrossReferences() {
 		EList<EObject> contents = new DefaultSmartEList<EObject>();
-		for(EReference ref : staticClass.getEAllReferences()) {
-			if(ref.isContainment())
+		for (EReference ref : staticClass.getEAllReferences()) {
+			if (ref.isContainment())
 				continue;
-			
-			if(ref.isMany()) {
+
+			if (ref.isMany()) {
 				contents.addAll((Collection<? extends EObject>) eGet(ref));
 			} else {
 				EObject value = (EObject) eGet(ref);
@@ -145,13 +143,13 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	public Object eGet(EStructuralFeature feature, boolean resolve) {
 		return eGet(feature);
 	}
-	
+
 	protected Object eDynamicGet(EStructuralFeature feature) {
-		if(feature2Value.containsKey(feature)) {
+		if (feature2Value.containsKey(feature)) {
 			return feature2Value.get(feature);
 		} else {
-			if(staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
-				if(feature.isMany()) {
+			if (staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
+				if (feature.isMany()) {
 					EList<Object> emptyList = new SmartESet<Object>(this, (EReference) feature);
 					feature2Value.put(feature, emptyList);
 					return emptyList;
@@ -160,100 +158,100 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 					return null;
 				}
 			} else {
-				throw new RuntimeException("Feature <"+feature+"> is not present in objects of EClass <"+staticClass+">");
+				throw new RuntimeException("Feature <" + feature + "> is not present in objects of EClass <" + staticClass + ">");
 			}
 		}
 	}
-	
+
 	protected void eDynamicSet(EStructuralFeature feature, Object value) {
 		Object oldValue = null;
-		if(feature2Value.containsKey(feature)) {
-			if(feature.isMany()) {
-				throw new RuntimeException("Feature <"+feature+"> represents a collection. Set can not be used on collection type attributes.");
+		if (feature2Value.containsKey(feature)) {
+			if (feature.isMany()) {
+				throw new RuntimeException("Feature <" + feature + "> represents a collection. Set can not be used on collection type attributes.");
 			} else {
 				oldValue = feature2Value.replace(feature, value);
 			}
-			
+
 		} else {
-			if(staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
-				if(feature.isMany()) {
-					throw new RuntimeException("Feature <"+feature+"> represents a collection. Set can not be used on collection type attributes.");
+			if (staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
+				if (feature.isMany()) {
+					throw new RuntimeException(
+							"Feature <" + feature + "> represents a collection. Set can not be used on collection type attributes.");
 				} else {
 					feature2Value.put(feature, value);
 				}
 			} else {
-				throw new RuntimeException("Feature <"+feature+"> is not present in objects of EClass <"+staticClass+">");
+				throw new RuntimeException("Feature <" + feature + "> is not present in objects of EClass <" + staticClass + ">");
 			}
 		}
-		
-		if(oldValue == null && value == null)
+
+		if (oldValue == null && value == null)
 			return;
-		
-		if(oldValue == null && value != null) {
+
+		if (oldValue == null && value != null) {
 			sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, value, -1));
-			if(feature instanceof EReference && ((EReference)feature).getEOpposite() != null) {
-				((SmartObject)value).eDynamicInverseAdd(this, ((EReference)feature).getEOpposite());
+			if (feature instanceof EReference && ((EReference) feature).getEOpposite() != null) {
+				((SmartObject) value).eDynamicInverseAdd(this, ((EReference) feature).getEOpposite());
 			}
 			return;
 		}
-			
-		if(!oldValue.equals(value)) {
+
+		if (!oldValue.equals(value)) {
 			sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, value, -1));
-			if(feature instanceof EReference && ((EReference)feature).getEOpposite() != null) {
-				((SmartObject)value).eDynamicInverseAdd(this, ((EReference)feature).getEOpposite());
+			if (feature instanceof EReference && ((EReference) feature).getEOpposite() != null) {
+				((SmartObject) value).eDynamicInverseAdd(this, ((EReference) feature).getEOpposite());
 			}
 		}
-		
+
 	}
-	
+
 	protected void eDynamicUnset(EStructuralFeature feature) {
 		Object oldValue = null;
-		if(feature2Value.containsKey(feature)) {
-			if(feature.isMany()) {
-				((Collection<?>)feature2Value.get(feature)).clear();
+		if (feature2Value.containsKey(feature)) {
+			if (feature.isMany()) {
+				((Collection<?>) feature2Value.get(feature)).clear();
 			} else {
 				oldValue = feature2Value.replace(feature, null);
-				if(oldValue == null)
+				if (oldValue == null)
 					return;
 
 				sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, null, -1));
-				
-				if(feature instanceof EReference && ((EReference)feature).getEOpposite() != null) {
-					((SmartObject)oldValue).eDynamicInverseRemove(this, ((EReference)feature).getEOpposite());
+
+				if (feature instanceof EReference && ((EReference) feature).getEOpposite() != null) {
+					((SmartObject) oldValue).eDynamicInverseRemove(this, ((EReference) feature).getEOpposite());
 				}
 			}
-			
+
 		} else {
-			if(staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
-				if(feature.isMany()) {
+			if (staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
+				if (feature.isMany()) {
 					EList<Object> emptyList = new SmartESet<Object>(this, (EReference) feature);
 					feature2Value.put(feature, emptyList);
 				} else {
 					feature2Value.put(feature, null);
 				}
 			} else {
-				throw new RuntimeException("Feature <"+feature+"> is not present in objects of EClass <"+staticClass+">");
+				throw new RuntimeException("Feature <" + feature + "> is not present in objects of EClass <" + staticClass + ">");
 			}
 		}
-		
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected void eDynamicInverseAdd(Object otherEnd, EStructuralFeature feature) {
-		if(feature.isMany()) {
+		if (feature.isMany()) {
 			SmartCollection<Object, Collection<Object>> list = (SmartCollection<Object, Collection<Object>>) eGet(feature);
-			if(list.addInternal(otherEnd, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
-	    		sendNotification(SmartEMFNotification.createAddNotification(this, feature, otherEnd, -1));
-	    	}
+			if (list.addInternal(otherEnd, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
+				sendNotification(SmartEMFNotification.createAddNotification(this, feature, otherEnd, -1));
+			}
 		} else {
 			eSet(feature, otherEnd);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	protected void eDynamicInverseRemove(Object otherEnd, EStructuralFeature feature) {			
-		if(feature.isMany()) {
+	protected void eDynamicInverseRemove(Object otherEnd, EStructuralFeature feature) {
+		if (feature.isMany()) {
 			SmartCollection<Object, Collection<Object>> list = (SmartCollection<Object, Collection<Object>>) eGet(feature);
 			list.removeInternal(otherEnd, false, true);
 		} else {
@@ -264,10 +262,9 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	@Override
 	public boolean eIsSet(EStructuralFeature feature) {
 		Object obj = eGet(feature);
-		if(feature.isMany()) {
+		if (feature.isMany()) {
 			return !((Collection<?>) obj).isEmpty();
-		}
-		else {
+		} else {
 			return obj != null;
 		}
 	}
@@ -290,23 +287,26 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	@Override
 	/**
 	 * revokes current containment relationship
+	 * 
+	 * @return status of execution and if a REMOVE notification was sent or not
 	 */
 	public NotifyStatus resetContainment() {
-		// if there is no eContainer, then this element is only contained within the resource and should be removed
-		if(eContainer == null && resource != null) {
+		// if there is no eContainer, then this element is only contained within the resource and should be
+		// removed
+		if (eContainer == null && resource != null) {
 			resource.getContents().remove(this);
 		}
-		
-		NotifyStatus status = setResource(null, true);
-		if(eContainingFeature == null)
-			return status;
-		
+
+		setResource(null, true);
+		if (eContainingFeature == null)
+			return NotifyStatus.SUCCESS_NO_NOTIFICATION;
+
 //		EObject oldContainer = eContainer;
 //		EStructuralFeature oldFeature = eContainingFeature;
-		
+
 		eContainer = null;
 		eContainingFeature = null;
-		
+
 //		if(oldFeature.isMany()) {
 //			if(((Collection<?>) oldContainer.eGet(oldFeature)).remove(this)) {
 //				return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
@@ -318,7 +318,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 ////			oldContainer.eUnset(oldFeature);
 //		}
 
-		return status;
+		return NotifyStatus.SUCCESS_NO_NOTIFICATION;
 	}
 
 	@Override
@@ -326,31 +326,30 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	 * sets new containment and cleans up the old
 	 */
 	public NotifyStatus setContainment(EObject eContainer, EStructuralFeature feature) {
-		if(this.eContainer == null && eContainer == null)
+		if (this.eContainer == null && eContainer == null)
 			return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
-		if(this.eContainer != null && this.eContainer.equals(eContainer) && this.eContainingFeature.equals(feature))
+		if (this.eContainer != null && this.eContainer.equals(eContainer) && this.eContainingFeature.equals(feature))
 			return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
-		
+
 		NotifyStatus status = NotifyStatus.FAILURE_NO_NOTIFICATION;
 		// clean up old containment
 		// we don't use resetContainment here to optimize the number of generated notifications
-		if(this.eContainer != null) {
-			if(eContainingFeature.isMany()) {
+		if (this.eContainer != null) {
+			if (eContainingFeature.isMany()) {
 				((Collection<?>) this.eContainer.eGet(eContainingFeature)).remove(this);
-			}
-			else {
+			} else {
 				this.eContainer.eUnset(eContainingFeature);
 			}
 			status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
-		}
-		else {
-			// if there is no eContainer, then this element is only contained within the resource and should be removed before setting the new eContainer
-			if(resource != null) {
+		} else {
+			// if there is no eContainer, then this element is only contained within the resource and should be
+			// removed before setting the new eContainer
+			if (resource != null) {
 				resource.getContents().remove(this);
 			}
 			status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
 		}
-		
+
 		this.eContainer = eContainer;
 		this.eContainingFeature = feature;
 		status = setResource(eContainer.eResource(), true);
@@ -361,88 +360,89 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	public boolean isContainmentObject() {
 		return eContainer != null;
 	}
-	
+
 	protected void sendNotification(Notification n) {
-		if(resource != null) {
-			for(Adapter a : resource.eAdapters()) {
+		if (resource != null) {
+			for (Adapter a : resource.eAdapters()) {
 				a.notifyChanged(n);
 			}
 		}
 	}
-	
+
 	protected void sendRemoveAdapterNotification(EObject obj) {
-		if(resource != null) {
-			for(Adapter a : resource.eAdapters()) {
+		if (resource != null) {
+			for (Adapter a : resource.eAdapters()) {
 				a.notifyChanged(SmartEMFNotification.createRemovingAdapterNotification(this, null, a, -1));
 			}
 		}
 	}
-	
+
 	public NotifyStatus setResource(Resource resource, boolean sendNotification) {
 		// stop if we encounter the same resource already
-		if(eResource() == null && resource == null) 
-	    	return NotifyStatus.SUCCESS_NO_NOTIFICATION;
-	    
-	    if(eResource() != null && eResource().equals(resource))
-	    	return NotifyStatus.SUCCESS_NO_NOTIFICATION;
-			
+		if (eResource() == null && resource == null)
+			return NotifyStatus.SUCCESS_NO_NOTIFICATION;
+
+		if (eResource() != null && eResource().equals(resource))
+			return NotifyStatus.SUCCESS_NO_NOTIFICATION;
+
 		// send remove messages to old adapters
-		// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
+		// TODO lfritsche: should we optimize this and only do this if the adapters of both resources
+		// differ?
 		sendRemoveAdapterNotification(this);
-		
+
 		this.resource = (Internal) resource;
-		
+
 		Consumer<SmartObject> setResourceCall = (o) -> o.setResource(resource, true);
-		
+
 		NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
-		if(resource != null) {
-			if(sendNotification) {
-    			// if container is null, then this element is a root element within a resource and notifications are handled there
-    			if(eContainer() == null) {
+		if (resource != null) {
+			if (sendNotification) {
+				// if container is null, then this element is a root element within a resource and notifications are
+				// handled there
+				if (eContainer() == null) {
 					sendNotification(SmartEMFNotification.createAddNotification(resource, null, this, -1));
 					status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
+				} else if (eContainingFeature().isMany()) {
+					sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
+					status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
 				}
-				else
-					if(eContainingFeature().isMany()) {
-						sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
-						status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
-					}
 
 			}
-			
+
 			// if cascading is activated, we recursively generate add messages; else just this once
 			SmartEMFResource smartResource = smartResource();
-			if(smartResource == null ||  smartResource.getCascade())
+			if (smartResource == null || smartResource.getCascade())
 				setResourceCall = (o) -> o.setResourceSilently(resource);
 		}
-		
+
 		setResourceOfContainments(setResourceCall);
-		
+
 		return status;
 	}
-	
+
 	protected abstract void setResourceOfContainments(Consumer<SmartObject> setResourceCall);
-	
-    public void setResourceSilently(Resource r) {
-    	// stop if we encounter the same resource already
-		if(eResource() == null && r == null) 
-	    	return;
-	    
-	    if(eResource() != null && eResource().equals(r))
-	    	return;
-			
+
+	public void setResourceSilently(Resource r) {
+		// stop if we encounter the same resource already
+		if (eResource() == null && r == null)
+			return;
+
+		if (eResource() != null && eResource().equals(r))
+			return;
+
 		// send remove messages to old adapters
-		// TODO lfritsche: should we optimize this and only do this if the adapters of both resources differ?
+		// TODO lfritsche: should we optimize this and only do this if the adapters of both resources
+		// differ?
 		sendRemoveAdapterNotification(this);
-			
+
 		setResource(r, true);
-		
+
 		setResourceOfContainmentsSilently(r);
-    }
-    
-    protected abstract void setResourceOfContainmentsSilently(Resource r);
-	
-    public abstract Object eGet(int featureID, boolean resolve, boolean coreType);
+	}
+
+	protected abstract void setResourceOfContainmentsSilently(Resource r);
+
+	public abstract Object eGet(int featureID, boolean resolve, boolean coreType);
 
 	@Override
 	public boolean eNotificationRequired() {
@@ -468,32 +468,32 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	public Setting eSetting(EStructuralFeature feature) {
 		EObject thisObj = this;
 		return new Setting() {
-			
+
 			@Override
 			public void unset() {
 				eUnset(feature);
 			}
-			
+
 			@Override
 			public void set(Object newValue) {
 				eSet(feature, newValue);
 			}
-			
+
 			@Override
 			public boolean isSet() {
 				return true;
 			}
-			
+
 			@Override
 			public EStructuralFeature getEStructuralFeature() {
 				return feature;
 			}
-			
+
 			@Override
 			public EObject getEObject() {
 				return thisObj;
 			}
-			
+
 			@Override
 			public Object get(boolean resolve) {
 				return eGet(feature);
@@ -528,25 +528,22 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	}
 
 	@Override
-	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, Class<?> baseClass,
-			NotificationChain notifications) {
+	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, Class<?> baseClass, NotificationChain notifications) {
 		throw new UnsupportedOperationException("Unsupported by SmartEMF");
 	}
-	
+
 	public abstract void eInverseAdd(Object otherEnd, EStructuralFeature feature);
-	
+
 	public abstract void eInverseRemove(Object otherEnd, EStructuralFeature feature);
 
 	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, Class<?> baseClass,
-			NotificationChain notifications) {
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, Class<?> baseClass, NotificationChain notifications) {
 		throw new UnsupportedOperationException("Unsupported by SmartEMF");
 
 	}
 
 	@Override
-	public NotificationChain eBasicSetContainer(InternalEObject newContainer, int newContainerFeatureID,
-			NotificationChain notifications) {
+	public NotificationChain eBasicSetContainer(InternalEObject newContainer, int newContainerFeatureID, NotificationChain notifications) {
 		throw new UnsupportedOperationException("Unsupported by SmartEMF");
 	}
 
@@ -619,7 +616,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		throw new UnsupportedOperationException("Unsupported by SmartEMF");
 	}
-	
+
 	@Override
 	public Object eGet(EStructuralFeature eFeature, boolean resolve, boolean coreType) {
 		return eGet(eFeature);

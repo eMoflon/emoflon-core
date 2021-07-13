@@ -123,18 +123,22 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		return status != NotifyStatus.FAILURE_NO_NOTIFICATION;
 	}
 
+	/**
+	 * Returns status of execution and if a REMOVE notification was sent or not
+	 */
 	public NotifyStatus removeInternal(Object o, boolean removeFromEOpposite, boolean sendRemoveNotification) {
 		boolean success = elements.remove(o);
 		if (!success)
 			return NotifyStatus.FAILURE_NO_NOTIFICATION;
 
+		NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
 		if (sendRemoveNotification) {
 			sendNotification(SmartEMFNotification.createRemoveNotification(eContainer, feature, o, -1));
+			status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
 		}
 
-		NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
 		if (feature.isContainment()) {
-			status = ((SmartObject) o).resetContainment();
+			((SmartObject) o).resetContainment();
 		}
 		if (removeFromEOpposite) {
 			((SmartObject) o).eInverseRemove(eContainer, feature.getEOpposite());
@@ -144,7 +148,7 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 
 	@Override
 	public boolean remove(Object o) {
-		NotifyStatus status = removeInternal(o, true, false);
+		NotifyStatus status = removeInternal(o, true, true);
 		if (status == NotifyStatus.SUCCESS_NO_NOTIFICATION)
 			sendNotification(SmartEMFNotification.createRemoveNotification(eContainer, feature, o, -1));
 		return status != NotifyStatus.FAILURE_NO_NOTIFICATION;
