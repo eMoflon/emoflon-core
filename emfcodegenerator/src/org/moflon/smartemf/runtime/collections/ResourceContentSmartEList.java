@@ -91,6 +91,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 		Collection<T> iObjs = new LinkedList<>();
 		for(T t : c) {
 			if(t instanceof SmartObject) {
+				resetContainment(e);
 				((SmartObject) t).setResource(resource, true);
 			} else {
 				t.eAdapters().addAll(resource.eAdapters());
@@ -109,6 +110,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 		Collection<T> iObjs = new LinkedList<>();
 		for(T t : c) {
 			if(t instanceof SmartObject) {
+				resetContainment(t);
 				((SmartObject) t).setResource(resource, true);
 			} else { 
 				t.eAdapters().addAll(resource.eAdapters());
