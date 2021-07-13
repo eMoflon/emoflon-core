@@ -132,9 +132,10 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 			
 			if(ref.isMany()) {
 				contents.addAll((Collection<? extends EObject>) eGet(ref));
-			}
-			else {
-				contents.add((EObject) eGet(ref));
+			} else {
+				EObject value = (EObject) eGet(ref);
+				if (value != null)
+					contents.add(value);
 			}
 		}
 		return contents;
