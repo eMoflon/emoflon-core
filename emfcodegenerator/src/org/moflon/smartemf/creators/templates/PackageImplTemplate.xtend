@@ -102,6 +102,9 @@ class PackageImplTemplate implements FileCreator{
 				// Initialize created meta-data
 				the«e_pak.get_emf_e_package.name.toFirstUpper»Package.initializePackageContents();
 				
+				// Inject internal eOpposites to unidirectional references
+				the«e_pak.get_emf_e_package.name.toFirstUpper»Package.injectDynamicOpposites();
+				
 				// Inject external references into foreign packages
 				the«e_pak.get_emf_e_package.name.toFirstUpper»Package.injectExternalReferences();
 		

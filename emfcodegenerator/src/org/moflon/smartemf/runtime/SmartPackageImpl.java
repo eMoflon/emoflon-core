@@ -144,6 +144,34 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 		}
 	}
 	
+	protected void injectDynamicOpposites() {
+		// Insert own features
+		Collection<EReference> internalRefs = getInternalUnidirectionalReferences();
+		for(EReference ref : internalRefs) {
+			if(ref.isContainment())
+				continue;
+			
+			EReferenceImpl inverse = (EReferenceImpl)ecoreFactory.createEReference();
+			inverse.setName(ref.getName()+"_inverseTo_"+getName());
+			inverse.setEType(ref.getEContainingClass());
+			inverse.setEOpposite(ref);
+			inverse.setLowerBound(0);
+			inverse.setUpperBound(-1);
+			inverse.setTransient(ref.isTransient());
+			inverse.setVolatile(ref.isVolatile());
+			inverse.setChangeable(ref.isChangeable());
+			inverse.setContainment(false);
+			inverse.setResolveProxies(ref.isResolveProxies());
+			inverse.setUnsettable(ref.isUnsettable());
+			inverse.setUnique(ref.isUnique());
+			inverse.setDerived(ref.isDerived());
+			inverse.setOrdered(ref.isOrdered());
+			
+			EReference trueInverse = (EReference) insertNewFeature((EClass) ref.getEType(), inverse);
+			ref.setEOpposite(trueInverse);
+		}
+	}
+	
 	protected void fetchDynamicEStructuralFeaturesOfSuperTypes() {
 		// Update dynamic feature collection with dynamic features from super classes
 		Set<EClass> ownClasses = eContents().parallelStream()
@@ -179,6 +207,19 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 			.filter(ref -> (ref instanceof EReference))
 			.map(ref -> (EReference) ref)
 			.filter(ref -> !ownClasses.contains(ref.getEType()))
+			.collect(Collectors.toSet());
+	}
+	
+	protected Collection<EReference> getInternalUnidirectionalReferences() {
+		Set<EClass> ownClasses = eContents().parallelStream().filter(obj->(obj instanceof EClass)).map(ecls -> (EClass)ecls).collect(Collectors.toSet());
+		// Find all references that point to EClasses not defined in this package.
+		return eContents().parallelStream()
+			.filter(obj->(obj instanceof EClass))
+			.map(ecls -> (EClass)ecls)
+			.flatMap(ecls -> ecls.getEAllStructuralFeatures().parallelStream())
+			.filter(ref -> (ref instanceof EReference))
+			.map(ref -> (EReference) ref)
+			.filter(ref -> ref.getEOpposite() == null)
 			.collect(Collectors.toSet());
 	}
 	
