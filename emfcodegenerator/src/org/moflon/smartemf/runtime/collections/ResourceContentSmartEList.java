@@ -59,9 +59,8 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 		}
 		else {
 			// if there is no eContainer, then this element is only contained within the resource and should be removed before setting the new eContainer
-			if(resource != null) {
-				resource.getContents().remove(e);
-			}
+			if(e.eResource() != null)
+				e.eResource().getContents().remove(e);
 		}
 	}
 	
