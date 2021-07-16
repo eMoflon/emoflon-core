@@ -16,7 +16,7 @@ import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
-public final class ResourceContentSmartEList<T extends EObject> extends LinkedList<T> implements EList<T>, InternalEList<T>{
+public final class ResourceContentSmartEList<T extends EObject> extends LinkedList<T> implements EList<T>, InternalEList<T> {
 
 	/**
 	 * 
@@ -24,106 +24,85 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 	private static final long serialVersionUID = 188149705186560304L;
 
 	private SmartEMFResource resource;
-	
+
 	public ResourceContentSmartEList(SmartEMFResource r) {
 		this.resource = (SmartEMFResource) r;
 	}
-	
+
 	@Override
-	public boolean add(T e) {
-		if(e instanceof SmartObject) {
-			resetContainment(e);
-			((SmartObject) e).setResource(resource, true);
-			return super.add(e);
+	public boolean add(T element) {
+		if (contains(element))
+			return false;
+
+		if (element instanceof SmartObject) {
+			resetContainment(element);
+			((SmartObject) element).setResource(resource, true);
+			return super.add(element);
 		} else {
-			e.eAdapters().addAll(resource.eAdapters());
-			resetContainment(e);
-			
-			((InternalEObject) e).eSetResource(resource, null);
-			boolean success = super.add(e);
-			sendAddNotification(e);
+			element.eAdapters().addAll(resource.eAdapters());
+			resetContainment(element);
+
+			((InternalEObject) element).eSetResource(resource, null);
+			boolean success = super.add(element);
+			sendAddNotification(element);
 			return success;
 		}
 	}
 
-	private void resetContainment(T e) {
-		EObject oldContainer = e.eContainer();
-		if(oldContainer != null) {
-			if(e.eContainingFeature().isMany()) {
-				Object getResult = oldContainer.eGet(e.eContainingFeature());
-				((Collection<?>) getResult).remove(e);
-			}
-			else {
-				oldContainer.eUnset(e.eContainingFeature());
-			}
-		}
-		else {
-			// if there is no eContainer, then this element is only contained within the resource and should be removed before setting the new eContainer
-			if(resource != null) {
-				resource.getContents().remove(e);
-			}
-		}
-	}
-	
 	@Override
 	public void add(int index, T element) {
-		if(element instanceof SmartObject) {
+		if (contains(element))
+			return;
+
+		if (element instanceof SmartObject) {
 			resetContainment(element);
 			((SmartObject) element).setResource(resource, true);
 			super.add(index, element);
-		} else  {
+		} else {
 			element.eAdapters().addAll(resource.eAdapters());
 			resetContainment(element);
-			
+
 			((InternalEObject) element).eSetResource(resource, null);
 			super.add(index, element);
 			sendAddNotification(element);
 		}
 	}
-	
+
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
-		Collection<T> iObjs = new LinkedList<>();
-		for(T t : c) {
-			if(t instanceof SmartObject) {
-				resetContainment(t);
-				((SmartObject) t).setResource(resource, true);
-			} else {
-				t.eAdapters().addAll(resource.eAdapters());
-				iObjs.add(t);
-			}
-		}
-		iObjs.forEach(this::resetContainment);
-		iObjs.forEach(t -> ((InternalEObject) t).eSetResource(resource, null));
-		boolean success = super.addAll(c) || super.addAll(iObjs);
-		iObjs.forEach(this::sendAddNotification);
-		return success;
+		return this.addAll(this.size(), c);
 	}
-	
+
 	@Override
 	public boolean addAll(int index, Collection<? extends T> c) {
-		Collection<T> iObjs = new LinkedList<>();
-		for(T t : c) {
-			if(t instanceof SmartObject) {
-				resetContainment(t);
-				((SmartObject) t).setResource(resource, true);
-			} else { 
-				t.eAdapters().addAll(resource.eAdapters());
-				iObjs.add(t);
-			}
-		}
-		iObjs.forEach(this::resetContainment);
-		iObjs.forEach(t -> ((InternalEObject) t).eSetResource(resource, null));
-		boolean success =  super.addAll(index, c) || super.addAll(index, iObjs);
-		iObjs.forEach(this::sendAddNotification);
-		return success;
+		Collection<T> objs = new LinkedList<>(c);
+		for (T t : objs)
+			this.add(index++, t);
+
+		return !c.isEmpty();
 	}
-	
+
+	private void resetContainment(T e) {
+		EObject oldContainer = e.eContainer();
+		if (oldContainer != null) {
+			if (e.eContainingFeature().isMany()) {
+				Object getResult = oldContainer.eGet(e.eContainingFeature());
+				((Collection<?>) getResult).remove(e);
+			} else {
+				oldContainer.eUnset(e.eContainingFeature());
+			}
+		} else {
+			// if there is no eContainer, then this element is only contained within the resource and should be removed before setting the new eContainer
+			if (e.eResource() != null)
+				e.eResource().getContents().remove(e);
+		}
+	}
+
 	@Override
 	public void clear() {
-		for(T t : this) {
+		for (T t : this) {
 			sendRemoveNotification((EObject) t);
-			if(t instanceof SmartObject) {
+			if (t instanceof SmartObject) {
 				((SmartObject) t).setResource(null, true);
 			} else {
 				t.eAdapters().removeAll(resource.eAdapters());
@@ -132,12 +111,12 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 		}
 		super.clear();
 	}
-	
+
 	@Override
 	public T remove(int index) {
-		Object o =  get(index);
+		Object o = get(index);
 		sendRemoveNotification((EObject) o);
-		if(o instanceof SmartObject) {
+		if (o instanceof SmartObject) {
 			((SmartObject) o).setResource(null, true);
 		} else {
 			((EObject) o).eAdapters().removeAll(resource.eAdapters());
@@ -145,33 +124,34 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 		}
 		return super.remove(index);
 	}
-	
+
 	@Override
 	public boolean remove(Object o) {
-		sendRemoveNotification((EObject) o);
-		if(o instanceof SmartObject) {
+		boolean success = super.remove(o);
+		if (success)
+			sendRemoveNotification((EObject) o);
+
+		if (o instanceof SmartObject) {
 			((SmartObject) o).setResource(null, true);
 		} else {
 			((EObject) o).eAdapters().removeAll(resource.eAdapters());
 			((InternalEObject) o).eSetResource(null, null);
 		}
-		return super.remove(o);
+
+		return success;
 	}
-	
+
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		for(Object t : c) {
-			sendRemoveNotification((EObject) t);
-			if(t instanceof SmartObject) {
-				((SmartObject) t).setResource(null, true);
-			} else {
-				((EObject) t).eAdapters().removeAll(resource.eAdapters());
-				((InternalEObject) t).eSetResource(null, null);
-			}
-		}
-		return super.removeAll(c);
+		boolean success = false;
+
+		Collection<?> objs = new LinkedList<>(c);
+		for (Object t : objs)
+			success = success || this.remove(t);
+
+		return success;
 	}
-	
+
 	@Override
 	public T basicGet(int index) {
 		return get(index);
@@ -275,15 +255,15 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 		add(newPosition, t);
 		return t;
 	}
-	
+
 	protected void sendAddNotification(EObject obj) {
-		for(Adapter a : resource.eAdapters()) {
+		for (Adapter a : resource.eAdapters()) {
 			a.notifyChanged(SmartEMFNotification.createAddNotification(resource, null, obj, -1));
 		}
 	}
-	
+
 	protected void sendRemoveNotification(EObject obj) {
-		for(Adapter a : resource.eAdapters()) {
+		for (Adapter a : resource.eAdapters()) {
 			a.notifyChanged(SmartEMFNotification.createRemoveNotification(resource, null, obj, -1));
 		}
 	}

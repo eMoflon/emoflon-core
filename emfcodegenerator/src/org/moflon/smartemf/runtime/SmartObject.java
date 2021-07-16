@@ -392,7 +392,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 		this.resource = (Internal) resource;
 
-		Consumer<SmartObject> setResourceCall = (o) -> o.setResource(resource, true);
+		Consumer<SmartObject> setResourceCall = (o) -> o.setResourceSilently(resource);
 
 		NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
 		if (resource != null) {
@@ -411,8 +411,8 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 			// if cascading is activated, we recursively generate add messages; else just this once
 			SmartEMFResource smartResource = smartResource();
-			if (smartResource == null || smartResource.getCascade())
-				setResourceCall = (o) -> o.setResourceSilently(resource);
+			if (smartResource != null && smartResource.getCascade())
+				setResourceCall = (o) -> o.setResource(resource, true);
 		}
 
 		setResourceOfContainments(setResourceCall);
@@ -422,22 +422,22 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 	protected abstract void setResourceOfContainments(Consumer<SmartObject> setResourceCall);
 
-	public void setResourceSilently(Resource r) {
+	public void setResourceSilently(Resource resource) {
 		// stop if we encounter the same resource already
-		if (eResource() == null && r == null)
+		if (eResource() == null && resource == null)
 			return;
 
-		if (eResource() != null && eResource().equals(r))
+		if (eResource() != null && eResource().equals(resource))
 			return;
 
 		// send remove messages to old adapters
 		// TODO lfritsche: should we optimize this and only do this if the adapters of both resources
 		// differ?
 		sendRemoveAdapterNotification(this);
+		
+		this.resource = (Internal) resource;
 
-		setResource(r, true);
-
-		setResourceOfContainmentsSilently(r);
+		setResourceOfContainmentsSilently(resource);
 	}
 
 	protected abstract void setResourceOfContainmentsSilently(Resource r);
