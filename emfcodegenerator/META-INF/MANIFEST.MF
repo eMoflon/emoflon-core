@@ -16,8 +16,24 @@ Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.23.0";visibility:=reexpo
  org.eclipse.jdt.core;bundle-version="3.25.0",
  org.eclipse.jdt.core.formatterapp;bundle-version="1.0.0",
  org.eclipse.text
-Bundle-ClassPath: .
-Export-Package: org.moflon.smartemf,
+Bundle-ClassPath: .,
+ jars/
+Export-Package: org.jdom2,
+ org.jdom2.adapters,
+ org.jdom2.filter,
+ org.jdom2.input,
+ org.jdom2.input.sax,
+ org.jdom2.input.stax,
+ org.jdom2.internal,
+ org.jdom2.located,
+ org.jdom2.output,
+ org.jdom2.output.support,
+ org.jdom2.transform,
+ org.jdom2.util,
+ org.jdom2.xpath,
+ org.jdom2.xpath.jaxen,
+ org.jdom2.xpath.util,
+ org.moflon.smartemf,
  org.moflon.smartemf.creators,
  org.moflon.smartemf.creators.templates,
  org.moflon.smartemf.persistence;
