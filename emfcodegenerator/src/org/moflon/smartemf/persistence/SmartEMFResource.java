@@ -7,9 +7,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -22,13 +25,18 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.xmi.DOMHandler;
 import org.eclipse.emf.ecore.xmi.DOMHelper;
 import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xml.type.AnyType;
-import org.jdom2.*;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 import org.moflon.smartemf.runtime.collections.ResourceContentSmartEList;
 import org.w3c.dom.Node;
@@ -66,7 +74,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 
 	@Override
 	public void save(Map<?, ?> options) throws IOException {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub");
+//		throw new UnsupportedOperationException("TODO: auto-generated method stub");
 	}
 
 	@Override
@@ -93,9 +101,6 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 
 		Notification notification = setLoaded(true);
 		isLoading = true;
-		    
-		errors.clear();
-		warnings.clear();
 		
 		InputStream is = null;
 		
@@ -117,7 +122,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 		SAXBuilder saxBuilder = new SAXBuilder();
 		Document parsedFile = null;
 		try {
-			saxBuilder.build(is);
+			parsedFile = saxBuilder.build(is);
 		} catch (JDOMException | IOException e) {
 			throw new IOException(e.getMessage(), e.getCause());
 		}
@@ -160,10 +165,15 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 	}
 	
 	
-	protected Map<Element, EObject> xmlElementToEObject = new HashMap<>();
-	protected Map<Element, List<Consumer<EObject>>> waitingCrossRefs = new HashMap<>();
+//	protected Map<Element, EObject> xmlElementToEObject = new HashMap<>();
+	protected Map<String, List<Consumer<EObject>>> waitingCrossRefs = new HashMap<>();
+	protected Map<String, EObject> id2Object = new HashMap<>();
+	final public static String XMI_NS = "xmi";
+	final public static String XSI_NS = "xsi";
 	
 	protected void domTreeToModel(final Document domTree) throws IOException {
+		id2Object = new HashMap<>();
+		waitingCrossRefs = new HashMap<>();
 		Element root = domTree.getRootElement();
 		
 		// Load the corresponding metamodel and factory
@@ -176,118 +186,209 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 		EFactory factory = metamodel.getEFactoryInstance();
 		
 		// traverse tree and instantiate classes
-		EObject eRoot = parseDomTree(root, metamodel, factory);
+		EObject eRoot = parseDomTree(root, metamodel, factory, null, "/", 0);
 		contents.add(eRoot);
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected EObject parseDomTree(Element root, EPackage metamodel, EFactory factory) throws IOException {
-		EClass rootClass = (EClass)metamodel.getEClassifier(root.getName());
+	protected EObject parseDomTree(Element root, EPackage metamodel, EFactory factory, EReference containment, String id, int idx) throws IOException {
+		EClass rootClass = null;
+		String currentId = id;
+		if(containment == null) {
+			rootClass = (EClass)metamodel.getEClassifier(root.getName());
+		} else {
+			Attribute typeATR = root.getAttribute("type");
+			if(typeATR != null && typeATR.getNamespacePrefix().equals(XSI_NS)) {
+				String[] exactType = typeATR.getValue().split(":");
+				//TODO: Import foreign metamodels
+				String metamodelNS = exactType[0];
+				String className = exactType[1];
+				rootClass = (EClass)metamodel.getEClassifier(className);
+			} else {
+				rootClass = containment.getEReferenceType();
+			}
+			currentId = id + "/@" + containment.getName() + "." + idx;
+		}
+		
 		EObject eRoot = factory.create(rootClass);
-		xmlElementToEObject.put(root, eRoot);
+		id2Object.put(currentId, eRoot);
 		if(waitingCrossRefs.containsKey(root)) {
 			waitingCrossRefs.get(root).forEach(waitingRef -> waitingRef.accept(eRoot));
 		}
-		
+		Map<EStructuralFeature,Integer> element2Idx = new HashMap<>();
 		for(Element element : root.getChildren()) {
-			EStructuralFeature feature = rootClass.getEAllStructuralFeatures().stream().filter(sf -> sf.getName().equals(element.getName())).findFirst().get();
-			if(feature == null)
+			if(XMI_NS.equals(element.getNamespace().getPrefix()))
+				continue;
+			
+			Optional<EStructuralFeature> featureOpt = rootClass.getEAllStructuralFeatures().stream().filter(sf -> sf.getName().equals(element.getName())).findFirst();
+			if(!featureOpt.isPresent())
 				throw new IOException("Unkown structual feature: "+element.getName());
 			
+			EStructuralFeature feature  = featureOpt.get();
 			if(feature instanceof EAttribute)
 				throw new IOException("Illegal use of EAttribute: "+element.getName());
+			
+			if(!element2Idx.containsKey(feature)) {
+				element2Idx.put(feature, 0);
+			}
 			
 			EReference ref = (EReference)feature;
 			if(ref.isContainment()) {
 				if(ref.isMany()) {
 					EList<EObject> objs = (EList<EObject>) eRoot.eGet(ref);
-					for(Element childElement : element.getChildren()) {
-						EObject child = parseDomTree(childElement, metamodel, factory);
-						objs.add(child);
-					}
+					EObject child = parseDomTree(element, metamodel, factory, ref, currentId, element2Idx.get(feature));
+					objs.add(child);
+					element2Idx.replace(feature, element2Idx.get(feature)+1);
 				} else {
-					EObject child = parseDomTree(element.getChildren().get(0), metamodel, factory);
+					EObject child = parseDomTree(element, metamodel, factory, ref, currentId, element2Idx.get(feature));
 					eRoot.eSet(ref, child);
+					element2Idx.replace(feature, element2Idx.get(feature)+1);
 				}
 			} else {
+//				if(ref.isMany()) {
+//					EList<EObject> objs = (EList<EObject>) eRoot.eGet(ref);
+//					if(xmlElementToEObject.containsKey(element)) {
+//						objs.add(xmlElementToEObject.get(element));
+//					} else {
+//						// Remember this crossRef and wait for traversal
+//						List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(element);
+//						if(otherCrossRefs == null) {
+//							otherCrossRefs = new LinkedList<>();
+//							waitingCrossRefs.put(element, otherCrossRefs);
+//						}
+//						otherCrossRefs.add((eobj) -> {
+//							objs.add(eobj);
+//						});
+//					}
+//				} else {
+//					if(xmlElementToEObject.containsKey(element)) {
+//						eRoot.eSet(ref, xmlElementToEObject.get(element));
+//					} else {
+//						// Remember this crossRef and wait for traversal
+//						List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(element);
+//						if(otherCrossRefs == null) {
+//							otherCrossRefs = new LinkedList<>();
+//							waitingCrossRefs.put(element, otherCrossRefs);
+//						}
+//						otherCrossRefs.add((eobj) -> {
+//							eRoot.eSet(ref, eobj);
+//						});
+//					}
+//				}
+				throw new IOException("XML DOM-Tree child: "+element.getName()+" is not in a containtment!");
+			}
+		}
+		
+		for(Attribute attribute : root.getAttributes()) {
+			if(XMI_NS.equals(attribute.getNamespace().getPrefix()))
+				continue;
+			
+			if(XSI_NS.equals(attribute.getNamespace().getPrefix()))
+				continue;
+			
+			Optional<EStructuralFeature> featureOpt = rootClass.getEAllStructuralFeatures().stream().filter(sf -> sf.getName().equals(attribute.getName())).findFirst();
+			if(!featureOpt.isPresent())
+				throw new IOException("Unkown structual feature: "+attribute.getName());
+			
+			EStructuralFeature feature  = featureOpt.get();
+			if(feature instanceof EReference) {
+				EReference ref = (EReference)feature;
+				
 				if(ref.isMany()) {
 					EList<EObject> objs = (EList<EObject>) eRoot.eGet(ref);
-					for(Element crossRef : element.getChildren()) {
-						if(xmlElementToEObject.containsKey(crossRef)) {
-							objs.add(xmlElementToEObject.get(crossRef));
-						} else {
-							// Remember this crossRef and wait for traversal
-							List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(crossRef);
-							if(otherCrossRefs == null) {
-								otherCrossRefs = new LinkedList<>();
-								waitingCrossRefs.put(crossRef, otherCrossRefs);
-							}
-							otherCrossRefs.add((eobj) -> {
-								objs.add(eobj);
-							});
-						}
-					}
-				} else {
-					if(xmlElementToEObject.containsKey(element.getChildren().get(0))) {
-						eRoot.eSet(ref, xmlElementToEObject.get(element.getChildren().get(0)));
+					if(id2Object.containsKey(attribute.getValue())) {
+						objs.add(id2Object.get(attribute.getValue()));
 					} else {
 						// Remember this crossRef and wait for traversal
-						List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(element.getChildren().get(0));
+						List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(attribute.getValue());
 						if(otherCrossRefs == null) {
 							otherCrossRefs = new LinkedList<>();
-							waitingCrossRefs.put(element.getChildren().get(0), otherCrossRefs);
+							waitingCrossRefs.put(attribute.getValue(), otherCrossRefs);
+						}
+						otherCrossRefs.add((eobj) -> {
+							objs.add(eobj);
+						});
+					}
+				} else {
+					if(id2Object.containsKey(attribute.getValue())) {
+						eRoot.eSet(ref, id2Object.get(attribute.getValue()));
+					} else {
+						// Remember this crossRef and wait for traversal
+						List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(attribute.getValue());
+						if(otherCrossRefs == null) {
+							otherCrossRefs = new LinkedList<>();
+							waitingCrossRefs.put(attribute.getValue(), otherCrossRefs);
 						}
 						otherCrossRefs.add((eobj) -> {
 							eRoot.eSet(ref, eobj);
 						});
 					}
 				}
+				
+			} else {
+				EAttribute eAttribute = (EAttribute) feature;
+				
+				switch(attribute.getAttributeType()) {
+				case CDATA:
+					eRoot.eSet(eAttribute, stringToValue(eAttribute, attribute.getValue()));
+					break;
+				case ENTITIES:
+					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
+				case ENTITY:
+					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
+				case ENUMERATION:
+					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
+				case ID:
+					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
+				case IDREF:
+					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
+				case IDREFS:
+					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
+				case NMTOKEN:
+					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
+				case NMTOKENS:
+					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
+				case NOTATION:
+					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
+				case UNDECLARED:
+					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
+				default:
+					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
+				
+				}
 			}
-			
-			
-			
-		}
-		
-		for(Attribute attribute : root.getAttributes()) {
-			EStructuralFeature feature = rootClass.getEAllStructuralFeatures().stream().filter(sf -> sf.getName().equals(attribute.getName())).findFirst().get();
-			if(feature == null)
-				throw new IOException("Unkown structual feature: "+attribute.getName());
-			
-			if(feature instanceof EReference)
-				throw new IOException("Illegal use of EReference: "+attribute.getName());
-			
-			EAttribute eAttribute = (EAttribute) feature;
-			
-			switch(attribute.getAttributeType()) {
-			case CDATA:
-				eRoot.eSet(eAttribute, attribute.getValue());
-				break;
-			case ENTITIES:
-				throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
-			case ENTITY:
-				throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
-			case ENUMERATION:
-				throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
-			case ID:
-				throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
-			case IDREF:
-				throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
-			case IDREFS:
-				throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
-			case NMTOKEN:
-				throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
-			case NMTOKENS:
-				throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
-			case NOTATION:
-				throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
-			case UNDECLARED:
-				throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
-			default:
-				throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
-			
-			}
+
 		}
 		return eRoot;
+	}
+	
+	public static Object stringToValue(final EAttribute atr, final String value) throws IOException {
+		EcorePackage epack = EcorePackage.eINSTANCE;
+		if(atr.getEAttributeType() == epack.getEString()) {
+			return value;
+		} else if(atr.getEAttributeType() == epack.getEBoolean()) {
+			return ("true".equals(value)) ? true : false;
+		} else if(atr.getEAttributeType() == epack.getEByte()) {
+			return Byte.parseByte(value);
+		} else if(atr.getEAttributeType() == epack.getEChar()) {
+			return value.charAt(0);
+		} else if(atr.getEAttributeType() == epack.getEDate()) {
+			throw new IOException("Unsupported attribute type: "+ atr.getEAttributeType().getName());
+		} else if(atr.getEAttributeType() == epack.getEDouble()) {
+			return Double.parseDouble(value);
+		} else if(atr.getEAttributeType() == epack.getEEnumerator()) {
+			throw new IOException("Unsupported attribute type: "+ atr.getEAttributeType().getName());
+		} else if(atr.getEAttributeType() == epack.getEFloat()) {
+			return Float.parseFloat(value);
+		} else if(atr.getEAttributeType() == epack.getEInt()) {
+			return Integer.parseInt(value);
+		} else if(atr.getEAttributeType() == epack.getELong()) {
+			return Long.parseLong(value);
+		} else if(atr.getEAttributeType() == epack.getEShort()) {
+			return Short.parseShort(value);
+		} else {
+			throw new IOException("Unsupported attribute type: "+ atr.getEAttributeType().getName());
+		}
 	}
 
 //	############ Tedious stuff :( ############
