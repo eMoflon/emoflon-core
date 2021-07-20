@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
@@ -168,41 +170,89 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 //	protected Map<Element, EObject> xmlElementToEObject = new HashMap<>();
 	protected Map<String, List<Consumer<EObject>>> waitingCrossRefs = new HashMap<>();
 	protected Map<String, EObject> id2Object = new HashMap<>();
+	protected Map<String, EPackage> ns2Package = new HashMap<>();
+	protected Map<String, EFactory> ns2Factory = new HashMap<>();
 	final public static String XMI_NS = "xmi";
 	final public static String XSI_NS = "xsi";
+	final public static String XSI_TYPE = "type";
 	
 	protected void domTreeToModel(final Document domTree) throws IOException {
 		id2Object = new HashMap<>();
 		waitingCrossRefs = new HashMap<>();
+		ns2Package = new HashMap<>();
+		ns2Factory = new HashMap<>();
+		
 		Element root = domTree.getRootElement();
-		
-		// Load the corresponding metamodel and factory
 		Namespace ns = root.getNamespace();
-		String metamodelUri = ns.getURI();
-		EPackage metamodel = EPackage.Registry.INSTANCE.getEPackage(metamodelUri);
-		if(metamodel.eIsProxy()) {
-			throw new IOException("No generated metamodel code found for: "+metamodelUri+", can not load model.");
+		List<Element> roots = new LinkedList<>();
+		// If there is a root node belonging to the XMI Namespace, than we have multiple container objects wrapped within an XML dummy-node to ensure XML compliance
+		if(XMI_NS.equals(ns.getPrefix())) {
+			roots.addAll(root.getChildren());
+		} else {
+			roots.add(root);
 		}
-		EFactory factory = metamodel.getEFactoryInstance();
 		
-		// traverse tree and instantiate classes
-		EObject eRoot = parseDomTree(root, metamodel, factory, null, "/", 0);
-		contents.add(eRoot);
+		for(Element subRoot : roots) {
+			// Load the corresponding metamodel and factory
+			Namespace subRootNS = subRoot.getNamespace();
+			String metamodelUri = subRootNS.getURI();
+			EPackage metamodel = EPackage.Registry.INSTANCE.getEPackage(metamodelUri);
+			if(metamodel.eIsProxy()) {
+				throw new IOException("No generated metamodel code found for: "+metamodelUri+", can not load model.");
+			}
+			EFactory factory = metamodel.getEFactoryInstance();
+			ns2Package.put(subRootNS.getPrefix(), metamodel);
+			ns2Factory.put(subRootNS.getPrefix(), factory);
+			// find additional namespaces
+			Set<Namespace> additionalNS = subRoot.getAdditionalNamespaces().stream()
+				.filter(ns2 -> !ns2.getPrefix().equals(XMI_NS) && !ns2.getPrefix().equals(XSI_NS) && !ns2.getPrefix().equals(subRootNS.getPrefix()))
+				.filter(ns2 -> !ns2Package.containsKey(ns2.getPrefix()))
+				.collect(Collectors.toSet());
+			
+			for(Namespace ns2 : additionalNS) {
+				EPackage additionalMetamodel = EPackage.Registry.INSTANCE.getEPackage(ns2.getURI());
+				if(additionalMetamodel.eIsProxy()) {
+					throw new IOException("No generated metamodel code found for: "+ns2.getURI()+", can not load model.");
+				}
+				EFactory additionalFactory = additionalMetamodel.getEFactoryInstance();
+				ns2Package.put(ns2.getPrefix(), additionalMetamodel);
+				ns2Factory.put(ns2.getPrefix(), additionalFactory);
+			}
+			
+			// traverse tree and instantiate classes
+			EObject eRoot = parseDomTree(subRoot, null, subRootNS.getPrefix(), "/", 0);
+			contents.add(eRoot);
+		}
+		
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected EObject parseDomTree(Element root, EPackage metamodel, EFactory factory, EReference containment, String id, int idx) throws IOException {
+	protected EObject parseDomTree(Element root, EReference containment, String namespace, String id, int idx) throws IOException {
+		EPackage metamodel = null;
+		String currentNamespace = null;
+		if(root.getNamespace().getPrefix() == null || root.getNamespace().getPrefix().isBlank()) {
+			metamodel = ns2Package.get(namespace);
+			currentNamespace = namespace;
+		} else {
+			metamodel = ns2Package.get(root.getNamespace().getPrefix());
+			currentNamespace = root.getNamespace().getPrefix();
+		}
+		EFactory factory = ns2Factory.get(currentNamespace);
+		
 		EClass rootClass = null;
 		String currentId = id;
 		if(containment == null) {
 			rootClass = (EClass)metamodel.getEClassifier(root.getName());
 		} else {
-			Attribute typeATR = root.getAttribute("type");
-			if(typeATR != null && typeATR.getNamespacePrefix().equals(XSI_NS)) {
-				String[] exactType = typeATR.getValue().split(":");
-				//TODO: Import foreign metamodels
+			Optional<Attribute> typeATR = root.getAttributes().stream()
+					.filter(atr -> atr.getName().equals(XSI_TYPE) && atr.getNamespacePrefix().equals(XSI_NS)).findFirst();
+			if(typeATR.isPresent()) {
+				String[] exactType = typeATR.get().getValue().split(":");
+				//This is obviously an element belonging to a foreign metamodel -> switch to suitable EPacakge and Factory but stay in the current namespace
 				String metamodelNS = exactType[0];
 				String className = exactType[1];
+				metamodel = ns2Package.get(metamodelNS);
+				factory = ns2Factory.get(metamodelNS);
 				rootClass = (EClass)metamodel.getEClassifier(className);
 			} else {
 				rootClass = containment.getEReferenceType();
@@ -212,8 +262,8 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 		
 		EObject eRoot = factory.create(rootClass);
 		id2Object.put(currentId, eRoot);
-		if(waitingCrossRefs.containsKey(root)) {
-			waitingCrossRefs.get(root).forEach(waitingRef -> waitingRef.accept(eRoot));
+		if(waitingCrossRefs.containsKey(currentId)) {
+			waitingCrossRefs.get(currentId).forEach(waitingRef -> waitingRef.accept(eRoot));
 		}
 		Map<EStructuralFeature,Integer> element2Idx = new HashMap<>();
 		for(Element element : root.getChildren()) {
@@ -236,45 +286,15 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 			if(ref.isContainment()) {
 				if(ref.isMany()) {
 					EList<EObject> objs = (EList<EObject>) eRoot.eGet(ref);
-					EObject child = parseDomTree(element, metamodel, factory, ref, currentId, element2Idx.get(feature));
+					EObject child = parseDomTree(element, ref, currentNamespace, currentId, element2Idx.get(feature));
 					objs.add(child);
 					element2Idx.replace(feature, element2Idx.get(feature)+1);
 				} else {
-					EObject child = parseDomTree(element, metamodel, factory, ref, currentId, element2Idx.get(feature));
+					EObject child = parseDomTree(element, ref, currentNamespace, currentId, element2Idx.get(feature));
 					eRoot.eSet(ref, child);
 					element2Idx.replace(feature, element2Idx.get(feature)+1);
 				}
 			} else {
-//				if(ref.isMany()) {
-//					EList<EObject> objs = (EList<EObject>) eRoot.eGet(ref);
-//					if(xmlElementToEObject.containsKey(element)) {
-//						objs.add(xmlElementToEObject.get(element));
-//					} else {
-//						// Remember this crossRef and wait for traversal
-//						List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(element);
-//						if(otherCrossRefs == null) {
-//							otherCrossRefs = new LinkedList<>();
-//							waitingCrossRefs.put(element, otherCrossRefs);
-//						}
-//						otherCrossRefs.add((eobj) -> {
-//							objs.add(eobj);
-//						});
-//					}
-//				} else {
-//					if(xmlElementToEObject.containsKey(element)) {
-//						eRoot.eSet(ref, xmlElementToEObject.get(element));
-//					} else {
-//						// Remember this crossRef and wait for traversal
-//						List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(element);
-//						if(otherCrossRefs == null) {
-//							otherCrossRefs = new LinkedList<>();
-//							waitingCrossRefs.put(element, otherCrossRefs);
-//						}
-//						otherCrossRefs.add((eobj) -> {
-//							eRoot.eSet(ref, eobj);
-//						});
-//					}
-//				}
 				throw new IOException("XML DOM-Tree child: "+element.getName()+" is not in a containtment!");
 			}
 		}
@@ -294,34 +314,38 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 			if(feature instanceof EReference) {
 				EReference ref = (EReference)feature;
 				
-				if(ref.isMany()) {
-					EList<EObject> objs = (EList<EObject>) eRoot.eGet(ref);
-					if(id2Object.containsKey(attribute.getValue())) {
-						objs.add(id2Object.get(attribute.getValue()));
-					} else {
-						// Remember this crossRef and wait for traversal
-						List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(attribute.getValue());
-						if(otherCrossRefs == null) {
-							otherCrossRefs = new LinkedList<>();
-							waitingCrossRefs.put(attribute.getValue(), otherCrossRefs);
+				String[] entries = attribute.getValue().split(" ");
+				
+				for(String entry : entries) {
+					if(ref.isMany()) {
+						EList<EObject> objs = (EList<EObject>) eRoot.eGet(ref);
+						if(id2Object.containsKey(entry)) {
+							objs.add(id2Object.get(entry));
+						} else {
+							// Remember this crossRef and wait for traversal
+							List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(entry);
+							if(otherCrossRefs == null) {
+								otherCrossRefs = new LinkedList<>();
+								waitingCrossRefs.put(entry, otherCrossRefs);
+							}
+							otherCrossRefs.add((eobj) -> {
+								objs.add(eobj);
+							});
 						}
-						otherCrossRefs.add((eobj) -> {
-							objs.add(eobj);
-						});
-					}
-				} else {
-					if(id2Object.containsKey(attribute.getValue())) {
-						eRoot.eSet(ref, id2Object.get(attribute.getValue()));
 					} else {
-						// Remember this crossRef and wait for traversal
-						List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(attribute.getValue());
-						if(otherCrossRefs == null) {
-							otherCrossRefs = new LinkedList<>();
-							waitingCrossRefs.put(attribute.getValue(), otherCrossRefs);
+						if(id2Object.containsKey(entry)) {
+							eRoot.eSet(ref, id2Object.get(entry));
+						} else {
+							// Remember this crossRef and wait for traversal
+							List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(entry);
+							if(otherCrossRefs == null) {
+								otherCrossRefs = new LinkedList<>();
+								waitingCrossRefs.put(entry, otherCrossRefs);
+							}
+							otherCrossRefs.add((eobj) -> {
+								eRoot.eSet(ref, eobj);
+							});
 						}
-						otherCrossRefs.add((eobj) -> {
-							eRoot.eSet(ref, eobj);
-						});
 					}
 				}
 				
@@ -330,7 +354,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 				
 				switch(attribute.getAttributeType()) {
 				case CDATA:
-					eRoot.eSet(eAttribute, stringToValue(eAttribute, attribute.getValue()));
+					eRoot.eSet(eAttribute, stringToValue(factory, eAttribute, attribute.getValue()));
 					break;
 				case ENTITIES:
 					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
@@ -362,7 +386,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 		return eRoot;
 	}
 	
-	public static Object stringToValue(final EAttribute atr, final String value) throws IOException {
+	public static Object stringToValue(final EFactory factory, final EAttribute atr, final String value) throws IOException {
 		EcorePackage epack = EcorePackage.eINSTANCE;
 		if(atr.getEAttributeType() == epack.getEString()) {
 			return value;
@@ -373,12 +397,10 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 		} else if(atr.getEAttributeType() == epack.getEChar()) {
 			return value.charAt(0);
 		} else if(atr.getEAttributeType() == epack.getEDate()) {
-			throw new IOException("Unsupported attribute type: "+ atr.getEAttributeType().getName());
+			return new SimpleDateFormat(value);
 		} else if(atr.getEAttributeType() == epack.getEDouble()) {
 			return Double.parseDouble(value);
-		} else if(atr.getEAttributeType() == epack.getEEnumerator()) {
-			throw new IOException("Unsupported attribute type: "+ atr.getEAttributeType().getName());
-		} else if(atr.getEAttributeType() == epack.getEFloat()) {
+		}  else if(atr.getEAttributeType() == epack.getEFloat()) {
 			return Float.parseFloat(value);
 		} else if(atr.getEAttributeType() == epack.getEInt()) {
 			return Integer.parseInt(value);
@@ -387,7 +409,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 		} else if(atr.getEAttributeType() == epack.getEShort()) {
 			return Short.parseShort(value);
 		} else {
-			throw new IOException("Unsupported attribute type: "+ atr.getEAttributeType().getName());
+			return factory.createFromString(atr.getEAttributeType(), value);
 		}
 	}
 

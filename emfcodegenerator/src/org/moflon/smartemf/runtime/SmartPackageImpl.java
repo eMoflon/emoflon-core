@@ -212,7 +212,7 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 	
 	protected Collection<EReference> getInternalUnidirectionalReferences() {
 		Set<EClass> ownClasses = eContents().parallelStream().filter(obj->(obj instanceof EClass)).map(ecls -> (EClass)ecls).collect(Collectors.toSet());
-		// Find all references that point to EClasses not defined in this package.
+		// Find all references that point to EClasses defined in this package.
 		return eContents().parallelStream()
 			.filter(obj->(obj instanceof EClass))
 			.map(ecls -> (EClass)ecls)
@@ -220,6 +220,8 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 			.filter(ref -> (ref instanceof EReference))
 			.map(ref -> (EReference) ref)
 			.filter(ref -> ref.getEOpposite() == null)
+			.filter(ref -> ownClasses.contains(ref.getEType()))
+			.filter(ref -> !ref.isContainment())
 			.collect(Collectors.toSet());
 	}
 	
