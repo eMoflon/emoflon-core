@@ -192,6 +192,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 			roots.add(root);
 		}
 		
+		int id = 0;
 		for(Element subRoot : roots) {
 			// Load the corresponding metamodel and factory
 			Namespace subRootNS = subRoot.getNamespace();
@@ -220,7 +221,13 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 			}
 			
 			// traverse tree and instantiate classes
-			EObject eRoot = parseDomTree(subRoot, null, subRootNS.getPrefix(), "/", 0);
+			EObject eRoot = null;
+			if(roots.size() > 1) {
+				eRoot = parseDomTree(subRoot, null, subRootNS.getPrefix(), "/"+id, 0);
+				id++;
+			} else {
+				eRoot = parseDomTree(subRoot, null, subRootNS.getPrefix(), "/", 0);
+			}
 			contents.add(eRoot);
 		}
 		
@@ -241,6 +248,8 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 		
 		EClass rootClass = null;
 		String currentId = id;
+		String simpleId = null;
+		
 		if(containment == null) {
 			rootClass = (EClass)metamodel.getEClassifier(root.getName());
 		} else {
@@ -258,13 +267,26 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 				rootClass = containment.getEReferenceType();
 			}
 			currentId = id + "/@" + containment.getName() + "." + idx;
+			
+			// This a workaround for a useless/annoying xml simplification that occurs when a child list is exactly of size 1, then the index is omitted.
+			if(idx == 0) {
+				simpleId = id + "/@" + containment.getName();
+			}
 		}
 		
 		EObject eRoot = factory.create(rootClass);
+		
 		id2Object.put(currentId, eRoot);
+		if(simpleId != null)
+			id2Object.put(simpleId, eRoot);
+		
 		if(waitingCrossRefs.containsKey(currentId)) {
 			waitingCrossRefs.get(currentId).forEach(waitingRef -> waitingRef.accept(eRoot));
 		}
+		if(simpleId != null && waitingCrossRefs.containsKey(simpleId)) {
+			waitingCrossRefs.get(simpleId).forEach(waitingRef -> waitingRef.accept(eRoot));
+		}
+		
 		Map<EStructuralFeature,Integer> element2Idx = new HashMap<>();
 		for(Element element : root.getChildren()) {
 			if(XMI_NS.equals(element.getNamespace().getPrefix()))
