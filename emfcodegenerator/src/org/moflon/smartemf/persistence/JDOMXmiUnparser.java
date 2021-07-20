@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -21,7 +22,6 @@ import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.SmartPackage;
 
 public class JDOMXmiUnparser {
@@ -38,6 +38,7 @@ public class JDOMXmiUnparser {
 		
 		Map<EPackage, Namespace> metamodel2NS = new HashMap<> ();
 		Map<EObject, String> object2ID = new HashMap<>();
+		Map<EObject, List<Consumer<String>>> waitingCrossRefs = new HashMap<>();
 	
 		public void modelToJDOMTree(final Resource resource, final Document domTree) throws IOException {
 			// Create tree by traversing model
@@ -150,15 +151,26 @@ public class JDOMXmiUnparser {
 				
 				//TODO: This will not work if cross refs point to elements which have not been parsed. Fix me!
 				String value = null;
+				List<EObject> pendingCrossRefs = new LinkedList<>();
 				if(refs.size()>0 && refs.size()<2) {
-					value = object2ID.get(refs.get(0));
+					if(object2ID.containsKey(refs.get(0))) {
+						value = object2ID.get(refs.get(0));
+					} else {
+						pendingCrossRefs.add(refs.get(0));
+					}
+					
 				} else if(refs.size()>1) {
 					StringBuilder sb = new StringBuilder();
 					for(EObject ref : refs) {
-						sb.append(object2ID.get(ref));
-						if(refs.getLast() != ref) {
-							sb.append(" ");
+						if(object2ID.containsKey(ref)) {
+							sb.append(object2ID.get(ref));
+							if(refs.getLast() != ref) {
+								sb.append(" ");
+							}
+						} else {
+							pendingCrossRefs.add(ref);
 						}
+						
 					}
 					value = sb.toString();
 				}
@@ -166,6 +178,9 @@ public class JDOMXmiUnparser {
 				if(value != null) {
 					Attribute refAtr = new Attribute(crossRef.getName(), value);
 					current.getAttributes().add(refAtr);
+					for(EObject pending : pendingCrossRefs) {
+						//TODO: finish this
+					}
 				}
 			}
 			
