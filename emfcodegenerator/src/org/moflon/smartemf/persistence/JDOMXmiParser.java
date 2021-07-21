@@ -2,6 +2,8 @@ package org.moflon.smartemf.persistence;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -194,14 +196,16 @@ public class JDOMXmiParser {
 			EStructuralFeature feature  = featureOpt.get();
 			if(feature instanceof EReference) {
 				EReference ref = (EReference)feature;
+				if(attribute.getValue().isBlank())
+					continue;
 				
 				String[] entries = attribute.getValue().split(" ");
-				
-				for(String entry : entries) {
+				final PendingEMFCrossReference pendingCrossRefs = new PendingEMFCrossReference(eRoot, ref, entries.length);
+				for(int i = 0; i<entries.length; i++) {
+					String entry = entries[i];
 					if(ref.isMany()) {
-						EList<EObject> objs = (EList<EObject>) eRoot.eGet(ref);
 						if(id2Object.containsKey(entry)) {
-							objs.add(id2Object.get(entry));
+							pendingCrossRefs.insertObject(id2Object.get(entry), i);
 						} else {
 							// Remember this crossRef and wait for traversal
 							List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(entry);
@@ -209,13 +213,16 @@ public class JDOMXmiParser {
 								otherCrossRefs = new LinkedList<>();
 								waitingCrossRefs.put(entry, otherCrossRefs);
 							}
+							final int currentIdx = i;
 							otherCrossRefs.add((eobj) -> {
-								objs.add(eobj);
+								pendingCrossRefs.insertObject(eobj, currentIdx);
+								if(pendingCrossRefs.isCompleted())
+									pendingCrossRefs.writeBack();
 							});
 						}
 					} else {
 						if(id2Object.containsKey(entry)) {
-							eRoot.eSet(ref, id2Object.get(entry));
+							pendingCrossRefs.insertObject(id2Object.get(entry), 0);
 						} else {
 							// Remember this crossRef and wait for traversal
 							List<Consumer<EObject>> otherCrossRefs = waitingCrossRefs.get(entry);
@@ -224,11 +231,15 @@ public class JDOMXmiParser {
 								waitingCrossRefs.put(entry, otherCrossRefs);
 							}
 							otherCrossRefs.add((eobj) -> {
-								eRoot.eSet(ref, eobj);
+								pendingCrossRefs.insertObject(eobj, 0);
+								if(pendingCrossRefs.isCompleted())
+									pendingCrossRefs.writeBack();
 							});
 						}
 					}
 				}
+				if(pendingCrossRefs.isCompleted())
+					pendingCrossRefs.writeBack();
 				
 			} else {
 				EAttribute eAttribute = (EAttribute) feature;
@@ -291,6 +302,38 @@ public class JDOMXmiParser {
 			return Short.parseShort(value);
 		} else {
 			return factory.createFromString(atr.getEAttributeType(), value);
+		}
+	}
+}
+
+class PendingEMFCrossReference {
+	final private EObject node;
+	final private EReference reference;
+	final private EObject[] crossRefs;
+	private int insertedObjects = 0;
+	
+	public PendingEMFCrossReference(final EObject node, final EReference reference, int numOfRefs) {
+		this.node = node;
+		this.reference = reference;
+		crossRefs = new EObject[numOfRefs];
+	}
+	
+	public void insertObject(final EObject ref, int idx) {
+		crossRefs[idx] = ref;
+		insertedObjects++;
+	}
+	
+	public boolean isCompleted() {
+		return insertedObjects == crossRefs.length;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void writeBack() {
+		if(reference.isMany()) {
+			List<EObject> refs = (List<EObject>) node.eGet(reference);
+			refs.addAll(Arrays.asList(crossRefs));
+		} else {
+			node.eSet(reference, crossRefs[0]);
 		}
 	}
 }
