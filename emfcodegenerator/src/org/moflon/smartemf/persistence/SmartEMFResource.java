@@ -2,6 +2,7 @@ package org.moflon.smartemf.persistence;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +61,13 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 
 	@Override
 	public void save(Map<?, ?> options) throws IOException {
-		File file = new File(uri.toFileString());
+		String path = uri.devicePath();
+		path = path.trim().replaceAll("%20", " ");
+		
+		if(path == null)
+			throw new FileNotFoundException("No valid xmi file present at: "+uri);
+		
+		File file = new File(path);
 		FileOutputStream fos = new FileOutputStream(file);
 		save(fos, options);
 		fos.close();
@@ -98,9 +105,15 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 	
 	@Override
 	public void load(Map<?, ?> options) throws IOException {
-		File file = new File(uri.toFileString());
-		if(!file.exists())
-			throw new IOException("No valid xmi file present at: "+uri);
+		String path = uri.devicePath();
+		path = path.trim().replaceAll("%20", " ");
+
+		if(path == null)
+			throw new FileNotFoundException("No valid xmi file present at: "+uri);
+		
+		File file = new File(path);
+		if(file == null || !file.exists())
+			throw new FileNotFoundException("No valid xmi file present at: "+path);
 		
 		FileInputStream fis = new FileInputStream(file);
 		load(fis, options);
@@ -137,17 +150,8 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 			is = inputStream;
 		}
 				
-		SAXBuilder saxBuilder = new SAXBuilder();
-		Document parsedFile = null;
-		try {
-			parsedFile = saxBuilder.build(is);
-		} catch (JDOMException | IOException e) {
-			throw new IOException(e.getMessage(), e.getCause());
-		}
-		
 		JDOMXmiParser parser = new JDOMXmiParser();
-		parser.domTreeToModel(parsedFile, this);
-		
+		parser.load(is, this);
 		// Finish useless stuff
 		isLoading = false;
 

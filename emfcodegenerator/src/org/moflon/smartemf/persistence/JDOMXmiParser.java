@@ -1,6 +1,10 @@
 package org.moflon.smartemf.persistence;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +18,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EFactory;
@@ -23,25 +28,60 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
+import org.jdom2.input.SAXBuilder;
 
 public class JDOMXmiParser {
 	protected Map<String, List<Consumer<EObject>>> waitingCrossRefs = new HashMap<>();
 	protected Map<String, EObject> id2Object = new HashMap<>();
+	protected Map<String, EObject> fqId2Object = new HashMap<>();
 	protected Map<String, EPackage> ns2Package = new HashMap<>();
 	protected Map<String, EFactory> ns2Factory = new HashMap<>();
+	protected Map<String, Resource> loadedResources = new HashMap<>(); 
 	final public static String XMI_NS = "xmi";
 	final public static String XSI_NS = "xsi";
 	final public static String XSI_TYPE = "type";
+	final public static String HREF_ATR = "href";
+	
+	public void load(final InputStream is, final Resource resource) throws IOException {
+		SAXBuilder saxBuilder = new SAXBuilder();
+		Document parsedFile = null;
+		try {
+			parsedFile = saxBuilder.build(is);
+		} catch (JDOMException | IOException e) {
+			throw new IOException(e.getMessage(), e.getCause());
+		}
+		
+		domTreeToModel(parsedFile, resource);
+		loadedResources.put(resource.getURI().toString(), resource);
+	}
+	
+	public void load(final String uri, final ResourceSet rs) throws IOException{
+		URI path = URI.createURI(uri);
+		
+		String filePath = path.devicePath();
+		filePath = filePath.trim().replaceAll("%20", " ");
+
+		if(filePath == null)
+			throw new FileNotFoundException("No valid xmi file present at: "+path );
+		
+		File file = new File(filePath);
+		if(file == null || !file.exists())
+			throw new FileNotFoundException("No valid xmi file present at: "+filePath);
+		
+		FileInputStream fis = new FileInputStream(file);
+		Resource resource = new SmartEMFResource(URI.createURI(uri));
+		load(fis, resource);
+		rs.getResources().add(resource);
+	}
 	
 	public void domTreeToModel(final Document domTree, final Resource resource) throws IOException {
-		id2Object = new HashMap<>();
-		waitingCrossRefs = new HashMap<>();
-		ns2Package = new HashMap<>();
-		ns2Factory = new HashMap<>();
+		String uri = resource.getURI().toString();
 		
 		Element root = domTree.getRootElement();
 		Namespace ns = root.getNamespace();
@@ -84,10 +124,10 @@ public class JDOMXmiParser {
 			// traverse tree and instantiate classes
 			EObject eRoot = null;
 			if(roots.size() > 1) {
-				eRoot = parseDomTree(subRoot, null, subRootNS.getPrefix(), "/"+id, 0);
+				eRoot = parseDomTree(resource, subRoot, null, subRootNS.getPrefix(), resource.getURI().toString()+"#/"+id, "/"+id, 0);
 				id++;
 			} else {
-				eRoot = parseDomTree(subRoot, null, subRootNS.getPrefix(), "/", 0);
+				eRoot = parseDomTree(resource, subRoot, null, subRootNS.getPrefix(), resource.getURI().toString()+"#/", "/", 0);
 			}
 			resource.getContents().add(eRoot);
 		}
@@ -95,7 +135,7 @@ public class JDOMXmiParser {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected EObject parseDomTree(Element root, EReference containment, String namespace, String id, int idx) throws IOException {
+	protected EObject parseDomTree(final Resource resource, Element root, EReference containment, String namespace, String fqId, String id, int idx) throws IOException {
 		EPackage metamodel = null;
 		String currentNamespace = null;
 		if(root.getNamespace().getPrefix() == null || root.getNamespace().getPrefix().isBlank()) {
@@ -109,7 +149,9 @@ public class JDOMXmiParser {
 		
 		EClass rootClass = null;
 		String currentId = id;
+		String currenFqId = fqId;
 		String simpleId = null;
+		String simpleFqId = null;
 		
 		if(containment == null) {
 			rootClass = (EClass)metamodel.getEClassifier(root.getName());
@@ -128,18 +170,23 @@ public class JDOMXmiParser {
 				rootClass = containment.getEReferenceType();
 			}
 			currentId = id + "/@" + containment.getName() + "." + idx;
-			
+			currenFqId = fqId + "/@" + containment.getName() + "." + idx;
 			// This a workaround for a useless/annoying xml simplification that occurs when a child list is exactly of size 1, then the index is omitted.
 			if(idx == 0) {
 				simpleId = id + "/@" + containment.getName();
+				simpleFqId = fqId + "/@" + containment.getName();
 			}
 		}
 		
 		EObject eRoot = factory.create(rootClass);
 		
 		id2Object.put(currentId, eRoot);
-		if(simpleId != null)
+		fqId2Object.put(currenFqId, eRoot);
+		if(simpleId != null) {
 			id2Object.put(simpleId, eRoot);
+			fqId2Object.put(simpleFqId, eRoot);
+		}
+			
 		
 		if(waitingCrossRefs.containsKey(currentId)) {
 			waitingCrossRefs.get(currentId).forEach(waitingRef -> waitingRef.accept(eRoot));
@@ -169,16 +216,40 @@ public class JDOMXmiParser {
 			if(ref.isContainment()) {
 				if(ref.isMany()) {
 					EList<EObject> objs = (EList<EObject>) eRoot.eGet(ref);
-					EObject child = parseDomTree(element, ref, currentNamespace, currentId, element2Idx.get(feature));
+					EObject child = parseDomTree(resource, element, ref, currentNamespace, currenFqId, currentId, element2Idx.get(feature));
 					objs.add(child);
 					element2Idx.replace(feature, element2Idx.get(feature)+1);
 				} else {
-					EObject child = parseDomTree(element, ref, currentNamespace, currentId, element2Idx.get(feature));
+					EObject child = parseDomTree(resource, element, ref, currentNamespace, currenFqId, currentId, element2Idx.get(feature));
 					eRoot.eSet(ref, child);
 					element2Idx.replace(feature, element2Idx.get(feature)+1);
 				}
 			} else {
-				throw new IOException("XML DOM-Tree child: "+element.getName()+" is not in a containtment!");
+				if(isHyperref(element)) {
+					Attribute href = element.getAttribute(HREF_ATR);
+					String[] hrefPath = href.getValue().split("#");
+					String modelUri = hrefPath[0];
+					String elementID = hrefPath[1];
+					
+					if(!loadedResources.containsKey(modelUri)) {
+						load(modelUri, resource.getResourceSet());
+					}
+					
+					EObject hyperref = fqId2Object.get(href.getValue());
+					if(hyperref == null)
+						throw new IOException("Foreign element "+elementID+ " in model "+modelUri+" could not be found.");
+					
+					if(ref.isMany()) {
+						EList<EObject> objs = (EList<EObject>) eRoot.eGet(ref);
+						objs.add(hyperref);
+					} else {
+						eRoot.eSet(ref, hyperref);
+					}
+					
+				} else {
+					throw new IOException("XML DOM-Tree child: "+element.getName()+" is neither, a hyperref nor in a containment!");
+				}
+				
 			}
 		}
 		
@@ -276,6 +347,17 @@ public class JDOMXmiParser {
 
 		}
 		return eRoot;
+	}
+	
+	public static boolean isHyperref(final Element element) {
+		if(element == null)
+			return false;
+		
+		Attribute atr = element.getAttribute(HREF_ATR);
+		if(atr == null)
+			return false;
+		
+		return true;
 	}
 	
 	public static Object stringToValue(final EFactory factory, final EAttribute atr, final String value) throws IOException {
