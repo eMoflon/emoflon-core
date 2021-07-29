@@ -5,9 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +23,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.jdom2.Attribute;
@@ -38,6 +34,8 @@ import org.jdom2.input.SAXBuilder;
 
 public class JDOMXmiParser {
 	
+	protected final String workspacePath;
+	
 	protected Map<String, List<Consumer<EObject>>> waitingCrossRefs = new HashMap<>();
 	protected Map<String, List<Consumer<EObject>>> waitingHRefs = new HashMap<>();
 	protected Map<String, EObject> id2Object = new HashMap<>();
@@ -47,10 +45,9 @@ public class JDOMXmiParser {
 	protected Map<String, Resource> loadedResources = new HashMap<>(); 
 	protected URI initialUri = null;
 	
-	final public static String XMI_NS = "xmi";
-	final public static String XSI_NS = "xsi";
-	final public static String XSI_TYPE = "type";
-	final public static String HREF_ATR = "href";
+	public JDOMXmiParser(final String workspacePath) {
+		this.workspacePath = workspacePath;
+	}
 	
 	public Map<String, Resource> getLoadedResources() {
 		return loadedResources;
@@ -73,68 +70,32 @@ public class JDOMXmiParser {
 			throw new IOException(e.getMessage(), e.getCause());
 		}
 		
-		if(initialUri == null)
-			initialUri = resource.getURI();
+		if(initialUri == null) {
+			String resolvedPath = XmiParserUtil.resolveURIToPath(resource.getURI(), workspacePath);
+			initialUri = URI.createFileURI(resolvedPath);
+		}
 		
 		domTreeToModel(parsedFile, resource);
 		loadedResources.put(resource.getURI().toString(), resource);
 	}
 	
-	public void load(final String uri, final ResourceSet rs) throws IOException{
-		URI path = URI.createURI(uri);
-		if(uri.contains("platform:/resource") || uri.contains("platform:/plugin"))
-			throw new UnsupportedOperationException("Referencing and loading of global registry files such as platform:/plugin or plaform:/resource files is unsupported.");
-		
-		String filePath = path.devicePath();
-		filePath = filePath.trim().replaceAll("%20", " ");
-
+	public void load(final String uri, final ResourceSet rs) throws IOException{	
+		String filePath = XmiParserUtil.resolveURIRelativeToBaseURI(initialUri, URI.createURI(uri), workspacePath);
 		if(filePath == null)
-			throw new FileNotFoundException("No valid xmi file present at: "+path );
+			throw new FileNotFoundException("Relative path "+uri.trim().replace("%20", " ")+" could not be resolved with the path of the initial uri "+initialUri.devicePath().trim().replace("%20", " ")+".");
 		
 		File file = new File(filePath);
-		if(file == null || !file.exists()) {
-			// Try to resolve the relative uri using the working initial uri
-			URI fileUri = URI.createFileURI(filePath);
-			String fileRootSegment = fileUri.segment(0);
-			File commonRoot = null;
-			
-			File queryFile = new File(initialUri.path().trim().replace("%20", " "));
-			while(queryFile!=null && queryFile.exists()) {
-				if(queryFile.isDirectory()) {
-					for(File containedFile : queryFile.listFiles()) {
-						if(containedFile.isDirectory() && containedFile.getName().equals(fileRootSegment)) {
-							commonRoot = containedFile;
-							break;
-						}
-					}
-				}
-				Path queryPath = queryFile.toPath();
-				if(queryPath.getParent() == null)
-					break;
-				
-				queryFile = queryPath.getParent().toFile();
-			}
-			if(commonRoot == null)
-				throw new FileNotFoundException("Relative path "+filePath+" could not be resolved with the path of the initial uri "+initialUri.path().trim().replace("%20", " ")+"." );
-			
-			String newValidPath = commonRoot.getCanonicalPath()+"/"+fileUri.path();
-			file = new File(newValidPath);
-			if(file == null || !file.exists()) {
-				throw new FileNotFoundException("Relative path "+filePath+" could not be resolved with the path of the initial uri "+initialUri.path().trim().replace("%20", " ")+". The following path does not exist: "+newValidPath);
-			}
-		}
-			
 		FileInputStream fis = new FileInputStream(file);
-		Resource resource = new SmartEMFResource(URI.createURI(uri));
+		Resource resource = new SmartEMFResource(URI.createFileURI(file.getCanonicalPath()), workspacePath);
+		rs.getResources().add(resource);
 		
-		JDOMXmiParser subParser = new JDOMXmiParser();
+		JDOMXmiParser subParser = new JDOMXmiParser(workspacePath);
 		subParser.addWaitingHRefs(waitingHRefs);
 		subParser.load(fis, resource);
 		fis.close();
 		
 		loadedResources.putAll(subParser.getLoadedResources());
 		fqId2Object.putAll(subParser.getFqId2ObjectMap());
-		rs.getResources().add(resource);
 	}
 	
 	public void domTreeToModel(final Document domTree, final Resource resource) throws IOException {
@@ -142,7 +103,7 @@ public class JDOMXmiParser {
 		Namespace ns = root.getNamespace();
 		List<Element> roots = new LinkedList<>();
 		// If there is a root node belonging to the XMI Namespace, than we have multiple container objects wrapped within an XML dummy-node to ensure XML compliance
-		if(XMI_NS.equals(ns.getPrefix())) {
+		if(XmiParserUtil.XMI_NS.equals(ns.getPrefix())) {
 			roots.addAll(root.getChildren());
 		} else {
 			roots.add(root);
@@ -162,7 +123,7 @@ public class JDOMXmiParser {
 			ns2Factory.put(subRootNS.getPrefix(), factory);
 			// find additional namespaces
 			Set<Namespace> additionalNS = subRoot.getAdditionalNamespaces().stream()
-				.filter(ns2 -> !ns2.getPrefix().equals(XMI_NS) && !ns2.getPrefix().equals(XSI_NS) && !ns2.getPrefix().equals(subRootNS.getPrefix()))
+				.filter(ns2 -> !ns2.getPrefix().equals(XmiParserUtil.XMI_NS) && !ns2.getPrefix().equals(XmiParserUtil.XSI_NS) && !ns2.getPrefix().equals(subRootNS.getPrefix()))
 				.filter(ns2 -> !ns2Package.containsKey(ns2.getPrefix()))
 				.collect(Collectors.toSet());
 			
@@ -212,7 +173,7 @@ public class JDOMXmiParser {
 			rootClass = (EClass)metamodel.getEClassifier(root.getName());
 		} else {
 			Optional<Attribute> typeATR = root.getAttributes().stream()
-					.filter(atr -> atr.getName().equals(XSI_TYPE) && atr.getNamespacePrefix().equals(XSI_NS)).findFirst();
+					.filter(atr -> atr.getName().equals(XmiParserUtil.XSI_TYPE) && atr.getNamespacePrefix().equals(XmiParserUtil.XSI_NS)).findFirst();
 			if(typeATR.isPresent()) {
 				String[] exactType = typeATR.get().getValue().split(":");
 				//This is obviously an element belonging to a foreign metamodel -> switch to suitable EPacakge and Factory but stay in the current namespace
@@ -260,7 +221,7 @@ public class JDOMXmiParser {
 		Map<EStructuralFeature,Integer> element2Idx = new HashMap<>();
 		Map<EStructuralFeature, PendingEMFCrossReference> feature2CrossRef = new HashMap<>();
 		for(Element element : root.getChildren()) {
-			if(XMI_NS.equals(element.getNamespace().getPrefix()))
+			if(XmiParserUtil.XMI_NS.equals(element.getNamespace().getPrefix()))
 				continue;
 			
 			Optional<EStructuralFeature> featureOpt = rootClass.getEAllStructuralFeatures().stream().filter(sf -> sf.getName().equals(element.getName())).findFirst();
@@ -288,13 +249,13 @@ public class JDOMXmiParser {
 					element2Idx.replace(feature, element2Idx.get(feature)+1);
 				}
 			} else {
-				if(isHyperref(element)) {
+				if(XmiParserUtil.isHyperref(element)) {
 					PendingEMFCrossReference pendingCrossref = feature2CrossRef.get(ref);
 					if(pendingCrossref == null) {
 						pendingCrossref = new PendingEMFCrossReference(eRoot, ref, (int)root.getChildren().stream().filter(elt -> elt.getName().equals(ref.getName())).count());
 						feature2CrossRef.put(ref, pendingCrossref);
 					}
-					Attribute href = element.getAttribute(HREF_ATR);
+					Attribute href = element.getAttribute(XmiParserUtil.HREF_ATR);
 					String[] hrefPath = href.getValue().split("#");
 					String modelUri = hrefPath[0];
 					
@@ -341,10 +302,10 @@ public class JDOMXmiParser {
 		}
 		
 		for(Attribute attribute : root.getAttributes()) {
-			if(XMI_NS.equals(attribute.getNamespace().getPrefix()))
+			if(XmiParserUtil.XMI_NS.equals(attribute.getNamespace().getPrefix()))
 				continue;
 			
-			if(XSI_NS.equals(attribute.getNamespace().getPrefix()))
+			if(XmiParserUtil.XSI_NS.equals(attribute.getNamespace().getPrefix()))
 				continue;
 			
 			Optional<EStructuralFeature> featureOpt = rootClass.getEAllStructuralFeatures().stream().filter(sf -> sf.getName().equals(attribute.getName())).findFirst();
@@ -404,7 +365,7 @@ public class JDOMXmiParser {
 				
 				switch(attribute.getAttributeType()) {
 				case CDATA:
-					eRoot.eSet(eAttribute, stringToValue(factory, eAttribute, attribute.getValue()));
+					eRoot.eSet(eAttribute, XmiParserUtil.stringToValue(factory, eAttribute, attribute.getValue()));
 					break;
 				case ENTITIES:
 					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());
@@ -436,73 +397,5 @@ public class JDOMXmiParser {
 		return eRoot;
 	}
 	
-	public static boolean isHyperref(final Element element) {
-		if(element == null)
-			return false;
-		
-		Attribute atr = element.getAttribute(HREF_ATR);
-		if(atr == null)
-			return false;
-		
-		return true;
-	}
-	
-	public static Object stringToValue(final EFactory factory, final EAttribute atr, final String value) throws IOException {
-		EcorePackage epack = EcorePackage.eINSTANCE;
-		if(atr.getEAttributeType() == epack.getEString()) {
-			return value;
-		} else if(atr.getEAttributeType() == epack.getEBoolean()) {
-			return ("true".equals(value)) ? true : false;
-		} else if(atr.getEAttributeType() == epack.getEByte()) {
-			return Byte.parseByte(value);
-		} else if(atr.getEAttributeType() == epack.getEChar()) {
-			return value.charAt(0);
-		} else if(atr.getEAttributeType() == epack.getEDate()) {
-			return new SimpleDateFormat(value);
-		} else if(atr.getEAttributeType() == epack.getEDouble()) {
-			return Double.parseDouble(value);
-		}  else if(atr.getEAttributeType() == epack.getEFloat()) {
-			return Float.parseFloat(value);
-		} else if(atr.getEAttributeType() == epack.getEInt()) {
-			return Integer.parseInt(value);
-		} else if(atr.getEAttributeType() == epack.getELong()) {
-			return Long.parseLong(value);
-		} else if(atr.getEAttributeType() == epack.getEShort()) {
-			return Short.parseShort(value);
-		} else {
-			return factory.createFromString(atr.getEAttributeType(), value);
-		}
-	}
-}
 
-class PendingEMFCrossReference {
-	final private EObject node;
-	final private EReference reference;
-	final private EObject[] crossRefs;
-	private int insertedObjects = 0;
-	
-	public PendingEMFCrossReference(final EObject node, final EReference reference, int numOfRefs) {
-		this.node = node;
-		this.reference = reference;
-		crossRefs = new EObject[numOfRefs];
-	}
-	
-	public void insertObject(final EObject ref, int idx) {
-		crossRefs[idx] = ref;
-		insertedObjects++;
-	}
-	
-	public boolean isCompleted() {
-		return insertedObjects == crossRefs.length;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void writeBack() {
-		if(reference.isMany()) {
-			List<EObject> refs = (List<EObject>) node.eGet(reference);
-			refs.addAll(Arrays.asList(crossRefs));
-		} else {
-			node.eSet(reference, crossRefs[0]);
-		}
-	}
 }

@@ -26,16 +26,6 @@ import org.moflon.smartemf.runtime.SmartPackage;
 
 public class JDOMXmiUnparser {
 
-		final public static String XMI_ROOT_NODE = "XMI";
-		final public static String XMI_NS = "xmi";
-		final public static String XMI_URI = "http://www.omg.org/XMI";
-		final public static String XMI_VERSION_ATR = "version";
-		final public static String XMI_VERSION = "2.0";
-		
-		final public static String XSI_NS = "xsi";
-		final public static String XSI_URI = "http://www.w3.org/2001/XMLSchema-instance";
-		final public static String XSI_TYPE_ATR = "type";
-		
 		Map<EPackage, Namespace> metamodel2NS = new HashMap<> ();
 		Map<EObject, String> object2ID = new HashMap<>();
 		Map<EObject, List<Consumer<String>>> waitingCrossRefs = new HashMap<>();
@@ -43,7 +33,7 @@ public class JDOMXmiUnparser {
 		public void modelToJDOMTree(final Resource resource, final Document domTree) throws IOException {
 			// Create tree by traversing model
 			if(resource.getContents().size()> 1 || resource.getContents().size()< 1) {
-				Element root = new Element(XMI_ROOT_NODE, XMI_NS, XMI_URI);
+				Element root = new Element(XmiParserUtil.XMI_ROOT_NODE, XmiParserUtil.XMI_NS, XmiParserUtil.XMI_URI);
 				domTree.setRootElement(root);
 				
 				int idx = 0;
@@ -58,18 +48,18 @@ public class JDOMXmiUnparser {
 			
 			// Add default xmi namespaces and version attribute
 			if(resource.getContents().size() <= 1) {
-				Namespace xmiNS = Namespace.getNamespace(XMI_NS, XMI_URI);
+				Namespace xmiNS = Namespace.getNamespace(XmiParserUtil.XMI_NS, XmiParserUtil.XMI_URI);
 				domTree.getRootElement().addNamespaceDeclaration(xmiNS);
 			}
 			
-			Namespace xsiNS = Namespace.getNamespace(XSI_NS, XSI_URI);
+			Namespace xsiNS = Namespace.getNamespace(XmiParserUtil.XSI_NS, XmiParserUtil.XSI_URI);
 			domTree.getRootElement().addNamespaceDeclaration(xsiNS);
 			
 			for(EPackage pkg : metamodel2NS.keySet()) {
 				domTree.getRootElement().addNamespaceDeclaration(metamodel2NS.get(pkg));
 			}
 			
-			domTree.getRootElement().getAttributes().add(new Attribute(XMI_VERSION_ATR, XMI_VERSION, Namespace.getNamespace(XMI_NS, XMI_URI)));
+			domTree.getRootElement().getAttributes().add(new Attribute(XmiParserUtil.XMI_VERSION_ATR, XmiParserUtil.XMI_VERSION, Namespace.getNamespace(XmiParserUtil.XMI_NS, XmiParserUtil.XMI_URI)));
 		}
 		
 		@SuppressWarnings("unchecked")
@@ -91,8 +81,8 @@ public class JDOMXmiUnparser {
 				current = new Element(containment.getName());
 				EPackage rootMetamodel = root.eClass().getEPackage();
 				if(metamodel != rootMetamodel) {
-					current.getAttributes().add(new Attribute(XSI_TYPE_ATR, metamodel2NS.get(metamodel).getPrefix()+":"+currentClass.getName(), 
-							Namespace.getNamespace(XSI_NS, XSI_URI)));
+					current.getAttributes().add(new Attribute(XmiParserUtil.XSI_TYPE, metamodel2NS.get(metamodel).getPrefix()+":"+currentClass.getName(), 
+							Namespace.getNamespace(XmiParserUtil.XSI_NS, XmiParserUtil.XSI_URI)));
 				}
 				
 				// This a workaround for a useless/annoying xml simplification that occurs when a child list is exactly of size 1, then the index is omitted.
@@ -207,7 +197,7 @@ public class JDOMXmiUnparser {
 			// Attributes
 			EFactory factory = metamodel.getEFactoryInstance();
 			for(EAttribute attribute : currentClass.getEAllAttributes()) {
-				String value = valueToString(factory, attribute, currentEObject.eGet(attribute));
+				String value = XmiParserUtil.valueToString(factory, attribute, currentEObject.eGet(attribute));
 				if(value == null)
 					continue;
 				
@@ -217,69 +207,5 @@ public class JDOMXmiUnparser {
 			return current;
 		}
 		
-		public static String valueToString(final EFactory factory, final EAttribute atr, final Object value) throws IOException {
-			EcorePackage epack = EcorePackage.eINSTANCE;
-			if(atr.getEAttributeType() == epack.getEString()) {
-				return (String) value;
-			} else if(atr.getEAttributeType() == epack.getEBoolean()) {
-				return String.valueOf(value);
-			} else if(atr.getEAttributeType() == epack.getEByte()) {
-				return String.valueOf(value);
-			} else if(atr.getEAttributeType() == epack.getEChar()) {
-				return String.valueOf(value);
-			} else if(atr.getEAttributeType() == epack.getEDate()) {
-				return ((SimpleDateFormat)value).toLocalizedPattern();
-			} else if(atr.getEAttributeType() == epack.getEDouble()) {
-				return String.valueOf(value);
-			}  else if(atr.getEAttributeType() == epack.getEFloat()) {
-				return String.valueOf(value);
-			} else if(atr.getEAttributeType() == epack.getEInt()) {
-				return String.valueOf(value);
-			} else if(atr.getEAttributeType() == epack.getELong()) {
-				return String.valueOf(value);
-			} else if(atr.getEAttributeType() == epack.getEShort()) {
-				return String.valueOf(value);
-			} else if(atr.getEAttributeType() == epack.getEFeatureMapEntry()) {
-				return null;
-			}else {
-				return factory.convertToString(atr.getEAttributeType(), value);
-			}
-		}
-}
 
-class PendingXMLCrossReference {
-	final private Element element;
-	final private Attribute attribute;
-	final private String[] ids;
-	private int insertedIds = 0;
-	
-	public PendingXMLCrossReference(final Element element, final Attribute attribute, int numOfIds) {
-		this.element = element;
-		this.attribute = attribute;
-		ids = new String[numOfIds];
-	}
-	
-	public void insertID(final String id, int idx) {
-		ids[idx] = id;
-		insertedIds++;
-	}
-	
-	public boolean isCompleted() {
-		return insertedIds == ids.length;
-	}
-	
-	public void writeBack() {
-		StringBuilder sb = new StringBuilder();
-		for(int i = 0; i<ids.length; i++) {
-			sb.append(ids[i]);
-			if(i < ids.length-1) {
-				sb.append(" ");
-			}
-		}
-		if(sb.toString().isBlank())
-			return;
-		
-		attribute.setValue(sb.toString());
-		element.getAttributes().add(attribute);
-	}
 }

@@ -35,12 +35,15 @@ import org.xml.sax.InputSource;
  */
 public class SmartEMFResource extends UnlockedResourceImpl implements XMIResource{
 	
+	protected String workspacePath;
+	
 	protected boolean cascadeNotifications = false;
 	
 	private EList<EObject> contents = new ResourceContentSmartEList<>(this);
 	
-	public SmartEMFResource(final URI uri) {
+	public SmartEMFResource(final URI uri, final String workspacePath) {
 		this.uri = uri;
+		this.workspacePath = workspacePath;
 	}
 
 	public boolean getCascade() {
@@ -105,9 +108,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 	
 	@Override
 	public void load(Map<?, ?> options) throws IOException {
-		String path = uri.devicePath();
-		path = path.trim().replaceAll("%20", " ");
-
+		String path = XmiParserUtil.resolveURIToPath(uri, workspacePath);
 		if(path == null)
 			throw new FileNotFoundException("No valid xmi file present at: "+uri);
 		
@@ -150,7 +151,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 			is = inputStream;
 		}
 				
-		JDOMXmiParser parser = new JDOMXmiParser();
+		JDOMXmiParser parser = new JDOMXmiParser(workspacePath);
 		parser.load(is, this);
 		// Finish useless stuff
 		isLoading = false;
