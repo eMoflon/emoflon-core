@@ -1,12 +1,14 @@
 package org.moflon.smartemf.persistence;
 
+import java.awt.Container;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -16,7 +18,6 @@ import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
@@ -28,7 +29,7 @@ public class JDOMXmiUnparser {
 
 		Map<EPackage, Namespace> metamodel2NS = new HashMap<> ();
 		Map<EObject, String> object2ID = new HashMap<>();
-		Map<EObject, List<Consumer<String>>> waitingCrossRefs = new HashMap<>();
+		Map<EObject, Set<Consumer<String>>> waitingCrossRefs = new HashMap<>();
 	
 		public void modelToJDOMTree(final Resource resource, final Document domTree) throws IOException {
 			// Create tree by traversing model
@@ -44,7 +45,22 @@ public class JDOMXmiUnparser {
 			} else {
 				EObject container = resource.getContents().get(0);
 				domTree.setRootElement(createDOMTree(container, container, null, "/", 0, false));
-			} 
+			}
+			
+			// Resolve unresolved Cross-Refs -> These are HRefs to foreign models
+			for(EObject href : waitingCrossRefs.keySet()) {
+				if(href.eResource() == resource) {
+					throw new IOException("Cross-reference to "+href+" could not be resolved during saving.");
+				}
+				
+				// Explore and index foreign model
+				if(!object2ID.containsKey(href)) {
+					indexForeignResource(href.eResource());
+				}
+				
+				String foreignID = object2ID.get(href);
+				waitingCrossRefs.get(href).forEach(waiting -> waiting.accept(foreignID));
+			}
 			
 			// Add default xmi namespaces and version attribute
 			if(resource.getContents().size() <= 1) {
@@ -101,6 +117,7 @@ public class JDOMXmiUnparser {
 				for(Consumer<String> consumer : waitingCrossRefs.get(currentEObject)) {
 					consumer.accept(currentId);
 				}
+				waitingCrossRefs.remove(currentEObject);
 			}
 			
 			// Containments
@@ -115,7 +132,7 @@ public class JDOMXmiUnparser {
 				}
 				int idIDX = 0;
 				for(EObject containee : containees) {
-					current.getChildren().add(createDOMTree(root, containee, containmentRef, id, idIDX, containees.size()==1));
+					current.getChildren().add(createDOMTree(root, containee, containmentRef, currentId, idIDX, containees.size()==1));
 					idIDX++;
 				}
 			}
@@ -147,22 +164,46 @@ public class JDOMXmiUnparser {
 				Attribute refAtr = new Attribute(crossRef.getName(), "");
 				PendingXMLCrossReference pendingCrossRefs = new PendingXMLCrossReference(current, refAtr, refs.size());
 				if(refs.size()<2) {
-					if(object2ID.containsKey(refs.get(0))) {
-						pendingCrossRefs.insertID(object2ID.get(refs.get(0)), 0);
+					EObject refObj = refs.get(0);
+					if(object2ID.containsKey(refObj)) {
+						pendingCrossRefs.insertID(object2ID.get(refObj), 0);
 					} else {
 						// Remember this crossRef and wait for traversal
-						List<Consumer<String>> otherPendingRefs = waitingCrossRefs.get(refs.get(0));
+						Set<Consumer<String>> otherPendingRefs = waitingCrossRefs.get(refObj);
 						if(otherPendingRefs == null) {
-							otherPendingRefs = new LinkedList<>();
-							waitingCrossRefs.put(refs.get(0), otherPendingRefs);
+							otherPendingRefs = new LinkedHashSet<>();
+							waitingCrossRefs.put(refObj, otherPendingRefs);
 						}
-						otherPendingRefs.add((crossRefID) -> {
-							pendingCrossRefs.insertID(crossRefID, 0);
-							if(pendingCrossRefs.isCompleted()) {
-								pendingCrossRefs.writeBack();
-							}
-						});
+						if(refObj.eResource() == currentEObject.eResource()) {
+							otherPendingRefs.add((crossRefID) -> {
+								pendingCrossRefs.insertID(crossRefID, 0);
+								if(pendingCrossRefs.isCompleted()) {
+									pendingCrossRefs.writeBack();
+								}
+							});
+						} else {
+							// this is reference to a foreign element -> href!
+							otherPendingRefs.add((crossRefID) -> {
+								pendingCrossRefs.insertID(crossRefID, 0);
+								EPackage otherMetamodel = refObj.eClass().getEPackage();
+								if(!metamodel2NS.containsKey(otherMetamodel)) {
+									Namespace otherNS =  Namespace.getNamespace(otherMetamodel.getName(), otherMetamodel.getNsURI());
+									metamodel2NS.put(otherMetamodel, otherNS);
+								}
+								if(otherMetamodel != metamodel) {
+									pendingCrossRefs.elementIsHref(true, 0, crossRef.getName(), metamodel2NS.get(otherMetamodel).getPrefix()+":"+refObj.eClass().getName());
+								} else {
+									pendingCrossRefs.elementIsHref(true, 0, crossRef.getName(), null);
+								}
+								
+								if(pendingCrossRefs.isCompleted()) {
+									pendingCrossRefs.writeBack();
+								}
+							});
+						}
+						
 					}
+					
 					
 				} else if(refs.size()>1) {
 					int crossRefIdx = 0;
@@ -171,20 +212,43 @@ public class JDOMXmiUnparser {
 							pendingCrossRefs.insertID(object2ID.get(ref), crossRefIdx);
 						} else {
 							// Remember this crossRef and wait for traversal
-							List<Consumer<String>> otherPendingRefs = waitingCrossRefs.get(ref);
+							Set<Consumer<String>> otherPendingRefs = waitingCrossRefs.get(ref);
 							if(otherPendingRefs == null) {
-								otherPendingRefs = new LinkedList<>();
+								otherPendingRefs = new LinkedHashSet<>();
 								waitingCrossRefs.put(ref, otherPendingRefs);
 							}
 							final int currentIdx = crossRefIdx;
-							otherPendingRefs.add((crossRefID) -> {
-								pendingCrossRefs.insertID(crossRefID,  currentIdx);
-								if(pendingCrossRefs.isCompleted()) {
-									pendingCrossRefs.writeBack();
-								}
-							});
+							
+							if(ref.eResource() == currentEObject.eResource()) {
+								otherPendingRefs.add((crossRefID) -> {
+									pendingCrossRefs.insertID(crossRefID,  currentIdx);
+									if(pendingCrossRefs.isCompleted()) {
+										pendingCrossRefs.writeBack();
+									}
+								});
+							} else {
+								// this is reference to a foreign element -> href!
+								otherPendingRefs.add((crossRefID) -> {
+									pendingCrossRefs.insertID(crossRefID,  currentIdx);
+									EPackage otherMetamodel = ref.eClass().getEPackage();
+									if(!metamodel2NS.containsKey(otherMetamodel)) {
+										Namespace otherNS =  Namespace.getNamespace(otherMetamodel.getName(), otherMetamodel.getNsURI());
+										metamodel2NS.put(otherMetamodel, otherNS);
+									}
+									if(otherMetamodel != metamodel) {
+										pendingCrossRefs.elementIsHref(true, currentIdx, crossRef.getName(), metamodel2NS.get(otherMetamodel).getPrefix()+":"+ref.eClass().getName());
+									} else {
+										pendingCrossRefs.elementIsHref(true, currentIdx, crossRef.getName(), null);
+									}
+									
+									if(pendingCrossRefs.isCompleted()) {
+										pendingCrossRefs.writeBack();
+									}
+								});
+							}
+							
 						}
-						crossRefIdx++;
+						crossRefIdx++;	
 					}
 					
 				}
@@ -207,5 +271,47 @@ public class JDOMXmiUnparser {
 			return current;
 		}
 		
+		protected void indexForeignResource(final Resource resource) {
+			if(resource.getContents().size() < 2) {
+				indexForeignModel(resource.getContents().get(0), null, resource.getURI().toString()+"#/", 0, false);
+			} else {
+				int idx = 0;
+				for(EObject container : resource.getContents()) {
+					indexForeignModel(container, null, resource.getURI().toString()+"#/"+idx++, 0, false);
+				}
+			}
+			
+		}
+		
+		@SuppressWarnings("unchecked")
+		protected void indexForeignModel(final EObject root, final EReference containment, final String id, int idx, boolean useSimple) {
+			EClass rootClass = root.eClass();
+			String rootId = id;
+			if(containment != null) {
+				if(useSimple) {
+					rootId = id + "/@" + containment.getName();
+				} else {
+					rootId = id + "/@" + containment.getName() + "." + idx;
+				}
+			}
+			object2ID.put(root, rootId);
+			
+			// Containments
+			for(EReference containmentRef : rootClass.getEAllContainments()) {
+				List<EObject> containees = new LinkedList<>();
+				if(containmentRef.isMany()) {
+					containees.addAll((Collection<? extends EObject>) root.eGet(containmentRef));
+				} else {
+					EObject containee = (EObject) root.eGet(containmentRef);
+					if(containee != null)
+						containees.add(containee);
+				}
+				int idIDX = 0;
+				for(EObject containee : containees) {
+					indexForeignModel(containee, containmentRef, rootId, idIDX, containees.size()==1);
+					idIDX++;
+				}
+			}
+		}
 
 }

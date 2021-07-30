@@ -11,6 +11,7 @@ import java.io.Writer;
 import java.util.Map;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -33,7 +34,7 @@ import org.xml.sax.InputSource;
  * A simplified resource implementation that serializes to XMI. Ignores save options. Can enable
  * notification cascading for its contents.
  */
-public class SmartEMFResource extends UnlockedResourceImpl implements XMIResource{
+public class SmartEMFResource extends UnlockedResourceImpl implements XMIResource {
 	
 	protected String workspacePath;
 	
@@ -64,8 +65,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 
 	@Override
 	public void save(Map<?, ?> options) throws IOException {
-		String path = uri.devicePath();
-		path = path.trim().replaceAll("%20", " ");
+		String path = XmiParserUtil.resolveURIToPath(uri, workspacePath);
 		
 		if(path == null)
 			throw new FileNotFoundException("No valid xmi file present at: "+uri);
@@ -152,7 +152,11 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 		}
 				
 		JDOMXmiParser parser = new JDOMXmiParser(workspacePath);
-		parser.load(is, this);
+		try {
+			parser.load(is, this);
+		} catch (Exception e) {
+			throw new IOException(e.getMessage(), e.getCause());
+		}
 		// Finish useless stuff
 		isLoading = false;
 

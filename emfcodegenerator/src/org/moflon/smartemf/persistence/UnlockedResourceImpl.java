@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.emf.ecore.util.EcoreUtil.ContentTreeIterator;
 import org.eclipse.emf.ecore.util.EcoreUtil.ProperContentIterator;
 
-public abstract class UnlockedResourceImpl extends NotifierImpl implements Resource, Resource.Internal {
+public abstract class UnlockedResourceImpl extends NotifierImpl implements Resource, Resource.Internal{
 	/**
 	 * The default URI converter when there is no resource set.
 	 */

@@ -1,14 +1,9 @@
 package org.moflon.smartemf.persistence;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
+import java.text.DateFormat;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EFactory;
@@ -152,7 +147,7 @@ public final class XmiParserUtil {
 		return true;
 	}
 	
-	public static Object stringToValue(final EFactory factory, final EAttribute atr, final String value) throws IOException {
+	public static Object stringToValue(final EFactory factory, final EAttribute atr, final String value) throws Exception {
 		EcorePackage epack = EcorePackage.eINSTANCE;
 		if(atr.getEAttributeType() == epack.getEString()) {
 			return value;
@@ -163,7 +158,7 @@ public final class XmiParserUtil {
 		} else if(atr.getEAttributeType() == epack.getEChar()) {
 			return value.charAt(0);
 		} else if(atr.getEAttributeType() == epack.getEDate()) {
-			return new SimpleDateFormat(value);
+			return DateFormat.getDateInstance().parse(value);
 		} else if(atr.getEAttributeType() == epack.getEDouble()) {
 			return Double.parseDouble(value);
 		}  else if(atr.getEAttributeType() == epack.getEFloat()) {
@@ -190,7 +185,7 @@ public final class XmiParserUtil {
 		} else if(atr.getEAttributeType() == epack.getEChar()) {
 			return String.valueOf(value);
 		} else if(atr.getEAttributeType() == epack.getEDate()) {
-			return ((SimpleDateFormat)value).toLocalizedPattern();
+			return DateFormat.getDateInstance().format(value);
 		} else if(atr.getEAttributeType() == epack.getEDouble()) {
 			return String.valueOf(value);
 		}  else if(atr.getEAttributeType() == epack.getEFloat()) {
