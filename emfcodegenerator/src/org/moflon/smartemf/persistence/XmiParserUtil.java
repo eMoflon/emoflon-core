@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EFactory;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -149,6 +150,7 @@ public final class XmiParserUtil {
 	
 	public static Object stringToValue(final EFactory factory, final EAttribute atr, final String value) throws Exception {
 		EcorePackage epack = EcorePackage.eINSTANCE;
+		EFactory efac = epack.getEFactoryInstance();
 		if(atr.getEAttributeType() == epack.getEString()) {
 			return value;
 		} else if(atr.getEAttributeType() == epack.getEBoolean()) {
@@ -158,7 +160,7 @@ public final class XmiParserUtil {
 		} else if(atr.getEAttributeType() == epack.getEChar()) {
 			return value.charAt(0);
 		} else if(atr.getEAttributeType() == epack.getEDate()) {
-			return DateFormat.getDateInstance().parse(value);
+			return efac.createFromString(atr.getEAttributeType(), value);
 		} else if(atr.getEAttributeType() == epack.getEDouble()) {
 			return Double.parseDouble(value);
 		}  else if(atr.getEAttributeType() == epack.getEFloat()) {
@@ -176,6 +178,7 @@ public final class XmiParserUtil {
 	
 	public static String valueToString(final EFactory factory, final EAttribute atr, final Object value) throws IOException {
 		EcorePackage epack = EcorePackage.eINSTANCE;
+		EFactory efac = epack.getEFactoryInstance();
 		if(atr.getEAttributeType() == epack.getEString()) {
 			return (String) value;
 		} else if(atr.getEAttributeType() == epack.getEBoolean()) {
@@ -185,7 +188,7 @@ public final class XmiParserUtil {
 		} else if(atr.getEAttributeType() == epack.getEChar()) {
 			return String.valueOf(value);
 		} else if(atr.getEAttributeType() == epack.getEDate()) {
-			return DateFormat.getDateInstance().format(value);
+			return efac.convertToString(atr.getEAttributeType(), value);
 		} else if(atr.getEAttributeType() == epack.getEDouble()) {
 			return String.valueOf(value);
 		}  else if(atr.getEAttributeType() == epack.getEFloat()) {
@@ -201,5 +204,33 @@ public final class XmiParserUtil {
 		}else {
 			return factory.convertToString(atr.getEAttributeType(), value);
 		}
+	}
+	
+	public static EPackage loadMetamodel(URI uri) throws IOException {
+		return loadMetamodel(uri.toString());
+	}
+	
+	public static EPackage loadMetamodel(String uri) throws IOException {
+		String metamodelUri = uri.split("#")[0];	
+		EPackage metamodel = EPackage.Registry.INSTANCE.getEPackage(metamodelUri);
+		if(metamodel == null || metamodel.eIsProxy()) {
+			// Retry with Plugin or Resource
+			if(metamodelUri.contains("platform:/resource/")) {
+				metamodelUri = metamodelUri.replaceFirst("/resource/", "/plugin/");
+				metamodel = EPackage.Registry.INSTANCE.getEPackage(metamodelUri);
+				if(metamodel == null || metamodel.eIsProxy()) {
+					throw new IOException("No registered metamodel or generated metamodel code found for: "+metamodelUri+", can not load model.");
+				}
+			} else if (metamodelUri.contains("platform:/plugin/")) {
+				metamodelUri = metamodelUri.replaceFirst("/plugin/", "/resource/");
+				metamodel = EPackage.Registry.INSTANCE.getEPackage(metamodelUri);
+				if(metamodel == null || metamodel.eIsProxy()) {
+					throw new IOException("No registered metamodel or generated metamodel code found for: "+metamodelUri+", can not load model.");
+				}
+			} else {
+				throw new IOException("No registered metamodel or generated metamodel code found for: "+metamodelUri+", can not load model.");
+			}
+		}
+		return metamodel;
 	}
 }

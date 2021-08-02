@@ -165,6 +165,10 @@ public class JDOMXmiUnparser {
 				PendingXMLCrossReference pendingCrossRefs = new PendingXMLCrossReference(current, refAtr, refs.size());
 				if(refs.size()<2) {
 					EObject refObj = refs.get(0);
+					//Ignore dangling references
+					if(refObj.eResource() == null)
+						continue;
+					
 					if(object2ID.containsKey(refObj)) {
 						pendingCrossRefs.insertID(object2ID.get(refObj), 0);
 					} else {
@@ -174,6 +178,7 @@ public class JDOMXmiUnparser {
 							otherPendingRefs = new LinkedHashSet<>();
 							waitingCrossRefs.put(refObj, otherPendingRefs);
 						}
+						
 						if(refObj.eResource() == currentEObject.eResource()) {
 							otherPendingRefs.add((crossRefID) -> {
 								pendingCrossRefs.insertID(crossRefID, 0);
@@ -208,6 +213,10 @@ public class JDOMXmiUnparser {
 				} else if(refs.size()>1) {
 					int crossRefIdx = 0;
 					for(EObject ref : refs) {
+						//Ignore dangling references
+						if(ref.eResource() == null)
+							continue;
+						
 						if(object2ID.containsKey(ref)) {
 							pendingCrossRefs.insertID(object2ID.get(ref), crossRefIdx);
 						} else {

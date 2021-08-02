@@ -113,11 +113,7 @@ public class JDOMXmiParser {
 		for(Element subRoot : roots) {
 			// Load the corresponding metamodel and factory
 			Namespace subRootNS = subRoot.getNamespace();
-			String metamodelUri = subRootNS.getURI().split("#")[0];
-			EPackage metamodel = EPackage.Registry.INSTANCE.getEPackage(metamodelUri);
-			if(metamodel == null || metamodel.eIsProxy()) {
-				throw new IOException("No registered metamodel or generated metamodel code found for: "+metamodelUri+", can not load model.");
-			}
+			EPackage metamodel = XmiParserUtil.loadMetamodel(subRootNS.getURI());
 			EFactory factory = metamodel.getEFactoryInstance();
 			ns2Package.put(subRootNS.getPrefix(), metamodel);
 			ns2Factory.put(subRootNS.getPrefix(), factory);
@@ -128,10 +124,7 @@ public class JDOMXmiParser {
 				.collect(Collectors.toSet());
 			
 			for(Namespace ns2 : additionalNS) {
-				EPackage additionalMetamodel = EPackage.Registry.INSTANCE.getEPackage(ns2.getURI().split("#")[0]);
-				if(additionalMetamodel.eIsProxy()) {
-					throw new IOException("No generated metamodel code found for: "+ns2.getURI().split("#")[0]+", can not load model.");
-				}
+				EPackage additionalMetamodel = XmiParserUtil.loadMetamodel(ns2.getURI());
 				EFactory additionalFactory = additionalMetamodel.getEFactoryInstance();
 				ns2Package.put(ns2.getPrefix(), additionalMetamodel);
 				ns2Factory.put(ns2.getPrefix(), additionalFactory);
