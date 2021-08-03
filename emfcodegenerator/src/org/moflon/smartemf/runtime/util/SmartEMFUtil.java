@@ -47,7 +47,6 @@ public class SmartEMFUtil {
 					continue;
 
 				Object value = obj.eGet(ref);
-				obj.eUnset(ref);
 
 				if (recursive && ref.isContainment()) {
 					if (value == null)
@@ -59,6 +58,7 @@ public class SmartEMFUtil {
 						queue.addAll((Collection<? extends EObject>) value);
 					}
 				}
+				obj.eUnset(ref);
 			}
 
 //			// HOTFIX until default bidirectional edges works
