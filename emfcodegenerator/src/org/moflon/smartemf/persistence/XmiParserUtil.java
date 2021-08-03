@@ -58,22 +58,34 @@ public final class XmiParserUtil {
 		String[] segments = URI.createURI(path).segments();
 		String projectFolder = segments[0];
 		String projectPath = null;
-		try {
-			projectPath = pathOfProjectInWorkspace(workspacePath, projectFolder);
-		} catch (IOException e) {
-			return null;
-		}
-		if(projectPath == null) {
-			return null;
+		
+		// If user wants an explicit folder -> try to resolve using workspace path
+		if(!projectFolder.equals(".")) {
+			try {
+				projectPath = pathOfProjectInWorkspace(workspacePath, projectFolder);
+			} catch (IOException e) {
+				return null;
+			}
+			if(projectPath == null) {
+				return null;
+			}
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append(projectPath);
+			for(int i = 1; i<segments.length; i++) {
+				sb.append("/"+segments[i]);
+			}
+			
+			return sb.toString();
+		} else {
+			// If the user does not give any information towards a specific folder -> create a path relative to the java exec. path
+			try {
+				return file.getCanonicalPath();
+			} catch (IOException e) {
+				return null;
+			}
 		}
 		
-		StringBuilder sb = new StringBuilder();
-		sb.append(projectPath);
-		for(int i = 1; i<segments.length; i++) {
-			sb.append("/"+segments[i]);
-		}
-		
-		return sb.toString();
 	}
 	
 	public static String resolveURIRelativeToBaseURI(final URI baseUri, final URI uri, final String workspacePath) {

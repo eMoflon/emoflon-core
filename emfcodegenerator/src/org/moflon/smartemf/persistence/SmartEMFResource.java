@@ -68,6 +68,9 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 			throw new FileNotFoundException("No valid xmi file present at: "+uri);
 		
 		File file = new File(path);
+		if(!file.getParentFile().exists()) {
+			file.getParentFile().mkdir();
+		}
 		FileOutputStream fos = new FileOutputStream(file);
 		save(fos, options);
 		fos.close();
