@@ -65,15 +65,19 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 		String path = XmiParserUtil.resolveURIToPath(uri, workspacePath);
 		
 		if(path == null)
-			throw new FileNotFoundException("No valid xmi file present at: "+uri);
+			throw new FileNotFoundException("Invalid path at: "+uri);
 		
 		File file = new File(path);
-		if(!file.getParentFile().exists()) {
-			file.getParentFile().mkdir();
-		}
+		createFoldersIfNecessary(file);
 		FileOutputStream fos = new FileOutputStream(file);
 		save(fos, options);
 		fos.close();
+	}
+	
+	public static void createFoldersIfNecessary(final File file) {
+		if(!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
+		}
 	}
 
 	@Override
