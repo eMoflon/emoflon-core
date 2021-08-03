@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.emf.ecore.util.EcoreUtil.ContentTreeIterator;
 import org.eclipse.emf.ecore.util.EcoreUtil.ProperContentIterator;
 
-public abstract class UnlockedResourceImpl extends NotifierImpl implements Resource, Resource.Internal{
+public abstract class UnlockedResourceImpl extends NotifierImpl implements Resource, Resource.Internal {
 	/**
 	 * The default URI converter when there is no resource set.
 	 */
@@ -195,7 +195,7 @@ public abstract class UnlockedResourceImpl extends NotifierImpl implements Resou
 			notifications.add(new NotificationImpl(Notification.SET, oldResourceSet, resourceSet) {
 				@Override
 				public Object getNotifier() {
-					return this;
+					return null;
 				}
 
 				@Override
@@ -225,7 +225,7 @@ public abstract class UnlockedResourceImpl extends NotifierImpl implements Resou
 			Notification notification = new NotificationImpl(Notification.SET, oldURI, uri) {
 				@Override
 				public Object getNotifier() {
-					return this;
+					return null;
 				}
 
 				@Override
@@ -248,7 +248,7 @@ public abstract class UnlockedResourceImpl extends NotifierImpl implements Resou
 			Notification notification = new NotificationImpl(Notification.SET, oldTimeStamp, timeStamp) {
 				@Override
 				public Object getNotifier() {
-					return this;
+					return null;
 				}
 
 				@Override
@@ -334,7 +334,7 @@ public abstract class UnlockedResourceImpl extends NotifierImpl implements Resou
 
 				@Override
 				public Object getNotifier() {
-					return this;
+					return null;
 				}
 
 				@Override
@@ -700,7 +700,7 @@ public abstract class UnlockedResourceImpl extends NotifierImpl implements Resou
 			Notification notification = new NotificationImpl(Notification.SET, oldIsLoaded, isLoaded) {
 				@Override
 				public Object getNotifier() {
-					return this;
+					return null;
 				}
 
 				@Override
@@ -807,7 +807,7 @@ public abstract class UnlockedResourceImpl extends NotifierImpl implements Resou
 
 				@Override
 				public Object getNotifier() {
-					return this;
+					return null;
 				}
 
 				@Override
@@ -848,7 +848,7 @@ public abstract class UnlockedResourceImpl extends NotifierImpl implements Resou
 			Notification notification = new NotificationImpl(Notification.SET, oldIsModified, isModified) {
 				@Override
 				public Object getNotifier() {
-					return this;
+					return null;
 				}
 
 				@Override

@@ -61,16 +61,16 @@ public class SmartEMFUtil {
 				}
 			}
 
-			// HOTFIX until default bidirectional edges works
-			EObject container = obj.eContainer();
-			EReference containmentFeature = obj.eContainmentFeature();
-			if (container != null && containmentFeature != null) {
-				if (containmentFeature.isMany())
-					((List<?>) container.eGet(containmentFeature)).remove(obj);
-				else
-					container.eUnset(containmentFeature);
-			}
-			// END HOTFIX
+//			// HOTFIX until default bidirectional edges works
+//			EObject container = obj.eContainer();
+//			EReference containmentFeature = obj.eContainmentFeature();
+//			if (container != null && containmentFeature != null) {
+//				if (containmentFeature.isMany())
+//					((List<?>) container.eGet(containmentFeature)).remove(obj);
+//				else
+//					container.eUnset(containmentFeature);
+//			}
+//			// END HOTFIX
 
 			((SmartObject) obj).resetContainment();
 			if (recursive)
