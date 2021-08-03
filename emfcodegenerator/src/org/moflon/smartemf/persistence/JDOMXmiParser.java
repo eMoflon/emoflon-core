@@ -61,6 +61,10 @@ public class JDOMXmiParser {
 		waitingHRefs.putAll(hrefs);
 	}
 	
+	public Map<String, List<Consumer<EObject>>> getWaitingHRefs() {
+		return waitingHRefs;
+	}
+	
 	public void load(final InputStream is, final Resource resource) throws Exception {
 		SAXBuilder saxBuilder = new SAXBuilder();
 		Document parsedFile = null;
@@ -79,7 +83,7 @@ public class JDOMXmiParser {
 		loadedResources.put(resource.getURI().toString(), resource);
 	}
 	
-	public void load(final String uri, final ResourceSet rs) throws Exception{	
+	public Resource load(final String uri, final ResourceSet rs) throws Exception{	
 		String filePath = XmiParserUtil.resolveURIRelativeToBaseURI(initialUri, URI.createURI(uri), workspacePath);
 		if(filePath == null)
 			throw new FileNotFoundException("Relative path "+uri.trim().replace("%20", " ")+" could not be resolved with the path of the initial uri "+initialUri.devicePath().trim().replace("%20", " ")+".");
@@ -95,7 +99,11 @@ public class JDOMXmiParser {
 		fis.close();
 		
 		loadedResources.putAll(subParser.getLoadedResources());
+		loadedResources.put(uri, resource);
+		
 		fqId2Object.putAll(subParser.getFqId2ObjectMap());
+		waitingHRefs.putAll(subParser.getWaitingHRefs());
+		return resource;
 	}
 	
 	public void domTreeToModel(final Document domTree, final Resource resource) throws Exception {
@@ -251,13 +259,19 @@ public class JDOMXmiParser {
 					Attribute href = element.getAttribute(XmiParserUtil.HREF_ATR);
 					String[] hrefPath = href.getValue().split("#");
 					String modelUri = hrefPath[0];
+					String hrefFQId = null;
+					Resource otherResource = null;
 					
 					if(!loadedResources.containsKey(modelUri)) {
-						load(modelUri, resource.getResourceSet());
+						otherResource = load(modelUri, resource.getResourceSet());
+						
+					} else {
+						otherResource = loadedResources.get(modelUri);
 					}
+					hrefFQId = otherResource.getURI().toString()+"#"+hrefPath[1];
 					
-					if(fqId2Object.containsKey(href.getValue()))  {
-						EObject hyperref = fqId2Object.get(href.getValue());
+					if(fqId2Object.containsKey(hrefFQId))  {
+						EObject hyperref = fqId2Object.get(hrefFQId);
 						
 						if(ref.isMany()) {
 							pendingCrossref.insertObject(hyperref, element2Idx.get(feature));
@@ -270,10 +284,10 @@ public class JDOMXmiParser {
 							pendingCrossref.writeBack();
 						}
 					} else {
-						List<Consumer<EObject>> pendingHRefs = waitingHRefs.get(href.getValue());
+						List<Consumer<EObject>> pendingHRefs = waitingHRefs.get(hrefFQId);
 						if(pendingHRefs == null) {
 							pendingHRefs = new LinkedList<>();
-							waitingHRefs.put(href.getValue(), pendingHRefs);
+							waitingHRefs.put(hrefFQId, pendingHRefs);
 						}
 						
 						// Make those variables final 'cause java ..
