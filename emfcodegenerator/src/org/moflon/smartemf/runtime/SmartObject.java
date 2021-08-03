@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.notify.impl.NotificationChainImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -529,7 +530,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, Class<?> baseClass, NotificationChain notifications) {
-		throw new UnsupportedOperationException("Unsupported by SmartEMF");
+		return new NotificationChainImpl();
 	}
 
 	public abstract void eInverseAdd(Object otherEnd, EStructuralFeature feature);
