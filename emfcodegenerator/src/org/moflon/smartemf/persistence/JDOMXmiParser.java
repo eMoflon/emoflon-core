@@ -314,7 +314,7 @@ public class JDOMXmiParser {
 				String[] entries = attribute.getValue().split(" ");
 				final PendingEMFCrossReference pendingCrossRefs = new PendingEMFCrossReference(eRoot, ref, entries.length);
 				for(int i = 0; i<entries.length; i++) {
-					String entry = entries[i];
+					String entry = (entries[i].contains("#"))?entries[i].split("#")[1]:entries[i];
 					if(ref.isMany()) {
 						if(id2Object.containsKey(entry)) {
 							pendingCrossRefs.insertObject(id2Object.get(entry), i);
