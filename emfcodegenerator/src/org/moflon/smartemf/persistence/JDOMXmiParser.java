@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,21 +89,32 @@ public class JDOMXmiParser {
 		if(filePath == null)
 			throw new FileNotFoundException("Relative path "+uri.trim().replace("%20", " ")+" could not be resolved with the path of the initial uri "+initialUri.devicePath().trim().replace("%20", " ")+".");
 		
-		File file = new File(filePath);
-		FileInputStream fis = new FileInputStream(file);
-		Resource resource = new SmartEMFResource(URI.createFileURI(file.getCanonicalPath()), workspacePath);
-		rs.getResources().add(resource);
+		Resource resource = null;
+		for(Resource loadedResource : rs.getResources()) {
+			if(XmiParserUtil.relativeURIsAreEqual(initialUri, URI.createURI(uri), loadedResource.getURI(), workspacePath)) {
+				resource = loadedResource;
+				break;
+			}
+		}
+		if(resource == null) {
+			File file = new File(filePath);
+			FileInputStream fis = new FileInputStream(file);
+			resource = new SmartEMFResource(URI.createFileURI(file.getCanonicalPath()), workspacePath);
+			rs.getResources().add(resource);
+			
+			JDOMXmiParser subParser = new JDOMXmiParser(workspacePath);
+			subParser.addWaitingHRefs(waitingHRefs);
+			subParser.load(fis, resource);
+			fis.close();
+			
+			loadedResources.putAll(subParser.getLoadedResources());			
+			fqId2Object.putAll(subParser.getFqId2ObjectMap());
+			waitingHRefs.putAll(subParser.getWaitingHRefs());
+		} else {
+			indexForeignResource(resource);
+		}
 		
-		JDOMXmiParser subParser = new JDOMXmiParser(workspacePath);
-		subParser.addWaitingHRefs(waitingHRefs);
-		subParser.load(fis, resource);
-		fis.close();
-		
-		loadedResources.putAll(subParser.getLoadedResources());
 		loadedResources.put(uri, resource);
-		
-		fqId2Object.putAll(subParser.getFqId2ObjectMap());
-		waitingHRefs.putAll(subParser.getWaitingHRefs());
 		return resource;
 	}
 	
@@ -206,17 +218,21 @@ public class JDOMXmiParser {
 			
 		if(waitingCrossRefs.containsKey(currentId)) {
 			waitingCrossRefs.get(currentId).forEach(waitingRef -> waitingRef.accept(eRoot));
+			waitingCrossRefs.remove(currentId);
 		}
 		if(simpleId != null && waitingCrossRefs.containsKey(simpleId)) {
 			waitingCrossRefs.get(simpleId).forEach(waitingRef -> waitingRef.accept(eRoot));
+			waitingCrossRefs.remove(simpleId);
 		}
 		
 		if(waitingHRefs.containsKey(currentFqId)) {
 			waitingHRefs.get(currentFqId).forEach(waitingRef -> waitingRef.accept(eRoot));
+			waitingHRefs.remove(currentFqId);
 		}
 		
 		if(simpleFqId != null && waitingCrossRefs.containsKey(simpleFqId)) {
 			waitingHRefs.get(simpleFqId).forEach(waitingRef -> waitingRef.accept(eRoot));
+			waitingHRefs.remove(simpleFqId);
 		}
 		
 		Map<EStructuralFeature,Integer> element2Idx = new HashMap<>();
@@ -404,5 +420,51 @@ public class JDOMXmiParser {
 		return eRoot;
 	}
 	
+	protected void indexForeignResource(final Resource resource) {
+		if(resource.getContents().size() < 2) {
+			indexForeignModel(resource.getContents().get(0), null, resource.getURI().toString()+"#/", 0, false);
+		} else {
+			int idx = 0;
+			for(EObject container : resource.getContents()) {
+				indexForeignModel(container, null, resource.getURI().toString()+"#/"+idx++, 0, false);
+			}
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected void indexForeignModel(final EObject root, final EReference containment, final String id, int idx, boolean useSimple) {
+		EClass rootClass = root.eClass();
+		String rootId = id;
+		if(containment != null) {
+			if(useSimple) {
+				rootId = id + "/@" + containment.getName();
+			} else {
+				rootId = id + "/@" + containment.getName() + "." + idx;
+			}
+		}
+		fqId2Object.put(rootId, root);
+		if(waitingHRefs.containsKey(rootId)) {
+			waitingHRefs.get(rootId).forEach(waitingRef -> waitingRef.accept(root));
+			waitingHRefs.remove(rootId);
+		}
+		
+		// Containments
+		for(EReference containmentRef : rootClass.getEAllContainments()) {
+			List<EObject> containees = new LinkedList<>();
+			if(containmentRef.isMany()) {
+				containees.addAll((Collection<? extends EObject>) root.eGet(containmentRef));
+			} else {
+				EObject containee = (EObject) root.eGet(containmentRef);
+				if(containee != null)
+					containees.add(containee);
+			}
+			int idIDX = 0;
+			for(EObject containee : containees) {
+				indexForeignModel(containee, containmentRef, rootId, idIDX, containees.size()==1);
+				idIDX++;
+			}
+		}
+	}
 
 }

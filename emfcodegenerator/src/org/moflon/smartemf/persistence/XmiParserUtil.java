@@ -26,6 +26,18 @@ public final class XmiParserUtil {
 	
 	final public static String HREF_ATR = "href";
 	
+	public static boolean URIsAreEqual(final URI uri1, final URI uri2, final String workspacePath) {
+		String path1 = resolveURIToPath(uri1, workspacePath);
+		String path2 = resolveURIToPath(uri2, workspacePath);
+		return path1.equals(path2);
+	}
+	
+	public static boolean relativeURIsAreEqual(final URI baseUri, final URI uri1, final URI uri2, final String workspacePath) {
+		String path1 = resolveURIRelativeToBaseURI(baseUri, uri1, workspacePath).replace("/", "\\");
+		String path2 = resolveURIRelativeToBaseURI(baseUri, uri2, workspacePath).replace("/", "\\");
+		return path1.equals(path2);
+	}
+	
 	public static String resolveURIToPath(final URI uri, final String workspacePath) {
 		String path = uri.devicePath();
 		if(path.startsWith("/resource")) {
