@@ -43,9 +43,6 @@ public class SmartEMFUtil {
 			EObject obj = queue.poll();
 
 			for (EReference ref : obj.eClass().getEAllReferences()) {
-				if (ref.isContainment() && !recursive)
-					continue;
-
 				Object value = obj.eGet(ref);
 
 				if (recursive && ref.isContainment()) {
@@ -73,8 +70,6 @@ public class SmartEMFUtil {
 //			// END HOTFIX
 
 			((SmartObject) obj).resetContainment();
-			if (recursive)
-				deleteNodes(obj.eContents(), recursive);
 		}
 	}
 

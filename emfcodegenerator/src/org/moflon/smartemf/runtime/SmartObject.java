@@ -337,9 +337,26 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		// we don't use resetContainment here to optimize the number of generated notifications
 		if (this.eContainer != null) {
 			if (eContainingFeature.isMany()) {
-				((Collection<?>) this.eContainer.eGet(eContainingFeature)).remove(this);
+				// remove quietly if element is only moved within the same resource
+				if(eContainer != null && resource != null && resource.equals(eContainer.eResource())) {
+//					Resource.Internal tmp = resource;
+//					resource = null;
+					((SmartCollection<?,?>) this.eContainer.eGet(eContainingFeature)).removeWithoutContainerResetting(this);
+//					resource = tmp;
+				}
+				else
+					((SmartCollection<?,?>) this.eContainer.eGet(eContainingFeature)).remove(this);
 			} else {
-				this.eContainer.eUnset(eContainingFeature);
+				// remove quietly if element is only moved within the same resource
+				if(eContainer != null && resource != null && resource.equals(eContainer.eResource())) {
+					Resource.Internal tmp = resource;
+					resource = null;
+					((SmartObject) this.eContainer).eUnset(eContainingFeature);
+					resource = tmp;
+				}
+				else {
+					((SmartObject) this.eContainer).eUnset(eContainingFeature);
+				}
 			}
 			status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
 		} else {

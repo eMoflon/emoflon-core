@@ -123,6 +123,17 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		return status != NotifyStatus.FAILURE_NO_NOTIFICATION;
 	}
 
+	public NotifyStatus removeWithoutContainerResetting(Object o) {
+		boolean success = elements.remove(o);
+		if (!success)
+			return NotifyStatus.FAILURE_NO_NOTIFICATION;
+
+		sendNotification(SmartEMFNotification.createRemoveNotification(eContainer, feature, o, -1));
+		((SmartObject) o).eInverseRemove(eContainer, feature.getEOpposite());
+		return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
+	}
+
+	
 	/**
 	 * Returns status of execution and if a REMOVE notification was sent or not
 	 */
