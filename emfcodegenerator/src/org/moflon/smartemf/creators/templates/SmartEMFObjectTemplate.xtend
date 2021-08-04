@@ -316,6 +316,14 @@ class SmartEMFObjectTemplate implements FileCreator {
 			return '''
 			
 			Object oldValue = this.«TemplateUtil.getValidName(feature.name)»;
+			
+    		«IF feature.containment»
+	        NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
+			if(oldValue != null) {
+        		status = ((MinimalSObjectContainer) oldValue).resetContainment();
+			}	
+			«ENDIF»
+			
 	        this.«TemplateUtil.getValidName(feature.name)» = value;
 			if(value == null && oldValue == null)
 				return;
@@ -323,9 +331,6 @@ class SmartEMFObjectTemplate implements FileCreator {
 			if(value != null && value.equals(oldValue))
 				return;
 
-	        «IF feature.containment»
-	        NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
-	        «ENDIF»
 	        «IF feature.isMany && !"EFeatureMapEntry".equals(feature.EType.name) && !feature.EType.name.contains("MapEntry")»
 	        
 			if(value instanceof «TemplateUtil.getListTypeName(feature)»){
@@ -358,9 +363,6 @@ class SmartEMFObjectTemplate implements FileCreator {
         	«IF feature instanceof EReference && inverse»
         	if(«TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».getEOpposite() != null) {
         		if(oldValue != null) {
-        			«IF feature.containment»
-					status = ((MinimalSObjectContainer) oldValue).resetContainment();
-        			«ENDIF»
         			((SmartObject) oldValue).eInverseRemove(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».getEOpposite());
         		}
         		if(value != null) {
