@@ -172,6 +172,15 @@ public final class XmiParserUtil {
 		return true;
 	}
 	
+	public static String simplifyID(final String id) {
+		if(id.contains("#")) {
+			String[] idSegments = id.split("#");
+			return idSegments[0]+"#"+idSegments[1].replace(".0", "");
+		} else {
+			return id.replace(".0", "");
+		}
+	}
+	
 	public static Object stringToValue(final EFactory factory, final EAttribute atr, final String value) throws Exception {
 		EcorePackage epack = EcorePackage.eINSTANCE;
 		EFactory efac = epack.getEFactoryInstance();

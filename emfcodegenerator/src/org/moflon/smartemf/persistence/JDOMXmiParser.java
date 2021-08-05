@@ -209,9 +209,16 @@ public class JDOMXmiParser {
 		
 		EObject eRoot = factory.create(rootClass);
 		
+		currentId = XmiParserUtil.simplifyID(currentId);
+		currentFqId = XmiParserUtil.simplifyID(currentFqId);
+		
 		id2Object.put(currentId, eRoot);
 		fqId2Object.put(currentFqId, eRoot);
+		
 		if(simpleId != null) {
+			simpleId = XmiParserUtil.simplifyID(simpleId);
+			simpleFqId = XmiParserUtil.simplifyID(simpleFqId);
+			
 			id2Object.put(simpleId, eRoot);
 			fqId2Object.put(simpleFqId, eRoot);
 		}
@@ -285,6 +292,7 @@ public class JDOMXmiParser {
 						otherResource = loadedResources.get(modelUri);
 					}
 					hrefFQId = otherResource.getURI().toString()+"#"+hrefPath[1];
+					hrefFQId = XmiParserUtil.simplifyID(hrefFQId);
 					
 					if(fqId2Object.containsKey(hrefFQId))  {
 						EObject hyperref = fqId2Object.get(hrefFQId);
@@ -345,6 +353,7 @@ public class JDOMXmiParser {
 				final PendingEMFCrossReference pendingCrossRefs = new PendingEMFCrossReference(eRoot, ref, entries.length);
 				for(int i = 0; i<entries.length; i++) {
 					String entry = (entries[i].contains("#"))?entries[i].split("#")[1]:entries[i];
+					entry = XmiParserUtil.simplifyID(entry);
 					if(ref.isMany()) {
 						if(id2Object.containsKey(entry)) {
 							pendingCrossRefs.insertObject(id2Object.get(entry), i);
@@ -443,6 +452,8 @@ public class JDOMXmiParser {
 				rootId = id + "/@" + containment.getName() + "." + idx;
 			}
 		}
+		rootId = XmiParserUtil.simplifyID(rootId);
+		
 		fqId2Object.put(rootId, root);
 		if(waitingHRefs.containsKey(rootId)) {
 			waitingHRefs.get(rootId).forEach(waitingRef -> waitingRef.accept(root));
