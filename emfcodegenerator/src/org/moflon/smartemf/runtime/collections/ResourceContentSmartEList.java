@@ -11,6 +11,8 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Internal;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.SmartObject;
@@ -35,12 +37,12 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 			return false;
 
 		if (element instanceof SmartObject) {
-			resetContainment(element);
+			resetContainment(element, !resource.equals(element.eResource()));
 			((SmartObject) element).setResource(resource, true);
 			return super.add(element);
 		} else {
 			element.eAdapters().addAll(resource.eAdapters());
-			resetContainment(element);
+			resetContainment(element,!resource.equals(element.eResource()));
 
 			((InternalEObject) element).eSetResource(resource, null);
 			boolean success = super.add(element);
@@ -55,12 +57,12 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 			return;
 
 		if (element instanceof SmartObject) {
-			resetContainment(element);
+			resetContainment(element, !resource.equals(element.eResource()));
 			((SmartObject) element).setResource(resource, true);
 			super.add(index, element);
 		} else {
 			element.eAdapters().addAll(resource.eAdapters());
-			resetContainment(element);
+			resetContainment(element, !resource.equals(element.eResource()));
 
 			((InternalEObject) element).eSetResource(resource, null);
 			super.add(index, element);
@@ -82,19 +84,32 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 		return !c.isEmpty();
 	}
 
-	private void resetContainment(T e) {
+	private void resetContainment(T e, boolean removeRecursively) {
 		EObject oldContainer = e.eContainer();
 		if (oldContainer != null) {
 			if (e.eContainingFeature().isMany()) {
 				Object getResult = oldContainer.eGet(e.eContainingFeature());
-				((Collection<?>) getResult).remove(e);
+				if(removeRecursively)
+					((SmartCollection<?, ?>) getResult).remove(e);
+				else
+					((SmartCollection<?, ?>) getResult).removeWithoutContainerResetting(e);
 			} else {
-				oldContainer.eUnset(e.eContainingFeature());
+				if(removeRecursively) {
+					oldContainer.eUnset(e.eContainingFeature());
+				}
+				else {
+					Resource tmp = e.eResource();
+					((SmartObject) e).setResourceWithoutChecks(null);
+					oldContainer.eUnset(e.eContainingFeature());
+					sendRemoveNotification(oldContainer);
+					((SmartObject) e).setResourceWithoutChecks((Internal) tmp);
+				}
 			}
 		} else {
 			// if there is no eContainer, then this element is only contained within the resource and should be removed before setting the new eContainer
-			if (e.eResource() != null)
+			if (e.eResource() != null) {
 				e.eResource().getContents().remove(e);
+			}
 		}
 	}
 

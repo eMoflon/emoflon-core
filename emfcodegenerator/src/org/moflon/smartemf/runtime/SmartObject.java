@@ -338,12 +338,8 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		if (this.eContainer != null) {
 			if (eContainingFeature.isMany()) {
 				// remove quietly if element is only moved within the same resource
-				if(eContainer != null && resource != null && resource.equals(eContainer.eResource())) {
-//					Resource.Internal tmp = resource;
-//					resource = null;
+				if(eContainer != null && resource != null && resource.equals(eContainer.eResource())) 
 					((SmartCollection<?,?>) this.eContainer.eGet(eContainingFeature)).removeWithoutContainerResetting(this);
-//					resource = tmp;
-				}
 				else
 					((SmartCollection<?,?>) this.eContainer.eGet(eContainingFeature)).remove(this);
 			} else {
@@ -393,6 +389,10 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 				a.notifyChanged(SmartEMFNotification.createRemovingAdapterNotification(this, null, a, -1));
 			}
 		}
+	}
+	
+	public void setResourceWithoutChecks(Internal resource) {
+		this.resource = resource;
 	}
 
 	public NotifyStatus setResource(Resource resource, boolean sendNotification) {
