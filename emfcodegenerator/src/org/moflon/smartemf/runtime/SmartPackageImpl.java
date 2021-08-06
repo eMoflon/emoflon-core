@@ -116,7 +116,7 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 	
 	protected void injectExternalReferences() {
 		// Insert own features
-		Collection<EReference> externalRefs = getExternalReferences();
+		Collection<EReference> externalRefs = getExternalUnidirectionalReferences();
 		for(EReference ref : externalRefs) {
 			if(! (ref.getEType().getEPackage() instanceof SmartPackage))
 				continue;
@@ -148,8 +148,6 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 		// Insert own features
 		Collection<EReference> internalRefs = getInternalUnidirectionalReferences();
 		for(EReference ref : internalRefs) {
-			if(ref.isContainment())
-				continue;
 			
 			EReferenceImpl inverse = (EReferenceImpl)ecoreFactory.createEReference();
 			inverse.setName(ref.getName()+"_inverseTo_"+getName());
@@ -197,7 +195,7 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 		}
 	}
 	
-	protected Collection<EReference> getExternalReferences() {
+	protected Collection<EReference> getExternalUnidirectionalReferences() {
 		Set<EClass> ownClasses = eContents().parallelStream().filter(obj->(obj instanceof EClass)).map(ecls -> (EClass)ecls).collect(Collectors.toSet());
 		// Find all references that point to EClasses not defined in this package.
 		return eContents().parallelStream()
@@ -206,7 +204,9 @@ public abstract class SmartPackageImpl extends EPackageImpl implements SmartPack
 			.flatMap(ecls -> ecls.getEAllStructuralFeatures().parallelStream())
 			.filter(ref -> (ref instanceof EReference))
 			.map(ref -> (EReference) ref)
+			.filter(ref -> ref.getEOpposite() == null)
 			.filter(ref -> !ownClasses.contains(ref.getEType()))
+			.filter(ref -> !ref.isContainment())
 			.collect(Collectors.toSet());
 	}
 	
