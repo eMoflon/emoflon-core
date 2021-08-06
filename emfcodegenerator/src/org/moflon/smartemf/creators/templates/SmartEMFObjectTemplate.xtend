@@ -317,19 +317,20 @@ class SmartEMFObjectTemplate implements FileCreator {
 			
 			Object oldValue = this.«TemplateUtil.getValidName(feature.name)»;
 			
-    		«IF feature.containment»
-	        NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
-			if(oldValue != null) {
-        		status = ((MinimalSObjectContainer) oldValue).resetContainment();
-			}	
-			«ENDIF»
-			
-	        this.«TemplateUtil.getValidName(feature.name)» = value;
 			if(value == null && oldValue == null)
 				return;
 				
 			if(value != null && value.equals(oldValue))
 				return;
+				
+			«IF feature.containment»
+	        NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
+			if(oldValue != null) {
+        		status = ((MinimalSObjectContainer) oldValue).resetContainment();
+			}	
+			«ENDIF»
+
+	        this.«TemplateUtil.getValidName(feature.name)» = value;
 
 	        «IF feature.isMany && !"EFeatureMapEntry".equals(feature.EType.name) && !feature.EType.name.contains("MapEntry")»
 	        
