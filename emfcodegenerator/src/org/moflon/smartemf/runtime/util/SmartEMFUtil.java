@@ -26,51 +26,51 @@ import org.moflon.smartemf.runtime.collections.SmartCollection;
 public class SmartEMFUtil {
 
 	public static void deleteNode(EObject node, boolean recursive) {
-		Queue<EObject> queue = new LinkedBlockingDeque<>();
-		queue.add(node);
-		deleteNodes(queue, recursive);
+		deleteNode_internal(node, recursive);
 	}
 
 	public static void deleteNodes(Collection<EObject> objs, boolean recursive) {
-		Queue<EObject> queue = new LinkedBlockingDeque<>();
-		queue.addAll(objs);
-		deleteNodes(queue, recursive);
+		Queue<EObject> queue = new LinkedBlockingDeque<>(objs);
+		while (!queue.isEmpty()) {
+			deleteNode(queue.poll(), recursive);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void deleteNodes(Queue<EObject> queue, boolean recursive) {
-		while (!queue.isEmpty()) {
-			EObject obj = queue.poll();
+	private static void deleteNode_internal(EObject obj, boolean recursive) {
+		for (EReference ref : obj.eClass().getEAllReferences()) {
+			Object value = obj.eGet(ref);
 
-			for (EReference ref : obj.eClass().getEAllReferences()) {
-				Object value = obj.eGet(ref);
-
-				if (recursive && ref.isContainment()) {
-					if (value == null)
-						continue;
-
-					if (value instanceof EObject) {
-						queue.add((EObject) value);
-					} else {
-						queue.addAll((Collection<? extends EObject>) value);
-					}
-				}
-				obj.eUnset(ref);
+			// do not revoke the containment just yet
+			if(ref.getEOpposite() != null && ref.getEOpposite().equals(obj.eContainmentFeature())) {
+				continue;
 			}
+			
+			if (recursive && ref.isContainment()) {
+				if (value == null)
+					continue;
 
-//			// HOTFIX until default bidirectional edges works
-//			EObject container = obj.eContainer();
-//			EReference containmentFeature = obj.eContainmentFeature();
-//			if (container != null && containmentFeature != null) {
-//				if (containmentFeature.isMany())
-//					((List<?>) container.eGet(containmentFeature)).remove(obj);
-//				else
-//					container.eUnset(containmentFeature);
-//			}
-//			// END HOTFIX
-
-			((SmartObject) obj).resetContainment();
+				if (value instanceof EObject) {
+					deleteNode_internal((EObject) value, recursive);
+				} else {
+					deleteNodes((Collection<EObject>) value, recursive);
+				}
+			}
+			obj.eUnset(ref);
 		}
+
+//		// HOTFIX until default bidirectional edges works
+//		EObject container = obj.eContainer();
+//		EReference containmentFeature = obj.eContainmentFeature();
+//		if (container != null && containmentFeature != null) {
+//			if (containmentFeature.isMany())
+//				((List<?>) container.eGet(containmentFeature)).remove(obj);
+//			else
+//				container.eUnset(containmentFeature);
+//		}
+//		// END HOTFIX
+		
+		((SmartObject) obj).resetContainment();
 	}
 
 	public static void resolveAll(ResourceSet resourceSet) {

@@ -108,12 +108,11 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
 		NotifyStatus status = NotifyStatus.FAILURE_NO_NOTIFICATION;
-		Collection<T> newList = new LinkedList<>();
-		for (T t : c) {
+		Collection<T> newList = new LinkedList<>(c);
+		for (T t : newList) {
 			NotifyStatus addStatus = addInternal(t, true);
 			if (addStatus != NotifyStatus.FAILURE_NO_NOTIFICATION)
 				status = addStatus;
-			newList.add(t);
 		}
 
 		// if feature is containment then set resource should have sent this notification already
@@ -185,18 +184,20 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		Collection<Object> newList = new LinkedList<>();
+		Collection<Object> newList = new LinkedList<>(c);
+		Collection<Object> deletedList = new LinkedList<>();
+
 		NotifyStatus status = NotifyStatus.FAILURE_NO_NOTIFICATION;
-		for (Object t : c) {
+		for (Object t : newList) {
 			NotifyStatus removeStatus = removeInternal(t, true, false);
 			if (removeStatus != NotifyStatus.FAILURE_NO_NOTIFICATION) {
-				newList.add(t);
+				deletedList.add(t);
 				status = removeStatus;
 			}
 		}
 		if (status == NotifyStatus.SUCCESS_NO_NOTIFICATION)
-			sendNotification(SmartEMFNotification.createRemoveManyNotification(eContainer, feature, newList, -1));
-		return !newList.isEmpty();
+			sendNotification(SmartEMFNotification.createRemoveManyNotification(eContainer, feature, deletedList, -1));
+		return !deletedList.isEmpty();
 	}
 
 	@Override
