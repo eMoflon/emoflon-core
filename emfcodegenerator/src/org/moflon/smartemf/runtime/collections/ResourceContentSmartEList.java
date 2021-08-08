@@ -75,7 +75,11 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
-		return this.addAll(this.size(), c);
+		Collection<T> objs = new LinkedList<>(c);
+		for (T t : objs)
+			this.add(t);
+
+		return !c.isEmpty();
 	}
 
 	@Override
