@@ -1,7 +1,9 @@
 package org.moflon.smartemf.runtime.collections;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -18,7 +20,7 @@ import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
-public final class ResourceContentSmartEList<T extends EObject> extends LinkedList<T> implements EList<T>, InternalEList<T> {
+public final class ResourceContentSmartEList<T extends EObject> extends LinkedHashSet<T> implements EList<T>, InternalEList<T> {
 
 	/**
 	 * 
@@ -53,21 +55,22 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 
 	@Override
 	public void add(int index, T element) {
-		if (contains(element))
-			return;
-
-		if (element instanceof SmartObject) {
-			resetContainment(element, !resource.equals(element.eResource()));
-			((SmartObject) element).setResource(resource, true);
-			super.add(index, element);
-		} else {
-			element.eAdapters().addAll(resource.eAdapters());
-			resetContainment(element, !resource.equals(element.eResource()));
-
-			((InternalEObject) element).eSetResource(resource, null);
-			super.add(index, element);
-			sendAddNotification(element);
-		}
+//		if (contains(element))
+//			return;
+//
+//		if (element instanceof SmartObject) {
+//			resetContainment(element, !resource.equals(element.eResource()));
+//			((SmartObject) element).setResource(resource, true);
+//			super.add(index, element);
+//		} else {
+//			element.eAdapters().addAll(resource.eAdapters());
+//			resetContainment(element, !resource.equals(element.eResource()));
+//
+//			((InternalEObject) element).eSetResource(resource, null);
+//			super.add(index, element);
+//			sendAddNotification(element);
+//		}
+		throw new UnsupportedOperationException("Indexbased modifications are not supported by SmartEMF");
 	}
 
 	@Override
@@ -77,11 +80,12 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 
 	@Override
 	public boolean addAll(int index, Collection<? extends T> c) {
-		Collection<T> objs = new LinkedList<>(c);
-		for (T t : objs)
-			this.add(index++, t);
-
-		return !c.isEmpty();
+//		Collection<T> objs = new LinkedList<>(c);
+//		for (T t : objs)
+//			this.add(index++, t);
+//
+//		return !c.isEmpty();
+		throw new UnsupportedOperationException("Indexbased modifications are not supported by SmartEMF");
 	}
 
 	private void resetContainment(T e, boolean removeRecursively) {
@@ -129,15 +133,16 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 
 	@Override
 	public T remove(int index) {
-		Object o = get(index);
-		sendRemoveNotification((EObject) o);
-		if (o instanceof SmartObject) {
-			((SmartObject) o).setResource(null, true);
-		} else {
-			((EObject) o).eAdapters().removeAll(resource.eAdapters());
-			((InternalEObject) o).eSetResource(null, null);
-		}
-		return super.remove(index);
+//		Object o = get(index);
+//		sendRemoveNotification((EObject) o);
+//		if (o instanceof SmartObject) {
+//			((SmartObject) o).setResource(null, true);
+//		} else {
+//			((EObject) o).eAdapters().removeAll(resource.eAdapters());
+//			((InternalEObject) o).eSetResource(null, null);
+//		}
+//		return super.remove(index);
+		throw new UnsupportedOperationException("Indexbased modifications are not supported by SmartEMF");
 	}
 
 	@Override
@@ -251,24 +256,27 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 
 	@Override
 	public boolean addAllUnique(int index, Collection<? extends T> collection) {
-		return addAll(index, collection);
+//		return addAll(index, collection);
+		throw new UnsupportedOperationException("Indexbased modifications are not supported by SmartEMF");
 	}
 
 	@Override
 	public T setUnique(int index, T object) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Indexbased modifications are not supported by SmartEMF");
 	}
 
 	@Override
 	public void move(int newPosition, T object) {
-		move(newPosition, indexOf(object));
+//		move(newPosition, indexOf(object));
+		throw new UnsupportedOperationException("Indexbased modifications are not supported by SmartEMF");
 	}
 
 	@Override
 	public T move(int newPosition, int oldPosition) {
-		T t = remove(oldPosition);
-		add(newPosition, t);
-		return t;
+//		T t = remove(oldPosition);
+//		add(newPosition, t);
+//		return t;
+		throw new UnsupportedOperationException("Indexbased modifications are not supported by SmartEMF");
 	}
 
 	protected void sendAddNotification(EObject obj) {
@@ -281,6 +289,54 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedLi
 		for (Adapter a : resource.eAdapters()) {
 			a.notifyChanged(SmartEMFNotification.createRemoveNotification(resource, null, obj, -1));
 		}
+	}
+
+	@Override
+	public T get(int index) {
+		int counter = 0;
+		for(T t : this) {
+			if(counter == index)
+				return t;
+			counter++;
+		}
+		throw new IndexOutOfBoundsException(index);
+	}
+
+	@Override
+	public T set(int index, T element) {
+		throw new UnsupportedOperationException("Indexbased modifications are not supported by SmartEMF");
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		int counter = 0;
+		for(T t : this) {
+			if(t.equals(o)) {
+				return counter;
+			}
+			counter++;
+		}
+		return -1;
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		return indexOf(o);
+	}
+
+	@Override
+	public ListIterator<T> listIterator() {
+		throw new UnsupportedOperationException("ListIterators are not supported by SmartEMF");
+	}
+
+	@Override
+	public ListIterator<T> listIterator(int index) {
+		throw new UnsupportedOperationException("ListIterators are not supported by SmartEMF");
+	}
+
+	@Override
+	public List<T> subList(int fromIndex, int toIndex) {
+		throw new UnsupportedOperationException("Sublists are not supported by SmartEMF");
 	}
 
 }

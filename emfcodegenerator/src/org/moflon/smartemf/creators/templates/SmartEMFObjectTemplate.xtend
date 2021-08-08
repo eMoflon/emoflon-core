@@ -323,7 +323,13 @@ class SmartEMFObjectTemplate implements FileCreator {
 			if(value != null && value.equals(oldValue))
 				return;
 				
+			
 			«IF feature.containment»
+			Resource.Internal resource = (Resource.Internal) eResource();
+	        if(oldValue != null && value != null) {
+	        	setResourceWithoutChecks(null);
+	        }
+	        
 	        NotifyStatus status = NotifyStatus.SUCCESS_NO_NOTIFICATION;
 			if(oldValue != null) {
         		status = ((MinimalSObjectContainer) oldValue).resetContainment();
@@ -348,7 +354,11 @@ class SmartEMFObjectTemplate implements FileCreator {
 			if(value != null)
 				status = ((MinimalSObjectContainer) this.«TemplateUtil.getValidName(feature.name)»).setContainment(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)»);
 			
-			if(status == NotifyStatus.SUCCESS_NO_NOTIFICATION)
+		 	if(oldValue != null && value != null) {
+	        	setResourceWithoutChecks(resource);
+	        }
+			
+			if(status == NotifyStatus.SUCCESS_NO_NOTIFICATION || oldValue != null && value != null)
 			«ENDIF»
         	sendNotification(SmartEMFNotification.createSetNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», oldValue, value, -1));
         	
