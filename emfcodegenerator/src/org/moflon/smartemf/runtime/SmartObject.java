@@ -41,7 +41,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	private SmartPackage staticPackage;
 	private URI proxyUri;
 
-	private Map<EStructuralFeature, Object> feature2Value = new HashMap<>();
+	private Map<EStructuralFeature, Object> feature2Value = Collections.synchronizedMap(new HashMap<>());
 
 	public SmartObject(EClass staticClass) {
 		this.staticClass = staticClass;
