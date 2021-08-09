@@ -216,9 +216,7 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		if (elements.isEmpty())
 			return;
 
-		Collection<Object> newList = new LinkedList<>();
-		newList.addAll(elements);
-		removeAll(newList);
+		removeAll(elements);
 	}
 
 	@Override
