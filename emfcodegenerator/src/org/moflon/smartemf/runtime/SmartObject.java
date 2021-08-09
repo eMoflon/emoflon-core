@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.resource.Resource.Internal;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.moflon.smartemf.persistence.SmartEMFResource;
 import org.moflon.smartemf.runtime.collections.DefaultSmartEList;
+import org.moflon.smartemf.runtime.collections.LinkedSmartESet;
 import org.moflon.smartemf.runtime.collections.SmartCollection;
 import org.moflon.smartemf.runtime.collections.SmartESet;
 import org.moflon.smartemf.runtime.notification.NotifyStatus;
@@ -151,7 +152,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		} else {
 			if (staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
 				if (feature.isMany()) {
-					EList<Object> emptyList = new SmartESet<Object>(this, (EReference) feature);
+					EList<Object> emptyList = new LinkedSmartESet<Object>(this, (EReference) feature);
 					feature2Value.put(feature, emptyList);
 					return emptyList;
 				} else {
