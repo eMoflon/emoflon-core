@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -211,7 +212,10 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		Object oldValue = null;
 		if (feature2Value.containsKey(feature)) {
 			if (feature.isMany()) {
-				((Collection<?>) feature2Value.get(feature)).clear();
+				Collection<?> elements = (Collection<?>) feature2Value.get(feature);
+				Collection<?> copy = new LinkedList<>(elements);
+				copy.forEach(e -> ((SmartObject) e).eInverseRemove(this, ((EReference) feature).getEOpposite()));
+				elements.clear();
 			} else {
 				oldValue = feature2Value.replace(feature, null);
 				if (oldValue == null)
@@ -220,7 +224,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 				sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, null, -1));
 
 				if (feature instanceof EReference && ((EReference) feature).getEOpposite() != null) {
-					((SmartObject) oldValue).eDynamicInverseRemove(this, ((EReference) feature).getEOpposite());
+					((SmartObject) oldValue).eInverseRemove(this, ((EReference) feature).getEOpposite());
 				}
 			}
 
