@@ -22,6 +22,13 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	protected final EReference feature;
 	protected L elements;
 
+	private boolean sendNotifications = true;
+
+	public SmartCollection(EObject eContainer, EReference feature, boolean sendNotifications) {
+		this(eContainer, feature);
+		this.sendNotifications = sendNotifications;
+	}
+	
 	public SmartCollection(EObject eContainer, EReference feature) {
 		this.eContainer = eContainer;
 		this.feature = feature;
@@ -233,7 +240,9 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		// if the feature is a containment, then notifications are handled when setting the resource
 //		if(feature.isContainment())
 //			return;
-
+		if(!sendNotifications)
+			return;
+		
 		Resource r = eContainer.eResource();
 		if (r != null) {
 			for (Adapter a : r.eAdapters()) {

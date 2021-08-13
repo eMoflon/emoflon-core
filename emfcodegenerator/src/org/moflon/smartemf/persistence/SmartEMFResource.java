@@ -35,7 +35,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 	
 	protected String workspacePath;
 	
-	protected boolean cascadeNotifications = false;
+	protected boolean cascadeNotifications = true;
 	
 	private EList<EObject> contents = new ResourceContentSmartEList<>(this);
 	

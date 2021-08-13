@@ -7,12 +7,17 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 
 public class SmartESet<T> extends SmartCollection<T, HashSet<T>> {
 
+	public SmartESet(EObject eContainer, EReference feature, boolean sendNotifications) {
+		super(eContainer, feature, sendNotifications);
+	}
+	
 	public SmartESet(EObject eContainer, EReference feature) {
 		super(eContainer, feature);
 	}

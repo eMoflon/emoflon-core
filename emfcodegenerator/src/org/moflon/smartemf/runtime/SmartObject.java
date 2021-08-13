@@ -153,7 +153,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		} else {
 			if (staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
 				if (feature.isMany()) {
-					EList<Object> emptyList = new LinkedSmartESet<Object>(this, (EReference) feature);
+					EList<Object> emptyList = new SmartESet<Object>(this, (EReference) feature, false);
 					feature2Value.put(feature, emptyList);
 					return emptyList;
 				} else {
@@ -192,7 +192,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 			return;
 
 		if (oldValue == null && value != null) {
-			sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, value, -1));
+//			sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, value, -1));
 			if (feature instanceof EReference && ((EReference) feature).getEOpposite() != null) {
 				((SmartObject) value).eDynamicInverseAdd(this, ((EReference) feature).getEOpposite());
 			}
@@ -200,7 +200,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		}
 
 		if (!oldValue.equals(value)) {
-			sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, value, -1));
+//			sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, value, -1));
 			if (feature instanceof EReference && ((EReference) feature).getEOpposite() != null) {
 				((SmartObject) value).eDynamicInverseAdd(this, ((EReference) feature).getEOpposite());
 			}
@@ -221,7 +221,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 				if (oldValue == null)
 					return;
 
-				sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, null, -1));
+//				sendNotification(SmartEMFNotification.createSetNotification(this, feature, oldValue, null, -1));
 
 				if (feature instanceof EReference && ((EReference) feature).getEOpposite() != null) {
 					((SmartObject) oldValue).eInverseRemove(this, ((EReference) feature).getEOpposite());
@@ -231,7 +231,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		} else {
 			if (staticPackage.isDynamicEStructuralFeature(staticClass, feature)) {
 				if (feature.isMany()) {
-					EList<Object> emptyList = new SmartESet<Object>(this, (EReference) feature);
+					EList<Object> emptyList = new SmartESet<Object>(this, (EReference) feature, false);
 					feature2Value.put(feature, emptyList);
 				} else {
 					feature2Value.put(feature, null);
@@ -248,7 +248,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		if (feature.isMany()) {
 			SmartCollection<Object, Collection<Object>> list = (SmartCollection<Object, Collection<Object>>) eGet(feature);
 			if (list.addInternal(otherEnd, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
-				sendNotification(SmartEMFNotification.createAddNotification(this, feature, otherEnd, -1));
+//				sendNotification(SmartEMFNotification.createAddNotification(this, feature, otherEnd, -1));
 			}
 		} else {
 			eSet(feature, otherEnd);
