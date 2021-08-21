@@ -42,10 +42,10 @@ public class SmartEMFUtil {
 			Object value = obj.eGet(ref);
 
 			// do not revoke the containment just yet
-			if(ref.getEOpposite() != null && ref.getEOpposite().equals(obj.eContainmentFeature())) {
+			if (ref.getEOpposite() != null && ref.getEOpposite().equals(obj.eContainmentFeature())) {
 				continue;
 			}
-			
+
 			if (recursive && ref.isContainment()) {
 				if (value == null)
 					continue;
@@ -69,10 +69,11 @@ public class SmartEMFUtil {
 //				container.eUnset(containmentFeature);
 //		}
 //		// END HOTFIX
-		
+
 		((SmartObject) obj).resetContainment();
 	}
 
+	@Deprecated
 	public static void resolveAll(ResourceSet resourceSet) {
 		disconnectAdapters(resourceSet);
 
@@ -83,6 +84,7 @@ public class SmartEMFUtil {
 		reconnectAdapters(resourceSet);
 	}
 
+	@Deprecated
 	public static void resolveAll(Resource resource) {
 		disconnectAdapters(resource.getResourceSet());
 
