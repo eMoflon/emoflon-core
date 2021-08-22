@@ -396,6 +396,12 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		}
 	}
 	
+	public void sendRemoveAdapterNotificationsRecursively(Adapter adapter) {
+		adapter.notifyChanged(SmartEMFNotification.createRemovingAdapterNotification(this, null, adapter, -1));
+		
+		setResourceOfContainments((o) -> o.sendRemoveAdapterNotificationsRecursively(adapter));
+	}
+	
 	public void setResourceWithoutChecks(Internal resource) {
 		this.resource = resource;
 	}

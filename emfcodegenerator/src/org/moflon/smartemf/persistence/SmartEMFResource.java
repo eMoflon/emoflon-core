@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Map;
 
+import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -23,6 +24,7 @@ import org.eclipse.emf.ecore.xml.type.AnyType;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.collections.ResourceContentSmartEList;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -38,6 +40,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 	protected boolean cascadeNotifications = true;
 	
 	private EList<EObject> contents = new ResourceContentSmartEList<>(this);
+	private AdapterList adapters = new AdapterList(this);
 	
 	public SmartEMFResource(final URI uri, final String workspacePath) {
 		this.uri = uri;
@@ -57,6 +60,10 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 		return contents;
 	}
 
+	@Override
+	public EList<Adapter> eAdapters() {
+		return adapters;
+	}
 	
 //	############ The meat and potatoes ############
 
@@ -310,6 +317,12 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 	@Override
 	public void setXMINamespace(String namespace) {
 		throw new UnsupportedOperationException("TODO: auto-generated method stub");
+	}
+
+	protected void sendRemoveAdapterMessages(Adapter o) {
+		for(EObject obj : contents) {
+			((SmartObject) obj).sendRemoveAdapterNotificationsRecursively(o);
+		}
 	}
 
 }

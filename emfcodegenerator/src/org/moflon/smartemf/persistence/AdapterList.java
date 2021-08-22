@@ -1,7 +1,8 @@
-package org.moflon.smartemf.runtime.collections;
+package org.moflon.smartemf.persistence;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -11,7 +12,12 @@ import org.eclipse.emf.common.util.EList;
 
 public class AdapterList implements EList<Adapter> {
 
-	private Collection<Adapter> adapters = new LinkedList<>();
+	private Collection<Adapter> adapters = new LinkedHashSet<>();
+	private SmartEMFResource resource;
+	
+	public AdapterList(SmartEMFResource resource) {
+		this.resource = resource;
+	}
 	
 	@Override
 	public int size() {
@@ -52,7 +58,9 @@ public class AdapterList implements EList<Adapter> {
 
 	@Override
 	public boolean remove(Object o) {
-		return adapters.remove(o);
+		boolean remove = adapters.remove(o);
+		resource.sendRemoveAdapterMessages((Adapter) o);
+		return remove;
 	}
 
 	@Override
@@ -71,18 +79,17 @@ public class AdapterList implements EList<Adapter> {
 
 	@Override
 	public boolean addAll(int index, Collection<? extends Adapter> c) {
-		boolean changed = false;
-		for(Adapter a : c) {
-			changed = changed || add(a);
-		}
-		return changed;
+		return addAll(c);
 	}
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		boolean changed = false;
 		for(Object a : c) {
-			changed = changed || remove(a);
+			boolean success = remove(a);
+			changed = changed || success;
+			if(success)
+				resource.sendRemoveAdapterMessages((Adapter) a);
 		}
 		return changed;
 	}
@@ -99,25 +106,22 @@ public class AdapterList implements EList<Adapter> {
 
 	@Override
 	public Adapter get(int index) {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Adapter set(int index, Adapter element) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void add(int index, Adapter element) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Adapter remove(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
