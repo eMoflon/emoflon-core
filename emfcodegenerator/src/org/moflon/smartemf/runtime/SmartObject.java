@@ -434,6 +434,9 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 				} else if (eContainingFeature().isMany()) {
 					sendNotification(SmartEMFNotification.createAddNotification(eContainer(), eContainingFeature(), this, -1));
 					status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
+				} else {
+					sendNotification(SmartEMFNotification.createSetNotification(eContainer(), eContainingFeature(), null, this, -1));
+					status = NotifyStatus.SUCCESS_NOTIFICATION_SEND;
 				}
 
 			}
