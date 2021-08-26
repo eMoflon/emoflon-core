@@ -34,10 +34,8 @@ public class SmartEMFUtil {
 	public static void deleteNodes(Collection<EObject> objs, boolean recursive) {
 		Queue<EObject> queue = new LinkedBlockingDeque<>(objs);
 		while (!queue.isEmpty()) {
-			// reset containment is only called for this element (and not recursively) like in EMF
 			EObject poll = queue.poll();
 			deleteNode(poll, recursive);
-			((SmartObject) poll).resetContainment();
 		}
 	}
 
