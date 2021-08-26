@@ -26,13 +26,18 @@ import org.moflon.smartemf.runtime.collections.SmartCollection;
 public class SmartEMFUtil {
 
 	public static void deleteNode(EObject node, boolean recursive) {
+		// reset containment is only called for this element (and not recursively) like in EMF
 		deleteNode_internal(node, recursive);
+		((SmartObject) node).resetContainment();
 	}
 
 	public static void deleteNodes(Collection<EObject> objs, boolean recursive) {
 		Queue<EObject> queue = new LinkedBlockingDeque<>(objs);
 		while (!queue.isEmpty()) {
-			deleteNode(queue.poll(), recursive);
+			// reset containment is only called for this element (and not recursively) like in EMF
+			EObject poll = queue.poll();
+			deleteNode(poll, recursive);
+			((SmartObject) poll).resetContainment();
 		}
 	}
 
@@ -53,24 +58,10 @@ public class SmartEMFUtil {
 				if (value instanceof EObject) {
 					deleteNode_internal((EObject) value, recursive);
 				} else {
-					deleteNodes((Collection<EObject>) value, recursive);
+					((Collection<EObject>) value).forEach(o -> deleteNode_internal(o, recursive));
 				}
 			}
-			obj.eUnset(ref);
 		}
-
-//		// HOTFIX until default bidirectional edges works
-//		EObject container = obj.eContainer();
-//		EReference containmentFeature = obj.eContainmentFeature();
-//		if (container != null && containmentFeature != null) {
-//			if (containmentFeature.isMany())
-//				((List<?>) container.eGet(containmentFeature)).remove(obj);
-//			else
-//				container.eUnset(containmentFeature);
-//		}
-//		// END HOTFIX
-
-		((SmartObject) obj).resetContainment();
 	}
 
 	@Deprecated
