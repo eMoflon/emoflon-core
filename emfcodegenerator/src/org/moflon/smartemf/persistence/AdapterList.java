@@ -3,7 +3,6 @@ package org.moflon.smartemf.persistence;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
