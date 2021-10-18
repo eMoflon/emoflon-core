@@ -132,7 +132,7 @@ public class JDOMXmiUnparser {
 				}
 				int idIDX = 0;
 				for(EObject containee : containees) {
-					current.getChildren().add(createDOMTree(root, containee, containmentRef, currentId, idIDX, containees.size()==1));
+					current.getChildren().add(createDOMTree(root, containee, containmentRef, currentId, idIDX, !containmentRef.isMany()));
 					idIDX++;
 				}
 			}
@@ -317,7 +317,7 @@ public class JDOMXmiUnparser {
 				}
 				int idIDX = 0;
 				for(EObject containee : containees) {
-					indexForeignModel(containee, containmentRef, rootId, idIDX, containees.size()==1);
+					indexForeignModel(containee, containmentRef, rootId, idIDX, !containmentRef.isMany());
 					idIDX++;
 				}
 			}
