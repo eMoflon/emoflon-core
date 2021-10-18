@@ -1,6 +1,5 @@
 package org.moflon.smartemf.persistence;
 
-import java.awt.Container;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -99,6 +98,12 @@ public class JDOMXmiUnparser {
 				if(metamodel != rootMetamodel) {
 					current.getAttributes().add(new Attribute(XmiParserUtil.XSI_TYPE, metamodel2NS.get(metamodel).getPrefix()+":"+currentClass.getName(), 
 							Namespace.getNamespace(XmiParserUtil.XSI_NS, XmiParserUtil.XSI_URI)));
+				} else {
+					// If the current object is a sub-type of the edge type then this must be defined in the xmi model
+					if(!containment.getEType().equals(currentEObject.eClass())) {
+						current.getAttributes().add(new Attribute(XmiParserUtil.XSI_TYPE, ns.getPrefix()+":"+currentClass.getName(),
+								Namespace.getNamespace(XmiParserUtil.XSI_NS, XmiParserUtil.XSI_URI)));
+					}
 				}
 				
 				// This a workaround for a useless/annoying xml simplification that occurs when a child list is exactly of size 1, then the index is omitted.

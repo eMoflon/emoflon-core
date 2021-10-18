@@ -3,7 +3,6 @@ package org.moflon.smartemf.persistence;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.text.DateFormat;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EFactory;
