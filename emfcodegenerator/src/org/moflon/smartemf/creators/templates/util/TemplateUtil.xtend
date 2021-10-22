@@ -12,6 +12,7 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.moflon.smartemf.creators.FileCreator
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import java.util.Collections
+import org.eclipse.emf.ecore.EAttribute
 
 class TemplateUtil {
 	
@@ -37,7 +38,7 @@ class TemplateUtil {
 //			return "org.eclipse.emf.common.util.EMap<Object, Object>"
 			return "java.util.HashMap<Object, Object>"
 			
-		if(!feature.isMany) {
+		if(!feature.isMany || feature instanceof EAttribute) {
 			switch feature.EType.name {
 				case "EString" : return "java.lang.String"
 				case "EInt" : return "int"
@@ -49,8 +50,19 @@ class TemplateUtil {
 			return getFQName(feature.EType)
 		}
 			
-		return '''«getListTypeName(feature)»<«getFQName(feature.EType)»>'''
+		return '''«getListTypeName(feature)»<«getValidGenericArg(getFQName(feature.EType))»>'''
 	}
+	
+	static def getValidGenericArg(String arg) {
+		switch(arg) {
+			case "boolean" : return "Boolean"
+			case "int"     : return "Integer"
+			case "double"  : return "Double"
+			case "float"   : return "Float"
+			case "char"    : return "Char"
+			default : return arg   
+		}
+	}  
 	
 	static def splitNameAtUppercases(String name) {
 		var splittedName = new LinkedList
@@ -153,6 +165,9 @@ class TemplateUtil {
 	static def getFQName(EPackage ePackage) {
 		if(ePackage.EClassifiers.get(0).instanceClassName !== null) {
 			val someClazzFQN = getFQName(ePackage.EClassifiers.get(0))
+			if(!someClazzFQN.contains(".")) {
+				return "";
+			}
 			val dotIdx = someClazzFQN.lastIndexOf(".")
 			return someClazzFQN.substring(0,dotIdx)
 		}

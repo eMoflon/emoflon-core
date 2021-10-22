@@ -118,7 +118,7 @@ class SmartEMFObjectTemplate implements FileCreator {
 		    public void eUnset(EStructuralFeature eFeature){
 		    	«FOR feature : eClass.EAllStructuralFeatures»
 		    	 if («TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».equals(eFeature)) {
-		    	 	«IF feature.isMany»
+		    	 	«IF feature.isMany && feature instanceof EReference»
 		    	 	get«feature.name.toFirstUpper»().clear(); 
 		    	 	«ELSE»
 		    	 	set«feature.name.toFirstUpper»((«TemplateUtil.getFieldTypeName(feature)»)«getDefaultValue(feature)»); 
@@ -260,12 +260,24 @@ class SmartEMFObjectTemplate implements FileCreator {
 		if(feature.EType.name.contains("MapEntry"))
 			return "new java.util.HashMap<Object, Object>()"
 			
-		if(feature.isMany)
+		if(feature.isMany && feature instanceof EReference)
 			return '''new «TemplateUtil.getFieldTypeName(feature)»(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)»)'''
 			
 		val value = feature.defaultValue
-		if(value === null)
-			return "null"
+		if(value === null) {
+			switch(feature.EType.name) {
+				case "boolean" : return "false"
+				case "double" : return "0.0"
+				case "float" : return "0.0"
+				case "int" : return "0"
+				case "Boolean" : return "false"
+				case "Double" : return "0.0"
+				case "Float" : return "0.0"
+				case "Int" : return "0"
+				default : return "null"
+			}
+			
+		}
 		
 		if(value instanceof EEnumLiteral)
 			return TemplateUtil.getFQName(value.EEnum.EPackage) + "." + value.EEnum.name + "." + TemplateUtil.getLiteral(value)
