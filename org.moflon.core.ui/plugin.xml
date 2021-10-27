@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="DiagramTextProvider" name="DiagramTextProvider" schema="schema/DiagramTextProvider.exsd"/>
+   <extension-point id="EMoflonVisualizer" name="EMoflonVisualizer" schema="schema/EMoflonVisualizer.exsd"/>
   <extension point="org.eclipse.core.expressions.propertyTesters">
     <propertyTester class="org.moflon.core.ui.propertytester.PerspectivePropertyTester" id="org.moflon.core.ui.propertytester.PerspectivePropertyTester" namespace="org.moflon.core.ui.property" properties="perspectiveId" type="org.eclipse.e4.ui.model.application.ui.advanced.MPerspective"/>
   </extension>
@@ -365,5 +366,26 @@
            priority="10"
            providerClass="org.moflon.core.ui.visualisation.common.EMoflonIntentProvider">
      </diagramIntentProvider>
+  </extension>
+  <extension
+        point="org.eclipse.ui.views">
+     <category
+           id="org.moflon.core.ui.view"
+           name="eMoflon Viewer">
+     </category>
+     <view
+           allowMultiple="true"
+           category="org.moflon.core.ui.view"
+           class="org.moflon.core.ui.visualisation.ModelViewer"
+           id="org.moflon.core.ui.view.modelview"
+           name="eMoflon Model Viewer"
+           restorable="true">
+     </view>
+  </extension>
+  <extension
+        point="org.moflon.core.ui.EMoflonVisualizer">
+     <emoflon_visualizer
+           class="org.moflon.core.ui.visualisation.common.EMoflonEcoreVisualizer">
+     </emoflon_visualizer>
   </extension>
 </plugin>
