@@ -388,4 +388,10 @@
            class="org.moflon.core.ui.visualisation.common.EMoflonEcoreVisualizer">
      </emoflon_visualizer>
   </extension>
+  <extension
+        point="org.moflon.core.ui.EMoflonVisualizer">
+     <emoflon_visualizer
+           class="org.moflon.core.ui.visualisation.common.EMoflonXmiVisualizer">
+     </emoflon_visualizer>
+  </extension>
 </plugin>

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
@@ -28,12 +29,6 @@ import org.moflon.core.ui.VisualiserUtilities;
 import org.moflon.core.ui.visualisation.metamodels.ClassDiagramStyleSheet;
 
 public class EMoflonEcoreVisualizer implements EMoflonVisualizer {
-	
-	/**
-	 * Stores whether or not the superset of Ecore elements can be retrieved from
-	 * currently associated editor.
-	 */
-	private boolean isEmptySelectionSupported = false;
 	
 	/**
 	 * Stores a subset of Ecore elements, that are to be visualised..
@@ -128,6 +123,20 @@ public class EMoflonEcoreVisualizer implements EMoflonVisualizer {
 				createEdgeFromInheritance(classDiagram, eClass, superType);
 			});
 		}
+		
+//		// Put the container object in center of the coordinate system
+//		EPackage root = (EPackage) latestSelection.iterator().next().eResource().getContents().iterator().next();
+//		Node rootNode = classDiagram.addNode(root.getName()+"_PACKAGE");
+//		rootNode.setAttribute("ui.label", root.getName()+" Package");
+//		rootNode.setAttribute("ui.style", "text-style: bold;");
+//		
+//		rootNode.setAttribute("layout.frozen");
+//		rootNode.setAttribute("x", 0);
+//		rootNode.setAttribute("y", 0);
+//		rootNode.setAttribute("z", 0.0);
+//		
+//		eClass2Node.values().forEach(eClass->classDiagram.addEdge(rootNode.getId()+"->"+eClass.getId(), rootNode, eClass, true));
+				
 		return classDiagram;
 	}
 	
@@ -211,24 +220,6 @@ public class EMoflonEcoreVisualizer implements EMoflonVisualizer {
 			edge.setAttribute("ui.style", "arrow-shape: diamond; arrow-size: 18px; z-index: 0;");
 		}
 		edge.setAttribute("ui.label", ref.getName());
-		
-//		if(ref.isContainment()) {
-//			Sprite containment = sman.addSprite(edge.getId()+"_containment");
-//			containment.setAttribute("ui.style", "shape: diamond; sprite-orientation: from; size: 20px; stroke-mode: plain;");
-//			containment.setPosition(0.1);
-//			containment.attachToEdge(edge.getId());
-//			
-//		} else if(ref.getEOpposite() != null) {
-//			Sprite source = sman.addSprite(edge.getId()+"_source");
-//			source.setAttribute("ui.style", "shape: arrow; sprite-orientation: from; size: 20px; stroke-mode: plain;");
-//			source.setPosition(0.1);
-//			source.attachToEdge(edge.getId());
-//		}
-//		
-//		Sprite target = sman.addSprite(edge.getId()+"_target");
-//		target.setAttribute("ui.style", "shape: arrow; sprite-orientation: to; size: 20px; stroke-mode: plain;");
-//		target.setPosition(0.9);
-//		target.attachToEdge(edge.getId());
 		
 		if(!ref.isContainment() && ref.getEOpposite() != null) {
 			Edge reverseEdge = graph.addEdge(createUniqueEdgeLabel(ref), eClass2Node.get((EClass)ref.getEType()), eClass2Node.get(src), true);
