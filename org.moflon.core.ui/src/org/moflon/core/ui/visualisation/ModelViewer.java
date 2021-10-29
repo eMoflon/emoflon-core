@@ -50,7 +50,7 @@ public class ModelViewer extends ViewPart{
 	private Composite composite;
 	private Viewer graphStreamViewer;
 	private DefaultView graphStreamView;
-	private Frame graphStreamFrame;
+//	private Frame graphStreamFrame;
 	private GraphicElement selectedElement = null;
 	
 	private final ModelChangedListener modelChangedListener = new ModelChangedListener();
@@ -72,10 +72,10 @@ public class ModelViewer extends ViewPart{
 				Node n = graph.addNode("Empty_Node");
 				n.setAttribute("ui.label", "Nothing to visualize");
 				n.setAttribute("ui.style", "text-size: 32; size-mode: fit; shape: box; fill-mode: none;");
-				graphStreamViewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-				graphStreamFrame = SWT_AWT.new_Frame(composite);
-				graphStreamView = (DefaultView) graphStreamViewer.addDefaultView(false);
-				graphStreamFrame.add(graphStreamView);
+				graphStreamViewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+//				graphStreamFrame = SWT_AWT.new_Frame(composite);
+				graphStreamView = (DefaultView) graphStreamViewer.addDefaultView(true);
+//				graphStreamFrame.add(graphStreamView);
 				
 				graphStreamViewer.getDefaultView().enableMouseOptions();
 
@@ -83,7 +83,7 @@ public class ModelViewer extends ViewPart{
 				addMenuActions();
 				addListeners();
 				
-				graphStreamView.resizeFrame(parent.getBounds().width, parent.getBounds().height);
+//				graphStreamView.resizeFrame(parent.getBounds().width, parent.getBounds().height);
 				graphStreamView.getCamera().setAutoFitView(true);
 				Toolkit.computeLayout(graph);
 				
@@ -183,7 +183,13 @@ public class ModelViewer extends ViewPart{
 		Action autoLayout = new Action() {
 			@Override
 			public void run() {
-				activateLayout();
+				parent.getDisplay().asyncExec( new Runnable() {
+					@Override
+					public void run() {
+						activateLayout();
+					}
+				});
+				
 			}
 		};
 		autoLayout.setText("AutoLayout");
@@ -208,26 +214,34 @@ public class ModelViewer extends ViewPart{
 	}
 	
 	public void updateGraphView(final Graph newGraph) {
-		composite.dispose();
-		
-		graph = newGraph;
-		
-		composite = new Composite(parent, SWT.EMBEDDED | SWT.NO_BACKGROUND);
-		composite.setLayout(new GridLayout(1, false));
-		composite.setVisible(true);
-		
-		graphStreamViewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-		graphStreamFrame = SWT_AWT.new_Frame(composite);
-		graphStreamView = (DefaultView) graphStreamViewer.addDefaultView(false);
-		graphStreamFrame.add((DefaultView)graphStreamView);
+		parent.getDisplay().asyncExec( new Runnable() {
 
-		graphStreamViewer.getDefaultView().enableMouseOptions();
+			@Override
+			public void run() {
+				composite.dispose();
+				
+				graph = newGraph;
+				
+				composite = new Composite(parent, SWT.EMBEDDED | SWT.NO_BACKGROUND);
+				composite.setLayout(new GridLayout(1, false));
+				composite.setVisible(true);
+				
+				graphStreamViewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+//				graphStreamFrame = SWT_AWT.new_Frame(composite);
+				graphStreamView = (DefaultView) graphStreamViewer.addDefaultView(true);
+//				graphStreamFrame.add((DefaultView)graphStreamView);
+
+				graphStreamViewer.getDefaultView().enableMouseOptions();
+				
+				addInputListeners();
+				
+//				graphStreamView.resizeFrame(parent.getBounds().width, parent.getBounds().height);
+				
+//				activateLayout();
+			}
+			
+		});
 		
-		addInputListeners();
-		
-		graphStreamView.resizeFrame(parent.getBounds().width, parent.getBounds().height);
-		
-		activateLayout();
 	}
 
 	private class ModelChangedListener implements ISelectionListener{
@@ -257,7 +271,7 @@ public class ModelViewer extends ViewPart{
 	}
 	
 	private void activateLayout() {
-		graphStreamView.resizeFrame(parent.getBounds().width, parent.getBounds().height);
+//		graphStreamView.resizeFrame(parent.getBounds().width, parent.getBounds().height);
 		
 		Toolkit.computeLayout(graph);
 		
@@ -269,8 +283,8 @@ public class ModelViewer extends ViewPart{
 		graphStreamView.getCamera().setViewCenter(graphCenter.x, graphCenter.y, graphStreamView.getCamera().getViewCenter().z);
 		
 		composite.requestLayout();
-		composite.layout();
-		composite.redraw();
+//		composite.layout();
+//		composite.redraw();
 		composite.setVisible(true);
 	}
 	
