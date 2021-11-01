@@ -56,7 +56,7 @@ class PackageInterfaceTemplate implements FileCreator{
 		
 		public interface «e_pak.get_emf_package_class_name» extends SmartPackage {
 
-			String eNAME = "«e_pak.get_emf_package_class_name»";
+			String eNAME = "«e_pak.get_name»";
 			String eNS_URI = "«e_pak.get_ens_uri»";
 			String eNS_PREFIX = "«e_pak.get_ens_prefix»";
 		
