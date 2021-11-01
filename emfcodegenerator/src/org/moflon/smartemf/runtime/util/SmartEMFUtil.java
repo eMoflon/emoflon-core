@@ -49,15 +49,16 @@ public class SmartEMFUtil {
 				continue;
 			}
 
-			if (recursive && ref.isContainment()) {
-				if (value == null)
-					continue;
-
-				if (value instanceof EObject) {
-					deleteNode_internal((EObject) value, recursive);
-				} else {
-					((Collection<EObject>) value).forEach(o -> deleteNode_internal(o, recursive));
+			if (ref.isContainment()) {
+				if (recursive && value != null) {
+					if (value instanceof EObject) {
+						deleteNode_internal((EObject) value, recursive);
+					} else {
+						((Collection<EObject>) value).forEach(o -> deleteNode_internal(o, recursive));
+					}
 				}
+			} else {
+				obj.eUnset(ref);
 			}
 		}
 	}
