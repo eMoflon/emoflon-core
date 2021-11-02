@@ -19,7 +19,7 @@ import org.moflon.smartemf.creators.templates.util.TemplateUtil
 /**
  * Creator-class which generates the class-file for the SmartEMF-package-class.
  */
-class PackageImplTemplate implements FileCreator{
+class PackageImplTemplate implements FileCreator {
 	
 	val PackageInformation e_pak
 	var boolean isInitialized = false
@@ -54,6 +54,9 @@ class PackageImplTemplate implements FileCreator{
 		«IF !e_pak.get_all_eenums_in_package.empty»
 		import org.eclipse.emf.ecore.EEnum;
 		«ENDIF»
+		«IF !e_pak.get_all_edata_types_in_package.empty»
+		import org.eclipse.emf.ecore.EDataType;
+		«ENDIF»
 		import org.eclipse.emf.ecore.EPackage;
 		import org.eclipse.emf.ecore.EReference;
 		import org.eclipse.emf.ecore.EcorePackage;
@@ -68,12 +71,16 @@ class PackageImplTemplate implements FileCreator{
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
 				private EClass «clazz.name.toFirstLower»EClass = null;
 				«FOR feature : clazz.EStructuralFeatures»
-				private «IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» «clazz.name.toFirstLower»_«feature.name.toFirstLower»«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» = null;
+					private «IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» «clazz.name.toFirstLower»_«feature.name.toFirstLower»«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» = null;
 				«ENDFOR»
 			«ENDFOR»
 			
-			«FOR clazz : e_pak.get_all_eenums_in_package»
-				private EEnum «clazz.name.toFirstLower»EEnum = null;
+			«FOR eenum : e_pak.get_all_eenums_in_package»
+				private EEnum «eenum.name.toFirstLower»EEnum = null;
+			«ENDFOR»
+			
+			«FOR datatype : e_pak.get_all_edata_types_in_package»
+				private EDataType «datatype.name.toFirstLower»EDataType = null;
 			«ENDFOR»
 
 			private «e_pak.get_emf_e_package.name.toFirstUpper»PackageImpl() {
@@ -121,23 +128,30 @@ class PackageImplTemplate implements FileCreator{
 			}
 		
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
-			@Override
-			public EClass get«clazz.name»() {
-				return «clazz.name.toFirstLower»EClass;
-			}
-			«FOR feature : clazz.EStructuralFeatures»
-			@Override
-			public «IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» get«clazz.name»_«feature.name.toFirstUpper»() {
-			return «clazz.name.toFirstLower»_«feature.name.toFirstLower»«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF»;	
-			}
-			«ENDFOR»
+				@Override
+				public EClass get«clazz.name»() {
+					return «clazz.name.toFirstLower»EClass;
+				}
+				«FOR feature : clazz.EStructuralFeatures»
+					@Override
+					public «IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» get«clazz.name»_«feature.name.toFirstUpper»() {
+						return «clazz.name.toFirstLower»_«feature.name.toFirstLower»«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF»;	
+					}
+				«ENDFOR»
 			«ENDFOR»
 			
-			«FOR clazz : e_pak.get_all_eenums_in_package»
-			@Override
-			public EEnum get«clazz.name.toFirstUpper»() {
-				return «clazz.name.toFirstLower»EEnum;
-			}
+			«FOR eenum : e_pak.get_all_eenums_in_package»
+				@Override
+				public EEnum get«eenum.name.toFirstUpper»() {
+					return «eenum.name.toFirstLower»EEnum;
+				}
+			«ENDFOR»
+			
+			«FOR datatype : e_pak.get_all_edata_types_in_package»
+				@Override
+				public EDataType get«datatype.name.toFirstUpper»() {
+					return «datatype.name.toFirstLower»EDataType;
+				}
 			«ENDFOR»
 		
 			/**
@@ -157,16 +171,21 @@ class PackageImplTemplate implements FileCreator{
 		
 				// Create classes and their features
 				«FOR clazz : e_pak.get_all_eclasses_in_package»
-				«clazz.name.toFirstLower»EClass = createEClass(«TemplateUtil.getLiteral(clazz)»);
-				«FOR feature : clazz.EStructuralFeatures»
-				«IF feature instanceof EReference»createEReference«ELSE»createEAttribute«ENDIF»(«clazz.name.toFirstLower»EClass, «TemplateUtil.getLiteral(feature)»);
-				«clazz.name.toFirstLower»_«feature.name.toFirstLower»«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» = («IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF») «clazz.name.toFirstLower»EClass.getEStructuralFeatures().get(«clazz.EStructuralFeatures.indexOf(feature)»);
-				«ENDFOR»
-				
+					«clazz.name.toFirstLower»EClass = createEClass(«TemplateUtil.getLiteral(clazz)»);
+					«FOR feature : clazz.EStructuralFeatures»
+						«IF feature instanceof EReference»createEReference«ELSE»createEAttribute«ENDIF»(«clazz.name.toFirstLower»EClass, «TemplateUtil.getLiteral(feature)»);
+						«clazz.name.toFirstLower»_«feature.name.toFirstLower»«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» = («IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF») «clazz.name.toFirstLower»EClass.getEStructuralFeatures().get(«clazz.EStructuralFeatures.indexOf(feature)»);
+					«ENDFOR»
+					
 				«ENDFOR»
 				// Create enums
 				«FOR clazz : e_pak.get_all_eenums_in_package»
-				«clazz.name.toFirstLower»EEnum = createEEnum(«TemplateUtil.getLiteral(clazz)»);
+					«clazz.name.toFirstLower»EEnum = createEEnum(«TemplateUtil.getLiteral(clazz)»);
+				«ENDFOR»
+				
+				// Create data types
+				«FOR datatype : e_pak.get_all_edata_types_in_package»
+					«datatype.name.toFirstLower»EDataType = createEDataType(«TemplateUtil.getLiteral(datatype)»);
 				«ENDFOR»
 			}
 		
@@ -182,7 +201,7 @@ class PackageImplTemplate implements FileCreator{
 				
 				// Obtain other dependent packages
 				«FOR ePackage : dependentPackages»
-				«TemplateUtil.getPackageClassName(ePackage)» the«ePackage.name»Package = «TemplateUtil.getPackageClassName(ePackage)».eINSTANCE;
+					«TemplateUtil.getPackageClassName(ePackage)» the«ePackage.name»Package = «TemplateUtil.getPackageClassName(ePackage)».eINSTANCE;
 				«ENDFOR»
 		
 				// Create type parameters
@@ -191,36 +210,41 @@ class PackageImplTemplate implements FileCreator{
 		
 				// Add supertypes to classes
 				«FOR clazz : e_pak.get_all_eclasses_in_package»
-				«FOR superClazz : clazz.EAllSuperTypes»
-				«clazz.name.toFirstLower»EClass.getESuperTypes().add(«IF superClazz.EPackage.equals(e_pak.get_emf_e_package)»this«ELSE»«TemplateUtil.getPackageClassName(superClazz.EPackage)».eINSTANCE«ENDIF».get«superClazz.name.toFirstUpper»());
-				«ENDFOR»
-				
+					«FOR superClazz : clazz.EAllSuperTypes»
+						«clazz.name.toFirstLower»EClass.getESuperTypes().add(«IF superClazz.EPackage.equals(e_pak.get_emf_e_package)»this«ELSE»«TemplateUtil.getPackageClassName(superClazz.EPackage)».eINSTANCE«ENDIF».get«superClazz.name.toFirstUpper»());
+					«ENDFOR»
+					
 				«ENDFOR»
 		
 				// Initialize classes, features, and operations; add parameters
 				«FOR clazz : e_pak.get_all_eclasses_in_package»
-				initEClass(«clazz.name.toFirstLower»EClass, «clazz.name».class, "«clazz.name»", !IS_ABSTRACT, !IS_INTERFACE,
-					IS_GENERATED_INSTANCE_CLASS);
-				«FOR feature : clazz.EStructuralFeatures»
-				«IF feature instanceof EReference»«val ref = feature as EReference»
-				initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «IF ref.EType.EPackage.name.equals("ecore")»ecorePackage.get«ref.EType.name»()«ELSE»«getPackageName(ref)».get«ref.EType.name»()«ENDIF», «IF ref.EOpposite !== null»«getPackageName(ref)».get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
-					"«ref.name»", «(ref.defaultValue === null)?"null":ref.defaultValue», «ref.lowerBound», «ref.upperBound», «clazz.name».class, «(ref.isTransient)?"":"!"»IS_TRANSIENT, «(ref.isVolatile)?"":"!"»IS_VOLATILE, «(ref.isChangeable)?"":"!"»IS_CHANGEABLE, «(ref.isContainment)?"":"!"»IS_COMPOSITE, «(ref.isResolveProxies)?"":"!"»IS_RESOLVE_PROXIES,
-					«(ref.isUnsettable)?"":"!"»IS_UNSETTABLE, «(ref.isUnique)?"":"!"»IS_UNIQUE, «(ref.isDerived)?"":"!"»IS_DERIVED, «(ref.isOrdered)?"":"!"»IS_ORDERED);
-				«ELSE»«val atr = feature as EAttribute»
-				initEAttribute(get«clazz.name»_«atr.name.toFirstUpper»(), «IF atr.EType.EPackage.name.equals("ecore")»ecorePackage.get«atr.EType.name»()«ELSE»«getPackageName(atr)».get«atr.EType.name.toFirstUpper»()«ENDIF»,
-					"«atr.name»", «(atr.defaultValue === null)?"null":"\""+atr.defaultValue+"\""», «atr.lowerBound», «atr.upperBound», «clazz.name».class, «(atr.isTransient)?"":"!"»IS_TRANSIENT, «(atr.isVolatile)?"":"!"»IS_VOLATILE, «(atr.isChangeable)?"":"!"»IS_CHANGEABLE, «(atr.isUnsettable)?"":"!"»IS_UNSETTABLE, «(atr.isUnique)?"":"!"»IS_ID, IS_UNIQUE,
-					«(atr.isDerived)?"":"!"»IS_DERIVED, «(atr.isOrdered)?"":"!"»IS_ORDERED);
-				«ENDIF»
-				«ENDFOR»
-								
+					initEClass(«clazz.name.toFirstLower»EClass, «clazz.name».class, "«clazz.name»", !IS_ABSTRACT, !IS_INTERFACE,
+						IS_GENERATED_INSTANCE_CLASS);
+					«FOR feature : clazz.EStructuralFeatures»
+						«IF feature instanceof EReference»«val ref = feature as EReference»
+						initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «IF ref.EType.EPackage.name.equals("ecore")»ecorePackage.get«ref.EType.name»()«ELSE»«getPackageName(ref)».get«ref.EType.name»()«ENDIF», «IF ref.EOpposite !== null»«getPackageName(ref)».get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
+							"«ref.name»", «(ref.defaultValue === null)?"null":ref.defaultValue», «ref.lowerBound», «ref.upperBound», «clazz.name».class, «(ref.isTransient)?"":"!"»IS_TRANSIENT, «(ref.isVolatile)?"":"!"»IS_VOLATILE, «(ref.isChangeable)?"":"!"»IS_CHANGEABLE, «(ref.isContainment)?"":"!"»IS_COMPOSITE, «(ref.isResolveProxies)?"":"!"»IS_RESOLVE_PROXIES,
+							«(ref.isUnsettable)?"":"!"»IS_UNSETTABLE, «(ref.isUnique)?"":"!"»IS_UNIQUE, «(ref.isDerived)?"":"!"»IS_DERIVED, «(ref.isOrdered)?"":"!"»IS_ORDERED);
+						«ELSE»«val atr = feature as EAttribute»
+						initEAttribute(get«clazz.name»_«atr.name.toFirstUpper»(), «IF atr.EType.EPackage.name.equals("ecore")»ecorePackage.get«atr.EType.name»()«ELSE»«getPackageName(atr)».get«atr.EType.name.toFirstUpper»()«ENDIF»,
+							"«atr.name»", «(atr.defaultValue === null)?"null":"\""+atr.defaultValue+"\""», «atr.lowerBound», «atr.upperBound», «clazz.name».class, «(atr.isTransient)?"":"!"»IS_TRANSIENT, «(atr.isVolatile)?"":"!"»IS_VOLATILE, «(atr.isChangeable)?"":"!"»IS_CHANGEABLE, «(atr.isUnsettable)?"":"!"»IS_UNSETTABLE, «(atr.isUnique)?"":"!"»IS_ID, IS_UNIQUE,
+							«(atr.isDerived)?"":"!"»IS_DERIVED, «(atr.isOrdered)?"":"!"»IS_ORDERED);
+						«ENDIF»
+					«ENDFOR»
+					
 				«ENDFOR»
 				
 				// Initialize enums and add enum literals
-				«FOR clazz : e_pak.get_all_eenums_in_package»
-				initEEnum(«clazz.name.toFirstLower»EEnum, «clazz.name».class, "«clazz.name»");
-				«FOR literal : clazz.ELiterals»
-				addEEnumLiteral(«clazz.name.toFirstLower»EEnum, «clazz.EPackage.name».«clazz.name».«TemplateUtil.getLiteral(literal)»);
+				«FOR eenum : e_pak.get_all_eenums_in_package»
+					initEEnum(«eenum.name.toFirstLower»EEnum, «eenum.name».class, "«eenum.name»");
+					«FOR literal : eenum.ELiterals»
+						addEEnumLiteral(«eenum.name.toFirstLower»EEnum, «eenum.EPackage.name».«eenum.name».«TemplateUtil.getLiteral(literal)»);
+					«ENDFOR»
 				«ENDFOR»
+				
+				// Initialize data types
+				«FOR datatype : e_pak.get_all_edata_types_in_package»
+					initEDataType(«datatype.name.toFirstLower»EDataType, «datatype.instanceClassName».class, "«datatype.name»", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 				«ENDFOR»
 				
 				// Create resource

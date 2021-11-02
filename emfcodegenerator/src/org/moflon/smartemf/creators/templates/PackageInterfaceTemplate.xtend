@@ -15,7 +15,7 @@ import org.moflon.smartemf.creators.templates.util.TemplateUtil
 /**
  * This class generates the interface for the EMF-package class
  */
-class PackageInterfaceTemplate implements FileCreator{
+class PackageInterfaceTemplate implements FileCreator {
 	
 	/**
 	 * The inspector for the package
@@ -49,6 +49,9 @@ class PackageInterfaceTemplate implements FileCreator{
 		«IF !e_pak.get_all_eenums_in_package.empty»
 		import org.eclipse.emf.ecore.EEnum;
 		«ENDIF»
+		«IF !e_pak.get_all_edata_types_in_package.empty»
+		import org.eclipse.emf.ecore.EDataType;
+		«ENDIF»
 		import org.eclipse.emf.ecore.EPackage;
 		import org.eclipse.emf.ecore.EReference;
 		
@@ -63,29 +66,34 @@ class PackageInterfaceTemplate implements FileCreator{
 			«e_pak.get_emf_package_class_name» eINSTANCE = «e_pak.get_package_declaration_name».impl.«e_pak.get_emf_package_class_name»Impl.init();
 		
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
-			int «TemplateUtil.getLiteral(clazz)» = «clazz.classifierID»;
-			«FOR feature : clazz.EStructuralFeatures»
-			int «TemplateUtil.getLiteral(feature)» = «featureCounter++»;
+				int «TemplateUtil.getLiteral(clazz)» = «clazz.classifierID»;
+				«FOR feature : clazz.EStructuralFeatures»
+					int «TemplateUtil.getLiteral(feature)» = «featureCounter++»;
+				«ENDFOR»
+				int «TemplateUtil.getLiteral(clazz)»_FEATURE_COUNT = «clazz.EStructuralFeatures.size + countSuperFeatures(clazz)»;
+				int «TemplateUtil.getLiteral(clazz)»_OPERATION_COUNT = «clazz.EOperations.size + countSuperOperations(clazz)»;
+				
 			«ENDFOR»
-			int «TemplateUtil.getLiteral(clazz)»_FEATURE_COUNT = «clazz.EStructuralFeatures.size + countSuperFeatures(clazz)»;
-			int «TemplateUtil.getLiteral(clazz)»_OPERATION_COUNT = «clazz.EOperations.size + countSuperOperations(clazz)»;
-			
+			«FOR eenum : e_pak.get_all_eenums_in_package»
+				int «TemplateUtil.getLiteral(eenum)» = «eenum.classifierID»;
 			«ENDFOR»
-			«FOR clazz : e_pak.get_all_eenums_in_package»
-			int «TemplateUtil.getLiteral(clazz)» = «clazz.classifierID»;
 			
+			«FOR datatype : e_pak.get_all_edata_types_in_package»
+				int «TemplateUtil.getLiteral(datatype)» = «datatype.classifierID»;
 			«ENDFOR»
 
 			«FOR clazz : e_pak.get_all_eclasses_in_package»
-			EClass get«clazz.name»();
-			«FOR feature : clazz.EStructuralFeatures»
-			«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» get«clazz.name»_«feature.name.toFirstUpper»();
+				EClass get«clazz.name»();
+				«FOR feature : clazz.EStructuralFeatures»
+					«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» get«clazz.name»_«feature.name.toFirstUpper»();
+				«ENDFOR»
+				
 			«ENDFOR»
-			
+			«FOR eenum : e_pak.get_all_eenums_in_package»
+				EEnum get«eenum.name.toFirstUpper»();
 			«ENDFOR»
-			
-			«FOR clazz : e_pak.get_all_eenums_in_package»
-			EEnum get«clazz.name.toFirstUpper»();
+			«FOR datatype : e_pak.get_all_edata_types_in_package»
+				EDataType get«datatype.name.toFirstUpper»();
 			«ENDFOR»
 			
 			«e_pak.get_emf_e_package.name.toFirstUpper»Factory get«e_pak.get_emf_e_package.name.toFirstUpper»Factory();
@@ -93,17 +101,22 @@ class PackageInterfaceTemplate implements FileCreator{
 			interface Literals {
 				
 				«FOR clazz : e_pak.get_all_eclasses_in_package»
-				EClass «TemplateUtil.getLiteral(clazz)» = eINSTANCE.get«clazz.name»();
-				
-				«FOR feature : clazz.EStructuralFeatures»
-				«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» «TemplateUtil.getLiteral(feature).toUpperCase» = eINSTANCE.get«clazz.name»_«feature.name.toFirstUpper»();
-				
+					EClass «TemplateUtil.getLiteral(clazz)» = eINSTANCE.get«clazz.name»();
+					
+					«FOR feature : clazz.EStructuralFeatures»
+						«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» «TemplateUtil.getLiteral(feature).toUpperCase» = eINSTANCE.get«clazz.name»_«feature.name.toFirstUpper»();
+						
+					«ENDFOR»
 				«ENDFOR»
+				
+				«FOR eenum : e_pak.get_all_eenums_in_package»
+					EEnum «TemplateUtil.getLiteral(eenum)» = eINSTANCE.get«eenum.name.toFirstUpper»();
 				«ENDFOR»
 				
-				«FOR clazz : e_pak.get_all_eenums_in_package»
-				EEnum «TemplateUtil.getLiteral(clazz)» = eINSTANCE.get«clazz.name.toFirstUpper»();
+				«FOR datatype : e_pak.get_all_edata_types_in_package»
+					EDataType «TemplateUtil.getLiteral(datatype)» = eINSTANCE.get«datatype.name»();
 				«ENDFOR»
+				
 			}
 		
 		} //«e_pak.get_emf_package_class_name»
