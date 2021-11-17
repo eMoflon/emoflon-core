@@ -53,6 +53,9 @@ public class ExportedPackagesInManifestUpdater extends WorkspaceTask {
 	}
 
 	private boolean updateExportedPackages(final Manifest manifest) {
+		// Check and update basic settings
+		boolean changed = ManifestFileUpdater.setBasicProperties(manifest, project.getName());
+		
 		String exportedPackageString = (String) manifest.getMainAttributes().get(EXPORT_PACKAGE);
 		List<String> exportedPackages = new ArrayList<>();
 		if (exportedPackageString != null && !exportedPackageString.isEmpty()) {
@@ -60,9 +63,11 @@ public class ExportedPackagesInManifestUpdater extends WorkspaceTask {
 		}
 		Set<String> newPackages = new HashSet<>(getExportPackage());
 		newPackages.removeAll(exportedPackages);
-		if (newPackages.isEmpty()) {
+		if (newPackages.isEmpty() && !changed) {
 			// No update necessary
 			return false;
+		} else if(newPackages.isEmpty() && changed) {
+			return true;
 		}
 
 		exportedPackages.addAll(newPackages);
@@ -73,7 +78,7 @@ public class ExportedPackagesInManifestUpdater extends WorkspaceTask {
 		} else {
 			manifest.getMainAttributes().remove(EXPORT_PACKAGE);
 		}
-
+		
 		return true;
 	}
 
