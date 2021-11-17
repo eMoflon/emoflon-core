@@ -4,7 +4,7 @@ Bundle-Name: Unit tests for org.moflon.core.utilities
 Bundle-SymbolicName: org.moflon.core.utilities.tests;singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Bundle-Vendor: eMoflon developers
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-15
 Require-Bundle: org.moflon.core.utilities;bundle-version="2.0.0",
  org.eclipse.core.runtime;bundle-version="3.0.0",
  org.eclipse.core.resources;bundle-version="3.0.0",

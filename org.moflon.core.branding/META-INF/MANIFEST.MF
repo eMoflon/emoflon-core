@@ -4,5 +4,5 @@ Bundle-Name: eMoflon::Core branding resources (icons,...)
 Bundle-SymbolicName: org.moflon.core.branding
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: eMoflon developers
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-15
 Automatic-Module-Name: org.moflon.core.branding
