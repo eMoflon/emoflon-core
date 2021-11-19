@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: eMoflon::Core build components for Eclipse
 Bundle-SymbolicName: org.moflon.core.build
 Bundle-Version: 1.1.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-15
+Bundle-RequiredExecutionEnvironment: JavaSE-16
 Bundle-Vendor: eMoflon developers
 Require-Bundle: org.emoflon.core.dependencies;bundle-version="1.0.0",
  org.moflon.core.utilities;bundle-version="2.0.0",
