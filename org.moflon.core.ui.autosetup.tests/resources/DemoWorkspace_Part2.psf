@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<psf version="2.0">
-<provider id="org.eclipse.egit.core.GitProvider">
-<project reference="1.0,https://github.com/eMoflon/emoflon-examples.git,master,demo/org.moflon.demo.testsuite"/>
-</provider>
-<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1451897936725_9" label="eMoflon Demo Testing" name="eMoflon Demo Testing">
-<item elementID="=org.moflon.demo.doublelinkedlist.test" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
-</workingSets>
-</psf>

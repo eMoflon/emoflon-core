@@ -182,7 +182,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_ACTIVATION_POLICY,
 					"lazy", AttributeUpdatePolicy.KEEP);
 			changed |= ManifestFileUpdater.updateAttribute(manifest,
-					PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT, "JavaSE-1.8", AttributeUpdatePolicy.KEEP);
+					PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT, "JavaSE-16", AttributeUpdatePolicy.FORCE);
 			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.AUTOMATIC_MODULE_NAME,
 					pluginId, AttributeUpdatePolicy.KEEP);
 			return changed;
