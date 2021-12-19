@@ -15,7 +15,7 @@ public class ManifestPrettyPrinter {
 	// Newline character used by Manifest.write
 	public static final String MF_NL = "\r\n";
 
-	private static final int MAX_CHARACTERS_PER_LINE = 70;
+	private static final int MAX_CHARACTERS_PER_LINE = 700;
 
 	public String print(final String content) {
 		String[] lines = content.split(Pattern.quote(MF_NL));
