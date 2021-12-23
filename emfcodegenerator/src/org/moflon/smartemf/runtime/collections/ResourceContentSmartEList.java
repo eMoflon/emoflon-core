@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.notify.impl.NotificationImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -232,8 +234,18 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 	}
 
 	@Override
-	public NotificationChain basicRemove(Object object, NotificationChain notifications) {
-		remove(object);
+	public NotificationChain basicRemove(Object o, NotificationChain notifications) {
+		boolean success = super.remove(o);
+		if (success)
+			sendRemoveNotification((EObject) o);
+
+		if (o instanceof SmartObject) {
+			((SmartObject) o).setResource(null, true);
+		} else {
+//			((EObject) o).eAdapters().removeAll(resource.eAdapters());
+//			((InternalEObject) o).eSetResource(null, null);
+		}
+
 		return notifications;
 	}
 
