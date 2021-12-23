@@ -9,13 +9,26 @@ import java.util.ListIterator;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EContentsEList;
+import org.eclipse.emf.ecore.util.EContentsEList.FeatureIterator;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.moflon.smartemf.runtime.SmartObject;
 import org.moflon.smartemf.runtime.notification.SmartEMFNotification;
 
-public final class DefaultSmartEList<T> extends LinkedList<T> implements EList<T>, InternalEList<T>{
+public final class DefaultSmartEList<T> extends LinkedList<T> implements EList<T>, InternalEList<T> {
 
+	private EStructuralFeature feature = null;
+	
+	public DefaultSmartEList() {
+		
+	}
+	
+	public DefaultSmartEList(EStructuralFeature feature) {
+		this.feature = feature;
+	}
+	
 	/**
 	 * 
 	 */
@@ -70,10 +83,34 @@ public final class DefaultSmartEList<T> extends LinkedList<T> implements EList<T
 	public List<T> basicList() {
 		return this;
 	}
+	
+	@Override
+	public Iterator<T> iterator() {
+		return basicIterator();
+	}
 
 	@Override
 	public Iterator<T> basicIterator() {
-		return iterator();
+		Iterator<T> listIterator = super.iterator();
+		Iterator<T> featureIterator = new EContentsEList.FeatureIterator<T>() {
+			
+			@Override
+			public boolean hasNext() {
+				return listIterator.hasNext();
+			}
+
+			@Override
+			public T next() {
+				// TODO Auto-generated method stub
+				return listIterator.next();
+			}
+
+			@Override
+			public EStructuralFeature feature() {
+				return feature;
+			}
+		};
+		return featureIterator;
 	}
 
 	@Override
@@ -162,5 +199,4 @@ public final class DefaultSmartEList<T> extends LinkedList<T> implements EList<T
 		add(newPosition, t);
 		return t;
 	}
-
 }

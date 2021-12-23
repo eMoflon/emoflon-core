@@ -44,7 +44,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 			return super.add(element);
 		} else {
 			element.eAdapters().addAll(resource.eAdapters());
-			resetContainment(element,!resource.equals(element.eResource()));
+//			resetContainment(element,!resource.equals(element.eResource()));
 
 			((InternalEObject) element).eSetResource(resource, null);
 			boolean success = super.add(element);
