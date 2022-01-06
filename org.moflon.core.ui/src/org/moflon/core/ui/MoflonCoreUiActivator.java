@@ -1,12 +1,17 @@
 package org.moflon.core.ui;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.SimpleLayout;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.moflon.core.utilities.LogUtils;
@@ -95,6 +100,22 @@ public class MoflonCoreUiActivator extends AbstractUIPlugin {
 		} catch (MalformedURLException e) {
 			LogUtils.error(logger, e, "URL to configFile is malformed: " + loggingConfigurationFile);
 		}
+
+		SimpleLayout layout = new SimpleLayout();
+	    ConsoleAppender consoleAppender = new ConsoleAppender( layout );
+	    logger.addAppender( consoleAppender );
+	    FileAppender fileAppender;
+		try {
+			fileAppender = new FileAppender( layout, "/tmp/emoflon-dirty.log", false );
+			//logger.addAppender( fileAppender );
+		      // ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF:
+		      //logger.setLevel( Level.ALL );
+			Logger.getRootLogger().addAppender(fileAppender);
+			Logger.getRootLogger().setLevel(Level.INFO);
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
