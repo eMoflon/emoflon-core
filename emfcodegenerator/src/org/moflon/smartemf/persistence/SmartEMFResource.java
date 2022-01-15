@@ -311,4 +311,18 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 		}
 	}
 
+	public void adapterAdded(Adapter adapter) {
+		if (contents.stream().noneMatch(elt -> elt instanceof SmartObject))
+			adapter.setTarget(this);
+	}
+
+	public void adapterRemoved(Adapter adapter) {
+		if (contents.stream().noneMatch(elt -> elt instanceof SmartObject)) {
+			if (adapter instanceof Adapter.Internal)
+				((Adapter.Internal) adapter).unsetTarget(this);
+			else if (adapter.getTarget() == this)
+				adapter.setTarget(null);
+		}
+	}
+
 }

@@ -50,14 +50,19 @@ public class AdapterList implements EList<Adapter> {
 
 	@Override
 	public boolean add(Adapter e) {
-		if(!adapters.contains(e)) 
-			return adapters.add(e);
+		if(!adapters.contains(e)) {
+			boolean result = adapters.add(e);
+			resource.adapterAdded(e);
+			return result;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean remove(Object o) {
 		boolean remove = adapters.remove(o);
+		if (remove)
+			resource.adapterRemoved((Adapter) o);
 		resource.sendRemoveAdapterMessages((Adapter) o);
 		return remove;
 	}
