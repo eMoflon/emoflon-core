@@ -1,7 +1,6 @@
 package org.moflon.smartemf.runtime.collections;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -9,9 +8,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-import org.eclipse.emf.common.notify.impl.NotificationImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -48,7 +45,8 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 			element.eAdapters().addAll(resource.eAdapters());
 //			resetContainment(element,!resource.equals(element.eResource()));
 
-			((InternalEObject) element).eSetResource(resource, null);
+			NotificationChain notificationChain = ((InternalEObject) element).eSetResource(resource, null);
+			sendNotifications(notificationChain);
 			boolean success = super.add(element);
 			sendAddNotification(element);
 			return success;
@@ -131,7 +129,8 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 				((SmartObject) t).setResource(null, true);
 			} else {
 				t.eAdapters().removeAll(resource.eAdapters());
-				((InternalEObject) t).eSetResource(null, null);
+				NotificationChain notificationChain = ((InternalEObject) t).eSetResource(null, null);
+				sendNotifications(notificationChain);
 			}
 		}
 		super.clear();
@@ -161,7 +160,8 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 			((SmartObject) o).setResource(null, true);
 		} else {
 			((EObject) o).eAdapters().removeAll(resource.eAdapters());
-			((InternalEObject) o).eSetResource(null, null);
+			NotificationChain notificationChain = ((InternalEObject) o).eSetResource(null, null);
+			sendNotifications(notificationChain);
 		}
 
 		return success;
@@ -305,6 +305,12 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 		for (Adapter a : resource.eAdapters()) {
 			a.notifyChanged(SmartEMFNotification.createRemoveNotification(resource, null, obj, -1));
 		}
+	}
+
+	protected void sendNotifications(NotificationChain notificationChain) {
+		// should only be called when there are no SmartEMF objects in use
+		if (notificationChain != null)
+			notificationChain.dispatch();
 	}
 
 	@Override
