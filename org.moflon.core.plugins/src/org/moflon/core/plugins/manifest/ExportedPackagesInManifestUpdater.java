@@ -75,10 +75,10 @@ public class ExportedPackagesInManifestUpdater extends WorkspaceTask {
 			try {
 				manifestFileBuilder.processManifest(project, manifest -> {
 					boolean changed = false;
-					//if model generator is smart emf, then extra dependencies(emfcodegenerator) are necessary
+					//if model generator is smart emf, then extra dependencies(org.emoflon.smartemf) are necessary
 	
 					changed |= ManifestFileUpdater.updateDependencies(manifest, Arrays
-							.asList(new String[] {"emfcodegenerator"}));
+							.asList(new String[] {"org.emoflon.smartemf"}));
 					//exported packages are only "model" and "model".impl; so the .util package needs to be removed
 					String atr = (String) manifest.getMainAttributes().get(PluginManifestConstants.EXPORT_PACKAGE);
 					List<String> exportsList = ManifestFileUpdater
