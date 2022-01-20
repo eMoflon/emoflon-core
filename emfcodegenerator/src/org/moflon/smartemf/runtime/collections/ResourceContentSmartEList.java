@@ -75,11 +75,12 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
+		boolean success = false;
 		Collection<T> objs = new LinkedList<>(c);
 		for (T t : objs)
-			this.add(t);
+			success = this.add(t) || success;
 
-		return !c.isEmpty();
+		return success;
 	}
 
 	@Override
@@ -173,7 +174,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 
 		Collection<?> objs = new LinkedList<>(c);
 		for (Object t : objs)
-			success = success || this.remove(t);
+			success =  this.remove(t) || success;
 
 		return success;
 	}
