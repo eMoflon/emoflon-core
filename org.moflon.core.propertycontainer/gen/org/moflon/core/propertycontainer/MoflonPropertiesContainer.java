@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getAdditionalUsedGenPackages <em>Additional Used Gen Packages</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getDescription <em>Description</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getProjectName <em>Project Name</em>}</li>
- *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getUsedCodeGen <em>Used Code Gen</em>}</li>
+ *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getCodeGenerator <em>Code Generator</em>}</li>
  * </ul>
  *
  * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer()
@@ -204,28 +204,25 @@ public interface MoflonPropertiesContainer extends EObject {
 	void setProjectName(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Used Code Gen</b></em>' attribute.
-	 * The literals are from the enumeration {@link org.moflon.core.propertycontainer.UsedCodeGen}.
+	 * Returns the value of the '<em><b>Code Generator</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Used Code Gen</em>' attribute.
-	 * @see org.moflon.core.propertycontainer.UsedCodeGen
-	 * @see #setUsedCodeGen(UsedCodeGen)
-	 * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer_UsedCodeGen()
-	 * @model
+	 * @return the value of the '<em>Code Generator</em>' containment reference.
+	 * @see #setCodeGenerator(CodeGenerator)
+	 * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer_CodeGenerator()
+	 * @model containment="true" required="true"
 	 * @generated
 	 */
-	UsedCodeGen getUsedCodeGen();
+	CodeGenerator getCodeGenerator();
 
 	/**
-	 * Sets the value of the '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getUsedCodeGen <em>Used Code Gen</em>}' attribute.
+	 * Sets the value of the '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getCodeGenerator <em>Code Generator</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Used Code Gen</em>' attribute.
-	 * @see org.moflon.core.propertycontainer.UsedCodeGen
-	 * @see #getUsedCodeGen()
+	 * @param value the new value of the '<em>Code Generator</em>' containment reference.
+	 * @see #getCodeGenerator()
 	 * @generated
 	 */
-	void setUsedCodeGen(UsedCodeGen value);
+	void setCodeGenerator(CodeGenerator value);
 
 } // MoflonPropertiesContainer

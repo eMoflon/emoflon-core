@@ -122,6 +122,11 @@ public class PropertycontainerAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
+		public Adapter caseCodeGenerator(CodeGenerator object) {
+			return createCodeGeneratorAdapter();
+		}
+
+		@Override
 		public Adapter defaultCase(EObject object) {
 			return createEObjectAdapter();
 		}
@@ -291,6 +296,20 @@ public class PropertycontainerAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createMetaModelProjectAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.moflon.core.propertycontainer.CodeGenerator <em>Code Generator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.moflon.core.propertycontainer.CodeGenerator
+	 * @generated
+	 */
+	public Adapter createCodeGeneratorAdapter() {
 		return null;
 	}
 

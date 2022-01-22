@@ -121,6 +121,15 @@ public interface PropertycontainerFactory extends EFactory {
 	MetaModelProject createMetaModelProject();
 
 	/**
+	 * Returns a new object of class '<em>Code Generator</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Code Generator</em>'.
+	 * @generated
+	 */
+	CodeGenerator createCodeGenerator();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

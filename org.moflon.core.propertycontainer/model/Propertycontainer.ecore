@@ -56,7 +56,8 @@
         defaultValueLiteral="[Properties to configure code generation]"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="projectName" ordered="false"
         lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="usedCodeGen" eType="#//UsedCodeGen"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="codeGenerator" lowerBound="1"
+        eType="#//CodeGenerator" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ReplaceGenModel">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="bool" ordered="false" lowerBound="1"
@@ -93,5 +94,10 @@
   <eClassifiers xsi:type="ecore:EEnum" name="UsedCodeGen">
     <eLiterals name="EMF"/>
     <eLiterals name="SMART_EMF" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CodeGenerator">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="generator" eType="#//UsedCodeGen"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="enforced" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="false"/>
   </eClassifiers>
 </ecore:EPackage>

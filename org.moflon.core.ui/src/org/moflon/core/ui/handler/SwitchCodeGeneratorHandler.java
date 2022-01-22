@@ -10,6 +10,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.text.ITextSelection;
@@ -19,6 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
+import org.moflon.core.propertycontainer.PropertycontainerFactory;
 import org.moflon.core.propertycontainer.UsedCodeGen;
 import org.moflon.core.ui.AbstractCommandHandler;
 
@@ -36,13 +38,17 @@ public class SwitchCodeGeneratorHandler extends AbstractCommandHandler {
 
 		Collection<Object> selections = extractFromSelection(event);
 		for (Object o : selections) {
-			if (o instanceof IJavaProject) {
-				IJavaProject project = (IJavaProject) o;
-				setProperties(project.getProject(), choosedCodeGen);
+			if (o instanceof IJavaProject project) {
+				try {
+					if(project.getProject().hasNature("org.moflon.emf.build.MoflonEmfNatur") || project.getProject().hasNature("org.emoflon.ibex.tgg.ide.nature")) {
+						setProperties(project.getProject(), choosedCodeGen);						
+					}
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
 			}
 
-			if (o instanceof IFile) {
-				IFile f = (IFile) o;
+			if (o instanceof IFile f) {
 				setProperties(f.getProject(), choosedCodeGen);
 			}
 		}
@@ -54,7 +60,15 @@ public class SwitchCodeGeneratorHandler extends AbstractCommandHandler {
 	private void setProperties(IProject project, UsedCodeGen codeGen) {
 		MoflonPropertiesContainerHelper helper = new MoflonPropertiesContainerHelper(project, new NullProgressMonitor());
 		MoflonPropertiesContainer container = helper.load();
-		container.setUsedCodeGen(codeGen);
+		if(container.getCodeGenerator() == null) {
+			container.setCodeGenerator(PropertycontainerFactory.eINSTANCE.createCodeGenerator());
+			container.getCodeGenerator().setGenerator(codeGen);
+		}
+		
+		// if enforced is true => do not override it
+		if(!container.getCodeGenerator().isEnforced()) {
+			container.getCodeGenerator().setGenerator(codeGen);;			
+		}
 		helper.save();
 	}
 

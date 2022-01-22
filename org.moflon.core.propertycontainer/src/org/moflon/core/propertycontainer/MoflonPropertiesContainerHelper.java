@@ -94,7 +94,8 @@ public class MoflonPropertiesContainerHelper {
 
 	private MoflonPropertiesContainer createDefaultPropertiesContainer(final IProject project) {
 		container = PropertycontainerFactory.eINSTANCE.createMoflonPropertiesContainer();
-		container.setUsedCodeGen(UsedCodeGen.SMART_EMF);
+		container.setCodeGenerator(PropertycontainerFactory.eINSTANCE.createCodeGenerator());
+		container.getCodeGenerator().setGenerator(UsedCodeGen.SMART_EMF);
 		container.setProjectName(project.getName());
 		container.setReplaceGenModel(PropertycontainerFactory.eINSTANCE.createReplaceGenModel());
 		return container;

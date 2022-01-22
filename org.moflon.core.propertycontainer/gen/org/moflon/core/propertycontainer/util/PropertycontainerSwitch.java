@@ -153,6 +153,13 @@ public class PropertycontainerSwitch<T> extends Switch<T> {
 				result = defaultCase(theEObject);
 			return result;
 		}
+		case PropertycontainerPackage.CODE_GENERATOR: {
+			CodeGenerator codeGenerator = (CodeGenerator) theEObject;
+			T result = caseCodeGenerator(codeGenerator);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
 		default:
 			return defaultCase(theEObject);
 		}
@@ -320,6 +327,21 @@ public class PropertycontainerSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseMetaModelProject(MetaModelProject object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Code Generator</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Code Generator</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseCodeGenerator(CodeGenerator object) {
 		return null;
 	}
 

@@ -489,13 +489,13 @@ public interface PropertycontainerPackage extends EPackage {
 	int MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME = 9;
 
 	/**
-	 * The feature id for the '<em><b>Used Code Gen</b></em>' attribute.
+	 * The feature id for the '<em><b>Code Generator</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER__USED_CODE_GEN = 10;
+	int MOFLON_PROPERTIES_CONTAINER__CODE_GENERATOR = 10;
 
 	/**
 	 * The number of structural features of the '<em>Moflon Properties Container</em>' class.
@@ -654,6 +654,52 @@ public interface PropertycontainerPackage extends EPackage {
 	int META_MODEL_PROJECT_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.moflon.core.propertycontainer.impl.CodeGeneratorImpl <em>Code Generator</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.moflon.core.propertycontainer.impl.CodeGeneratorImpl
+	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getCodeGenerator()
+	 * @generated
+	 */
+	int CODE_GENERATOR = 11;
+
+	/**
+	 * The feature id for the '<em><b>Generator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODE_GENERATOR__GENERATOR = 0;
+
+	/**
+	 * The feature id for the '<em><b>Enforced</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODE_GENERATOR__ENFORCED = 1;
+
+	/**
+	 * The number of structural features of the '<em>Code Generator</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODE_GENERATOR_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Code Generator</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODE_GENERATOR_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link org.moflon.core.propertycontainer.BuildMode <em>Build Mode</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -661,7 +707,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getBuildMode()
 	 * @generated
 	 */
-	int BUILD_MODE = 11;
+	int BUILD_MODE = 12;
 
 	/**
 	 * The meta object id for the '{@link org.moflon.core.propertycontainer.UsedCodeGen <em>Used Code Gen</em>}' enum.
@@ -671,7 +717,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getUsedCodeGen()
 	 * @generated
 	 */
-	int USED_CODE_GEN = 12;
+	int USED_CODE_GEN = 13;
 
 	/**
 	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.Dependencies <em>Dependencies</em>}'.
@@ -931,15 +977,15 @@ public interface PropertycontainerPackage extends EPackage {
 	EAttribute getMoflonPropertiesContainer_ProjectName();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getUsedCodeGen <em>Used Code Gen</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getCodeGenerator <em>Code Generator</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Used Code Gen</em>'.
-	 * @see org.moflon.core.propertycontainer.MoflonPropertiesContainer#getUsedCodeGen()
+	 * @return the meta object for the containment reference '<em>Code Generator</em>'.
+	 * @see org.moflon.core.propertycontainer.MoflonPropertiesContainer#getCodeGenerator()
 	 * @see #getMoflonPropertiesContainer()
 	 * @generated
 	 */
-	EAttribute getMoflonPropertiesContainer_UsedCodeGen();
+	EReference getMoflonPropertiesContainer_CodeGenerator();
 
 	/**
 	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.ReplaceGenModel <em>Replace Gen Model</em>}'.
@@ -1057,6 +1103,38 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getMetaModelProject_MetaModelProjectName();
+
+	/**
+	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.CodeGenerator <em>Code Generator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Code Generator</em>'.
+	 * @see org.moflon.core.propertycontainer.CodeGenerator
+	 * @generated
+	 */
+	EClass getCodeGenerator();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.moflon.core.propertycontainer.CodeGenerator#getGenerator <em>Generator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Generator</em>'.
+	 * @see org.moflon.core.propertycontainer.CodeGenerator#getGenerator()
+	 * @see #getCodeGenerator()
+	 * @generated
+	 */
+	EAttribute getCodeGenerator_Generator();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.moflon.core.propertycontainer.CodeGenerator#isEnforced <em>Enforced</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Enforced</em>'.
+	 * @see org.moflon.core.propertycontainer.CodeGenerator#isEnforced()
+	 * @see #getCodeGenerator()
+	 * @generated
+	 */
+	EAttribute getCodeGenerator_Enforced();
 
 	/**
 	 * Returns the meta object for enum '{@link org.moflon.core.propertycontainer.BuildMode <em>Build Mode</em>}'.
@@ -1314,12 +1392,12 @@ public interface PropertycontainerPackage extends EPackage {
 		EAttribute MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME = eINSTANCE.getMoflonPropertiesContainer_ProjectName();
 
 		/**
-		 * The meta object literal for the '<em><b>Used Code Gen</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Code Generator</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute MOFLON_PROPERTIES_CONTAINER__USED_CODE_GEN = eINSTANCE.getMoflonPropertiesContainer_UsedCodeGen();
+		EReference MOFLON_PROPERTIES_CONTAINER__CODE_GENERATOR = eINSTANCE.getMoflonPropertiesContainer_CodeGenerator();
 
 		/**
 		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.impl.ReplaceGenModelImpl <em>Replace Gen Model</em>}' class.
@@ -1416,6 +1494,32 @@ public interface PropertycontainerPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute META_MODEL_PROJECT__META_MODEL_PROJECT_NAME = eINSTANCE.getMetaModelProject_MetaModelProjectName();
+
+		/**
+		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.impl.CodeGeneratorImpl <em>Code Generator</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.moflon.core.propertycontainer.impl.CodeGeneratorImpl
+		 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getCodeGenerator()
+		 * @generated
+		 */
+		EClass CODE_GENERATOR = eINSTANCE.getCodeGenerator();
+
+		/**
+		 * The meta object literal for the '<em><b>Generator</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODE_GENERATOR__GENERATOR = eINSTANCE.getCodeGenerator_Generator();
+
+		/**
+		 * The meta object literal for the '<em><b>Enforced</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODE_GENERATOR__ENFORCED = eINSTANCE.getCodeGenerator_Enforced();
 
 		/**
 		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.BuildMode <em>Build Mode</em>}' enum.

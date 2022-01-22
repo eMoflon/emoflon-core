@@ -79,6 +79,8 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 			return createAdditionalDependencies();
 		case PropertycontainerPackage.META_MODEL_PROJECT:
 			return createMetaModelProject();
+		case PropertycontainerPackage.CODE_GENERATOR:
+			return createCodeGenerator();
 		default:
 			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -237,6 +239,17 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	public MetaModelProject createMetaModelProject() {
 		MetaModelProjectImpl metaModelProject = new MetaModelProjectImpl();
 		return metaModelProject;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public CodeGenerator createCodeGenerator() {
+		CodeGeneratorImpl codeGenerator = new CodeGeneratorImpl();
+		return codeGenerator;
 	}
 
 	/**

@@ -32,6 +32,7 @@ import org.emoflon.smartemf.SmartEMFGenerator;
 import org.moflon.core.preferences.EMoflonPreferencesStorage;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
+import org.moflon.core.propertycontainer.PropertycontainerFactory;
 import org.moflon.core.utilities.LogUtils;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.emf.codegen.CodeGenerator;
@@ -92,8 +93,12 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 			
 			MoflonPropertiesContainerHelper helper = new MoflonPropertiesContainerHelper(getProject(), new NullProgressMonitor());
 			MoflonPropertiesContainer container = helper.load();
+			if(container.getCodeGenerator() == null) {
+				container.setCodeGenerator(PropertycontainerFactory.eINSTANCE.createCodeGenerator());
+			}
+			
 			// choose metamodel code generator
-			switch(container.getUsedCodeGen()) {
+			switch(container.getCodeGenerator().getGenerator()) {
 				case EMF: {
 					//old emf model creation
 					final CodeGenerator codeGenerator = new CodeGenerator();
