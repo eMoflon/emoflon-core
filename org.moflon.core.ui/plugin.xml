@@ -377,16 +377,6 @@
                       <or>
                          <adapt
                                type="org.eclipse.core.resources.IProject">
-                            <or>
-                               <test
-                                     property="org.eclipse.core.resources.projectNature"
-                                     value="org.moflon.emf.build.MoflonEmfNature">
-                               </test>
-                               <test
-                                     property="org.eclipse.core.resources.projectNature"
-                                     value="org.emoflon.ibex.tgg.ide.nature">
-                               </test>
-                            </or>
                          </adapt>
                       </or>
                    </iterate>
@@ -409,16 +399,6 @@
                       <or>
                          <adapt
                                type="org.eclipse.core.resources.IProject">
-                            <or>
-                               <test
-                                     property="org.eclipse.core.resources.projectNature"
-                                     value="org.moflon.emf.build.MoflonEmfNature">
-                               </test>
-                               <test
-                                     property="org.eclipse.core.resources.projectNature"
-                                     value="org.emoflon.ibex.tgg.ide.nature">
-                               </test>
-                            </or>
                          </adapt>
                       </or>
                    </iterate>
@@ -433,16 +413,6 @@
                    <or>
                       <adapt
                             type="org.eclipse.core.resources.IProject">
-                         <or>
-                            <test
-                                  property="org.eclipse.core.resources.projectNature"
-                                  value="org.moflon.emf.build.MoflonEmfNature">
-                            </test>
-                            <test
-                                  property="org.eclipse.core.resources.projectNature"
-                                  value="org.emoflon.ibex.tgg.ide.nature">
-                            </test>
-                         </or>
                       </adapt>
                    </or>
                 </iterate>
