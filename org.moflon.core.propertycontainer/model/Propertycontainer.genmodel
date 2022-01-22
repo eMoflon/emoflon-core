@@ -13,6 +13,10 @@
       <genEnumLiterals ecoreEnumLiteral="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//BuildMode/FORWARD"/>
       <genEnumLiterals ecoreEnumLiteral="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//BuildMode/FORWARD_AND_BACKWARD"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//UsedCodeGen">
+      <genEnumLiterals ecoreEnumLiteral="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//UsedCodeGen/EMF"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//UsedCodeGen/SMART_EMF"/>
+    </genEnums>
     <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//Dependencies">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//Dependencies/description"/>
     </genClasses>
@@ -43,6 +47,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/additionalUsedGenPackages"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/description"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/projectName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//MoflonPropertiesContainer/usedCodeGen"/>
     </genClasses>
     <genClasses ecoreClass="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//ReplaceGenModel">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore#//ReplaceGenModel/bool"/>

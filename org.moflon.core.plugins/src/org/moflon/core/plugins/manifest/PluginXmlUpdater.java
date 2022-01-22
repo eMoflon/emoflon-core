@@ -173,7 +173,10 @@ public class PluginXmlUpdater extends WorkspaceTask {
 
 	private static List<GeneratedPackageEntry> extractGeneratedPackageEntries(final IProject project,
 			final GenModel genmodel) {
-		String genmodelFile = MoflonConventions.getDefaultPathToGenModelInProject(project.getName());
+		String genmodelFile = getGenModelPath(genmodel);
+		if(genmodelFile == null)
+			genmodelFile = MoflonConventions.getDefaultPathToGenModelInProject(project.getName());
+		
 		final List<GeneratedPackageEntry> entries = new ArrayList<>();
 		final List<GenPackage> ePackages = genmodel.getAllGenPackagesWithClassifiers();
 		for (final GenPackage genPackage : ePackages) {
@@ -187,6 +190,15 @@ public class PluginXmlUpdater extends WorkspaceTask {
 
 	private static IFile getPluginXml(final IProject currentProject) {
 		return currentProject.getFile("plugin.xml");
+	}
+	
+	private static String getGenModelPath(GenModel genModel) {
+		Resource r = genModel.eResource();
+		if(r == null)
+			return null;
+
+		List<String> uriSegments = r.getURI().segmentsList();
+		return uriSegments.get(uriSegments.size() - 2) + "/" + uriSegments.get(uriSegments.size() - 1);
 	}
 
 	private static NodeList getGeneratedPackageExtensionPoints(final Document doc) throws XPathExpressionException {

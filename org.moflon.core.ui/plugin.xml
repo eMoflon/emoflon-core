@@ -23,7 +23,6 @@
     </definition>
     <definition id="org.moflon.ide.ui.definitions.isInGenFolder">
       <adapt type="org.eclipse.core.resources.IResource">
-        <test property="org.eclipse.core.resources.path" value="*/gen/*"/>
       </adapt>
     </definition>
     <definition id="org.moflon.ide.ui.definitions.isXmiFile">
@@ -74,6 +73,16 @@
       <with variable="activePartId">
         <equals value="org.eclipse.jdt.ui.PackageExplorer"/>
       </with>
+    </definition>
+    <definition
+          id="org.moflon.ide.ui.definitions.isGenmodelFile">
+       <adapt
+             type="org.eclipse.core.resources.IResource">
+          <test
+                property="org.eclipse.core.resources.extension"
+                value="genmodel">
+          </test>
+       </adapt>
     </definition>
   </extension>
   <extension point="org.eclipse.ui.newWizards">
@@ -149,6 +158,16 @@
            <parameter name="persisted" value="false"></parameter>
          </class>
        </state>
+    </command>
+    <command
+          defaultHandler="org.moflon.core.ui.handler.SwitchCodeGeneratorHandler"
+          id="org.moflon.ide.ui.commands.SwitchCodeGeneratorCommand"
+          name="Switch Code Generator">
+       <commandParameter
+             id="org.moflon.core.ui.codegenerator"
+             name="Code Generator"
+             optional="false">
+       </commandParameter>
     </command>
   </extension>
   <extension point="org.eclipse.ui.handlers">
@@ -336,6 +355,100 @@
              style="toggle"
              tooltip="Shows or hides the documentation for the current selection and neighborhood.">
        </command>
+    </menuContribution>
+    <menuContribution
+          allPopups="false"
+          locationURI="popup:org.moflon.ide.ui.moflon?after=moflonGroupResources">
+       <menu
+             label="Choose Code Generator for Selected Projects">
+          <command
+                commandId="org.moflon.ide.ui.commands.SwitchCodeGeneratorCommand"
+                label="EMF"
+                style="radio">
+             <parameter
+                   name="org.moflon.core.ui.codegenerator"
+                   value="EMF">
+             </parameter>
+             <visibleWhen
+                   checkEnabled="false">
+                <with
+                      variable="activeMenuSelection">
+                   <iterate>
+                      <or>
+                         <adapt
+                               type="org.eclipse.core.resources.IProject">
+                            <or>
+                               <test
+                                     property="org.eclipse.core.resources.projectNature"
+                                     value="org.moflon.emf.build.MoflonEmfNature">
+                               </test>
+                               <test
+                                     property="org.eclipse.core.resources.projectNature"
+                                     value="org.emoflon.ibex.tgg.ide.nature">
+                               </test>
+                            </or>
+                         </adapt>
+                      </or>
+                   </iterate>
+                </with>
+             </visibleWhen>
+          </command>
+          <command
+                commandId="org.moflon.ide.ui.commands.SwitchCodeGeneratorCommand"
+                label="SmartEMF"
+                style="radio">
+             <parameter
+                   name="org.moflon.core.ui.codegenerator"
+                   value="SMART_EMF">
+             </parameter>
+             <visibleWhen
+                   checkEnabled="false">
+                <with
+                      variable="activeMenuSelection">
+                   <iterate>
+                      <or>
+                         <adapt
+                               type="org.eclipse.core.resources.IProject">
+                            <or>
+                               <test
+                                     property="org.eclipse.core.resources.projectNature"
+                                     value="org.moflon.emf.build.MoflonEmfNature">
+                               </test>
+                               <test
+                                     property="org.eclipse.core.resources.projectNature"
+                                     value="org.emoflon.ibex.tgg.ide.nature">
+                               </test>
+                            </or>
+                         </adapt>
+                      </or>
+                   </iterate>
+                </with>
+             </visibleWhen>
+          </command>
+          <visibleWhen
+                checkEnabled="false">
+             <with
+                   variable="activeMenuSelection">
+                <iterate>
+                   <or>
+                      <adapt
+                            type="org.eclipse.core.resources.IProject">
+                         <or>
+                            <test
+                                  property="org.eclipse.core.resources.projectNature"
+                                  value="org.moflon.emf.build.MoflonEmfNature">
+                            </test>
+                            <test
+                                  property="org.eclipse.core.resources.projectNature"
+                                  value="org.emoflon.ibex.tgg.ide.nature">
+                            </test>
+                         </or>
+                      </adapt>
+                   </or>
+                </iterate>
+             </with>
+          </visibleWhen>
+       </menu>
     </menuContribution>
   </extension>
   <extension point="org.eclipse.ui.bindings">

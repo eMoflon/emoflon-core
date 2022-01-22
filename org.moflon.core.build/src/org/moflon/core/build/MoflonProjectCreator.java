@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -147,10 +148,9 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 					WorkspaceHelper.getBinFolder(project).getFullPath(), true, subMon.split(1));
 
 			// (7) Create Moflon properties file (moflon.properties.xmi)
-			final MoflonPropertiesContainer moflonProperties = MoflonPropertiesContainerHelper
-					.loadOrCreatePropertiesContainer(getProject(),
-							MoflonConventions.getDefaultMoflonPropertiesFile(getProject()));
-			MoflonPropertiesContainerHelper.save(moflonProperties, subMon.split(1));
+			MoflonPropertiesContainerHelper moflonPropertiesContainerHelper = new MoflonPropertiesContainerHelper(getProject(), new NullProgressMonitor());
+			final MoflonPropertiesContainer moflonProperties = moflonPropertiesContainerHelper.load();
+			moflonPropertiesContainerHelper.save();
 		}
 	}
 

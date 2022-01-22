@@ -40,7 +40,6 @@ public class ManifestPrettyPrinter {
 					sb.append(MF_NL);
 					sb.append(Arrays.asList(dependencies).subList(1, dependencies.length).stream()
 							.map(ManifestPrettyPrinter::normalizeIndentedLine)
-							.map(ManifestPrettyPrinter::shortenToMaximumWidth)
 							.collect(Collectors.joining("," + MF_NL)));
 				}
 			} else {

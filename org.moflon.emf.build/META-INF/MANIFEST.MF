@@ -7,6 +7,7 @@ Bundle-Vendor: eMoflon developers
 Bundle-RequiredExecutionEnvironment: JavaSE-16
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.0.0",
  org.eclipse.core.resources;bundle-version="3.0.0";visibility:=reexport,
+ org.emoflon.smartemf;bundle-version="1.0.0",
  org.emoflon.core.dependencies;bundle-version="1.0.0";visibility:=reexport,
  org.moflon.core.build;bundle-version="1.0.0",
  org.moflon.core.utilities;bundle-version="2.0.0",

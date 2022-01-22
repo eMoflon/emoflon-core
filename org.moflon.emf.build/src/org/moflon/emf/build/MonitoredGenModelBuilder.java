@@ -53,9 +53,9 @@ public final class MonitoredGenModelBuilder implements ITask {
 		subMon.worked(5);
 
 		if (this.moflonProperties == null) {
-			this.moflonProperties = MoflonPropertiesContainerHelper.load(project, subMon.split(5));
+			this.moflonProperties = new MoflonPropertiesContainerHelper(project, subMon.split(5)).load();
 		}
-
+			
 		subMon.setWorkRemaining(90);
 		if (subMon.isCanceled()) {
 			return Status.CANCEL_STATUS;
@@ -80,7 +80,7 @@ public final class MonitoredGenModelBuilder implements ITask {
 		final boolean isNewGenModelConstructed = genModelBuilder.isNewGenModelRequired(genModelURI);
 		try {
 			this.genModel = genModelBuilder.buildGenModel(genModelURI);
-		} catch (final RuntimeException e) {
+		} catch (final Exception e) {
 			return handleExceptionDuringGenmodelProcessing(e);
 		}
 
@@ -168,7 +168,7 @@ public final class MonitoredGenModelBuilder implements ITask {
 	}
 
 	public final GenModel getGenModel() {
-		return genModel;
+ 		return genModel;
 	}
 
 	@Override

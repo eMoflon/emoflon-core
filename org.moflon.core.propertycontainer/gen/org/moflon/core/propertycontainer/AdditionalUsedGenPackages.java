@@ -2,8 +2,6 @@
  */
 package org.moflon.core.propertycontainer;
 
-import org.eclipse.emf.ecore.EObject;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Additional Used Gen Packages</b></em>'.
@@ -20,7 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface AdditionalUsedGenPackages extends EObject, PropertiesValue {
+public interface AdditionalUsedGenPackages extends PropertiesValue {
 	/**
 	 * Returns the value of the '<em><b>Description</b></em>' attribute.
 	 * The default value is <code>"[Used to add additional GenPackages for code generation]"</code>.

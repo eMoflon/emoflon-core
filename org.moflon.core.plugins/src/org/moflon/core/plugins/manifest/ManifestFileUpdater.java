@@ -439,4 +439,19 @@ public class ManifestFileUpdater {
 		}
 		return updated;
 	}
+	
+	/**
+	 * Changes the Export-Package property of the manifest. Can also remove exports
+	 * 
+	 * @param manifest
+	 *            the manifest to update
+	 * @param exports
+	 *            the exports to add
+	 * @return whether the property was changed
+	 */
+	public static boolean changeExports(final Manifest manifest, final List<String> exports) {
+			manifest.getMainAttributes().put(PluginManifestConstants.EXPORT_PACKAGE,
+					exports.stream().filter(e -> !e.isEmpty()).collect(Collectors.joining(",")));
+		return true;
+	}
 }

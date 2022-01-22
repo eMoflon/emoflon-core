@@ -3,21 +3,18 @@
 package org.moflon.core.propertycontainer.impl;
 
 import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
+
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.InternalEObject;
 
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
-
 import org.moflon.core.propertycontainer.AdditionalDependencies;
 import org.moflon.core.propertycontainer.AdditionalUsedGenPackages;
 import org.moflon.core.propertycontainer.Dependencies;
@@ -28,6 +25,7 @@ import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.PropertycontainerPackage;
 import org.moflon.core.propertycontainer.ReplaceGenModel;
 import org.moflon.core.propertycontainer.TGGBuildMode;
+import org.moflon.core.propertycontainer.UsedCodeGen;
 
 /**
  * <!-- begin-user-doc -->
@@ -47,6 +45,7 @@ import org.moflon.core.propertycontainer.TGGBuildMode;
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getAdditionalUsedGenPackages <em>Additional Used Gen Packages</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getProjectName <em>Project Name</em>}</li>
+ *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getUsedCodeGen <em>Used Code Gen</em>}</li>
  * </ul>
  *
  * @generated
@@ -171,6 +170,26 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	 * @ordered
 	 */
 	protected String projectName = PROJECT_NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getUsedCodeGen() <em>Used Code Gen</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getUsedCodeGen()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final UsedCodeGen USED_CODE_GEN_EDEFAULT = UsedCodeGen.EMF;
+
+	/**
+	 * The cached value of the '{@link #getUsedCodeGen() <em>Used Code Gen</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getUsedCodeGen()
+	 * @generated
+	 * @ordered
+	 */
+	protected UsedCodeGen usedCodeGen = USED_CODE_GEN_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -480,6 +499,30 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	 * @generated
 	 */
 	@Override
+	public UsedCodeGen getUsedCodeGen() {
+		return usedCodeGen;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setUsedCodeGen(UsedCodeGen newUsedCodeGen) {
+		UsedCodeGen oldUsedCodeGen = usedCodeGen;
+		usedCodeGen = newUsedCodeGen == null ? USED_CODE_GEN_EDEFAULT : newUsedCodeGen;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET,
+					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__USED_CODE_GEN, oldUsedCodeGen, usedCodeGen));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__DEPENDENCIES:
@@ -530,6 +573,8 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 			return getDescription();
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME:
 			return getProjectName();
+		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__USED_CODE_GEN:
+			return getUsedCodeGen();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -578,6 +623,9 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME:
 			setProjectName((String) newValue);
 			return;
+		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__USED_CODE_GEN:
+			setUsedCodeGen((UsedCodeGen) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -620,6 +668,9 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME:
 			setProjectName(PROJECT_NAME_EDEFAULT);
 			return;
+		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__USED_CODE_GEN:
+			setUsedCodeGen(USED_CODE_GEN_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -652,6 +703,8 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 			return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME:
 			return PROJECT_NAME_EDEFAULT == null ? projectName != null : !PROJECT_NAME_EDEFAULT.equals(projectName);
+		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__USED_CODE_GEN:
+			return usedCodeGen != USED_CODE_GEN_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -671,6 +724,8 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		result.append(description);
 		result.append(", projectName: ");
 		result.append(projectName);
+		result.append(", usedCodeGen: ");
+		result.append(usedCodeGen);
 		result.append(')');
 		return result.toString();
 	}
