@@ -40,7 +40,7 @@ public class SwitchCodeGeneratorHandler extends AbstractCommandHandler {
 		for (Object o : selections) {
 			if (o instanceof IJavaProject project) {
 				try {
-					if(project.getProject().hasNature("org.moflon.emf.build.MoflonEmfNatur") || project.getProject().hasNature("org.emoflon.ibex.tgg.ide.nature")) {
+					if(project.getProject().hasNature("org.moflon.emf.build.MoflonEmfNature") || project.getProject().hasNature("org.emoflon.ibex.tgg.ide.nature")) {
 						setProperties(project.getProject(), choosedCodeGen);						
 					}
 				} catch (CoreException e) {
