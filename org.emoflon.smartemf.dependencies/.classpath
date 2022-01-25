@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-15"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="jdom-2.0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="jdom-2.0.6-contrib.jar"/>
+	<classpathentry exported="true" kind="lib" path="jdom-2.0.6-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="jdom-2.0.6-junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="jdom-2.0.6-sources.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
