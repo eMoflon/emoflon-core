@@ -5,7 +5,7 @@
         <runtime>
             <run class="org.moflon.emf.build.MoflonEmfNature"/>
         </runtime>
-        <builder id="org.moflon.emf.build.MoflonEmfBuilder">
+        <builder id="org.moflon.emf.build.MoflonEMFBuilder">
         </builder>
         <one-of-nature id="org.moflon.core.ui.runtime.natures.MoflonNature">
         </one-of-nature>
@@ -17,7 +17,7 @@
     </extension>
     <extension id="org.moflon.emf.build.MoflonEmfBuilder" name="eMoflon EMF Builder" point="org.eclipse.core.resources.builders">
         <builder isConfigurable="true">
-            <run class="org.moflon.emf.build.MoflonEmfBuilder"/>
+            <run class="org.moflon.emf.build.MoflonEMFBuilder"/>
         </builder>
     </extension>
 </plugin>
