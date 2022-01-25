@@ -4,7 +4,7 @@ Bundle-Name: SmartEMF
 Bundle-SymbolicName: org.emoflon.smartemf
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: smartemf
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-16
 Require-Bundle: org.eclipse.emf.ecore.xmi;bundle-version="2.16.0",
  org.emoflon.smartemf.dependencies;bundle-version="1.0.0";visibility:=reexport,
  org.eclipse.emf.ecore;bundle-version="2.23.0";visibility:=reexport,
