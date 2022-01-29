@@ -1,46 +1,37 @@
-package org.emoflon.smartemf.creators.templates
+package org.emoflon.smartemf.templates
 
-import java.io.File
-import java.io.FileWriter
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
 import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EEnumLiteral
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EcorePackage
-import org.emoflon.smartemf.creators.FileCreator
-import org.emoflon.smartemf.creators.templates.util.CodeFormattingUtil
-import org.emoflon.smartemf.creators.templates.util.TemplateUtil
+import org.emoflon.smartemf.templates.util.TemplateUtil
 
-class SmartEMFObjectTemplate implements FileCreator {
+class SmartEMFObjectTemplate implements CodeTemplate{
 	
-	public val EClass eClass
+	var GenPackage genPack
+	var EClass eClass
+	var String path
 	
-	/**
-	 * stores the fq-file name to which this interface shall be written to.
-	 */
-	var String file_path
-	
-	/**
-	 * stores if this Creator was properly initialized
-	 */
-	var boolean is_initialized = false
-	
-	new(EClass eClass) {
+	new(GenPackage genPack, EClass eClass, String path) {
+		this.genPack = genPack
 		this.eClass = eClass
+		this.path = path
 	}
-
-	def String createCode() {
+	
+	override createCode() {
 		val className = eClass.name
 		val ePackage = eClass.EPackage
 		val packageClassName = ePackage.name.toFirstUpper + "Package"
 		val FQPackagePath = TemplateUtil.getFQName(ePackage)
 		
-		return '''
-		package «FQPackagePath».impl;
+		var code = '''
+		package «TemplateUtil.getImplPrefix(genPack)»;
 		
-		«FOR packages : getImportPackages()»
-		import «TemplateUtil.getFQName(packages)».«packages.name.toFirstUpper»Package;
+		«FOR importedGenPack : TemplateUtil.getImportPackages(eClass)»
+		import «TemplateUtil.getPackageClassName(importedGenPack)»;
 		«ENDFOR»
 		
 		import org.emoflon.smartemf.runtime.*;
@@ -71,7 +62,7 @@ class SmartEMFObjectTemplate implements FileCreator {
 		    «FOR feature : eClass.EAllStructuralFeatures»
 		    
 		    @Override
-		    public «TemplateUtil.getFieldTypeName(feature)» «getOrIs(feature)»«feature.name.toFirstUpper»() {
+		    public «TemplateUtil.getFieldTypeName(feature)» «TemplateUtil.getOrIs(feature)»«feature.name.toFirstUpper»() {
 		    	return this.«TemplateUtil.getValidName(feature.name)»;
 		    }
 		    «IF !feature.isUnsettable»
@@ -131,14 +122,14 @@ class SmartEMFObjectTemplate implements FileCreator {
 		
 		    @Override
 		    public String toString(){
-				return «getToString()»
+				return «getToString(eClass)»
 		    }
 		
 		 	@Override
 		    public Object eGet(EStructuralFeature eFeature){
 		    	«FOR feature : eClass.EAllStructuralFeatures»
 		    	 if («TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».equals(eFeature))
-		    	 	return «getOrIs(feature)»«feature.name.toFirstUpper»();
+		    	 	return «TemplateUtil.getOrIs(feature)»«feature.name.toFirstUpper»();
 		    	«ENDFOR»
 		    	return eDynamicGet(eFeature);
 		    }
@@ -231,9 +222,10 @@ class SmartEMFObjectTemplate implements FileCreator {
 	    	}
 		}
 		'''
+		TemplateUtil.writeToFile(path + TemplateUtil.getFQImplName(genPack, eClass) + ".java", code);
 	}
 	
-	def getToString() {
+	def getToString(EClass eClass) {
 		var EAttribute nameAttribute = null
 		var EAttribute firstStringAttribute = null
 		for(attr : eClass.EAllAttributes) {
@@ -290,27 +282,6 @@ class SmartEMFObjectTemplate implements FileCreator {
 			return '''"«value»"'''
 			
 		return value;
-	}
-	
-	def getOrIs(EStructuralFeature feature) {
-		if(feature.EType.equals(EcorePackage.Literals.EBOOLEAN))
-			return "is"
-		else
-			return "get"
-	}
-	
-	def getImportPackages() {
-		var packages = eClass.EAllSuperTypes.map[c|c.EPackage].toSet
-		packages.add(eClass.EPackage)
-		return packages
-	}
-	
-	def getImportTypes() {
-		// estructural feature types
-		val types = eClass.EAllStructuralFeatures.map[c|c.EType].filter[c|!c.EPackage.equals(EcorePackage.eINSTANCE)].toSet
-		// add this eclass
-		types.add(eClass)
-		return types
 	}
 	
 	def getSetterMethod(EClass eClass, EStructuralFeature feature, String FQPackagePath, String packageClassName, boolean inverse) {
@@ -396,26 +367,5 @@ class SmartEMFObjectTemplate implements FileCreator {
         	«ENDIF»
         	'''
 		}
-	}
-	
-	def getPackage() {
-		return eClass.EPackage
-	}
-	
-	override initialize_creator(String fq_file_path) {
-		file_path = fq_file_path
-		is_initialized = true;
-	}
-	
-	override write_to_file() {
-		if(!is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
-			
-//		var class_file = new File('''«path»/impl/«eClass.name»Impl.java''')
-		var class_file = new File(file_path)
-		class_file.getParentFile().mkdirs()
-		var class_fw = new FileWriter(class_file , false)
-		class_fw.write(CodeFormattingUtil.format(createCode));
-		class_fw.close
 	}
 }

@@ -1,18 +1,26 @@
-package org.emoflon.smartemf.creators.templates.util
+package org.emoflon.smartemf.templates.util
 
+import java.io.File
+import java.io.FileWriter
+import java.util.Collections
 import java.util.HashMap
+import java.util.HashSet
 import java.util.LinkedList
 import java.util.Map
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
 import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.EAttribute
+import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EClassifier
+import org.eclipse.emf.ecore.EDataType
+import org.eclipse.emf.ecore.EEnum
 import org.eclipse.emf.ecore.ENamedElement
 import org.eclipse.emf.ecore.EPackage
+import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EStructuralFeature
-import org.emoflon.smartemf.creators.FileCreator
+import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import java.util.Collections
-import org.eclipse.emf.ecore.EAttribute
 
 class TemplateUtil {
 	
@@ -162,6 +170,10 @@ class TemplateUtil {
 		return null
 	}
 	
+	static def getFQName(GenPackage genPackage) {
+		return getFQName(genPackage.getEcorePackage)
+	}
+	
 	static def getFQName(EPackage ePackage) {
 		if(ePackage.EClassifiers.get(0).instanceClassName !== null) {
 			val someClazzFQN = getFQName(ePackage.EClassifiers.get(0))
@@ -200,6 +212,10 @@ class TemplateUtil {
 		return pkg.name.toFirstUpper + "Package"
 	}
 	
+	static def getPackageClassName(GenPackage genPackage) {
+		return getPackageClassName(genPackage.getEcorePackage)
+	}
+	
 	static def getPackageClassName(EClassifier c) {
 		return getPackageClassName(c.EPackage)
 	}
@@ -208,11 +224,140 @@ class TemplateUtil {
 		return getPackageClassName(f.eContainer as EClassifier)
 	}
 	
+	def static getInterfacePrefix(GenPackage genPackage) {
+		var prefix = ""
+		if(genPackage.basePackage.isEmpty) 
+			prefix += genPackage.basePackage + "." 
+		prefix += genPackage.getEcorePackage.name + "."
+		if(genPackage.interfacePackageSuffix.isEmpty)
+			prefix += "." + genPackage.interfacePackageSuffix 
+		return prefix
+	}
+	
+	def static getImplPrefix(GenPackage genPackage) {
+		var prefix = ""
+		if(genPackage.basePackage.isEmpty) 
+			prefix += genPackage.basePackage + "." 
+		prefix += genPackage.getEcorePackage.name + "."
+		if(genPackage.interfacePackageSuffix.isEmpty)
+			prefix += "." + genPackage.interfacePackageSuffix 
+		return prefix
+	}
+	
+	def static getFactoryInterface(GenPackage genPackage) {
+		var fqName = getInterfacePrefix(genPackage)
+		fqName += "." + genPackage.getEcorePackage.name + "Factory"
+		return fqName
+	}
+	
+	def static getFactoryImpl(GenPackage genPackage) {
+		var fqName = getImplPrefix(genPackage)
+		fqName += "." + genPackage.getEcorePackage.name + "FactoryImpl"
+		return fqName
+	}
+
+	static def writeToFile(String filePath, String code) {
+		var file = new File(filePath)
+		file.getParentFile().mkdirs()
+		var fw = new FileWriter(file , false)
+		fw.write(CodeFormattingUtil.format(code))
+		fw.close()
+	}	
+	
 	static def getValidName(String name) {
-		if(FileCreator.blacklist.contains(name)) {
+		if(Keywords.blacklist.contains(name)) {
 			return "__" + name
 		}
 		else
 			return name
 	}
+	
+	def static hasEEnums(GenPackage genPackage) {
+		return  getEEnums(genPackage).isEmpty
+	}
+	
+	def static getEEnums(GenPackage genPackage) {
+		val ePack = genPackage.getEcorePackage
+		return ePack.EClassifiers.filter[c | c instanceof EEnum].map[c | c as EEnum]
+	}
+	
+	def static getClassifier(GenPackage genPack) {
+		return genPack.getEcorePackage.EClassifiers
+	}
+	
+	def static getEClasses(GenPackage genPack) {
+		return getClassifier(genPack).filter(c | c instanceof EClass).map[c | c as EClass]
+	}
+	
+		
+	def static getImportPackages(EClass eClass) {
+		var packages = eClass.EAllSuperTypes.map[c|c.EPackage].toSet
+		packages.add(eClass.EPackage)
+		return packages.map[p|getGenPack(p)]
+	}
+	
+	def static getImportTypes(EClass eClass) {
+		// estructural feature types
+		val types = eClass.EAllStructuralFeatures.map[c|c.EType].filter[c|!c.EPackage.equals(EcorePackage.eINSTANCE)].toSet
+		// add this eclass
+		types.add(eClass)
+		return types
+	}
+	
+	
+	def static getDependentGenPackages(GenPackage genPack) {
+		val dependentPackages = new HashSet
+		val ePackage = genPack.getEcorePackage
+		for(classes : ePackage.EClassifiers.filter[c|c instanceof EClass].map[c|c as EClass]) {
+			for(feature : classes.EAllStructuralFeatures) {
+				if(feature instanceof EAttribute) {
+					dependentPackages.add(feature.EType.EPackage)
+				}
+				if(feature instanceof EReference) {
+					dependentPackages.add(feature.EType.EPackage)
+				}
+			}
+			for(superclasses : classes.ESuperTypes) {
+				dependentPackages.add(superclasses.EPackage)
+			}
+		}
+		// remove the current package from this list
+		dependentPackages.remove(ePackage)
+		dependentPackages.remove(EcorePackage.eINSTANCE)
+		var dependentGenPackages = dependentPackages.map[p|getGenPack(p)]
+		return dependentGenPackages
+	}
+	
+	def static getGenPack(EPackage ePackage) {
+		var genModel = getGenModel(ePackage)
+		return genModel.genPackages.get(0)
+	}
+	
+	def static getSuperTypes(EClass eClass) {
+		return '''«FOR s : eClass.ESuperTypes», «TemplateUtil.getFQName(s)»«ENDFOR»'''
+	}
+	
+	def static getPackage(EClass eClass) {
+		return eClass.EPackage
+	}
+	
+	def static getOrIs(EStructuralFeature feature) {
+		if(feature.EType.equals(EcorePackage.Literals.EBOOLEAN))
+			return "is"
+		else
+			return "get"
+	}
+	
+	def static getEDataTypes(GenPackage genPackage) {
+		return getClassifier(genPackage).filter[c|c instanceof EDataType].map[c | c as EDataType]
+	}
+	
+	def static getFQInterfaceName(GenPackage genPack, EClass eClass) {
+		return getInterfacePrefix(genPack) + "." + eClass.name
+	}
+	
+	def static getFQImplName(GenPackage genPack, EClass eClass) {
+		return getImplPrefix(genPack) + "." + eClass.name
+	}
+	
 }
