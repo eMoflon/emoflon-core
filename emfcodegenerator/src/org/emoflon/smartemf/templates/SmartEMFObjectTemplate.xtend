@@ -31,8 +31,8 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 		package «TemplateUtil.getImplPrefix(genPack)»;
 		
 		«FOR importedGenPack : TemplateUtil.getImportPackages(eClass)»
-		import «TemplateUtil.getPackageClassName(importedGenPack)»;
-		«ENDFOR»
+		import «TemplateUtil.getMetadataPrefix(importedGenPack)».«TemplateUtil.getPackageClassName(importedGenPack)»;
+ 		«ENDFOR»
 		
 		import org.emoflon.smartemf.runtime.*;
 		import org.emoflon.smartemf.runtime.collections.*;
@@ -222,7 +222,7 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 	    	}
 		}
 		'''
-		TemplateUtil.writeToFile(path + TemplateUtil.getFQImplName(genPack, eClass) + ".java", code);
+		TemplateUtil.writeToFile(path + TemplateUtil.getFQImplName(genPack, eClass).replace(".", "/") + "Impl.java", code);
 	}
 	
 	def getToString(EClass eClass) {

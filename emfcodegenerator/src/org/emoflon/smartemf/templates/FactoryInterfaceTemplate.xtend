@@ -16,10 +16,14 @@ class FactoryInterfaceTemplate implements CodeTemplate{
 	}
 	
 	override createCode() {
-		val className = genPack.getEcorePackage.name + "Factory"
+		val className = genPack.getEcorePackage.name.toFirstUpper + "Factory"
 		
 		var code = '''
-		package «TemplateUtil.getImplPrefix(genPack)»;
+		package «TemplateUtil.getMetadataPrefix(genPack)»;
+		
+		«FOR clazz : TemplateUtil.getEClasses(genPack)»
+			import «TemplateUtil.getFQName(clazz)»;
+		«ENDFOR»
 		
 		import org.eclipse.emf.ecore.EFactory;
 		
@@ -36,7 +40,7 @@ class FactoryInterfaceTemplate implements CodeTemplate{
 		
 		}
 		'''
-		TemplateUtil.writeToFile(path + TemplateUtil.getImplPrefix(genPack) + ".java", code);
+		TemplateUtil.writeToFile(path + TemplateUtil.getFactoryInterface(genPack).replace(".", "/") + ".java", code);
 	}
 
 }

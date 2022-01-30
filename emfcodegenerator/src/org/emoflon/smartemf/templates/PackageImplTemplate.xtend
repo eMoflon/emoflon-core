@@ -25,13 +25,12 @@ class PackageImplTemplate implements CodeTemplate{
 		«FOR clazz : TemplateUtil.getClassifier(genPack)»
 		import «TemplateUtil.getFQName(clazz)»;
 		«ENDFOR»
-
 		
 		import «TemplateUtil.getFactoryInterface(genPack)»;
-		import «TemplateUtil.getPackageClassName(genPack)»;
+		import «TemplateUtil.getMetadataPrefix(genPack)».«TemplateUtil.getPackageClassName(genPack)»;
 
 		«FOR dependency : TemplateUtil.getDependentGenPackages(genPack)»
-		import «TemplateUtil.getPackageClassName(dependency)»;
+		import «TemplateUtil.getMetadataPrefix(genPack)».«TemplateUtil.getPackageClassName(dependency)»;
 		«ENDFOR»
 
 		import org.eclipse.emf.ecore.EAttribute;
@@ -141,7 +140,7 @@ class PackageImplTemplate implements CodeTemplate{
 			 * @generated
 			 */
 			@Override
-			public «TemplateUtil.getFactoryInterface(genPack)» get«TemplateUtil.getFactoryInterface(genPack)»() {
+			public «TemplateUtil.getFactoryInterface(genPack)» get«TemplateUtil.getFactoryName(genPack)»() {
 				return («TemplateUtil.getFactoryInterface(genPack)») getEFactoryInstance();
 			}
 		
@@ -236,7 +235,7 @@ class PackageImplTemplate implements CodeTemplate{
 		
 		'''
 		
-		TemplateUtil.writeToFile(path + TemplateUtil.getPackageClassName(genPack) + ".java", code);
+		TemplateUtil.writeToFile(path + TemplateUtil.getImplPrefix(genPack).replace(".", "/") + "/" + TemplateUtil.getPackageClassName(genPack) + "Impl.java", code);
 		
 	}
 }

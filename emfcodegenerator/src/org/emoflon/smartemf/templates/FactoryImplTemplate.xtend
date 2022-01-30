@@ -18,7 +18,7 @@ class FactoryImplTemplate implements CodeTemplate{
 	
 	
 	override createCode() {
-		val className = genPack.getEcorePackage.name + "FactoryImpl"
+		val className = genPack.getEcorePackage.name.toFirstUpper + "FactoryImpl"
 		var code = '''
 			package «TemplateUtil.getImplPrefix(genPack)»;
 			
@@ -26,7 +26,7 @@ class FactoryImplTemplate implements CodeTemplate{
 				import «TemplateUtil.getFQName(clazz)»;
 			«ENDFOR»
 			import «TemplateUtil.getFactoryInterface(genPack)»;
-			import «TemplateUtil.getPackageClassName(genPack)»;
+			import «TemplateUtil.getMetadataPrefix(genPack)».«TemplateUtil.getPackageClassName(genPack)»;
 			
 			import org.eclipse.emf.ecore.EClass;
 			import org.eclipse.emf.ecore.EDataType;
@@ -41,10 +41,10 @@ class FactoryImplTemplate implements CodeTemplate{
 			
 				public static «TemplateUtil.getFactoryInterface(genPack)» init() {
 					try {
-						«TemplateUtil.getFactoryInterface(genPack)» the«TemplateUtil.getFactoryInterface(genPack)» = («TemplateUtil.getFactoryInterface(genPack)») EPackage.Registry.INSTANCE
+						«TemplateUtil.getFactoryName(genPack)» the«TemplateUtil.getFactoryName(genPack)» = («TemplateUtil.getFactoryName(genPack)») EPackage.Registry.INSTANCE
 								.getEFactory(«TemplateUtil.getPackageClassName(genPack)».eNS_URI);
-						if (the«TemplateUtil.getFactoryInterface(genPack)» != null) {
-							return the«TemplateUtil.getFactoryInterface(genPack)»;
+						if (the«TemplateUtil.getFactoryName(genPack)» != null) {
+							return the«TemplateUtil.getFactoryName(genPack)»;
 						}
 					} catch (Exception exception) {
 						EcorePlugin.INSTANCE.log(exception);
@@ -123,6 +123,6 @@ class FactoryImplTemplate implements CodeTemplate{
 			} 
 		'''
 		
-		TemplateUtil.writeToFile(path + TemplateUtil.getFactoryImpl(genPack) + ".java", code);
+		TemplateUtil.writeToFile(path + TemplateUtil.getFactoryImpl(genPack).replace(".", "/") + ".java", code);
 	}
 }

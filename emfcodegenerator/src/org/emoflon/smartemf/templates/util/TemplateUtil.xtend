@@ -113,8 +113,18 @@ class TemplateUtil {
 			return ""
 		
 		for(gp : genModel.allGenPackagesWithClassifiers) {
-			return gp.basePackage + "."
+			if(gp.basePackage != null && !gp.basePackage.isEmpty)
+				return gp.basePackage + "."
+			else
+				return ""
 		}
+	}
+	
+	static def registerGenModel(GenModel genModel) {
+		val pkgURI = genModel.genPackages.get(0).NSURI
+		val genModelURI = pkgURI.replace(".ecore", ".genmodel")
+		val resourceURI = genModelURI.replace("platform:/", "platform:/resource/")
+		uriStringToGenModelMap.put(resourceURI, genModel)
 	}
 	
 	static def getGenModel(EPackage ePackage) {
@@ -191,16 +201,29 @@ class TemplateUtil {
 			FQPackagePath = currentPackage.name + "." + FQPackagePath
 		}
 		
-		return getPrefix(ePackage) + FQPackagePath
+		var path = getPrefix(ePackage) + FQPackagePath + getInterfaceSuffix(ePackage)
+		return path
+	}
+	
+	static def String getInterfaceSuffix(EPackage ePackage) {
+		val genModel = getGenModel(ePackage)
+		if(genModel === null)
+			return ""
+		
+		for(gp : genModel.allGenPackagesWithClassifiers) {
+			if(gp.interfacePackageSuffix != null && !gp.interfacePackageSuffix.isEmpty)
+				return "." + gp.interfacePackageSuffix
+			else
+				return ""
+		}
 	}
 	
 	static def String getFQName(EClassifier eClass) {
 		if(eClass.instanceClassName !== null) {
 			return eClass.instanceClassName
 		} else {
-			return getFQName(eClass.EPackage) + "." + eClass.name
+			return getFQName(eClass.EPackage) +  "." + eClass.name
 		}
-		
 	}
 	
 	static def getPackageClassName(EPackage pkg) {
@@ -226,33 +249,43 @@ class TemplateUtil {
 	
 	def static getInterfacePrefix(GenPackage genPackage) {
 		var prefix = ""
-		if(genPackage.basePackage.isEmpty) 
+		if(genPackage.basePackage != null && !genPackage.basePackage.isEmpty) 
 			prefix += genPackage.basePackage + "." 
-		prefix += genPackage.getEcorePackage.name + "."
-		if(genPackage.interfacePackageSuffix.isEmpty)
+		prefix += genPackage.getEcorePackage.name
+		if(genPackage.interfacePackageSuffix != null && !genPackage.interfacePackageSuffix.isEmpty)
 			prefix += "." + genPackage.interfacePackageSuffix 
 		return prefix
 	}
 	
 	def static getImplPrefix(GenPackage genPackage) {
 		var prefix = ""
-		if(genPackage.basePackage.isEmpty) 
+		if(genPackage.basePackage != null && !genPackage.basePackage.isEmpty) 
 			prefix += genPackage.basePackage + "." 
-		prefix += genPackage.getEcorePackage.name + "."
-		if(genPackage.interfacePackageSuffix.isEmpty)
-			prefix += "." + genPackage.interfacePackageSuffix 
+		prefix += genPackage.getEcorePackage.name
+		if(genPackage.classPackageSuffix != null && !genPackage.classPackageSuffix.isEmpty)
+			prefix += "." + genPackage.classPackageSuffix
+		return prefix
+	}
+	
+	def static getMetadataPrefix(GenPackage genPackage) {
+		var prefix = ""
+		if(genPackage.basePackage != null && !genPackage.basePackage.isEmpty) 
+			prefix += genPackage.basePackage + "." 
+		prefix += genPackage.getEcorePackage.name
+		if(genPackage.metaDataPackageSuffix != null && !genPackage.metaDataPackageSuffix.isEmpty)
+			prefix += "." + genPackage.metaDataPackageSuffix
 		return prefix
 	}
 	
 	def static getFactoryInterface(GenPackage genPackage) {
-		var fqName = getInterfacePrefix(genPackage)
-		fqName += "." + genPackage.getEcorePackage.name + "Factory"
+		var fqName = getMetadataPrefix(genPackage)
+		fqName += "." + genPackage.getEcorePackage.name.toFirstUpper + "Factory"
 		return fqName
 	}
 	
 	def static getFactoryImpl(GenPackage genPackage) {
 		var fqName = getImplPrefix(genPackage)
-		fqName += "." + genPackage.getEcorePackage.name + "FactoryImpl"
+		fqName += "." + genPackage.getEcorePackage.name.toFirstUpper + "FactoryImpl"
 		return fqName
 	}
 
@@ -358,6 +391,10 @@ class TemplateUtil {
 	
 	def static getFQImplName(GenPackage genPack, EClass eClass) {
 		return getImplPrefix(genPack) + "." + eClass.name
+	}
+	
+	def static getFactoryName(GenPackage genPack) {
+		return genPack.getEcorePackage.name.toFirstUpper + "Factory"
 	}
 	
 }

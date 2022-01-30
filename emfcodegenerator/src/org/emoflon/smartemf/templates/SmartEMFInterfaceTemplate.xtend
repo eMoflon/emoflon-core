@@ -23,7 +23,7 @@ class SmartEMFInterfaceTemplate implements CodeTemplate{
 		package «TemplateUtil.getInterfacePrefix(genPack)»;
 		
 		«FOR importedGenPack : TemplateUtil.getImportPackages(eClass)»
-		import «TemplateUtil.getPackageClassName(importedGenPack)»;
+		import «TemplateUtil.getMetadataPrefix(importedGenPack)».«TemplateUtil.getPackageClassName(importedGenPack)»;
 		«ENDFOR»
 		
 		import org.emoflon.smartemf.runtime.notification.SmartEMFNotification;
@@ -48,7 +48,7 @@ class SmartEMFInterfaceTemplate implements CodeTemplate{
 		
 		}
 		'''
-		TemplateUtil.writeToFile(path + TemplateUtil.getFQInterfaceName(genPack, eClass) + ".java", code);
+		TemplateUtil.writeToFile(path + TemplateUtil.getFQInterfaceName(genPack, eClass).replace(".", "/") + ".java", code);
 	}
 	
 }

@@ -106,6 +106,6 @@ class EEnumTemplate implements CodeTemplate{
 			}
 			
 		'''
-		TemplateUtil.writeToFile(path + TemplateUtil.getImplPrefix(genPack) + ".java", code);
+		TemplateUtil.writeToFile(path + TemplateUtil.getImplPrefix(genPack).replace(".", "/") + eNum.name + ".java", code);
 	}
 }

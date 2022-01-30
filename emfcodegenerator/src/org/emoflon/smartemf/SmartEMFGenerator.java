@@ -28,6 +28,7 @@ public class SmartEMFGenerator{
 	
 	private String path;
 	private Collection<CodeTemplate> templates;
+	private GenModel genModel;
 
 	/**########################Constructor########################*/
 
@@ -38,8 +39,9 @@ public class SmartEMFGenerator{
 	 * @param path to the original Ecore of the corresponding project
 	 */ 
 	public SmartEMFGenerator(EPackage ePackage, GenModel genmodel, String workspacePath){
-		path = workspacePath + "/";
+		path = workspacePath + "/" + genmodel.getModelDirectory()+ "/";
 		templates = new LinkedList<>();
+		this.genModel = genmodel;
 		
 		for(GenPackage genPkg : getGenPackages(genmodel)){
 			initPackageInterface(genPkg);
@@ -112,8 +114,9 @@ public class SmartEMFGenerator{
 		}
 	}
 
-	public void generateModelCode(){
+	public void generateModelCode() {
 		TemplateUtil.uriStringToGenModelMap.clear();
+		TemplateUtil.registerGenModel(genModel);
 		templates.parallelStream().forEach(template -> template.createCode());
 	}
 }
