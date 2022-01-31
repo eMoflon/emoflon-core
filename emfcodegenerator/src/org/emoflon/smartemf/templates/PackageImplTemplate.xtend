@@ -20,17 +20,17 @@ class PackageImplTemplate implements CodeTemplate{
 
 	override createCode() {
 		var code = '''
-		package «TemplateUtil.getImplPrefix(genPack)»;
+		package «TemplateUtil.getImplSuffix(genPack)»;
 		
 		«FOR clazz : TemplateUtil.getClassifier(genPack)»
 		import «TemplateUtil.getFQName(clazz)»;
 		«ENDFOR»
 		
 		import «TemplateUtil.getFactoryInterface(genPack)»;
-		import «TemplateUtil.getMetadataPrefix(genPack)».«TemplateUtil.getPackageClassName(genPack)»;
+		import «TemplateUtil.getMetadataSuffix(genPack)».«TemplateUtil.getPackageClassName(genPack)»;
 
 		«FOR dependency : TemplateUtil.getDependentGenPackages(genPack)»
-		import «TemplateUtil.getMetadataPrefix(genPack)».«TemplateUtil.getPackageClassName(dependency)»;
+		import «TemplateUtil.getMetadataSuffix(genPack)».«TemplateUtil.getPackageClassName(dependency)»;
 		«ENDFOR»
 
 		import org.eclipse.emf.ecore.EAttribute;
@@ -202,11 +202,11 @@ class PackageImplTemplate implements CodeTemplate{
 						IS_GENERATED_INSTANCE_CLASS);
 					«FOR feature : clazz.EStructuralFeatures»
 						«IF feature instanceof EReference»«val ref = feature as EReference»
-						initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «IF ref.EType.EPackage.name.equals("ecore")»ecorePackage.get«ref.EType.name»()«ELSE»«TemplateUtil.getPackageClassName(ref)».get«ref.EType.name»()«ENDIF», «IF ref.EOpposite !== null»«TemplateUtil.getPackageClassName(ref)».get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
+						initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «IF ref.EType.EPackage.name.equals("ecore")»ecorePackage.get«ref.EType.name»()«ELSE»«TemplateUtil.getPackageClassName(ref)».eINSTANCE.get«ref.EType.name»()«ENDIF», «IF ref.EOpposite !== null»«TemplateUtil.getPackageClassName(ref)».eINSTANCE.get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
 							"«ref.name»", «(ref.defaultValue === null)?"null":ref.defaultValue», «ref.lowerBound», «ref.upperBound», «clazz.name».class, «(ref.isTransient)?"":"!"»IS_TRANSIENT, «(ref.isVolatile)?"":"!"»IS_VOLATILE, «(ref.isChangeable)?"":"!"»IS_CHANGEABLE, «(ref.isContainment)?"":"!"»IS_COMPOSITE, «(ref.isResolveProxies)?"":"!"»IS_RESOLVE_PROXIES,
 							«(ref.isUnsettable)?"":"!"»IS_UNSETTABLE, «(ref.isUnique)?"":"!"»IS_UNIQUE, «(ref.isDerived)?"":"!"»IS_DERIVED, «(ref.isOrdered)?"":"!"»IS_ORDERED);
 						«ELSE»«val atr = feature as EAttribute»
-						initEAttribute(get«clazz.name»_«atr.name.toFirstUpper»(), «IF atr.EType.EPackage.name.equals("ecore")»ecorePackage.get«atr.EType.name»()«ELSE»«TemplateUtil.getPackageClassName(atr)».get«atr.EType.name.toFirstUpper»()«ENDIF»,
+						initEAttribute(get«clazz.name»_«atr.name.toFirstUpper»(), «IF atr.EType.EPackage.name.equals("ecore")»ecorePackage.get«atr.EType.name»()«ELSE»«TemplateUtil.getPackageClassName(atr)».eINSTANCE.get«atr.EType.name.toFirstUpper»()«ENDIF»,
 							"«atr.name»", «(atr.defaultValue === null)?"null":"\""+atr.defaultValue+"\""», «atr.lowerBound», «atr.upperBound», «clazz.name».class, «(atr.isTransient)?"":"!"»IS_TRANSIENT, «(atr.isVolatile)?"":"!"»IS_VOLATILE, «(atr.isChangeable)?"":"!"»IS_CHANGEABLE, «(atr.isUnsettable)?"":"!"»IS_UNSETTABLE, «(atr.isUnique)?"":"!"»IS_ID, IS_UNIQUE,
 							«(atr.isDerived)?"":"!"»IS_DERIVED, «(atr.isOrdered)?"":"!"»IS_ORDERED);
 						«ENDIF»
@@ -235,7 +235,7 @@ class PackageImplTemplate implements CodeTemplate{
 		
 		'''
 		
-		TemplateUtil.writeToFile(path + TemplateUtil.getImplPrefix(genPack).replace(".", "/") + "/" + TemplateUtil.getPackageClassName(genPack) + "Impl.java", code);
+		TemplateUtil.writeToFile(path + TemplateUtil.getImplSuffix(genPack).replace(".", "/") + "/" + TemplateUtil.getPackageClassName(genPack) + "Impl.java", code);
 		
 	}
 }

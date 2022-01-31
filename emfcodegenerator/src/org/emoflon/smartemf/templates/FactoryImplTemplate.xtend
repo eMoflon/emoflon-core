@@ -20,13 +20,13 @@ class FactoryImplTemplate implements CodeTemplate{
 	override createCode() {
 		val className = genPack.getEcorePackage.name.toFirstUpper + "FactoryImpl"
 		var code = '''
-			package «TemplateUtil.getImplPrefix(genPack)»;
+			package «TemplateUtil.getImplSuffix(genPack)»;
 			
 			«FOR clazz : TemplateUtil.getEClasses(genPack)»
 				import «TemplateUtil.getFQName(clazz)»;
 			«ENDFOR»
 			import «TemplateUtil.getFactoryInterface(genPack)»;
-			import «TemplateUtil.getMetadataPrefix(genPack)».«TemplateUtil.getPackageClassName(genPack)»;
+			import «TemplateUtil.getMetadataSuffix(genPack)».«TemplateUtil.getPackageClassName(genPack)»;
 			
 			import org.eclipse.emf.ecore.EClass;
 			import org.eclipse.emf.ecore.EDataType;
@@ -96,7 +96,7 @@ class FactoryImplTemplate implements CodeTemplate{
 				
 				«FOR clazz : TemplateUtil.getEClasses(genPack)»
 				@Override
-				public «"Container".equals(clazz.name)?TemplateUtil.getImplPrefix(genPack)+"."+clazz.name:clazz.name» create«clazz.name.toFirstUpper»() {
+				public «"Container".equals(clazz.name)?TemplateUtil.getImplSuffix(genPack)+"."+clazz.name:clazz.name» create«clazz.name.toFirstUpper»() {
 					«clazz.name»Impl «TemplateUtil.getValidName(clazz.name.toFirstLower)» = new «clazz.name»Impl();
 					return «TemplateUtil.getValidName(clazz.name.toFirstLower)»;
 				}

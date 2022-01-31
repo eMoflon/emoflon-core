@@ -247,7 +247,7 @@ class TemplateUtil {
 		return getPackageClassName(f.eContainer as EClassifier)
 	}
 	
-	def static getInterfacePrefix(GenPackage genPackage) {
+	def static getInterfaceSuffix(GenPackage genPackage) {
 		var prefix = ""
 		if(genPackage.basePackage != null && !genPackage.basePackage.isEmpty) 
 			prefix += genPackage.basePackage + "." 
@@ -257,17 +257,20 @@ class TemplateUtil {
 		return prefix
 	}
 	
-	def static getImplPrefix(GenPackage genPackage) {
+	def static getImplSuffix(GenPackage genPackage) {
 		var prefix = ""
 		if(genPackage.basePackage != null && !genPackage.basePackage.isEmpty) 
 			prefix += genPackage.basePackage + "." 
 		prefix += genPackage.getEcorePackage.name
-		if(genPackage.classPackageSuffix != null && !genPackage.classPackageSuffix.isEmpty)
+		if(genPackage.classPackageSuffix == null) {
+			prefix += ".impl"
+		} 
+		else if(!genPackage.classPackageSuffix.isEmpty)
 			prefix += "." + genPackage.classPackageSuffix
 		return prefix
 	}
 	
-	def static getMetadataPrefix(GenPackage genPackage) {
+	def static getMetadataSuffix(GenPackage genPackage) {
 		var prefix = ""
 		if(genPackage.basePackage != null && !genPackage.basePackage.isEmpty) 
 			prefix += genPackage.basePackage + "." 
@@ -278,13 +281,13 @@ class TemplateUtil {
 	}
 	
 	def static getFactoryInterface(GenPackage genPackage) {
-		var fqName = getMetadataPrefix(genPackage)
+		var fqName = org.emoflon.smartemf.templates.util.TemplateUtil.getMetadataSuffix(genPackage)
 		fqName += "." + genPackage.getEcorePackage.name.toFirstUpper + "Factory"
 		return fqName
 	}
 	
 	def static getFactoryImpl(GenPackage genPackage) {
-		var fqName = getImplPrefix(genPackage)
+		var fqName = org.emoflon.smartemf.templates.util.TemplateUtil.getImplSuffix(genPackage)
 		fqName += "." + genPackage.getEcorePackage.name.toFirstUpper + "FactoryImpl"
 		return fqName
 	}
@@ -293,7 +296,8 @@ class TemplateUtil {
 		var file = new File(filePath)
 		file.getParentFile().mkdirs()
 		var fw = new FileWriter(file , false)
-		fw.write(CodeFormattingUtil.format(code))
+//		fw.write(CodeFormattingUtil.format(code))
+		fw.write(code)
 		fw.close()
 	}	
 	
@@ -363,6 +367,8 @@ class TemplateUtil {
 	
 	def static getGenPack(EPackage ePackage) {
 		var genModel = getGenModel(ePackage)
+		if(genModel == null)
+			return null
 		return genModel.genPackages.get(0)
 	}
 	
@@ -386,11 +392,11 @@ class TemplateUtil {
 	}
 	
 	def static getFQInterfaceName(GenPackage genPack, EClass eClass) {
-		return getInterfacePrefix(genPack) + "." + eClass.name
+		return org.emoflon.smartemf.templates.util.TemplateUtil.getInterfaceSuffix(genPack) + "." + eClass.name
 	}
 	
 	def static getFQImplName(GenPackage genPack, EClass eClass) {
-		return getImplPrefix(genPack) + "." + eClass.name
+		return org.emoflon.smartemf.templates.util.TemplateUtil.getImplSuffix(genPack) + "." + eClass.name
 	}
 	
 	def static getFactoryName(GenPackage genPack) {

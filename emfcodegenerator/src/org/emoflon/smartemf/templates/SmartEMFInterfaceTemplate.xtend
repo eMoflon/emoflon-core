@@ -20,10 +20,10 @@ class SmartEMFInterfaceTemplate implements CodeTemplate{
 		val className = eClass.name
 		
 		var code = '''
-		package «TemplateUtil.getInterfacePrefix(genPack)»;
+		package «TemplateUtil.getInterfaceSuffix(genPack)»;
 		
 		«FOR importedGenPack : TemplateUtil.getImportPackages(eClass)»
-		import «TemplateUtil.getMetadataPrefix(importedGenPack)».«TemplateUtil.getPackageClassName(importedGenPack)»;
+		import «TemplateUtil.getMetadataSuffix(importedGenPack)».«TemplateUtil.getPackageClassName(importedGenPack)»;
 		«ENDFOR»
 		
 		import org.emoflon.smartemf.runtime.notification.SmartEMFNotification;

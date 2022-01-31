@@ -19,7 +19,7 @@ class FactoryInterfaceTemplate implements CodeTemplate{
 		val className = genPack.getEcorePackage.name.toFirstUpper + "Factory"
 		
 		var code = '''
-		package «TemplateUtil.getMetadataPrefix(genPack)»;
+		package «TemplateUtil.getMetadataSuffix(genPack)»;
 		
 		«FOR clazz : TemplateUtil.getEClasses(genPack)»
 			import «TemplateUtil.getFQName(clazz)»;
@@ -29,7 +29,7 @@ class FactoryInterfaceTemplate implements CodeTemplate{
 		
 		public interface «className» extends EFactory {
 
-			«className» eINSTANCE = «TemplateUtil.getImplPrefix(genPack)».«className»Impl.init();
+			«className» eINSTANCE = «TemplateUtil.getImplSuffix(genPack)».«className»Impl.init();
 			
 			«FOR clazz : TemplateUtil.getEClasses(genPack)»
 			«clazz.name» create«clazz.name.toFirstUpper»();

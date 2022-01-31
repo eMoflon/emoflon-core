@@ -23,7 +23,7 @@ class PackageInterfaceTemplate implements CodeTemplate {
 		var ePack = genPack.getEcorePackage
 	
 		var code = '''
-		package «TemplateUtil.getMetadataPrefix(genPack)»;
+		package «TemplateUtil.getMetadataSuffix(genPack)»;
 		
 		import java.lang.String;
 		
@@ -41,7 +41,7 @@ class PackageInterfaceTemplate implements CodeTemplate {
 			String eNS_URI = "«ePack.nsURI»";
 			String eNS_PREFIX = "«ePack.nsPrefix»";
 		
-			«TemplateUtil.getPackageClassName(genPack)» eINSTANCE = «TemplateUtil.getImplPrefix(genPack)».«TemplateUtil.getPackageClassName(genPack)»Impl.init();
+			«TemplateUtil.getPackageClassName(genPack)» eINSTANCE = «TemplateUtil.getImplSuffix(genPack)».«TemplateUtil.getPackageClassName(genPack)»Impl.init();
 		
 			«FOR clazz : TemplateUtil.getEClasses(genPack)»
 				int «TemplateUtil.getLiteral(clazz)» = «clazz.classifierID»;
@@ -100,7 +100,7 @@ class PackageInterfaceTemplate implements CodeTemplate {
 		} 
 		'''
 		
-		TemplateUtil.writeToFile(path + TemplateUtil.getMetadataPrefix(genPack).replace(".", "/") + "/" + TemplateUtil.getPackageClassName(genPack) + ".java", code);
+		TemplateUtil.writeToFile(path + TemplateUtil.getMetadataSuffix(genPack).replace(".", "/") + "/" + TemplateUtil.getPackageClassName(genPack) + ".java", code);
 	}
 	
 	static def countSuperFeatures(EClass clazz) {

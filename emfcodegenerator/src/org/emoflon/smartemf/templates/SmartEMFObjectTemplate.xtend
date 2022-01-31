@@ -28,10 +28,10 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 		val FQPackagePath = TemplateUtil.getFQName(ePackage)
 		
 		var code = '''
-		package «TemplateUtil.getImplPrefix(genPack)»;
+		package «TemplateUtil.getImplSuffix(genPack)»;
 		
 		«FOR importedGenPack : TemplateUtil.getImportPackages(eClass)»
-		import «TemplateUtil.getMetadataPrefix(importedGenPack)».«TemplateUtil.getPackageClassName(importedGenPack)»;
+		import «TemplateUtil.getMetadataSuffix(importedGenPack)».«TemplateUtil.getPackageClassName(importedGenPack)»;
  		«ENDFOR»
 		
 		import org.emoflon.smartemf.runtime.*;
