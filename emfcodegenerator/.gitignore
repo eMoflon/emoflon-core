@@ -1,0 +1,7 @@
+/.metadata/
+/src-gen/
+**.class
+/bin/
+/xtend-gen/
+/.settings/
+/local-test-src/
