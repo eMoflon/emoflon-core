@@ -223,7 +223,7 @@ class PackageImplTemplate implements CodeTemplate{
 				«FOR eenum : TemplateUtil.getEEnums(genPack)»
 					initEEnum(«eenum.name.toFirstLower»EEnum, «eenum.name».class, "«eenum.name»");
 					«FOR literal : eenum.ELiterals»
-						addEEnumLiteral(«eenum.name.toFirstLower»EEnum, «eenum.EPackage.name».«eenum.name».«TemplateUtil.getLiteral(literal)»);
+						addEEnumLiteral(«eenum.name.toFirstLower»EEnum, «TemplateUtil.getInterfaceSuffix(genPack)».«eenum.name».«TemplateUtil.getLiteral(literal)»);
 					«ENDFOR»
 				«ENDFOR»
 				
