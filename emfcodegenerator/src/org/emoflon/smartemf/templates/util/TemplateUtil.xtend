@@ -171,14 +171,14 @@ class TemplateUtil {
 			return genModel;
 		}
 		
-//		// if loading was unsuccesful -> crawGenModel from file or workspace
-//		genModel = crawlGenModel(ePackage)
-//		if(genModel != null) {
-//			uriStringToGenModelMap.put(resourceURI, genModel)
-//			uriStringToGenModelMap.put(pluginURI, genModel)
-//			uriStringToGenModelMap.put(ePackage.nsURI, genModel)
-//			return genModel
-//		}
+		// if loading was unsuccesful -> crawGenModel from file or workspace
+		genModel = crawlGenModel(ePackage)
+		if(genModel != null) {
+			uriStringToGenModelMap.put(resourceURI, genModel)
+			uriStringToGenModelMap.put(pluginURI, genModel)
+			uriStringToGenModelMap.put(ePackage.nsURI, genModel)
+			return genModel
+		}
 		
 		// if not found until here -> create dummy genPackage and genmodels
 		genModel = GenModelFactory.eINSTANCE.createGenModel();
@@ -322,23 +322,6 @@ class TemplateUtil {
 	}
 	
 	static def getFQName(EPackage ePackage) {
-//		if(ePackage.EClassifiers.get(0).instanceClassName !== null) {
-//			val someClazzFQN = getFQName(ePackage.EClassifiers.get(0))
-//			if(!someClazzFQN.contains(".")) {
-//				return "";
-//			}
-//			val dotIdx = someClazzFQN.lastIndexOf(".")
-//			return someClazzFQN.substring(0,dotIdx)
-//		}
-//		
-//		var currentPackage = ePackage
-//		var FQPackagePath = currentPackage.name
-//		while(currentPackage.eContainer !== null) {
-//			currentPackage = currentPackage.eContainer as EPackage
-//			FQPackagePath = currentPackage.name + "." + FQPackagePath
-//		}
-//		
-//		var path = getPrefix(ePackage) + FQPackagePath + getInterfaceSuffix(ePackage)
 		val genPackage = getGenPack(ePackage)
 		return getFQName(genPackage)
 	}
