@@ -5,7 +5,7 @@
         <runtime>
             <run class="org.moflon.emf.build.MoflonEmfNature"/>
         </runtime>
-        <builder id="org.moflon.emf.build.MoflonEMFBuilder">
+        <builder id="org.moflon.emf.build.MoflonEmfBuilder">
         </builder>
         <one-of-nature id="org.moflon.core.ui.runtime.natures.MoflonNature">
         </one-of-nature>
