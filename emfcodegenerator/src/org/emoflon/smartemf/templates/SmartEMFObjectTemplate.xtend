@@ -123,7 +123,7 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 		
 		    @Override
 		    public String toString(){
-				return «getToString(eClass)»
+				«getToString()»
 		    }
 		
 		 	@Override
@@ -226,23 +226,60 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 		TemplateUtil.writeToFile(path + TemplateUtil.getFQImplName(genPack, eClass).replace(".", "/") + "Impl.java", code);
 	}
 	
-	def getToString(EClass eClass) {
-		var EAttribute nameAttribute = null
-		var EAttribute firstStringAttribute = null
-		for(attr : eClass.EAllAttributes) {
-			if(attr.EType.equals(EcorePackage.eINSTANCE.EString)) {
-				firstStringAttribute = attr
-				if(attr.name.equals("name")) {
-					nameAttribute = attr
-				}
-			}
+	}
+	
+	def getToString() {
+		var EAttribute nameAttr = null
+		var printableAttributes = new LinkedList
+		for (attr : eClass.EAllAttributes) {
+			if (attr.name.equals("name") && attr.EType.equals(EcorePackage.eINSTANCE.EString))
+				nameAttr = attr
+			else if (!attr.isMany)
+				printableAttributes.add(attr)
 		}
-		if(firstStringAttribute === null)
-			return '''super.toString();'''
-		if(nameAttribute !== null)
-			return '''super.toString() + "(name: " + getName() + ")";'''
-		return '''super.toString() + "(name: " + get«firstStringAttribute.name.toFirstUpper»() + ")";'''
-			
+		
+		if (nameAttr === null && printableAttributes.empty)
+			return '''return super.toString();'''
+		
+		return '''
+		StringBuilder b = new StringBuilder();
+		b.append(super.toString());
+		b.append(" (");
+		if (SmartEMFConfig.simpleStringRepresentations()) {
+			«getSimpleAttrRepresentation(nameAttr, printableAttributes)»
+		} else {
+			«getDefaultAttrRepresentation(nameAttr, printableAttributes)»
+		}
+		b.append(")");
+		return b.toString();
+		'''
+	}
+	
+	def getDefaultAttrRepresentation(EAttribute nameAttr, List<EAttribute> printableAttributes) {
+		'''
+		«IF nameAttr !== null»
+			b.append("name: ");
+			b.append(getName());
+		«ENDIF»
+		«IF nameAttr !== null && !printableAttributes.empty»
+			b.append(", ");
+		«ENDIF»
+		«FOR attr : printableAttributes SEPARATOR '''b.append(", ");'''»
+			b.append("«attr.name»: ");
+			b.append(«getOrIs(attr)»«attr.name.toFirstUpper»());
+		«ENDFOR»
+		'''
+	}
+	
+	def getSimpleAttrRepresentation(EAttribute nameAttr, List<EAttribute> printableAttributes) {
+		if (nameAttr !== null)
+			return '''b.append(getName());'''
+		
+		var firstAttr = printableAttributes.get(0)
+		return '''
+		b.append("«firstAttr.name»: ");
+		b.append(«getOrIs(firstAttr)»«firstAttr.name.toFirstUpper»());
+		'''
 	}
 	
 	def getDefaultValue(EStructuralFeature feature) {
