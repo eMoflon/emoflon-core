@@ -25,6 +25,8 @@ import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.emf.ecore.impl.EPackageImpl
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.ecore.util.EcoreUtil
+import org.eclipse.core.resources.IWorkspaceRoot
+import org.eclipse.core.resources.ResourcesPlugin
 
 class TemplateUtil {
 	
@@ -234,7 +236,10 @@ class TemplateUtil {
 		
 		// if file is a jar -> extract genmodels from it and search for epackage
 		if(packageFile.isFile && packageFile.name.endsWith(".jar")) {
-			var jarExtractor = new JarExtractor("E:\\", packageFile.absolutePath)
+			val root = ResourcesPlugin.getWorkspace().getRoot();			
+			val tmpPath = root.getLocation().toPortableString() + "/.tmp/";
+			
+			var jarExtractor = new JarExtractor(tmpPath, packageFile.absolutePath)
 			var genModels = jarExtractor.extractGenModels
 			for(genModel : genModels) {
 				if(ePackage.nsURI.equals(genModel.genPackages.get(0).getEcorePackage.nsURI)) {

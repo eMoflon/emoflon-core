@@ -56,6 +56,9 @@ public class JarExtractor {
 		name2genModelFiles.values().forEach(File::delete);
 		name2ecoreModelFiles.values().forEach(File::delete);
 		
+		File tmpFolder = new File(tempPath);
+		tmpFolder.delete();
+		
 		return genModels;
 	}
 	
