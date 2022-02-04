@@ -41,6 +41,9 @@ public class JarExtractor {
     }
 
 	public Collection<GenModel> extractGenModels() throws IOException {
+		File tmpFolder = new File(tempPath);
+		tmpFolder.mkdirs();
+
 		Collection<GenModel> genModels = new LinkedList<>();
 		
 		// read jar file and extract files
@@ -56,7 +59,6 @@ public class JarExtractor {
 		name2genModelFiles.values().forEach(File::delete);
 		name2ecoreModelFiles.values().forEach(File::delete);
 		
-		File tmpFolder = new File(tempPath);
 		tmpFolder.delete();
 		
 		return genModels;
