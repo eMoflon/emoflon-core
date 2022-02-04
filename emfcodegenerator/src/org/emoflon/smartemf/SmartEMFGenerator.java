@@ -1,9 +1,11 @@
 package org.emoflon.smartemf;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EClass;
@@ -38,11 +40,20 @@ public class SmartEMFGenerator{
 	 * @param genmodel to build with
 	 * @param path to the original Ecore of the corresponding project
 	 */ 
-	public SmartEMFGenerator(EPackage ePackage, GenModel genmodel, String workspacePath){
-		path = workspacePath + "/" + genmodel.getModelDirectory()+ "/";
+	public SmartEMFGenerator(IProject project, EPackage ePackage, GenModel genmodel) {
+		String projectPath = project.getLocation().makeAbsolute().toString();
+		
+		// if modeldirectory contains project name -> don't duplicate it
+		if(genmodel.getModelDirectory().contains(project.getName())) {
+			File f = new File(projectPath);
+			path = f.getParentFile().getAbsolutePath() + "/" + genmodel.getModelDirectory() + "/";
+		}
+		else {
+			path = projectPath + "/" + genmodel.getModelDirectory()+ "/";			
+		}
+
 		templates = new LinkedList<>();
 		this.genModel = genmodel;
-		
 		for(GenPackage genPkg : getGenPackages(genmodel)){
 			initPackageInterface(genPkg);
 			initPackageImplementation(genPkg);
@@ -117,6 +128,6 @@ public class SmartEMFGenerator{
 	public void generateModelCode() {
 		TemplateUtil.uriStringToGenModelMap.clear();
 		TemplateUtil.registerGenModel(genModel);
-		templates.parallelStream().forEach(template -> template.createCode());
+		templates.stream().forEach(template -> template.createCode());
 	}
 }

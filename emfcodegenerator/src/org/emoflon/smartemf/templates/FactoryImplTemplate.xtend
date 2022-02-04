@@ -23,8 +23,13 @@ class FactoryImplTemplate implements CodeTemplate{
 			package «TemplateUtil.getImplSuffix(genPack)»;
 			
 			«FOR clazz : TemplateUtil.getEClasses(genPack)»
-				import «TemplateUtil.getFQName(clazz)»;
+			import «TemplateUtil.getFQName(clazz)»;
 			«ENDFOR»
+			
+			«FOR eenum : TemplateUtil.getEEnums(genPack)»
+			import «TemplateUtil.getFQName(eenum)»;
+			«ENDFOR»
+			
 			import «TemplateUtil.getFactoryInterface(genPack)»;
 			import «TemplateUtil.getMetadataSuffix(genPack)».«TemplateUtil.getPackageClassName(genPack)»;
 			
@@ -59,7 +64,7 @@ class FactoryImplTemplate implements CodeTemplate{
 				@Override
 				public EObject create(EClass eClass) {
 					switch (eClass.getClassifierID()) {
-					«FOR clazz : TemplateUtil.getEClasses(genPack)»
+					«FOR clazz : TemplateUtil.getEClasses(genPack).filter[c|!c.abstract]»
 						case «TemplateUtil.getPackageClassName(genPack)».«TemplateUtil.getLiteral(clazz)»:
 							return create«clazz.name.toFirstUpper»();
 					«ENDFOR»
@@ -94,9 +99,9 @@ class FactoryImplTemplate implements CodeTemplate{
 				}
 				«ENDIF»
 				
-				«FOR clazz : TemplateUtil.getEClasses(genPack)»
+				«FOR clazz : TemplateUtil.getEClasses(genPack).filter[c|!c.abstract]»
 				@Override
-				public «"Container".equals(clazz.name)?TemplateUtil.getImplSuffix(genPack)+"."+clazz.name:clazz.name» create«clazz.name.toFirstUpper»() {
+				public «TemplateUtil.getInterfaceSuffix(genPack)+"."+clazz.name» create«clazz.name.toFirstUpper»() {
 					«clazz.name»Impl «TemplateUtil.getValidName(clazz.name.toFirstLower)» = new «clazz.name»Impl();
 					return «TemplateUtil.getValidName(clazz.name.toFirstLower)»;
 				}

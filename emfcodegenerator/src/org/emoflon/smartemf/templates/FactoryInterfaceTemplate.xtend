@@ -31,7 +31,7 @@ class FactoryInterfaceTemplate implements CodeTemplate{
 
 			«className» eINSTANCE = «TemplateUtil.getImplSuffix(genPack)».«className»Impl.init();
 			
-			«FOR clazz : TemplateUtil.getEClasses(genPack)»
+			«FOR clazz : TemplateUtil.getEClasses(genPack).filter[c|!c.abstract]»
 			«clazz.name» create«clazz.name.toFirstUpper»();
 			
 			«ENDFOR»

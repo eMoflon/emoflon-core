@@ -30,6 +30,7 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 		var code = '''
 		package «TemplateUtil.getImplSuffix(genPack)»;
 		
+		import «TemplateUtil.getMetadataSuffix(genPack)».«TemplateUtil.getPackageClassName(genPack)»;
 		«FOR importedGenPack : TemplateUtil.getImportPackages(eClass)»
 		import «TemplateUtil.getMetadataSuffix(importedGenPack)».«TemplateUtil.getPackageClassName(importedGenPack)»;
  		«ENDFOR»

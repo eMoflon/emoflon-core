@@ -19,7 +19,7 @@ class EEnumTemplate implements CodeTemplate{
 	
 	override createCode() {
 		var code = '''
-			package «TemplateUtil.getFQName(genPack)+"."+genPack»;
+			package «TemplateUtil.getInterfaceSuffix(genPack)»;
 			
 			import java.lang.String;
 			
@@ -106,6 +106,6 @@ class EEnumTemplate implements CodeTemplate{
 			}
 			
 		'''
-		TemplateUtil.writeToFile(path + TemplateUtil.getImplSuffix(genPack).replace(".", "/") + eNum.name + ".java", code);
+		TemplateUtil.writeToFile(path + TemplateUtil.getInterfaceSuffix(genPack).replace(".", "/") + "/" + eNum.name + ".java", code);
 	}
 }

@@ -2,12 +2,14 @@ package org.emoflon.smartemf.templates.util
 
 import java.io.File
 import java.io.FileWriter
+import java.util.Collection
 import java.util.Collections
 import java.util.HashMap
 import java.util.HashSet
 import java.util.LinkedList
 import java.util.Map
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
+import org.eclipse.emf.codegen.ecore.genmodel.GenModelFactory
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EAttribute
@@ -20,7 +22,9 @@ import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EcorePackage
+import org.eclipse.emf.ecore.impl.EPackageImpl
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.emf.ecore.util.EcoreUtil
 
 class TemplateUtil {
 	
@@ -128,81 +132,215 @@ class TemplateUtil {
 	}
 	
 	static def getGenModel(EPackage ePackage) {
-		val pkgURI = ePackage.nsURI
-		val genModelURI = pkgURI.replace(".ecore", ".genmodel")
-		val resourceURI = genModelURI.replace("platform:/", "platform:/resource/")
-		val pluginURI = resourceURI.replace("/resource/", "/plugin/")
+		val uri = EcoreUtil.getURI(ePackage)
+		val platformURI = uri.toString
 		
-		if(uriStringToGenModelMap.containsKey(resourceURI)) {
-			return uriStringToGenModelMap.get(resourceURI)
+		// create resource and plugin uris if possible
+		var pkgURI = ePackage.nsURI
+		if(!pkgURI.contains("platform:/") && platformURI.contains("platform:/")) {
+			pkgURI = platformURI
+		}
+		var genModelURI = pkgURI.replace(".ecore", ".genmodel")
+		var resourceURI = ""
+		var pluginURI = ""
+		if(genModelURI.contains("/resource/")) {
+			resourceURI = genModelURI
+			pluginURI = genModelURI.replace("/resource/", "/plugin/")
+		}
+		if(genModelURI.contains("/plugin/")) {
+			pluginURI = genModelURI
+			resourceURI = genModelURI.replace("/plugin/", "/resource/")
 		}
 		
-		if(uriStringToGenModelMap.containsKey(pluginURI)) {
-			return uriStringToGenModelMap.get(pluginURI)
+		if(!genModelURI.contains("/resource/") && !genModelURI.contains("/plugin/")) {
+			resourceURI = genModelURI.replace("platform:/", "platform:/resource/")
+			pluginURI = genModelURI.replace("platform:/", "platform:/plugin/")
 		}
 		
+		// try to load models from resource
+		var genModel = loadGenModelFromResource(genModelURI)
+		if(genModel != null) {
+			return genModel;
+		}
+		genModel = loadGenModelFromResource(resourceURI)
+		if(genModel != null) {
+			return genModel;
+		}
+ 		genModel = loadGenModelFromResource(pluginURI)
+		if(genModel != null) {
+			return genModel;
+		}
+		
+//		// if loading was unsuccesful -> crawGenModel from file or workspace
+//		genModel = crawlGenModel(ePackage)
+//		if(genModel != null) {
+//			uriStringToGenModelMap.put(resourceURI, genModel)
+//			uriStringToGenModelMap.put(pluginURI, genModel)
+//			uriStringToGenModelMap.put(ePackage.nsURI, genModel)
+//			return genModel
+//		}
+		
+		// if not found until here -> create dummy genPackage and genmodels
+		genModel = GenModelFactory.eINSTANCE.createGenModel();
+		var genPack = GenModelFactory.eINSTANCE.createGenPackage();
+		genModel.genPackages.add(genPack)
+		genPack.ecorePackage = ePackage
+		
+		// save dummy genmodels in map
+		uriStringToGenModelMap.put(resourceURI, genModel)
+		uriStringToGenModelMap.put(pluginURI, genModel)
+		
+		return genModel
+	}
+	
+	def static loadGenModelFromResource(String uri) {
+		// try to find the cached value if it exists
+		if(uriStringToGenModelMap.containsKey(uri)) {
+			return uriStringToGenModelMap.get(uri)
+		}
+		
+		// load resource
 		val rs = new ResourceSetImpl
-		val r = rs.createResource(URI.createURI(resourceURI))
+		val resource = rs.createResource(URI.createURI(uri))
 		try {
-			r.load(null)
-			if(r.contents.isEmpty)
+			resource.load(null)
+			if(resource.contents.isEmpty)
 				return null
 				
-			val content = r.contents.get(0)
+			val content = resource.contents.get(0)
 			if(content instanceof GenModel) {
-				uriStringToGenModelMap.put(resourceURI, content)
+				// get rid of eproxies
+				EcoreUtil.resolveAll(content)
+				// save result for later
+				uriStringToGenModelMap.put(uri, content)
 				return content
 			}
 		}
 		catch(Exception e) {
-			
+		}
+	}
+	
+	def static crawlGenModel(EPackage ePackage) {
+		if(ePackage.class.equals(EPackageImpl)) {
 		}
 		
-		val pluginResource = rs.createResource(URI.createURI(pluginURI))
-		try {
-			pluginResource.load(null)
-			if(pluginResource.contents.isEmpty)
-				return null
-				
-			val content = pluginResource.contents.get(0)
-			if(content instanceof GenModel) {
-				uriStringToGenModelMap.put(pluginURI, content)
-				return content
+		// get source path of package
+		var path = ePackage.class.protectionDomain.codeSource.location.path
+		var packageFile = new File(path)
+		if(!packageFile.exists) {
+			return null
+		}
+		var projectFolder = packageFile.parentFile
+		
+		// if file is a jar -> extract genmodels from it and search for epackage
+		if(packageFile.isFile && packageFile.name.endsWith(".jar")) {
+			var jarExtractor = new JarExtractor("E:\\", packageFile.absolutePath)
+			var genModels = jarExtractor.extractGenModels
+			for(genModel : genModels) {
+				if(ePackage.nsURI.equals(genModel.genPackages.get(0).getEcorePackage.nsURI)) {
+					// if genmodel has been found -> replace genModels ePackages with our one
+					genModel.genPackages.get(0).ecorePackage = ePackage
+					return genModel
+				}
+			}
+			return null
+		}
+
+		// project folder should contain a META-INF folder which identifies it
+		var projectFound = false
+		while(projectFolder != null && projectFolder.exists && !projectFound) {
+			for(file : projectFolder.listFiles) {
+				if(file.name == "META-INF") {
+					projectFound = true
+				}
+			}
+			projectFolder = projectFolder.parentFile
+		}
+		
+		// if META-INF was not found -> exit
+		if(projectFolder == null || !projectFolder.exists) {
+			return null		
+		}
+		
+		// we assume that there is a model folder at the root of the project
+		var File modelFolder = null
+		for(file : projectFolder.listFiles) {
+			if(file.name.equals("model")) {
+				modelFolder = file
 			}
 		}
-		catch(Exception e) {
-			
+		if(modelFolder == null) {
+			return null
 		}
 		
-		uriStringToGenModelMap.put(resourceURI, null)
-		uriStringToGenModelMap.put(pluginURI, null)
-		
+		// if modelFolder was found -> search for genModels there
+		return crawlGenModel(ePackage, modelFolder) 
+	}
+	
+	static def GenModel crawlGenModel(EPackage ePackage, File modelFolder) {
+		var GenModel genModel = null
+		// search for genmodels recursively through all subfolders of /model
+		for(file : modelFolder.listFiles) {
+			if(file.directory) {
+				genModel = crawlGenModel(ePackage, file);
+				if(genModel != null) {
+					return genModel
+				}
+			}
+			else {
+				// if genmodel was found -> load it and check if the uris match
+				if(file.name.endsWith(".genmodel")) {
+					var uri = URI.createFileURI(file.absolutePath);
+					var rs = new ResourceSetImpl
+					var genModelResource = rs.createResource(uri)
+					try {
+						genModelResource.load(null)
+						var content = genModelResource.contents.get(0)
+						if(content instanceof GenModel) {
+							genModel = content as GenModel
+							var ecorePackage = genModel.ecoreGenPackage
+							if(ecorePackage.equals(ePackage)) {
+								return genModel
+							}
+							if(ePackage.nsURI.equals(ecorePackage.NSURI)) {
+								return genModel
+							}
+						}
+					}
+					catch(Exception e) {
+						e.printStackTrace
+					}
+				}	
+			}
+		}
 		return null
 	}
 	
 	static def getFQName(GenPackage genPackage) {
-		return getFQName(genPackage.getEcorePackage)
+//		return getFQName(genPackage.getEcorePackage)
+		return getInterfaceSuffix(genPackage)
 	}
 	
 	static def getFQName(EPackage ePackage) {
-		if(ePackage.EClassifiers.get(0).instanceClassName !== null) {
-			val someClazzFQN = getFQName(ePackage.EClassifiers.get(0))
-			if(!someClazzFQN.contains(".")) {
-				return "";
-			}
-			val dotIdx = someClazzFQN.lastIndexOf(".")
-			return someClazzFQN.substring(0,dotIdx)
-		}
-		
-		var currentPackage = ePackage
-		var FQPackagePath = currentPackage.name
-		while(currentPackage.eContainer !== null) {
-			currentPackage = currentPackage.eContainer as EPackage
-			FQPackagePath = currentPackage.name + "." + FQPackagePath
-		}
-		
-		var path = getPrefix(ePackage) + FQPackagePath + getInterfaceSuffix(ePackage)
-		return path
+//		if(ePackage.EClassifiers.get(0).instanceClassName !== null) {
+//			val someClazzFQN = getFQName(ePackage.EClassifiers.get(0))
+//			if(!someClazzFQN.contains(".")) {
+//				return "";
+//			}
+//			val dotIdx = someClazzFQN.lastIndexOf(".")
+//			return someClazzFQN.substring(0,dotIdx)
+//		}
+//		
+//		var currentPackage = ePackage
+//		var FQPackagePath = currentPackage.name
+//		while(currentPackage.eContainer !== null) {
+//			currentPackage = currentPackage.eContainer as EPackage
+//			FQPackagePath = currentPackage.name + "." + FQPackagePath
+//		}
+//		
+//		var path = getPrefix(ePackage) + FQPackagePath + getInterfaceSuffix(ePackage)
+		val genPackage = getGenPack(ePackage)
+		return getFQName(genPackage)
 	}
 	
 	static def String getInterfaceSuffix(EPackage ePackage) {
@@ -281,13 +419,13 @@ class TemplateUtil {
 	}
 	
 	def static getFactoryInterface(GenPackage genPackage) {
-		var fqName = org.emoflon.smartemf.templates.util.TemplateUtil.getMetadataSuffix(genPackage)
+		var fqName = TemplateUtil.getMetadataSuffix(genPackage)
 		fqName += "." + genPackage.getEcorePackage.name.toFirstUpper + "Factory"
 		return fqName
 	}
 	
 	def static getFactoryImpl(GenPackage genPackage) {
-		var fqName = org.emoflon.smartemf.templates.util.TemplateUtil.getImplSuffix(genPackage)
+		var fqName = TemplateUtil.getImplSuffix(genPackage)
 		fqName += "." + genPackage.getEcorePackage.name.toFirstUpper + "FactoryImpl"
 		return fqName
 	}
@@ -310,7 +448,7 @@ class TemplateUtil {
 	}
 	
 	def static hasEEnums(GenPackage genPackage) {
-		return  getEEnums(genPackage).isEmpty
+		return !getEEnums(genPackage).isEmpty
 	}
 	
 	def static getEEnums(GenPackage genPackage) {
@@ -330,7 +468,8 @@ class TemplateUtil {
 	def static getImportPackages(EClass eClass) {
 		var packages = eClass.EAllSuperTypes.map[c|c.EPackage].toSet
 		packages.add(eClass.EPackage)
-		return packages.map[p|getGenPack(p)]
+		val genpackages = packages.map[p|getGenPack(p)]
+		return genpackages
 	}
 	
 	def static getImportTypes(EClass eClass) {
@@ -361,7 +500,7 @@ class TemplateUtil {
 		// remove the current package from this list
 		dependentPackages.remove(ePackage)
 		dependentPackages.remove(EcorePackage.eINSTANCE)
-		var dependentGenPackages = dependentPackages.map[p|getGenPack(p)]
+		var dependentGenPackages = dependentPackages.map[p|getGenPack(p)].toSet
 		return dependentGenPackages
 	}
 	
@@ -369,7 +508,21 @@ class TemplateUtil {
 		var genModel = getGenModel(ePackage)
 		if(genModel == null)
 			return null
-		return genModel.genPackages.get(0)
+		var genPack = searchGenPackage(genModel.genPackages, ePackage)
+		return genPack
+	}
+	
+	def static GenPackage searchGenPackage(Collection<GenPackage> genpacks, EPackage epack) {
+		for(genpack : genpacks) {
+			if(epack.nsURI.equals(genpack.getEcorePackage().nsURI)) {
+				return genpack;
+			}
+			val foundGenPack = searchGenPackage(genpack.subGenPackages, epack);
+			if(foundGenPack != null) {
+				return foundGenPack
+			}
+		}
+		return null
 	}
 	
 	def static getSuperTypes(EClass eClass) {
@@ -388,15 +541,15 @@ class TemplateUtil {
 	}
 	
 	def static getEDataTypes(GenPackage genPackage) {
-		return getClassifier(genPackage).filter[c|c instanceof EDataType].map[c | c as EDataType]
+		return getClassifier(genPackage).filter[c|c instanceof EDataType && !(c instanceof EEnum)].map[c | c as EDataType]
 	}
 	
 	def static getFQInterfaceName(GenPackage genPack, EClass eClass) {
-		return org.emoflon.smartemf.templates.util.TemplateUtil.getInterfaceSuffix(genPack) + "." + eClass.name
+		return TemplateUtil.getInterfaceSuffix(genPack) + "." + eClass.name
 	}
 	
 	def static getFQImplName(GenPackage genPack, EClass eClass) {
-		return org.emoflon.smartemf.templates.util.TemplateUtil.getImplSuffix(genPack) + "." + eClass.name
+		return TemplateUtil.getImplSuffix(genPack) + "." + eClass.name
 	}
 	
 	def static getFactoryName(GenPackage genPack) {

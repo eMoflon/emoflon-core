@@ -4,6 +4,7 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
 import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EReference
 import org.emoflon.smartemf.templates.util.TemplateUtil
+import org.eclipse.emf.ecore.EcorePackage
 
 /**
  * Creator-class which generates the class-file for the SmartEMF-package-class.
@@ -22,15 +23,19 @@ class PackageImplTemplate implements CodeTemplate{
 		var code = '''
 		package «TemplateUtil.getImplSuffix(genPack)»;
 		
-		«FOR clazz : TemplateUtil.getClassifier(genPack)»
+		«FOR clazz : TemplateUtil.getEClasses(genPack)»
 		import «TemplateUtil.getFQName(clazz)»;
+		«ENDFOR»
+		
+		«FOR eenum : TemplateUtil.getEEnums(genPack)»
+		import «TemplateUtil.getFQName(eenum)»;
 		«ENDFOR»
 		
 		import «TemplateUtil.getFactoryInterface(genPack)»;
 		import «TemplateUtil.getMetadataSuffix(genPack)».«TemplateUtil.getPackageClassName(genPack)»;
 
 		«FOR dependency : TemplateUtil.getDependentGenPackages(genPack)»
-		import «TemplateUtil.getMetadataSuffix(genPack)».«TemplateUtil.getPackageClassName(dependency)»;
+		import «TemplateUtil.getMetadataSuffix(dependency)».«TemplateUtil.getPackageClassName(dependency)»;
 		«ENDFOR»
 
 		import org.eclipse.emf.ecore.EAttribute;
@@ -180,8 +185,8 @@ class PackageImplTemplate implements CodeTemplate{
 				setNsURI(eNS_URI);
 				
 				// Obtain other dependent packages
-				«FOR genPackage : TemplateUtil.getDependentGenPackages(genPack)»
-					«TemplateUtil.getPackageClassName(genPack)» the«TemplateUtil.getPackageClassName(genPack)»Package = «TemplateUtil.getPackageClassName(genPack)».eINSTANCE;
+				«FOR dependency : TemplateUtil.getDependentGenPackages(genPack)»
+					«TemplateUtil.getPackageClassName(dependency)» the«TemplateUtil.getPackageClassName(dependency)»Package = «TemplateUtil.getPackageClassName(dependency)».eINSTANCE;
 				«ENDFOR»
 		
 				// Create type parameters
@@ -202,13 +207,13 @@ class PackageImplTemplate implements CodeTemplate{
 						IS_GENERATED_INSTANCE_CLASS);
 					«FOR feature : clazz.EStructuralFeatures»
 						«IF feature instanceof EReference»«val ref = feature as EReference»
-						initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «IF ref.EType.EPackage.name.equals("ecore")»ecorePackage.get«ref.EType.name»()«ELSE»«TemplateUtil.getPackageClassName(ref)».eINSTANCE.get«ref.EType.name»()«ENDIF», «IF ref.EOpposite !== null»«TemplateUtil.getPackageClassName(ref)».eINSTANCE.get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
+						initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «IF ref.EType.EPackage.equals(EcorePackage.eINSTANCE)»ecorePackage.get«ref.EType.name»()«ELSE»«IF genPack.getEcorePackage().nsURI.equals(ref.EType.EPackage.nsURI)»this«ELSE»«TemplateUtil.getPackageClassName(ref.EType)».eINSTANCE«ENDIF».get«ref.EType.name»()«ENDIF», «IF ref.EOpposite !== null»«IF genPack.getEcorePackage().nsURI.equals(ref.EType.EPackage.nsURI)»this«ELSE»«TemplateUtil.getPackageClassName(ref)».eINSTANCE«ENDIF».get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
 							"«ref.name»", «(ref.defaultValue === null)?"null":ref.defaultValue», «ref.lowerBound», «ref.upperBound», «clazz.name».class, «(ref.isTransient)?"":"!"»IS_TRANSIENT, «(ref.isVolatile)?"":"!"»IS_VOLATILE, «(ref.isChangeable)?"":"!"»IS_CHANGEABLE, «(ref.isContainment)?"":"!"»IS_COMPOSITE, «(ref.isResolveProxies)?"":"!"»IS_RESOLVE_PROXIES,
 							«(ref.isUnsettable)?"":"!"»IS_UNSETTABLE, «(ref.isUnique)?"":"!"»IS_UNIQUE, «(ref.isDerived)?"":"!"»IS_DERIVED, «(ref.isOrdered)?"":"!"»IS_ORDERED);
-						«ELSE»«val atr = feature as EAttribute»
-						initEAttribute(get«clazz.name»_«atr.name.toFirstUpper»(), «IF atr.EType.EPackage.name.equals("ecore")»ecorePackage.get«atr.EType.name»()«ELSE»«TemplateUtil.getPackageClassName(atr)».eINSTANCE.get«atr.EType.name.toFirstUpper»()«ENDIF»,
-							"«atr.name»", «(atr.defaultValue === null)?"null":"\""+atr.defaultValue+"\""», «atr.lowerBound», «atr.upperBound», «clazz.name».class, «(atr.isTransient)?"":"!"»IS_TRANSIENT, «(atr.isVolatile)?"":"!"»IS_VOLATILE, «(atr.isChangeable)?"":"!"»IS_CHANGEABLE, «(atr.isUnsettable)?"":"!"»IS_UNSETTABLE, «(atr.isUnique)?"":"!"»IS_ID, IS_UNIQUE,
-							«(atr.isDerived)?"":"!"»IS_DERIVED, «(atr.isOrdered)?"":"!"»IS_ORDERED);
+						«ELSE»«val attr = feature as EAttribute»
+						initEAttribute(get«clazz.name»_«attr.name.toFirstUpper»(), «IF attr.EType.EPackage.equals(EcorePackage.eINSTANCE)»ecorePackage.get«attr.EType.name»()«ELSE»«IF genPack.getEcorePackage().nsURI.equals(attr.EType.EPackage.nsURI)»this«ELSE»«TemplateUtil.getPackageClassName(attr.EType)».eINSTANCE«ENDIF».get«attr.EType.name.toFirstUpper»()«ENDIF»,
+							"«attr.name»", «(attr.defaultValue === null)?"null":"\""+attr.defaultValue+"\""», «attr.lowerBound», «attr.upperBound», «clazz.name».class, «(attr.isTransient)?"":"!"»IS_TRANSIENT, «(attr.isVolatile)?"":"!"»IS_VOLATILE, «(attr.isChangeable)?"":"!"»IS_CHANGEABLE, «(attr.isUnsettable)?"":"!"»IS_UNSETTABLE, «(attr.isUnique)?"":"!"»IS_ID, IS_UNIQUE,
+							«(attr.isDerived)?"":"!"»IS_DERIVED, «(attr.isOrdered)?"":"!"»IS_ORDERED);
 						«ENDIF»
 					«ENDFOR»
 					
