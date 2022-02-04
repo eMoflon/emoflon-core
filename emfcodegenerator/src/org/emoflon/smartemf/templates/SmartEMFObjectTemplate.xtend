@@ -1,5 +1,7 @@
 package org.emoflon.smartemf.templates
 
+import java.util.LinkedList
+import java.util.List
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
 import org.eclipse.emf.ecore.EAttribute
 import org.eclipse.emf.ecore.EClass
@@ -226,8 +228,6 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 		TemplateUtil.writeToFile(path + TemplateUtil.getFQImplName(genPack, eClass).replace(".", "/") + "Impl.java", code);
 	}
 	
-	}
-	
 	def getToString() {
 		var EAttribute nameAttr = null
 		var printableAttributes = new LinkedList
@@ -266,7 +266,7 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 		«ENDIF»
 		«FOR attr : printableAttributes SEPARATOR '''b.append(", ");'''»
 			b.append("«attr.name»: ");
-			b.append(«getOrIs(attr)»«attr.name.toFirstUpper»());
+			b.append(«TemplateUtil.getOrIs(attr)»«attr.name.toFirstUpper»());
 		«ENDFOR»
 		'''
 	}
@@ -278,7 +278,7 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 		var firstAttr = printableAttributes.get(0)
 		return '''
 		b.append("«firstAttr.name»: ");
-		b.append(«getOrIs(firstAttr)»«firstAttr.name.toFirstUpper»());
+		b.append(«TemplateUtil.getOrIs(firstAttr)»«firstAttr.name.toFirstUpper»());
 		'''
 	}
 	
