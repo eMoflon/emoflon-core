@@ -1,71 +1,51 @@
-package org.emoflon.smartemf.creators.templates
+package org.emoflon.smartemf.templates
 
-import java.io.File
-import java.io.FileWriter
-import java.util.HashMap
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
 import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
-import org.emoflon.smartemf.EcoreGenmodelParser
-import org.emoflon.smartemf.creators.FileCreator
-import org.emoflon.smartemf.creators.templates.util.CodeFormattingUtil
-import org.emoflon.smartemf.creators.templates.util.PackageInformation
-import org.emoflon.smartemf.creators.templates.util.TemplateUtil
+import org.emoflon.smartemf.templates.util.TemplateUtil
 
 /**
  * This class generates the interface for the EMF-package class
  */
-class PackageInterfaceTemplate implements FileCreator {
+class PackageInterfaceTemplate implements CodeTemplate {
 	
-	/**
-	 * The inspector for the package
-	 */
-	var PackageInformation e_pak
+	var GenPackage genPack
+	var String path
 	
-	/**
-	 * stores the fq-file name to which this interface shall be written to.
-	 */
-	var String file_path
-	
-	/**
-	 * stores if this Creator was properly initialized
-	 */
-	var boolean is_initialized = false
-	
-	var featureCounter = 0;
-	
-	new(PackageInformation package_inspector, HashMap<EPackage,PackageInformation> e_pak_map, EcoreGenmodelParser gen_model, String generatedFileDir){
-		e_pak = package_inspector
+	new(GenPackage genPack, String path) {
+		this.genPack = genPack
+		this.path = path
 	}
 	
-	def String createSrcCode() {
-		return '''
-		package «e_pak.get_package_declaration_name»;
+	override createCode() {
+		var featureCounter = 0;
+		var ePack = genPack.getEcorePackage
+	
+		var code = '''
+		package «TemplateUtil.getMetadataSuffix(genPack)»;
 		
 		import java.lang.String;
 		
 		import org.eclipse.emf.ecore.EAttribute;
 		import org.eclipse.emf.ecore.EClass;
-		«IF !e_pak.get_all_eenums_in_package.empty»
-		import org.eclipse.emf.ecore.EEnum;
-		«ENDIF»
-		«IF !e_pak.get_all_edata_types_in_package.empty»
 		import org.eclipse.emf.ecore.EDataType;
-		«ENDIF»
 		import org.eclipse.emf.ecore.EPackage;
 		import org.eclipse.emf.ecore.EReference;
+		import org.eclipse.emf.ecore.EEnum;
+		
 		
 		import org.emoflon.smartemf.runtime.SmartPackage;
 		
-		public interface «e_pak.get_emf_package_class_name» extends SmartPackage {
+		public interface «TemplateUtil.getPackageClassName(genPack)» extends SmartPackage {
 
-			String eNAME = "«e_pak.get_name»";
-			String eNS_URI = "«e_pak.get_ens_uri»";
-			String eNS_PREFIX = "«e_pak.get_ens_prefix»";
+			String eNAME = "«ePack.name»";
+			String eNS_URI = "«ePack.nsURI»";
+			String eNS_PREFIX = "«ePack.nsPrefix»";
 		
-			«e_pak.get_emf_package_class_name» eINSTANCE = «e_pak.get_package_declaration_name».impl.«e_pak.get_emf_package_class_name»Impl.init();
+			«TemplateUtil.getPackageClassName(genPack)» eINSTANCE = «TemplateUtil.getImplSuffix(genPack)».«TemplateUtil.getPackageClassName(genPack)»Impl.init();
 		
-			«FOR clazz : e_pak.get_all_eclasses_in_package»
+			«FOR clazz : TemplateUtil.getEClasses(genPack)»
 				int «TemplateUtil.getLiteral(clazz)» = «clazz.classifierID»;
 				«FOR feature : clazz.EStructuralFeatures»
 					int «TemplateUtil.getLiteral(feature)» = «featureCounter++»;
@@ -74,33 +54,33 @@ class PackageInterfaceTemplate implements FileCreator {
 				int «TemplateUtil.getLiteral(clazz)»_OPERATION_COUNT = «clazz.EOperations.size + countSuperOperations(clazz)»;
 				
 			«ENDFOR»
-			«FOR eenum : e_pak.get_all_eenums_in_package»
+			«FOR eenum : TemplateUtil.getEEnums(genPack)»
 				int «TemplateUtil.getLiteral(eenum)» = «eenum.classifierID»;
 			«ENDFOR»
 			
-			«FOR datatype : e_pak.get_all_edata_types_in_package»
+			«FOR datatype : TemplateUtil.getEDataTypes(genPack)»
 				int «TemplateUtil.getLiteral(datatype)» = «datatype.classifierID»;
 			«ENDFOR»
 
-			«FOR clazz : e_pak.get_all_eclasses_in_package»
+			«FOR clazz : TemplateUtil.getEClasses(genPack)»
 				EClass get«clazz.name»();
 				«FOR feature : clazz.EStructuralFeatures»
 					«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» get«clazz.name»_«feature.name.toFirstUpper»();
 				«ENDFOR»
 				
 			«ENDFOR»
-			«FOR eenum : e_pak.get_all_eenums_in_package»
+			«FOR eenum : TemplateUtil.getEEnums(genPack)»
 				EEnum get«eenum.name.toFirstUpper»();
 			«ENDFOR»
-			«FOR datatype : e_pak.get_all_edata_types_in_package»
+			«FOR datatype : TemplateUtil.getEDataTypes(genPack)»
 				EDataType get«datatype.name.toFirstUpper»();
 			«ENDFOR»
 			
-			«e_pak.get_emf_e_package.name.toFirstUpper»Factory get«e_pak.get_emf_e_package.name.toFirstUpper»Factory();
+			«TemplateUtil.getFactoryInterface(genPack)» get«TemplateUtil.getFactoryName(genPack)»();
 		
 			interface Literals {
 				
-				«FOR clazz : e_pak.get_all_eclasses_in_package»
+				«FOR clazz : TemplateUtil.getEClasses(genPack)»
 					EClass «TemplateUtil.getLiteral(clazz)» = eINSTANCE.get«clazz.name»();
 					
 					«FOR feature : clazz.EStructuralFeatures»
@@ -109,18 +89,20 @@ class PackageInterfaceTemplate implements FileCreator {
 					«ENDFOR»
 				«ENDFOR»
 				
-				«FOR eenum : e_pak.get_all_eenums_in_package»
+				«FOR eenum : TemplateUtil.getEEnums(genPack)»
 					EEnum «TemplateUtil.getLiteral(eenum)» = eINSTANCE.get«eenum.name.toFirstUpper»();
 				«ENDFOR»
 				
-				«FOR datatype : e_pak.get_all_edata_types_in_package»
+				«FOR datatype : TemplateUtil.getEDataTypes(genPack)»
 					EDataType «TemplateUtil.getLiteral(datatype)» = eINSTANCE.get«datatype.name»();
 				«ENDFOR»
 				
 			}
 		
-		} //«e_pak.get_emf_package_class_name»
+		} 
 		'''
+		
+		TemplateUtil.writeToFile(path + TemplateUtil.getMetadataSuffix(genPack).replace(".", "/") + "/" + TemplateUtil.getPackageClassName(genPack) + ".java", code);
 	}
 	
 	static def countSuperFeatures(EClass clazz) {
@@ -150,21 +132,4 @@ class PackageInterfaceTemplate implements FileCreator {
 		return operationList.size
 
 	}
-	
-	override initialize_creator(String fq_file_path) {
-		file_path = fq_file_path
-		is_initialized = true
-	}
-	
-	override write_to_file() {	
-		if(!is_initialized)
-			throw new RuntimeException('''The «this.class» was not initialized.'''.toString)
-			
-		var package_file = new File(file_path)
-		package_file.getParentFile().mkdirs()
-		var package_fw = new FileWriter(package_file , false)
-		package_fw.write(CodeFormattingUtil.format(createSrcCode))
-		package_fw.close()
-	}
-
 }

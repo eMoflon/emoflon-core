@@ -1,4 +1,4 @@
-package org.emoflon.smartemf.creators.templates.util;
+package org.emoflon.smartemf.templates.util;
 
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
