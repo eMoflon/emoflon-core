@@ -118,14 +118,15 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 					
 					//Find the current workspace
 					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();			
+					String rootPath = root.getLocation().toPortableString();
 					File ecoreFile = new File(root.findMember(getEcoreFile().getFullPath().toString()).getLocationURI());
 					String ecorePath = ecoreFile.getAbsolutePath();
 					EPackage ePack = (EPackage) (new ResourceSetImpl()).getResource(URI.createFileURI(ecorePath), true).getContents().get(0);
 		
 					if(ecoreFile.exists() && !ecoreFile.isDirectory()) {
 						//paths of the files necessary for smartEMF extension
-						final SmartEMFGenerator codeGenerator = new SmartEMFGenerator(ePack, genModel, ecorePath);
-						codeGenerator.generate_all_model_code();
+						final SmartEMFGenerator codeGenerator = new SmartEMFGenerator(getProject(), ePack, genModel);
+						codeGenerator.generateModelCode();
 					} else {
 						logger.warn("Problem when generating code: the genmodel file needs to be in the same folder as the ecore file.");
 					}	

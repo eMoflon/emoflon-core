@@ -12,7 +12,7 @@ public class MoflonEmfNature extends MoflonProjectConfigurator {
 
 	@Override
 	protected String getBuilderId() {
-		return MoflonEmfBuilder.getId();
+		return MoflonEMFBuilder.getId();
 	}
 
 	@Override
