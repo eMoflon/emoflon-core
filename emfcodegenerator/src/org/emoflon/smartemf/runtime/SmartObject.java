@@ -27,7 +27,6 @@ import org.eclipse.emf.ecore.resource.Resource.Internal;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.emoflon.smartemf.persistence.SmartEMFResource;
 import org.emoflon.smartemf.runtime.collections.DefaultSmartEList;
-import org.emoflon.smartemf.runtime.collections.LinkedSmartESet;
 import org.emoflon.smartemf.runtime.collections.SmartCollection;
 import org.emoflon.smartemf.runtime.collections.SmartESet;
 import org.emoflon.smartemf.runtime.notification.NotifyStatus;
@@ -657,5 +656,17 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 	@Override
 	public Object eGet(EStructuralFeature eFeature, boolean resolve, boolean coreType) {
 		return eGet(eFeature);
+	}
+
+	@Override
+	public String toString() {
+		if (SmartEMFConfig.simpleStringRepresentations()) {
+			String className = getClass().getSimpleName();
+			if (className.endsWith("Impl"))
+				className = className.substring(0, className.length() - 4);
+			return className + "@" + Integer.toHexString(hashCode());
+		} else {
+			return super.toString();
+		}
 	}
 }

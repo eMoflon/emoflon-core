@@ -15,11 +15,10 @@ Require-Bundle: org.eclipse.emf.ecore.xmi;bundle-version="2.16.0",
  org.eclipse.jdt.core,
  org.eclipse.text,
  org.eclipse.core.resources,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.pde.core
 Bundle-ClassPath: .
 Export-Package: org.emoflon.smartemf,
- org.emoflon.smartemf.creators,
- org.emoflon.smartemf.creators.templates,
  org.emoflon.smartemf.persistence;
   uses:="org.eclipse.emf.ecore,
    org.eclipse.emf.common.util,
@@ -35,4 +34,6 @@ Export-Package: org.emoflon.smartemf,
    org.eclipse.emf.common.notify",
  org.emoflon.smartemf.runtime.collections;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util,com.google.common.collect",
  org.emoflon.smartemf.runtime.notification;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util,org.eclipse.emf.common.notify",
- org.emoflon.smartemf.runtime.util
+ org.emoflon.smartemf.runtime.util,
+ org.emoflon.smartemf.templates,
+ org.emoflon.smartemf.templates.util
