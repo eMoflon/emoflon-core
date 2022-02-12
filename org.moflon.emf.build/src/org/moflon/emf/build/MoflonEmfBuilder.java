@@ -2,12 +2,10 @@ package org.moflon.emf.build;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
-import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -23,6 +21,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.gervarro.eclipse.workspace.util.AntPatternCondition;
 import org.moflon.core.build.CleanVisitor;
@@ -44,57 +45,50 @@ public class MoflonEmfBuilder extends IncrementalProjectBuilder {
 		IProject project = getProject();
 		IFolder folder = project.getFolder("model");
 		Collection<IResource> resources = Arrays.asList(folder.members());
+		Collection<IResource> genModelResources = resources.stream().filter(r -> r.getName().endsWith(".genmodel")).collect(Collectors.toList());
 		Collection<IResource> ecoreResources = resources.stream().filter(r -> r.getName().endsWith(".ecore")).collect(Collectors.toList());
+		
+		// get genmodels to filter ecores who are already covered by one
+		Collection<IFile> genModelFiles = genModelResources.stream().map(this::getIFileFromResource).collect(Collectors.toList());
+		Collection<GenModel> genModels = genModelFiles.stream().flatMap(g -> eMoflonEMFUtil.getContents(g).stream()).map(c -> (GenModel) c).collect(Collectors.toList());
+		Collection<IFile> ecoreFiles = ecoreResources.stream().map(this::getIFileFromResource).collect(Collectors.toList());
 		
 		IResourceDelta delta = getDelta(project);
 		if(delta!=null) {
 			for(IResourceDelta rDelta : delta.getAffectedChildren()) {
 				// if changed resource was in the build folder -> ignore it
 				if(!rDelta.getFullPath().toString().endsWith("/bin")) {
-					buildEcoreFiles(ecoreResources, monitor);					
+					buildEcoreFiles(ecoreFiles, genModels,  monitor);					
 				}
 			}
 		}
 		else {
 			// build ecore if delta was null as it will probably be the initial build
-			buildEcoreFiles(ecoreResources, monitor);					
+			buildEcoreFiles(ecoreFiles, genModels, monitor);					
 		}
 		return new IProject[] {project};
 	}
 	
-	private void buildEcoreFiles(Collection<IResource> resources, final IProgressMonitor monitor) throws CoreException {
+	private void buildEcoreFiles(Collection<IFile> ecoreFiles, Collection<GenModel> genModels,  final IProgressMonitor monitor) throws CoreException {
 		final IProject project = getProject();
 
 		// Remove markers and delete generated code
 		deleteProblemMarkers();
 		removeGeneratedCode(project);
+		ClasspathUtil.makeSourceFolderIfNecessary(WorkspaceHelper.getGenFolder(getProject()));
+		final SubMonitor subMon = SubMonitor.convert(monitor,
+				"Generating code for project " + getProject().getName(), 13);
+		final MultiStatus emfBuilderStatus = new MultiStatus(WorkspaceHelper.getPluginId(getClass()), 0,
+				"Problems during EMF code generation", null);
 		
-		for(IResource resource : resources) {
-			final IFile ecoreFile = Platform.getAdapterManager().getAdapter(resource, IFile.class);
-			final MultiStatus emfBuilderStatus = new MultiStatus(WorkspaceHelper.getPluginId(getClass()), 0,
-					"Problems during EMF code generation", null);
+		createFoldersIfNecessary(project, subMon.split(1));
+		
+		for(IFile ecoreFile : ecoreFiles) {
 			try {
-				final SubMonitor subMon = SubMonitor.convert(monitor,
-						"Generating code for project " + getProject().getName(), 13);
-				
-				createFoldersIfNecessary(project, subMon.split(1));
-				ClasspathUtil.makeSourceFolderIfNecessary(WorkspaceHelper.getGenFolder(getProject()));
-				
-				// Compute project dependencies
-//				final IBuildConfiguration[] referencedBuildConfigs = project
-//						.getReferencedBuildConfigs(project.getActiveBuildConfig().getName(), false);
-//				for (final IBuildConfiguration referencedConfig : referencedBuildConfigs) {
-//					addTriggerProject(referencedConfig.getProject());
-//				}
-				
-				
 				// Build
-				final ResourceSet resourceSet = eMoflonEMFUtil.createDefaultResourceSet();
-				eMoflonEMFUtil.installCrossReferencers(resourceSet);
 				subMon.worked(1);
 				
-				final MoflonEmfCodeGenerator codeGenerationTask = new MoflonEmfCodeGenerator(ecoreFile, resourceSet,
-						EMoflonPreferencesActivator.getDefault().getPreferencesStorage());
+				final MoflonEmfCodeGenerator codeGenerationTask = new MoflonEmfCodeGenerator(getProject(), ecoreFile, getGenModel(genModels, ecoreFile));
 				
 				final IStatus status = codeGenerationTask.run(subMon.split(1));
 				subMon.worked(3);
@@ -122,6 +116,10 @@ public class MoflonEmfBuilder extends IncrementalProjectBuilder {
 			
 		}
 		ResourcesPlugin.getWorkspace().checkpoint(false);
+	}
+
+	private IFile getIFileFromResource(IResource resource) {
+		return Platform.getAdapterManager().getAdapter(resource, IFile.class);
 	}
 
 	/**
@@ -175,6 +173,33 @@ public class MoflonEmfBuilder extends IncrementalProjectBuilder {
 		} else {
 			logger.error(String.format("Could not load error reporter '%s' to report status", reporterClass));
 		}
+	}
+	
+	/**
+	 * finds the genmodel for a given ecore file if any exists
+	 * @param genModels collection of genmodels
+	 * @param ecoreFile the ecore file 
+	 * @return the corresponding genmodel or null
+	 */
+	public GenModel getGenModel(Collection<GenModel> genModels, IFile ecoreFile) {
+		Collection<EObject> contents = eMoflonEMFUtil.getContents(ecoreFile);
+		for(EObject content : contents) {
+			if(!(content instanceof EPackage)) {
+				throw new RuntimeException(ecoreFile.getName() + " did not contain solely EPackages.");
+			}
+			
+			EPackage pkg = (EPackage) content;
+			for(GenModel genModel : genModels) {
+				for(GenPackage genPkg : genModel.getGenPackages()) {
+					EPackage ecorePackage = genPkg.getEcorePackage();
+					if(ecorePackage.getNsURI().equals(pkg.getNsURI())) {
+						// if one EPackage of this ecore has a corresponding genmodel then the rest will correspond to the same 
+						return genModel;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	public static String getId() {

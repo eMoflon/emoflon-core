@@ -38,7 +38,7 @@ public class MoflonGenModelBuilder extends GenModelBuilder {
 
 	private final String basePackage;
 
-	public MoflonGenModelBuilder(final ResourceSet resourceSet, final List<Resource> resources, final IFile ecoreFile,
+	public MoflonGenModelBuilder(final ResourceSet resourceSet, final IFile ecoreFile,
 			final String basePackage, final String modelDirectory, final MoflonPropertiesContainer moflonProperties) {
 		super(resourceSet);
 		this.ecoreFile = ecoreFile;

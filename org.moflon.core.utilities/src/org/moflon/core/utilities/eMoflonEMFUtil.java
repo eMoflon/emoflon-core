@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -58,6 +59,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
  * @author Anthony Anjorin
  * @author Gergely Varró
  * @author Roland Kluge
+ * @author Lars Fritsche
  */
 public class eMoflonEMFUtil {
 	private static final Logger logger = Logger.getLogger(eMoflonEMFUtil.class);
@@ -570,6 +572,20 @@ public class eMoflonEMFUtil {
 		}
 
 		return null;
+	}
+	
+	public static Collection<EObject> getContents(IFile iFile) {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();			
+		File file = new File(root.findMember(iFile.getFullPath().toString()).getLocationURI());
+		String ecorePath = file.getAbsolutePath();
+		ResourceSetImpl resourceSetImpl = new ResourceSetImpl();
+		Resource resource = resourceSetImpl.getResource(URI.createFileURI(ecorePath), true);
+		try {
+			resource.load(null);
+		} catch (IOException e) {
+			throw new RuntimeException("Could not load " + iFile.getName() + " as a resource", e);
+		}
+		return resource.getContents();
 	}
 
 	/**

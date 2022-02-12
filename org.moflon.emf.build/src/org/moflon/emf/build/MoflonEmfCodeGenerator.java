@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,59 +23,73 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.BasicMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.emoflon.smartemf.SmartEMFGenerator;
+import org.gervarro.eclipse.task.ITask;
 import org.moflon.core.preferences.EMoflonPreferencesStorage;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
 import org.moflon.core.propertycontainer.PropertycontainerFactory;
 import org.moflon.core.utilities.LogUtils;
 import org.moflon.core.utilities.WorkspaceHelper;
+import org.moflon.core.utilities.eMoflonEMFUtil;
 import org.moflon.emf.codegen.CodeGenerator;
 
 
 
-public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
+public class MoflonEmfCodeGenerator implements ITask {
 	private static final Logger logger = Logger.getLogger(MoflonEmfCodeGenerator.class);
 	
 	private GenModel genModel;
+	private IFile ecoreIFile;
+	
+	private IProject project;
+	private MoflonPropertiesContainer moflonProperties;
+	private ResourceSet resourceSet;
 
-	public MoflonEmfCodeGenerator(final IFile ecoreFile, final ResourceSet resourceSet,
-			final EMoflonPreferencesStorage preferencesStorage) {
-		super(ecoreFile, resourceSet, preferencesStorage);
+	
+	public MoflonEmfCodeGenerator(final IProject project, final IFile ecoreIFile, final GenModel genModel) {
+		this.project = project;
+		this.ecoreIFile = ecoreIFile;
+		this.genModel = genModel;
+		this.resourceSet = eMoflonEMFUtil.createDefaultResourceSet();
+		
+		eMoflonEMFUtil.installCrossReferencers(resourceSet);
 	}
 
 	@Override
 	public String getTaskName() {
-		return "Generating code for project " + getProjectName();
+		return "Generating code for project " + project.getName();
 	}
 
-	@Override
 	public IStatus processResource(final IProgressMonitor monitor) {
 		try {
 			final int totalWork = 15 + 5 + 30 + 5;
-			final SubMonitor subMon = SubMonitor.convert(monitor, "Code generation task for " + getProjectName(),
+			final SubMonitor subMon = SubMonitor.convert(monitor, "Code generation task for " + project.getName(),
 					totalWork);
-			LogUtils.info(logger, "Generating code for project %s", getProjectName());
+			LogUtils.info(logger, "Generating code for project %s", project.getName());
 
 			final long toc = System.nanoTime();
 			
-			// Build or load GenModel
-			final MonitoredGenModelBuilder genModelBuilderJob = new MonitoredGenModelBuilder(getResourceSet(),
-					getAllResources(), getEcoreFile(), true, getMoflonProperties());
-			final IStatus genModelBuilderStatus = genModelBuilderJob.run(subMon.split(15));
-			if (subMon.isCanceled())
-				return Status.CANCEL_STATUS;
-			if (genModelBuilderStatus.matches(IStatus.ERROR))
-				return genModelBuilderStatus;
-			this.setGenModel(genModelBuilderJob.getGenModel());
-			if (subMon.isCanceled())
-				return Status.CANCEL_STATUS;
+			// Build GenModel if not already loaded
+			if(genModel == null) {
+				final MonitoredGenModelBuilder genModelBuilderJob = new MonitoredGenModelBuilder(resourceSet, ecoreIFile, true, moflonProperties);
+				final IStatus genModelBuilderStatus = genModelBuilderJob.run(subMon.split(15));
+				if (subMon.isCanceled())
+					return Status.CANCEL_STATUS;
+				if (genModelBuilderStatus.matches(IStatus.ERROR))
+					return genModelBuilderStatus;
+				this.setGenModel(genModelBuilderJob.getGenModel());
+				if (subMon.isCanceled())
+					return Status.CANCEL_STATUS;
+			}
 			subMon.worked(5);
 
 			final IStatus inheritanceCheckStatus = checkForCyclicInheritance();
@@ -84,14 +99,9 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 				return inheritanceCheckStatus;
 			
 			// Generate code
-			subMon.subTask("Generating code for project " + getProjectName());
+			subMon.subTask("Generating code for project " + project.getName());
 			
-			//TODO:be able to change between SmartEMF and normal EMF
-//			boolean istSmartEmf = !this.getGenModel().getRootExtendsClass().equals("org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container");
-			//for testing purposes: if the genmodel name is of a specific model, then just create the old emf
-//			if(genModelBuilderJob.getGenModel().getModelName().equals("SimpleEMFEcoreModel")) istSmartEmf = false;
-			
-			MoflonPropertiesContainerHelper helper = new MoflonPropertiesContainerHelper(getProject(), new NullProgressMonitor());
+			MoflonPropertiesContainerHelper helper = new MoflonPropertiesContainerHelper(project, new NullProgressMonitor());
 			MoflonPropertiesContainer container = helper.load();
 			if(container.getCodeGenerator() == null) {
 				container.setCodeGenerator(PropertycontainerFactory.eINSTANCE.createCodeGenerator());
@@ -118,14 +128,13 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 					
 					//Find the current workspace
 					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();			
-					String rootPath = root.getLocation().toPortableString();
-					File ecoreFile = new File(root.findMember(getEcoreFile().getFullPath().toString()).getLocationURI());
+					File ecoreFile = new File(root.findMember(ecoreIFile.getFullPath().toString()).getLocationURI());
 					String ecorePath = ecoreFile.getAbsolutePath();
 					EPackage ePack = (EPackage) (new ResourceSetImpl()).getResource(URI.createFileURI(ecorePath), true).getContents().get(0);
 		
 					if(ecoreFile.exists() && !ecoreFile.isDirectory()) {
 						//paths of the files necessary for smartEMF extension
-						final SmartEMFGenerator codeGenerator = new SmartEMFGenerator(getProject(), ePack, genModel);
+						final SmartEMFGenerator codeGenerator = new SmartEMFGenerator(project, ePack, genModel);
 						codeGenerator.generateModelCode();
 					} else {
 						logger.warn("Problem when generating code: the genmodel file needs to be in the same folder as the ecore file.");
@@ -133,7 +142,7 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 					
 					//because of smartemf: the gen folder needs to be refreshed automatically; 
 					//else the user will need to do this manually 
-					getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+					project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					
 					break;
 				}
@@ -149,6 +158,43 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 			e.printStackTrace();
 			return reportExceptionDuringCodeGeneration(e);
 		}
+	}
+	
+	/**
+	 * Loads moflon.properties.xmi and the project's meta-model from the specified
+	 * Ecore file (see constructor).
+	 *
+	 * The control flow then continues to
+	 * {@link GenericMoflonProcess#processResource(IProgressMonitor)}.
+	 *
+	 * @see #processResource(IProgressMonitor)
+	 */
+	@Override
+	public final IStatus run(final IProgressMonitor monitor) {
+		final SubMonitor subMon = SubMonitor.convert(monitor, getTaskName(), 10);
+
+		if (!ecoreIFile.exists())
+			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()),
+					String.format("Ecore file does not exist. Expected location: '%s'", ecoreIFile));
+
+		try {
+			// (1) Loads moflon.properties file
+			final IProject project = ecoreIFile.getProject();
+			this.moflonProperties = new MoflonPropertiesContainerHelper(project, subMon).load();
+
+			subMon.worked(1);
+			if (subMon.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+		} catch (final WrappedException wrappedException) {
+			final Exception exception = wrappedException.exception();
+			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), exception.getMessage(),
+					exception);
+		} catch (final RuntimeException runtimeException) {
+			return new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()), runtimeException.getMessage(),
+					runtimeException);
+		}
+		return processResource(subMon.split(7));
 	}
 
 	/**
@@ -223,9 +269,5 @@ public class MoflonEmfCodeGenerator extends GenericMoflonProcess {
 	 */
 	private String getPluginId() {
 		return WorkspaceHelper.getPluginId(getClass());
-	}
-
-	private String getProjectName() {
-		return getProject().getName();
 	}
 }

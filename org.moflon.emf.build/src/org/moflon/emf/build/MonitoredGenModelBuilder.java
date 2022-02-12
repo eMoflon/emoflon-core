@@ -28,19 +28,15 @@ public final class MonitoredGenModelBuilder implements ITask {
 
 	private final IFile ecoreFile;
 
-	private final List<Resource> resources;
-
 	private final boolean saveGenModel;
 
 	private MoflonPropertiesContainer moflonProperties;
 
 	private GenModel genModel;
 
-	public MonitoredGenModelBuilder(final ResourceSet resourceSet, final List<Resource> resources,
-			final IFile ecoreFile, final boolean saveGenModel, final MoflonPropertiesContainer properties) {
+	public MonitoredGenModelBuilder(final ResourceSet resourceSet, final IFile ecoreFile, final boolean saveGenModel, final MoflonPropertiesContainer properties) {
 		this.resourceSet = resourceSet;
 		this.ecoreFile = ecoreFile;
-		this.resources = resources;
 		this.saveGenModel = saveGenModel;
 		this.moflonProperties = properties;
 	}
@@ -65,8 +61,7 @@ public final class MonitoredGenModelBuilder implements ITask {
 		final String basePackage = "";
 		final String modelDirectory = WorkspaceHelper.getGenFolder(project).getFullPath().toString();
 
-		final MoflonGenModelBuilder genModelBuilder = new MoflonGenModelBuilder(resourceSet, resources, ecoreFile,
-				basePackage, modelDirectory, moflonProperties);
+		final MoflonGenModelBuilder genModelBuilder = new MoflonGenModelBuilder(resourceSet, ecoreFile,	basePackage, modelDirectory, moflonProperties);
 		genModelBuilder.loadDefaultSettings();
 
 		subMon.worked(10);
