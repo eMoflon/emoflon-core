@@ -87,11 +87,6 @@ public class PropertycontainerAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
-		public Adapter caseTGGBuildMode(TGGBuildMode object) {
-			return createTGGBuildModeAdapter();
-		}
-
-		@Override
 		public Adapter caseFactoryMappings(FactoryMappings object) {
 			return createFactoryMappingsAdapter();
 		}
@@ -102,8 +97,8 @@ public class PropertycontainerAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
-		public Adapter caseReplaceGenModel(ReplaceGenModel object) {
-			return createReplaceGenModelAdapter();
+		public Adapter caseGenModelProperties(GenModelProperties object) {
+			return createGenModelPropertiesAdapter();
 		}
 
 		@Override
@@ -202,20 +197,6 @@ public class PropertycontainerAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.moflon.core.propertycontainer.TGGBuildMode <em>TGG Build Mode</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.moflon.core.propertycontainer.TGGBuildMode
-	 * @generated
-	 */
-	public Adapter createTGGBuildModeAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.moflon.core.propertycontainer.FactoryMappings <em>Factory Mappings</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -244,16 +225,16 @@ public class PropertycontainerAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.moflon.core.propertycontainer.ReplaceGenModel <em>Replace Gen Model</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.moflon.core.propertycontainer.GenModelProperties <em>Gen Model Properties</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.moflon.core.propertycontainer.ReplaceGenModel
+	 * @see org.moflon.core.propertycontainer.GenModelProperties
 	 * @generated
 	 */
-	public Adapter createReplaceGenModelAdapter() {
+	public Adapter createGenModelPropertiesAdapter() {
 		return null;
 	}
 

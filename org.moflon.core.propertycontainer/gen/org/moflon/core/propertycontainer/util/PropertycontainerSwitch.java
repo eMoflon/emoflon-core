@@ -100,13 +100,6 @@ public class PropertycontainerSwitch<T> extends Switch<T> {
 				result = defaultCase(theEObject);
 			return result;
 		}
-		case PropertycontainerPackage.TGG_BUILD_MODE: {
-			TGGBuildMode tggBuildMode = (TGGBuildMode) theEObject;
-			T result = caseTGGBuildMode(tggBuildMode);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
 		case PropertycontainerPackage.FACTORY_MAPPINGS: {
 			FactoryMappings factoryMappings = (FactoryMappings) theEObject;
 			T result = caseFactoryMappings(factoryMappings);
@@ -123,9 +116,9 @@ public class PropertycontainerSwitch<T> extends Switch<T> {
 				result = defaultCase(theEObject);
 			return result;
 		}
-		case PropertycontainerPackage.REPLACE_GEN_MODEL: {
-			ReplaceGenModel replaceGenModel = (ReplaceGenModel) theEObject;
-			T result = caseReplaceGenModel(replaceGenModel);
+		case PropertycontainerPackage.GEN_MODEL_PROPERTIES: {
+			GenModelProperties genModelProperties = (GenModelProperties) theEObject;
+			T result = caseGenModelProperties(genModelProperties);
 			if (result == null)
 				result = defaultCase(theEObject);
 			return result;
@@ -226,21 +219,6 @@ public class PropertycontainerSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>TGG Build Mode</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>TGG Build Mode</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseTGGBuildMode(TGGBuildMode object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Factory Mappings</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -271,17 +249,17 @@ public class PropertycontainerSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Replace Gen Model</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Gen Model Properties</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Replace Gen Model</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Gen Model Properties</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseReplaceGenModel(ReplaceGenModel object) {
+	public T caseGenModelProperties(GenModelProperties object) {
 		return null;
 	}
 

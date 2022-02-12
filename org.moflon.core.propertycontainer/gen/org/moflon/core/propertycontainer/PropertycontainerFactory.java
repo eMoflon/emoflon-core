@@ -58,15 +58,6 @@ public interface PropertycontainerFactory extends EFactory {
 	ImportMappings createImportMappings();
 
 	/**
-	 * Returns a new object of class '<em>TGG Build Mode</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>TGG Build Mode</em>'.
-	 * @generated
-	 */
-	TGGBuildMode createTGGBuildMode();
-
-	/**
 	 * Returns a new object of class '<em>Factory Mappings</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -85,13 +76,13 @@ public interface PropertycontainerFactory extends EFactory {
 	MoflonPropertiesContainer createMoflonPropertiesContainer();
 
 	/**
-	 * Returns a new object of class '<em>Replace Gen Model</em>'.
+	 * Returns a new object of class '<em>Gen Model Properties</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Replace Gen Model</em>'.
+	 * @return a new object of class '<em>Gen Model Properties</em>'.
 	 * @generated
 	 */
-	ReplaceGenModel createReplaceGenModel();
+	GenModelProperties createGenModelProperties();
 
 	/**
 	 * Returns a new object of class '<em>Properties Mapping</em>'.

@@ -54,7 +54,8 @@ public class MoflonGenModelBuilder extends GenModelBuilder {
 
 	@Override
 	public boolean isNewGenModelRequired(final URI genModelURI) {
-		return super.isNewGenModelRequired(genModelURI) || moflonProperties.getReplaceGenModel().isBool();
+		return (super.isNewGenModelRequired(genModelURI) || moflonProperties.getGenModelProps().isAutoReplaceGenModels()) 
+					&& moflonProperties.getGenModelProps().isGenerateNewGenModels();
 	}
 
 	@Override

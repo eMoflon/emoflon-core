@@ -3,30 +3,32 @@
 package org.moflon.core.propertycontainer.impl;
 
 import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.notify.NotificationChain;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.common.util.EList;
+
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+
 import org.moflon.core.propertycontainer.AdditionalDependencies;
 import org.moflon.core.propertycontainer.AdditionalUsedGenPackages;
 import org.moflon.core.propertycontainer.CodeGenerator;
 import org.moflon.core.propertycontainer.Dependencies;
 import org.moflon.core.propertycontainer.FactoryMappings;
+import org.moflon.core.propertycontainer.GenModelProperties;
 import org.moflon.core.propertycontainer.ImportMappings;
 import org.moflon.core.propertycontainer.MetaModelProject;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.PropertycontainerPackage;
-import org.moflon.core.propertycontainer.ReplaceGenModel;
 import org.moflon.core.propertycontainer.TGGBuildMode;
-import org.moflon.core.propertycontainer.UsedCodeGen;
 
 /**
  * <!-- begin-user-doc -->
@@ -40,8 +42,7 @@ import org.moflon.core.propertycontainer.UsedCodeGen;
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getFactoryMappings <em>Factory Mappings</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getAdditionalDependencies <em>Additional Dependencies</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getMetaModelProject <em>Meta Model Project</em>}</li>
- *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getReplaceGenModel <em>Replace Gen Model</em>}</li>
- *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getTGGBuildMode <em>TGG Build Mode</em>}</li>
+ *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getGenModelProps <em>Gen Model Props</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getImportMappings <em>Import Mappings</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getAdditionalUsedGenPackages <em>Additional Used Gen Packages</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.impl.MoflonPropertiesContainerImpl#getDescription <em>Description</em>}</li>
@@ -93,24 +94,14 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	protected MetaModelProject metaModelProject;
 
 	/**
-	 * The cached value of the '{@link #getReplaceGenModel() <em>Replace Gen Model</em>}' containment reference.
+	 * The cached value of the '{@link #getGenModelProps() <em>Gen Model Props</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getReplaceGenModel()
+	 * @see #getGenModelProps()
 	 * @generated
 	 * @ordered
 	 */
-	protected ReplaceGenModel replaceGenModel;
-
-	/**
-	 * The cached value of the '{@link #getTGGBuildMode() <em>TGG Build Mode</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTGGBuildMode()
-	 * @generated
-	 * @ordered
-	 */
-	protected TGGBuildMode tGGBuildMode;
+	protected GenModelProperties genModelProps;
 
 	/**
 	 * The cached value of the '{@link #getImportMappings() <em>Import Mappings</em>}' containment reference list.
@@ -303,8 +294,8 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	 * @generated
 	 */
 	@Override
-	public ReplaceGenModel getReplaceGenModel() {
-		return replaceGenModel;
+	public GenModelProperties getGenModelProps() {
+		return genModelProps;
 	}
 
 	/**
@@ -312,13 +303,13 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetReplaceGenModel(ReplaceGenModel newReplaceGenModel, NotificationChain msgs) {
-		ReplaceGenModel oldReplaceGenModel = replaceGenModel;
-		replaceGenModel = newReplaceGenModel;
+	public NotificationChain basicSetGenModelProps(GenModelProperties newGenModelProps, NotificationChain msgs) {
+		GenModelProperties oldGenModelProps = genModelProps;
+		genModelProps = newGenModelProps;
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL, oldReplaceGenModel,
-					newReplaceGenModel);
+					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__GEN_MODEL_PROPS, oldGenModelProps,
+					newGenModelProps);
 			if (msgs == null)
 				msgs = notification;
 			else
@@ -333,78 +324,24 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 	 * @generated
 	 */
 	@Override
-	public void setReplaceGenModel(ReplaceGenModel newReplaceGenModel) {
-		if (newReplaceGenModel != replaceGenModel) {
+	public void setGenModelProps(GenModelProperties newGenModelProps) {
+		if (newGenModelProps != genModelProps) {
 			NotificationChain msgs = null;
-			if (replaceGenModel != null)
-				msgs = ((InternalEObject) replaceGenModel).eInverseRemove(this, EOPPOSITE_FEATURE_BASE
-						- PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL, null, msgs);
-			if (newReplaceGenModel != null)
-				msgs = ((InternalEObject) newReplaceGenModel).eInverseAdd(this, EOPPOSITE_FEATURE_BASE
-						- PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL, null, msgs);
-			msgs = basicSetReplaceGenModel(newReplaceGenModel, msgs);
+			if (genModelProps != null)
+				msgs = ((InternalEObject) genModelProps).eInverseRemove(this,
+						EOPPOSITE_FEATURE_BASE - PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__GEN_MODEL_PROPS,
+						null, msgs);
+			if (newGenModelProps != null)
+				msgs = ((InternalEObject) newGenModelProps).eInverseAdd(this,
+						EOPPOSITE_FEATURE_BASE - PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__GEN_MODEL_PROPS,
+						null, msgs);
+			msgs = basicSetGenModelProps(newGenModelProps, msgs);
 			if (msgs != null)
 				msgs.dispatch();
 		} else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL, newReplaceGenModel,
-					newReplaceGenModel));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public TGGBuildMode getTGGBuildMode() {
-		return tGGBuildMode;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetTGGBuildMode(TGGBuildMode newTGGBuildMode, NotificationChain msgs) {
-		TGGBuildMode oldTGGBuildMode = tGGBuildMode;
-		tGGBuildMode = newTGGBuildMode;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE, oldTGGBuildMode,
-					newTGGBuildMode);
-			if (msgs == null)
-				msgs = notification;
-			else
-				msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setTGGBuildMode(TGGBuildMode newTGGBuildMode) {
-		if (newTGGBuildMode != tGGBuildMode) {
-			NotificationChain msgs = null;
-			if (tGGBuildMode != null)
-				msgs = ((InternalEObject) tGGBuildMode).eInverseRemove(this,
-						EOPPOSITE_FEATURE_BASE - PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE,
-						null, msgs);
-			if (newTGGBuildMode != null)
-				msgs = ((InternalEObject) newTGGBuildMode).eInverseAdd(this,
-						EOPPOSITE_FEATURE_BASE - PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE,
-						null, msgs);
-			msgs = basicSetTGGBuildMode(newTGGBuildMode, msgs);
-			if (msgs != null)
-				msgs.dispatch();
-		} else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET,
-					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE, newTGGBuildMode,
-					newTGGBuildMode));
+					PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__GEN_MODEL_PROPS, newGenModelProps,
+					newGenModelProps));
 	}
 
 	/**
@@ -556,10 +493,8 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 			return ((InternalEList<?>) getAdditionalDependencies()).basicRemove(otherEnd, msgs);
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT:
 			return basicSetMetaModelProject(null, msgs);
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL:
-			return basicSetReplaceGenModel(null, msgs);
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE:
-			return basicSetTGGBuildMode(null, msgs);
+		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__GEN_MODEL_PROPS:
+			return basicSetGenModelProps(null, msgs);
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS:
 			return ((InternalEList<?>) getImportMappings()).basicRemove(otherEnd, msgs);
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES:
@@ -586,10 +521,8 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 			return getAdditionalDependencies();
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT:
 			return getMetaModelProject();
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL:
-			return getReplaceGenModel();
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE:
-			return getTGGBuildMode();
+		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__GEN_MODEL_PROPS:
+			return getGenModelProps();
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS:
 			return getImportMappings();
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES:
@@ -628,11 +561,8 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT:
 			setMetaModelProject((MetaModelProject) newValue);
 			return;
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL:
-			setReplaceGenModel((ReplaceGenModel) newValue);
-			return;
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE:
-			setTGGBuildMode((TGGBuildMode) newValue);
+		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__GEN_MODEL_PROPS:
+			setGenModelProps((GenModelProperties) newValue);
 			return;
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS:
 			getImportMappings().clear();
@@ -675,11 +605,8 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT:
 			setMetaModelProject((MetaModelProject) null);
 			return;
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL:
-			setReplaceGenModel((ReplaceGenModel) null);
-			return;
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE:
-			setTGGBuildMode((TGGBuildMode) null);
+		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__GEN_MODEL_PROPS:
+			setGenModelProps((GenModelProperties) null);
 			return;
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS:
 			getImportMappings().clear();
@@ -716,10 +643,8 @@ public class MoflonPropertiesContainerImpl extends EObjectImpl implements Moflon
 			return additionalDependencies != null && !additionalDependencies.isEmpty();
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT:
 			return metaModelProject != null;
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL:
-			return replaceGenModel != null;
-		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE:
-			return tGGBuildMode != null;
+		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__GEN_MODEL_PROPS:
+			return genModelProps != null;
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS:
 			return importMappings != null && !importMappings.isEmpty();
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES:

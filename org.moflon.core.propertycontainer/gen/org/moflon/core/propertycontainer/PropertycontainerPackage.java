@@ -194,7 +194,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getPropertiesMapping()
 	 * @generated
 	 */
-	int PROPERTIES_MAPPING = 8;
+	int PROPERTIES_MAPPING = 7;
 
 	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -288,52 +288,6 @@ public interface PropertycontainerPackage extends EPackage {
 	int IMPORT_MAPPINGS_OPERATION_COUNT = PROPERTIES_MAPPING_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.moflon.core.propertycontainer.impl.TGGBuildModeImpl <em>TGG Build Mode</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.moflon.core.propertycontainer.impl.TGGBuildModeImpl
-	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getTGGBuildMode()
-	 * @generated
-	 */
-	int TGG_BUILD_MODE = 4;
-
-	/**
-	 * The feature id for the '<em><b>Build Mode</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TGG_BUILD_MODE__BUILD_MODE = 0;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TGG_BUILD_MODE__DESCRIPTION = 1;
-
-	/**
-	 * The number of structural features of the '<em>TGG Build Mode</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TGG_BUILD_MODE_FEATURE_COUNT = 2;
-
-	/**
-	 * The number of operations of the '<em>TGG Build Mode</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TGG_BUILD_MODE_OPERATION_COUNT = 0;
-
-	/**
 	 * The meta object id for the '{@link org.moflon.core.propertycontainer.impl.FactoryMappingsImpl <em>Factory Mappings</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -341,7 +295,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getFactoryMappings()
 	 * @generated
 	 */
-	int FACTORY_MAPPINGS = 5;
+	int FACTORY_MAPPINGS = 4;
 
 	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -396,7 +350,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getMoflonPropertiesContainer()
 	 * @generated
 	 */
-	int MOFLON_PROPERTIES_CONTAINER = 6;
+	int MOFLON_PROPERTIES_CONTAINER = 5;
 
 	/**
 	 * The feature id for the '<em><b>Dependencies</b></em>' containment reference list.
@@ -435,22 +389,13 @@ public interface PropertycontainerPackage extends EPackage {
 	int MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT = 3;
 
 	/**
-	 * The feature id for the '<em><b>Replace Gen Model</b></em>' containment reference.
+	 * The feature id for the '<em><b>Gen Model Props</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL = 4;
-
-	/**
-	 * The feature id for the '<em><b>TGG Build Mode</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE = 5;
+	int MOFLON_PROPERTIES_CONTAINER__GEN_MODEL_PROPS = 4;
 
 	/**
 	 * The feature id for the '<em><b>Import Mappings</b></em>' containment reference list.
@@ -459,7 +404,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS = 6;
+	int MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS = 5;
 
 	/**
 	 * The feature id for the '<em><b>Additional Used Gen Packages</b></em>' containment reference list.
@@ -468,7 +413,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES = 7;
+	int MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES = 6;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -477,7 +422,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER__DESCRIPTION = 8;
+	int MOFLON_PROPERTIES_CONTAINER__DESCRIPTION = 7;
 
 	/**
 	 * The feature id for the '<em><b>Project Name</b></em>' attribute.
@@ -486,7 +431,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME = 9;
+	int MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME = 8;
 
 	/**
 	 * The feature id for the '<em><b>Code Generator</b></em>' containment reference.
@@ -495,7 +440,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER__CODE_GENERATOR = 10;
+	int MOFLON_PROPERTIES_CONTAINER__CODE_GENERATOR = 9;
 
 	/**
 	 * The number of structural features of the '<em>Moflon Properties Container</em>' class.
@@ -504,7 +449,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MOFLON_PROPERTIES_CONTAINER_FEATURE_COUNT = 11;
+	int MOFLON_PROPERTIES_CONTAINER_FEATURE_COUNT = 10;
 
 	/**
 	 * The number of operations of the '<em>Moflon Properties Container</em>' class.
@@ -516,50 +461,50 @@ public interface PropertycontainerPackage extends EPackage {
 	int MOFLON_PROPERTIES_CONTAINER_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.moflon.core.propertycontainer.impl.ReplaceGenModelImpl <em>Replace Gen Model</em>}' class.
+	 * The meta object id for the '{@link org.moflon.core.propertycontainer.impl.GenModelPropertiesImpl <em>Gen Model Properties</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.moflon.core.propertycontainer.impl.ReplaceGenModelImpl
-	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getReplaceGenModel()
+	 * @see org.moflon.core.propertycontainer.impl.GenModelPropertiesImpl
+	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getGenModelProperties()
 	 * @generated
 	 */
-	int REPLACE_GEN_MODEL = 7;
+	int GEN_MODEL_PROPERTIES = 6;
 
 	/**
-	 * The feature id for the '<em><b>Bool</b></em>' attribute.
+	 * The feature id for the '<em><b>Auto Replace Gen Models</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int REPLACE_GEN_MODEL__BOOL = 0;
+	int GEN_MODEL_PROPERTIES__AUTO_REPLACE_GEN_MODELS = 0;
 
 	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * The feature id for the '<em><b>Generate New Gen Models</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int REPLACE_GEN_MODEL__DESCRIPTION = 1;
+	int GEN_MODEL_PROPERTIES__GENERATE_NEW_GEN_MODELS = 1;
 
 	/**
-	 * The number of structural features of the '<em>Replace Gen Model</em>' class.
+	 * The number of structural features of the '<em>Gen Model Properties</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int REPLACE_GEN_MODEL_FEATURE_COUNT = 2;
+	int GEN_MODEL_PROPERTIES_FEATURE_COUNT = 2;
 
 	/**
-	 * The number of operations of the '<em>Replace Gen Model</em>' class.
+	 * The number of operations of the '<em>Gen Model Properties</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int REPLACE_GEN_MODEL_OPERATION_COUNT = 0;
+	int GEN_MODEL_PROPERTIES_OPERATION_COUNT = 0;
 
 	/**
 	 * The meta object id for the '{@link org.moflon.core.propertycontainer.impl.AdditionalDependenciesImpl <em>Additional Dependencies</em>}' class.
@@ -569,7 +514,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getAdditionalDependencies()
 	 * @generated
 	 */
-	int ADDITIONAL_DEPENDENCIES = 9;
+	int ADDITIONAL_DEPENDENCIES = 8;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -615,7 +560,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getMetaModelProject()
 	 * @generated
 	 */
-	int META_MODEL_PROJECT = 10;
+	int META_MODEL_PROJECT = 9;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -661,7 +606,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getCodeGenerator()
 	 * @generated
 	 */
-	int CODE_GENERATOR = 11;
+	int CODE_GENERATOR = 10;
 
 	/**
 	 * The feature id for the '<em><b>Generator</b></em>' attribute.
@@ -700,16 +645,6 @@ public interface PropertycontainerPackage extends EPackage {
 	int CODE_GENERATOR_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.moflon.core.propertycontainer.BuildMode <em>Build Mode</em>}' enum.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.moflon.core.propertycontainer.BuildMode
-	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getBuildMode()
-	 * @generated
-	 */
-	int BUILD_MODE = 12;
-
-	/**
 	 * The meta object id for the '{@link org.moflon.core.propertycontainer.UsedCodeGen <em>Used Code Gen</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -717,7 +652,7 @@ public interface PropertycontainerPackage extends EPackage {
 	 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getUsedCodeGen()
 	 * @generated
 	 */
-	int USED_CODE_GEN = 13;
+	int USED_CODE_GEN = 11;
 
 	/**
 	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.Dependencies <em>Dependencies</em>}'.
@@ -804,38 +739,6 @@ public interface PropertycontainerPackage extends EPackage {
 	EAttribute getImportMappings_Description();
 
 	/**
-	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.TGGBuildMode <em>TGG Build Mode</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>TGG Build Mode</em>'.
-	 * @see org.moflon.core.propertycontainer.TGGBuildMode
-	 * @generated
-	 */
-	EClass getTGGBuildMode();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.moflon.core.propertycontainer.TGGBuildMode#getBuildMode <em>Build Mode</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Build Mode</em>'.
-	 * @see org.moflon.core.propertycontainer.TGGBuildMode#getBuildMode()
-	 * @see #getTGGBuildMode()
-	 * @generated
-	 */
-	EAttribute getTGGBuildMode_BuildMode();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.moflon.core.propertycontainer.TGGBuildMode#getDescription <em>Description</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Description</em>'.
-	 * @see org.moflon.core.propertycontainer.TGGBuildMode#getDescription()
-	 * @see #getTGGBuildMode()
-	 * @generated
-	 */
-	EAttribute getTGGBuildMode_Description();
-
-	/**
 	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.FactoryMappings <em>Factory Mappings</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -911,26 +814,15 @@ public interface PropertycontainerPackage extends EPackage {
 	EReference getMoflonPropertiesContainer_MetaModelProject();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getReplaceGenModel <em>Replace Gen Model</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getGenModelProps <em>Gen Model Props</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Replace Gen Model</em>'.
-	 * @see org.moflon.core.propertycontainer.MoflonPropertiesContainer#getReplaceGenModel()
+	 * @return the meta object for the containment reference '<em>Gen Model Props</em>'.
+	 * @see org.moflon.core.propertycontainer.MoflonPropertiesContainer#getGenModelProps()
 	 * @see #getMoflonPropertiesContainer()
 	 * @generated
 	 */
-	EReference getMoflonPropertiesContainer_ReplaceGenModel();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getTGGBuildMode <em>TGG Build Mode</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>TGG Build Mode</em>'.
-	 * @see org.moflon.core.propertycontainer.MoflonPropertiesContainer#getTGGBuildMode()
-	 * @see #getMoflonPropertiesContainer()
-	 * @generated
-	 */
-	EReference getMoflonPropertiesContainer_TGGBuildMode();
+	EReference getMoflonPropertiesContainer_GenModelProps();
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getImportMappings <em>Import Mappings</em>}'.
@@ -988,36 +880,36 @@ public interface PropertycontainerPackage extends EPackage {
 	EReference getMoflonPropertiesContainer_CodeGenerator();
 
 	/**
-	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.ReplaceGenModel <em>Replace Gen Model</em>}'.
+	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.GenModelProperties <em>Gen Model Properties</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Replace Gen Model</em>'.
-	 * @see org.moflon.core.propertycontainer.ReplaceGenModel
+	 * @return the meta object for class '<em>Gen Model Properties</em>'.
+	 * @see org.moflon.core.propertycontainer.GenModelProperties
 	 * @generated
 	 */
-	EClass getReplaceGenModel();
+	EClass getGenModelProperties();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.moflon.core.propertycontainer.ReplaceGenModel#isBool <em>Bool</em>}'.
+	 * Returns the meta object for the attribute '{@link org.moflon.core.propertycontainer.GenModelProperties#isAutoReplaceGenModels <em>Auto Replace Gen Models</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Bool</em>'.
-	 * @see org.moflon.core.propertycontainer.ReplaceGenModel#isBool()
-	 * @see #getReplaceGenModel()
+	 * @return the meta object for the attribute '<em>Auto Replace Gen Models</em>'.
+	 * @see org.moflon.core.propertycontainer.GenModelProperties#isAutoReplaceGenModels()
+	 * @see #getGenModelProperties()
 	 * @generated
 	 */
-	EAttribute getReplaceGenModel_Bool();
+	EAttribute getGenModelProperties_AutoReplaceGenModels();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.moflon.core.propertycontainer.ReplaceGenModel#getDescription <em>Description</em>}'.
+	 * Returns the meta object for the attribute '{@link org.moflon.core.propertycontainer.GenModelProperties#isGenerateNewGenModels <em>Generate New Gen Models</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Description</em>'.
-	 * @see org.moflon.core.propertycontainer.ReplaceGenModel#getDescription()
-	 * @see #getReplaceGenModel()
+	 * @return the meta object for the attribute '<em>Generate New Gen Models</em>'.
+	 * @see org.moflon.core.propertycontainer.GenModelProperties#isGenerateNewGenModels()
+	 * @see #getGenModelProperties()
 	 * @generated
 	 */
-	EAttribute getReplaceGenModel_Description();
+	EAttribute getGenModelProperties_GenerateNewGenModels();
 
 	/**
 	 * Returns the meta object for class '{@link org.moflon.core.propertycontainer.PropertiesMapping <em>Properties Mapping</em>}'.
@@ -1137,16 +1029,6 @@ public interface PropertycontainerPackage extends EPackage {
 	EAttribute getCodeGenerator_Enforced();
 
 	/**
-	 * Returns the meta object for enum '{@link org.moflon.core.propertycontainer.BuildMode <em>Build Mode</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for enum '<em>Build Mode</em>'.
-	 * @see org.moflon.core.propertycontainer.BuildMode
-	 * @generated
-	 */
-	EEnum getBuildMode();
-
-	/**
 	 * Returns the meta object for enum '{@link org.moflon.core.propertycontainer.UsedCodeGen <em>Used Code Gen</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1252,32 +1134,6 @@ public interface PropertycontainerPackage extends EPackage {
 		EAttribute IMPORT_MAPPINGS__DESCRIPTION = eINSTANCE.getImportMappings_Description();
 
 		/**
-		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.impl.TGGBuildModeImpl <em>TGG Build Mode</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.moflon.core.propertycontainer.impl.TGGBuildModeImpl
-		 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getTGGBuildMode()
-		 * @generated
-		 */
-		EClass TGG_BUILD_MODE = eINSTANCE.getTGGBuildMode();
-
-		/**
-		 * The meta object literal for the '<em><b>Build Mode</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TGG_BUILD_MODE__BUILD_MODE = eINSTANCE.getTGGBuildMode_BuildMode();
-
-		/**
-		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TGG_BUILD_MODE__DESCRIPTION = eINSTANCE.getTGGBuildMode_Description();
-
-		/**
 		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.impl.FactoryMappingsImpl <em>Factory Mappings</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1341,21 +1197,13 @@ public interface PropertycontainerPackage extends EPackage {
 				.getMoflonPropertiesContainer_MetaModelProject();
 
 		/**
-		 * The meta object literal for the '<em><b>Replace Gen Model</b></em>' containment reference feature.
+		 * The meta object literal for the '<em><b>Gen Model Props</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL = eINSTANCE
-				.getMoflonPropertiesContainer_ReplaceGenModel();
-
-		/**
-		 * The meta object literal for the '<em><b>TGG Build Mode</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE = eINSTANCE.getMoflonPropertiesContainer_TGGBuildMode();
+		EReference MOFLON_PROPERTIES_CONTAINER__GEN_MODEL_PROPS = eINSTANCE
+				.getMoflonPropertiesContainer_GenModelProps();
 
 		/**
 		 * The meta object literal for the '<em><b>Import Mappings</b></em>' containment reference list feature.
@@ -1400,30 +1248,32 @@ public interface PropertycontainerPackage extends EPackage {
 		EReference MOFLON_PROPERTIES_CONTAINER__CODE_GENERATOR = eINSTANCE.getMoflonPropertiesContainer_CodeGenerator();
 
 		/**
-		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.impl.ReplaceGenModelImpl <em>Replace Gen Model</em>}' class.
+		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.impl.GenModelPropertiesImpl <em>Gen Model Properties</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.moflon.core.propertycontainer.impl.ReplaceGenModelImpl
-		 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getReplaceGenModel()
+		 * @see org.moflon.core.propertycontainer.impl.GenModelPropertiesImpl
+		 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getGenModelProperties()
 		 * @generated
 		 */
-		EClass REPLACE_GEN_MODEL = eINSTANCE.getReplaceGenModel();
+		EClass GEN_MODEL_PROPERTIES = eINSTANCE.getGenModelProperties();
 
 		/**
-		 * The meta object literal for the '<em><b>Bool</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Auto Replace Gen Models</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute REPLACE_GEN_MODEL__BOOL = eINSTANCE.getReplaceGenModel_Bool();
+		EAttribute GEN_MODEL_PROPERTIES__AUTO_REPLACE_GEN_MODELS = eINSTANCE
+				.getGenModelProperties_AutoReplaceGenModels();
 
 		/**
-		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Generate New Gen Models</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute REPLACE_GEN_MODEL__DESCRIPTION = eINSTANCE.getReplaceGenModel_Description();
+		EAttribute GEN_MODEL_PROPERTIES__GENERATE_NEW_GEN_MODELS = eINSTANCE
+				.getGenModelProperties_GenerateNewGenModels();
 
 		/**
 		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.impl.PropertiesMappingImpl <em>Properties Mapping</em>}' class.
@@ -1520,16 +1370,6 @@ public interface PropertycontainerPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CODE_GENERATOR__ENFORCED = eINSTANCE.getCodeGenerator_Enforced();
-
-		/**
-		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.BuildMode <em>Build Mode</em>}' enum.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.moflon.core.propertycontainer.BuildMode
-		 * @see org.moflon.core.propertycontainer.impl.PropertycontainerPackageImpl#getBuildMode()
-		 * @generated
-		 */
-		EEnum BUILD_MODE = eINSTANCE.getBuildMode();
 
 		/**
 		 * The meta object literal for the '{@link org.moflon.core.propertycontainer.UsedCodeGen <em>Used Code Gen</em>}' enum.

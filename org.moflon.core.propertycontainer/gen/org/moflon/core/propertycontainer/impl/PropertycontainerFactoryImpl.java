@@ -65,14 +65,12 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 			return createAdditionalUsedGenPackages();
 		case PropertycontainerPackage.IMPORT_MAPPINGS:
 			return createImportMappings();
-		case PropertycontainerPackage.TGG_BUILD_MODE:
-			return createTGGBuildMode();
 		case PropertycontainerPackage.FACTORY_MAPPINGS:
 			return createFactoryMappings();
 		case PropertycontainerPackage.MOFLON_PROPERTIES_CONTAINER:
 			return createMoflonPropertiesContainer();
-		case PropertycontainerPackage.REPLACE_GEN_MODEL:
-			return createReplaceGenModel();
+		case PropertycontainerPackage.GEN_MODEL_PROPERTIES:
+			return createGenModelProperties();
 		case PropertycontainerPackage.PROPERTIES_MAPPING:
 			return createPropertiesMapping();
 		case PropertycontainerPackage.ADDITIONAL_DEPENDENCIES:
@@ -94,8 +92,6 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-		case PropertycontainerPackage.BUILD_MODE:
-			return createBuildModeFromString(eDataType, initialValue);
 		case PropertycontainerPackage.USED_CODE_GEN:
 			return createUsedCodeGenFromString(eDataType, initialValue);
 		default:
@@ -111,8 +107,6 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-		case PropertycontainerPackage.BUILD_MODE:
-			return convertBuildModeToString(eDataType, instanceValue);
 		case PropertycontainerPackage.USED_CODE_GEN:
 			return convertUsedCodeGenToString(eDataType, instanceValue);
 		default:
@@ -170,17 +164,6 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * @generated
 	 */
 	@Override
-	public TGGBuildMode createTGGBuildMode() {
-		TGGBuildModeImpl tggBuildMode = new TGGBuildModeImpl();
-		return tggBuildMode;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public FactoryMappings createFactoryMappings() {
 		FactoryMappingsImpl factoryMappings = new FactoryMappingsImpl();
 		return factoryMappings;
@@ -203,9 +186,9 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	 * @generated
 	 */
 	@Override
-	public ReplaceGenModel createReplaceGenModel() {
-		ReplaceGenModelImpl replaceGenModel = new ReplaceGenModelImpl();
-		return replaceGenModel;
+	public GenModelProperties createGenModelProperties() {
+		GenModelPropertiesImpl genModelProperties = new GenModelPropertiesImpl();
+		return genModelProperties;
 	}
 
 	/**
@@ -250,28 +233,6 @@ public class PropertycontainerFactoryImpl extends EFactoryImpl implements Proper
 	public CodeGenerator createCodeGenerator() {
 		CodeGeneratorImpl codeGenerator = new CodeGeneratorImpl();
 		return codeGenerator;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public BuildMode createBuildModeFromString(EDataType eDataType, String initialValue) {
-		BuildMode result = BuildMode.get(initialValue);
-		if (result == null)
-			throw new IllegalArgumentException(
-					"The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		return result;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertBuildModeToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**

@@ -97,7 +97,7 @@ public class MoflonPropertiesContainerHelper {
 		container.setCodeGenerator(PropertycontainerFactory.eINSTANCE.createCodeGenerator());
 		container.getCodeGenerator().setGenerator(UsedCodeGen.SMART_EMF);
 		container.setProjectName(project.getName());
-		container.setReplaceGenModel(PropertycontainerFactory.eINSTANCE.createReplaceGenModel());
+		container.setGenModelProps(PropertycontainerFactory.eINSTANCE.createGenModelProperties());
 		return container;
 	}
 

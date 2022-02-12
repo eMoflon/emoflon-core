@@ -6,8 +6,8 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.EReference;
+
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.moflon.core.propertycontainer.AdditionalDependencies;
@@ -16,6 +16,7 @@ import org.moflon.core.propertycontainer.BuildMode;
 import org.moflon.core.propertycontainer.CodeGenerator;
 import org.moflon.core.propertycontainer.Dependencies;
 import org.moflon.core.propertycontainer.FactoryMappings;
+import org.moflon.core.propertycontainer.GenModelProperties;
 import org.moflon.core.propertycontainer.ImportMappings;
 import org.moflon.core.propertycontainer.MetaModelProject;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
@@ -23,7 +24,6 @@ import org.moflon.core.propertycontainer.PropertiesMapping;
 import org.moflon.core.propertycontainer.PropertiesValue;
 import org.moflon.core.propertycontainer.PropertycontainerFactory;
 import org.moflon.core.propertycontainer.PropertycontainerPackage;
-import org.moflon.core.propertycontainer.ReplaceGenModel;
 import org.moflon.core.propertycontainer.TGGBuildMode;
 import org.moflon.core.propertycontainer.UsedCodeGen;
 
@@ -67,13 +67,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass tggBuildModeEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass factoryMappingsEClass = null;
 
 	/**
@@ -88,7 +81,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass replaceGenModelEClass = null;
+	private EClass genModelPropertiesEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -117,13 +110,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	private EClass codeGeneratorEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EEnum buildModeEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -282,36 +268,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	@Override
-	public EClass getTGGBuildMode() {
-		return tggBuildModeEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EAttribute getTGGBuildMode_BuildMode() {
-		return (EAttribute) tggBuildModeEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EAttribute getTGGBuildMode_Description() {
-		return (EAttribute) tggBuildModeEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EClass getFactoryMappings() {
 		return factoryMappingsEClass;
 	}
@@ -382,7 +338,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	@Override
-	public EReference getMoflonPropertiesContainer_ReplaceGenModel() {
+	public EReference getMoflonPropertiesContainer_GenModelProps() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -392,7 +348,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	@Override
-	public EReference getMoflonPropertiesContainer_TGGBuildMode() {
+	public EReference getMoflonPropertiesContainer_ImportMappings() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(5);
 	}
 
@@ -402,7 +358,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	@Override
-	public EReference getMoflonPropertiesContainer_ImportMappings() {
+	public EReference getMoflonPropertiesContainer_AdditionalUsedGenPackages() {
 		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(6);
 	}
 
@@ -412,18 +368,8 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	@Override
-	public EReference getMoflonPropertiesContainer_AdditionalUsedGenPackages() {
-		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(7);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EAttribute getMoflonPropertiesContainer_Description() {
-		return (EAttribute) moflonPropertiesContainerEClass.getEStructuralFeatures().get(8);
+		return (EAttribute) moflonPropertiesContainerEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -433,7 +379,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 */
 	@Override
 	public EAttribute getMoflonPropertiesContainer_ProjectName() {
-		return (EAttribute) moflonPropertiesContainerEClass.getEStructuralFeatures().get(9);
+		return (EAttribute) moflonPropertiesContainerEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -443,7 +389,7 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 */
 	@Override
 	public EReference getMoflonPropertiesContainer_CodeGenerator() {
-		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(10);
+		return (EReference) moflonPropertiesContainerEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -452,8 +398,8 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	@Override
-	public EClass getReplaceGenModel() {
-		return replaceGenModelEClass;
+	public EClass getGenModelProperties() {
+		return genModelPropertiesEClass;
 	}
 
 	/**
@@ -462,8 +408,8 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	@Override
-	public EAttribute getReplaceGenModel_Bool() {
-		return (EAttribute) replaceGenModelEClass.getEStructuralFeatures().get(0);
+	public EAttribute getGenModelProperties_AutoReplaceGenModels() {
+		return (EAttribute) genModelPropertiesEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -472,8 +418,8 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	@Override
-	public EAttribute getReplaceGenModel_Description() {
-		return (EAttribute) replaceGenModelEClass.getEStructuralFeatures().get(1);
+	public EAttribute getGenModelProperties_GenerateNewGenModels() {
+		return (EAttribute) genModelPropertiesEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -592,16 +538,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 	 * @generated
 	 */
 	@Override
-	public EEnum getBuildMode() {
-		return buildModeEEnum;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EEnum getUsedCodeGen() {
 		return usedCodeGenEEnum;
 	}
@@ -648,10 +584,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 		importMappingsEClass = createEClass(IMPORT_MAPPINGS);
 		createEAttribute(importMappingsEClass, IMPORT_MAPPINGS__DESCRIPTION);
 
-		tggBuildModeEClass = createEClass(TGG_BUILD_MODE);
-		createEAttribute(tggBuildModeEClass, TGG_BUILD_MODE__BUILD_MODE);
-		createEAttribute(tggBuildModeEClass, TGG_BUILD_MODE__DESCRIPTION);
-
 		factoryMappingsEClass = createEClass(FACTORY_MAPPINGS);
 		createEAttribute(factoryMappingsEClass, FACTORY_MAPPINGS__DESCRIPTION);
 
@@ -660,17 +592,16 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__FACTORY_MAPPINGS);
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_DEPENDENCIES);
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__META_MODEL_PROJECT);
-		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__REPLACE_GEN_MODEL);
-		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__TGG_BUILD_MODE);
+		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__GEN_MODEL_PROPS);
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__IMPORT_MAPPINGS);
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__ADDITIONAL_USED_GEN_PACKAGES);
 		createEAttribute(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__DESCRIPTION);
 		createEAttribute(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__PROJECT_NAME);
 		createEReference(moflonPropertiesContainerEClass, MOFLON_PROPERTIES_CONTAINER__CODE_GENERATOR);
 
-		replaceGenModelEClass = createEClass(REPLACE_GEN_MODEL);
-		createEAttribute(replaceGenModelEClass, REPLACE_GEN_MODEL__BOOL);
-		createEAttribute(replaceGenModelEClass, REPLACE_GEN_MODEL__DESCRIPTION);
+		genModelPropertiesEClass = createEClass(GEN_MODEL_PROPERTIES);
+		createEAttribute(genModelPropertiesEClass, GEN_MODEL_PROPERTIES__AUTO_REPLACE_GEN_MODELS);
+		createEAttribute(genModelPropertiesEClass, GEN_MODEL_PROPERTIES__GENERATE_NEW_GEN_MODELS);
 
 		propertiesMappingEClass = createEClass(PROPERTIES_MAPPING);
 		createEAttribute(propertiesMappingEClass, PROPERTIES_MAPPING__KEY);
@@ -688,7 +619,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 		createEAttribute(codeGeneratorEClass, CODE_GENERATOR__ENFORCED);
 
 		// Create enums
-		buildModeEEnum = createEEnum(BUILD_MODE);
 		usedCodeGenEEnum = createEEnum(USED_CODE_GEN);
 	}
 
@@ -753,15 +683,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 				"[Used to correct prefixes in imports for code generation]", 1, 1, ImportMappings.class, !IS_TRANSIENT,
 				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
-		initEClass(tggBuildModeEClass, TGGBuildMode.class, "TGGBuildMode", !IS_ABSTRACT, !IS_INTERFACE,
-				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getTGGBuildMode_BuildMode(), this.getBuildMode(), "buildMode", "BuildMode.ALL", 1, 1,
-				TGGBuildMode.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-				!IS_DERIVED, !IS_ORDERED);
-		initEAttribute(getTGGBuildMode_Description(), ecorePackage.getEString(), "description",
-				"[Controls which TGG operationalizations are generated]", 0, 1, TGGBuildMode.class, !IS_TRANSIENT,
-				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
-
 		initEClass(factoryMappingsEClass, FactoryMappings.class, "FactoryMappings", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getFactoryMappings_Description(), ecorePackage.getEString(), "description",
@@ -783,12 +704,9 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 		initEReference(getMoflonPropertiesContainer_MetaModelProject(), this.getMetaModelProject(), null,
 				"metaModelProject", null, 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE,
 				IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getMoflonPropertiesContainer_ReplaceGenModel(), this.getReplaceGenModel(), null,
-				"replaceGenModel", null, 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE,
+		initEReference(getMoflonPropertiesContainer_GenModelProps(), this.getGenModelProperties(), null,
+				"genModelProps", null, 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE,
 				IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getMoflonPropertiesContainer_TGGBuildMode(), this.getTGGBuildMode(), null, "tGGBuildMode", null,
-				1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
-				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getMoflonPropertiesContainer_ImportMappings(), this.getImportMappings(), null, "importMappings",
 				null, 0, -1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
 				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -806,15 +724,14 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 				null, 1, 1, MoflonPropertiesContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
 				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(replaceGenModelEClass, ReplaceGenModel.class, "ReplaceGenModel", !IS_ABSTRACT, !IS_INTERFACE,
-				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getReplaceGenModel_Bool(), ecorePackage.getEBoolean(), "bool", "true", 1, 1,
-				ReplaceGenModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-				!IS_DERIVED, !IS_ORDERED);
-		initEAttribute(getReplaceGenModel_Description(), ecorePackage.getEString(), "description",
-				"[Set to false if you wish to maintain the GenModel in the project yourself]", 1, 1,
-				ReplaceGenModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-				!IS_DERIVED, !IS_ORDERED);
+		initEClass(genModelPropertiesEClass, GenModelProperties.class, "GenModelProperties", !IS_ABSTRACT,
+				!IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getGenModelProperties_AutoReplaceGenModels(), ecorePackage.getEBoolean(), "autoReplaceGenModels",
+				"true", 1, 1, GenModelProperties.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
+				!IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEAttribute(getGenModelProperties_GenerateNewGenModels(), ecorePackage.getEBoolean(), "generateNewGenModels",
+				"true", 0, 1, GenModelProperties.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
+				!IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(propertiesMappingEClass, PropertiesMapping.class, "PropertiesMapping", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);
@@ -852,13 +769,6 @@ public class PropertycontainerPackageImpl extends EPackageImpl implements Proper
 				!IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
-		initEEnum(buildModeEEnum, BuildMode.class, "BuildMode");
-		addEEnumLiteral(buildModeEEnum, BuildMode.ALL);
-		addEEnumLiteral(buildModeEEnum, BuildMode.SIMULTANEOUS);
-		addEEnumLiteral(buildModeEEnum, BuildMode.BACKWARD);
-		addEEnumLiteral(buildModeEEnum, BuildMode.FORWARD);
-		addEEnumLiteral(buildModeEEnum, BuildMode.FORWARD_AND_BACKWARD);
-
 		initEEnum(usedCodeGenEEnum, UsedCodeGen.class, "UsedCodeGen");
 		addEEnumLiteral(usedCodeGenEEnum, UsedCodeGen.EMF);
 		addEEnumLiteral(usedCodeGenEEnum, UsedCodeGen.SMART_EMF);

@@ -3,6 +3,7 @@
 package org.moflon.core.propertycontainer;
 
 import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -18,8 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getFactoryMappings <em>Factory Mappings</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getAdditionalDependencies <em>Additional Dependencies</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getMetaModelProject <em>Meta Model Project</em>}</li>
- *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getReplaceGenModel <em>Replace Gen Model</em>}</li>
- *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getTGGBuildMode <em>TGG Build Mode</em>}</li>
+ *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getGenModelProps <em>Gen Model Props</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getImportMappings <em>Import Mappings</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getAdditionalUsedGenPackages <em>Additional Used Gen Packages</em>}</li>
  *   <li>{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getDescription <em>Description</em>}</li>
@@ -91,48 +91,26 @@ public interface MoflonPropertiesContainer extends EObject {
 	void setMetaModelProject(MetaModelProject value);
 
 	/**
-	 * Returns the value of the '<em><b>Replace Gen Model</b></em>' containment reference.
+	 * Returns the value of the '<em><b>Gen Model Props</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Replace Gen Model</em>' containment reference.
-	 * @see #setReplaceGenModel(ReplaceGenModel)
-	 * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer_ReplaceGenModel()
+	 * @return the value of the '<em>Gen Model Props</em>' containment reference.
+	 * @see #setGenModelProps(GenModelProperties)
+	 * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer_GenModelProps()
 	 * @model containment="true" required="true"
 	 * @generated
 	 */
-	ReplaceGenModel getReplaceGenModel();
+	GenModelProperties getGenModelProps();
 
 	/**
-	 * Sets the value of the '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getReplaceGenModel <em>Replace Gen Model</em>}' containment reference.
+	 * Sets the value of the '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getGenModelProps <em>Gen Model Props</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Replace Gen Model</em>' containment reference.
-	 * @see #getReplaceGenModel()
+	 * @param value the new value of the '<em>Gen Model Props</em>' containment reference.
+	 * @see #getGenModelProps()
 	 * @generated
 	 */
-	void setReplaceGenModel(ReplaceGenModel value);
-
-	/**
-	 * Returns the value of the '<em><b>TGG Build Mode</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>TGG Build Mode</em>' containment reference.
-	 * @see #setTGGBuildMode(TGGBuildMode)
-	 * @see org.moflon.core.propertycontainer.PropertycontainerPackage#getMoflonPropertiesContainer_TGGBuildMode()
-	 * @model containment="true" required="true"
-	 * @generated
-	 */
-	TGGBuildMode getTGGBuildMode();
-
-	/**
-	 * Sets the value of the '{@link org.moflon.core.propertycontainer.MoflonPropertiesContainer#getTGGBuildMode <em>TGG Build Mode</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>TGG Build Mode</em>' containment reference.
-	 * @see #getTGGBuildMode()
-	 * @generated
-	 */
-	void setTGGBuildMode(TGGBuildMode value);
+	void setGenModelProps(GenModelProperties value);
 
 	/**
 	 * Returns the value of the '<em><b>Import Mappings</b></em>' containment reference list.

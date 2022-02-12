@@ -23,12 +23,6 @@
         lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         defaultValueLiteral="[Used to correct prefixes in imports for code generation]"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="TGGBuildMode">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="buildMode" ordered="false"
-        lowerBound="1" eType="#//BuildMode" defaultValueLiteral="BuildMode.ALL"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="[Controls which TGG operationalizations are generated]"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="FactoryMappings" eSuperTypes="#//PropertiesMapping">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
         lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -43,10 +37,8 @@
         upperBound="-1" eType="#//AdditionalDependencies" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="metaModelProject" lowerBound="1"
         eType="#//MetaModelProject" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="replaceGenModel" lowerBound="1"
-        eType="#//ReplaceGenModel" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="tGGBuildMode" lowerBound="1"
-        eType="#//TGGBuildMode" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="genModelProps" lowerBound="1"
+        eType="#//GenModelProperties" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="importMappings" upperBound="-1"
         eType="#//ImportMappings" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="additionalUsedGenPackages"
@@ -59,12 +51,12 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="codeGenerator" lowerBound="1"
         eType="#//CodeGenerator" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ReplaceGenModel">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bool" ordered="false" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
-        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
-        defaultValueLiteral="[Set to false if you wish to maintain the GenModel in the project yourself]"/>
+  <eClassifiers xsi:type="ecore:EClass" name="GenModelProperties">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="autoReplaceGenModels" ordered="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="generateNewGenModels" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PropertiesMapping">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" ordered="false" lowerBound="1"
@@ -76,13 +68,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
         lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         defaultValueLiteral="[Used to add additional dependencies required for code generation]"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="BuildMode">
-    <eLiterals name="ALL" value="4" literal="ALL"/>
-    <eLiterals name="SIMULTANEOUS" value="3" literal="SIMULTANEOUS"/>
-    <eLiterals name="BACKWARD" value="2" literal="BACKWARD"/>
-    <eLiterals name="FORWARD" value="1" literal="FORWARD"/>
-    <eLiterals name="FORWARD_AND_BACKWARD" literal="FORWARD_AND_BACKWARD"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MetaModelProject">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" ordered="false"
