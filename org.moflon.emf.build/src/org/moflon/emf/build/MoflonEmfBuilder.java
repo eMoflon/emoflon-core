@@ -22,9 +22,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.gervarro.eclipse.workspace.util.AntPatternCondition;
 import org.moflon.core.build.CleanVisitor;
 import org.moflon.core.plugins.manifest.ExportedPackagesInManifestUpdater;
@@ -32,6 +35,7 @@ import org.moflon.core.plugins.manifest.PluginXmlUpdater;
 import org.moflon.core.preferences.EMoflonPreferencesActivator;
 import org.moflon.core.utilities.ClasspathUtil;
 import org.moflon.core.utilities.ErrorReporter;
+import org.moflon.core.utilities.ProxyResolver;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.core.utilities.eMoflonEMFUtil;
 
@@ -192,6 +196,17 @@ public class MoflonEmfBuilder extends IncrementalProjectBuilder {
 			for(GenModel genModel : genModels) {
 				for(GenPackage genPkg : genModel.getGenPackages()) {
 					EPackage ecorePackage = genPkg.getEcorePackage();
+					EcoreUtil.resolveAll(ecorePackage);
+					if(ecorePackage.eIsProxy()) {
+						URI eProxyURI = ((InternalEObject) ecorePackage).eProxyURI().trimFragment();
+						ecorePackage = ProxyResolver.resolvePackage(eProxyURI);
+						if(ecorePackage.eIsProxy()) {
+							throw new RuntimeException("Could not resolve package " + ecorePackage.getName());
+						}
+					}
+					
+					// replace with resolved pkg
+					genPkg.setEcorePackage(ecorePackage);
 					if(ecorePackage.getNsURI().equals(pkg.getNsURI())) {
 						// if one EPackage of this ecore has a corresponding genmodel then the rest will correspond to the same 
 						return genModel;
