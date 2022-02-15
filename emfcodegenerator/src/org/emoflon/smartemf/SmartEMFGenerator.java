@@ -54,13 +54,22 @@ public class SmartEMFGenerator{
 
 		templates = new LinkedList<>();
 		this.genModel = genmodel;
+		
 		for(GenPackage genPkg : getGenPackages(genmodel)){
-			initPackageInterface(genPkg);
-			initPackageImplementation(genPkg);
-			initFactoryInterface(genPkg);
-			initFactoryImplementation(genPkg);
-			initSmartEMFInterfaces(genPkg);
-			initSmartEMFImplementations(genPkg);
+			initTemplates(genPkg);
+		}
+	}
+
+	private void initTemplates(GenPackage genPkg) {
+		initPackageInterface(genPkg);
+		initPackageImplementation(genPkg);
+		initFactoryInterface(genPkg);
+		initFactoryImplementation(genPkg);
+		initSmartEMFInterfaces(genPkg);
+		initSmartEMFImplementations(genPkg);
+		
+		for(GenPackage subPkg : genPkg.getSubGenPackages()) {
+			initTemplates(subPkg);
 		}
 	}
 	

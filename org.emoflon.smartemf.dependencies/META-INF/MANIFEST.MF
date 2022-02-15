@@ -50,8 +50,7 @@ Export-Package: org.jdom2,
  org.jdom2.xpath,
  org.jdom2.xpath.jaxen,
  org.jdom2.xpath.util
-Require-Bundle: com.genuitec.eclipse.core.common.platform,
- org.apache.xerces,
+Require-Bundle: org.apache.xerces,
  org.junit
 Bundle-RequiredExecutionEnvironment: JavaSE-15
 Automatic-Module-Name: org.emoflon.smartemf.dependencies

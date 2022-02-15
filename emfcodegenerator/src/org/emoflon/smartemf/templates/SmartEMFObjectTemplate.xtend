@@ -79,17 +79,17 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 		    «IF feature instanceof EReference»
 		    «IF feature.EOpposite !== null»
 		    «IF feature.many»
-		    private void add«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
+		    private void add«TemplateUtil.getFeatureName(feature)»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
 		    	if(this.«TemplateUtil.getValidName(feature.name)».addInternal(value, false) == NotifyStatus.SUCCESS_NO_NOTIFICATION) {
 		    sendNotification(SmartEMFNotification.createAddNotification(this, «TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)», value, -1));
 		    	} 
 		    }
 		    
-		    private void remove«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
+		    private void remove«TemplateUtil.getFeatureName(feature)»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
 		    	«TemplateUtil.getValidName(feature.name)».removeInternal(value, false, true);
 		    }
 		    «ELSE»
-		    private void set«feature.name.toFirstUpper»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
+		    private void set«TemplateUtil.getFeatureName(feature)»AsInverse(«TemplateUtil.getFQName(feature.EType)» value) {
 			    «getSetterMethod(eClass, feature, FQPackagePath, packageClassName, false)»
 		    }
 		    «ENDIF»
@@ -101,7 +101,7 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 		    public void eSet(EStructuralFeature eFeature, Object newValue){
 		    	«FOR feature : eClass.EAllStructuralFeatures»
 		    	 if («TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».equals(eFeature)) {
-		    	 	set«feature.name.toFirstUpper»((«TemplateUtil.getFieldTypeName(feature)») newValue); 
+		    	 	set«TemplateUtil.getFeatureName(feature)»((«TemplateUtil.getFieldTypeName(feature)») newValue); 
 		    	 	return;
 		    	 }
 		    	«ENDFOR»
@@ -113,9 +113,9 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 		    	«FOR feature : eClass.EAllStructuralFeatures»
 		    	 if («TemplateUtil.getPackageClassName(feature)».Literals.«TemplateUtil.getLiteral(feature)».equals(eFeature)) {
 		    	 	«IF feature.isMany && feature instanceof EReference»
-		    	 	get«feature.name.toFirstUpper»().clear(); 
+		    	 	get«TemplateUtil.getFeatureName(feature)»().clear(); 
 		    	 	«ELSE»
-		    	 	set«feature.name.toFirstUpper»((«TemplateUtil.getFieldTypeName(feature)»)«getDefaultValue(feature)»); 
+		    	 	set«TemplateUtil.getFeatureName(feature)»((«TemplateUtil.getFieldTypeName(feature)»)«getDefaultValue(feature)»); 
 		    	 	«ENDIF»
 		    	 	return;
 		    	 }
@@ -286,7 +286,6 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 		if("EFeatureMapEntry".equals(feature.EType.name))
 			return "new java.util.HashMap<Object, Object>()"
 			
-		
 		if(feature.EType.name.contains("MapEntry"))
 			return "new java.util.HashMap<Object, Object>()"
 			
@@ -298,16 +297,21 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 			switch(feature.EType.name) {
 				case "boolean" : return "false"
 				case "double" : return "0.0"
-				case "float" : return "0.0"
+				case "float" : return "0.0f"
 				case "int" : return "0"
 				case "Boolean" : return "false"
 				case "Double" : return "0.0"
-				case "Float" : return "0.0"
+				case "Float" : return "0.0f"
 				case "Int" : return "0"
 				default : return "null"
 			}
-			
 		}
+		switch(feature.EType.name) {
+			case "float" : return '''«value»f'''
+			case "Float" : return '''«value»f'''
+			case "EFloat" : return '''«value»f'''
+		}
+
 		
 		if(value instanceof EEnumLiteral)
 			return TemplateUtil.getFQName(value.EEnum.EPackage) + "." + value.EEnum.name + "." + TemplateUtil.getLiteral(value)

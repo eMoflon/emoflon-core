@@ -8,6 +8,8 @@ import java.util.HashMap
 import java.util.HashSet
 import java.util.LinkedList
 import java.util.Map
+import org.eclipse.core.resources.IWorkspaceRoot
+import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelFactory
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
@@ -22,11 +24,11 @@ import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EcorePackage
+import org.eclipse.emf.ecore.InternalEObject
 import org.eclipse.emf.ecore.impl.EPackageImpl
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.ecore.util.EcoreUtil
-import org.eclipse.core.resources.IWorkspaceRoot
-import org.eclipse.core.resources.ResourcesPlugin
+import org.moflon.core.utilities.ProxyResolver
 
 class TemplateUtil {
 	
@@ -127,14 +129,20 @@ class TemplateUtil {
 	}
 	
 	static def registerGenModel(GenModel genModel) {
-		val pkgURI = genModel.genPackages.get(0).NSURI
-		val genModelURI = pkgURI.replace(".ecore", ".genmodel")
-		val resourceURI = genModelURI.replace("platform:/", "platform:/resource/")
-		uriStringToGenModelMap.put(resourceURI, genModel)
+		for(genpkg : genModel.genPackages) {
+			val pkgURI = genpkg.NSURI
+			val genModelURI = pkgURI.replace(".ecore", ".genmodel")
+			val resourceURI = genModelURI.replace("platform:/", "platform:/resource/")
+			uriStringToGenModelMap.put(resourceURI, genModel)
+		}
 	}
 	
-	static def getGenModel(EPackage ePackage) {
-		val uri = EcoreUtil.getURI(ePackage)
+	static def getGenModel(EPackage ePack) {
+		var ePackage = ePack
+		while(ePackage.ESuperPackage != null) {
+			ePackage = ePackage.ESuperPackage
+		}
+		val uri = EcoreUtil.getURI(ePackage).trimFragment
 		val platformURI = uri.toString
 		
 		// create resource and plugin uris if possible
@@ -160,7 +168,12 @@ class TemplateUtil {
 		}
 		
 		// try to load models from resource
-		var genModel = loadGenModelFromResource(genModelURI)
+		var genModel = loadGenModelFromResource(platformURI.replace(".ecore", ".genmodel"))
+		if(genModel != null) {
+			return genModel;
+		}
+		
+		genModel = loadGenModelFromResource(genModelURI)
 		if(genModel != null) {
 			return genModel;
 		}
@@ -172,6 +185,7 @@ class TemplateUtil {
 		if(genModel != null) {
 			return genModel;
 		}
+	
 		
 		// if loading was unsuccesful -> crawGenModel from file or workspace
 		genModel = crawlGenModel(ePackage)
@@ -213,6 +227,14 @@ class TemplateUtil {
 			if(content instanceof GenModel) {
 				// get rid of eproxies
 				EcoreUtil.resolveAll(content)
+				
+				val genPkg = content.genPackages.get(0)
+				if(genPkg.getEcorePackage.eIsProxy) {
+					val intEPkg = genPkg.getEcorePackage as InternalEObject
+					genPkg.ecorePackage = ProxyResolver.resolvePackage(intEPkg.eProxyURI.trimFragment)
+					println()
+				}
+				
 				// save result for later
 				uriStringToGenModelMap.put(uri, content)
 				return content
@@ -449,13 +471,23 @@ class TemplateUtil {
 	}
 	
 	def static getEClasses(GenPackage genPack) {
-		return getClassifier(genPack).filter(c | c instanceof EClass).map[c | c as EClass]
+		val classes = getClassifier(genPack).filter(c | c instanceof EClass).map[c | c as EClass]
+		return classes
+	}
+	
+	def static getSuperEClasses(GenPackage genPack) {
+		val typeToSuperTypes = new HashMap
+		for(c : getEClasses(genPack)) {
+			val sTypes = c.EAllSuperTypes.map[ProxyResolver.resolve(c) as EClass]
+			typeToSuperTypes.put(c, sTypes)
+		}
+		return typeToSuperTypes
 	}
 	
 		
 	def static getImportPackages(EClass eClass) {
-		var packages = eClass.EAllSuperTypes.map[c|c.EPackage].toSet
-		packages.add(eClass.EPackage)
+		var packages = eClass.EAllSuperTypes.map[c|ProxyResolver.resolve(c)].map[c|c.EPackage].toSet
+		packages.add(ProxyResolver.resolve(eClass).EPackage)
 		val genpackages = packages.map[p|getGenPack(p)]
 		return genpackages
 	}
@@ -482,7 +514,8 @@ class TemplateUtil {
 				}
 			}
 			for(superclasses : classes.ESuperTypes) {
-				dependentPackages.add(superclasses.EPackage)
+				val resClass = ProxyResolver.resolve(superclasses)
+				dependentPackages.add(resClass.EPackage)
 			}
 		}
 		// remove the current package from this list
@@ -514,7 +547,7 @@ class TemplateUtil {
 	}
 	
 	def static getSuperTypes(EClass eClass) {
-		return '''«FOR s : eClass.ESuperTypes», «TemplateUtil.getFQName(s)»«ENDFOR»'''
+		return '''«FOR s : eClass.ESuperTypes», «TemplateUtil.getFQName(ProxyResolver.resolve(s))»«ENDFOR»'''
 	}
 	
 	def static getPackage(EClass eClass) {
@@ -542,6 +575,20 @@ class TemplateUtil {
 	
 	def static getFactoryName(GenPackage genPack) {
 		return genPack.getEcorePackage.name.toFirstUpper + "Factory"
+	}
+	
+	def static getFeatureName(EStructuralFeature feature) {
+		if(feature.name.toLowerCase.equals("class")) {
+			return "Class_"
+		}
+		return feature.name.toFirstUpper
+	}
+	
+	def static getClassName(EClassifier ec) {
+		if(ec.name.toLowerCase.equals("class")) {
+			return "Class_"
+		}
+		return ec.name
 	}
 	
 }

@@ -114,7 +114,7 @@ class PackageImplTemplate implements CodeTemplate{
 		
 			«FOR clazz : TemplateUtil.getEClasses(genPack)»
 				@Override
-				public EClass get«clazz.name»() {
+				public EClass get«TemplateUtil.getClassName(clazz)»() {
 					return «clazz.name.toFirstLower»EClass;
 				}
 				«FOR feature : clazz.EStructuralFeatures»
@@ -196,9 +196,8 @@ class PackageImplTemplate implements CodeTemplate{
 				// Add supertypes to classes
 				«FOR clazz : TemplateUtil.getEClasses(genPack)»
 					«FOR superClazz : clazz.EAllSuperTypes»
-						«clazz.name.toFirstLower»EClass.getESuperTypes().add(«IF superClazz.EPackage.equals(genPack.getEcorePackage)»this«ELSE»«TemplateUtil.getPackageClassName(superClazz.EPackage)».eINSTANCE«ENDIF».get«superClazz.name.toFirstUpper»());
+						«clazz.name.toFirstLower»EClass.getESuperTypes().add(«IF superClazz.EPackage.equals(genPack.getEcorePackage)»this«ELSE»«TemplateUtil.getPackageClassName(superClazz.EPackage)».eINSTANCE«ENDIF».get«TemplateUtil.getClassName(superClazz)»());
 					«ENDFOR»
-					
 				«ENDFOR»
 		
 				// Initialize classes, features, and operations; add parameters
@@ -207,7 +206,7 @@ class PackageImplTemplate implements CodeTemplate{
 						IS_GENERATED_INSTANCE_CLASS);
 					«FOR feature : clazz.EStructuralFeatures»
 						«IF feature instanceof EReference»«val ref = feature as EReference»
-						initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «IF ref.EType.EPackage.equals(EcorePackage.eINSTANCE)»ecorePackage.get«ref.EType.name»()«ELSE»«IF genPack.getEcorePackage().nsURI.equals(ref.EType.EPackage.nsURI)»this«ELSE»«TemplateUtil.getPackageClassName(ref.EType)».eINSTANCE«ENDIF».get«ref.EType.name»()«ENDIF», «IF ref.EOpposite !== null»«IF genPack.getEcorePackage().nsURI.equals(ref.EType.EPackage.nsURI)»this«ELSE»«TemplateUtil.getPackageClassName(ref)».eINSTANCE«ENDIF».get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
+						initEReference(get«clazz.name»_«ref.name.toFirstUpper»(), «IF ref.EType.EPackage.equals(EcorePackage.eINSTANCE)»ecorePackage.get«TemplateUtil.getClassName(ref.EType)»()«ELSE»«IF genPack.getEcorePackage().nsURI.equals(ref.EType.EPackage.nsURI)»this«ELSE»«TemplateUtil.getPackageClassName(ref.EType)».eINSTANCE«ENDIF».get«TemplateUtil.getClassName(ref.EType)»()«ENDIF», «IF ref.EOpposite !== null»«IF genPack.getEcorePackage().nsURI.equals(ref.EType.EPackage.nsURI)»this«ELSE»«TemplateUtil.getPackageClassName(ref.EType)».eINSTANCE«ENDIF».get«ref.EType.name.toFirstUpper»_«ref.EOpposite.name.toFirstUpper»(),«ELSE» null,«ENDIF» 
 							"«ref.name»", «(ref.defaultValue === null)?"null":ref.defaultValue», «ref.lowerBound», «ref.upperBound», «clazz.name».class, «(ref.isTransient)?"":"!"»IS_TRANSIENT, «(ref.isVolatile)?"":"!"»IS_VOLATILE, «(ref.isChangeable)?"":"!"»IS_CHANGEABLE, «(ref.isContainment)?"":"!"»IS_COMPOSITE, «(ref.isResolveProxies)?"":"!"»IS_RESOLVE_PROXIES,
 							«(ref.isUnsettable)?"":"!"»IS_UNSETTABLE, «(ref.isUnique)?"":"!"»IS_UNIQUE, «(ref.isDerived)?"":"!"»IS_DERIVED, «(ref.isOrdered)?"":"!"»IS_ORDERED);
 						«ELSE»«val attr = feature as EAttribute»

@@ -63,7 +63,7 @@ class PackageInterfaceTemplate implements CodeTemplate {
 			«ENDFOR»
 
 			«FOR clazz : TemplateUtil.getEClasses(genPack)»
-				EClass get«clazz.name»();
+				EClass get«TemplateUtil.getClassName(clazz)»();
 				«FOR feature : clazz.EStructuralFeatures»
 					«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» get«clazz.name»_«feature.name.toFirstUpper»();
 				«ENDFOR»
@@ -81,7 +81,7 @@ class PackageInterfaceTemplate implements CodeTemplate {
 			interface Literals {
 				
 				«FOR clazz : TemplateUtil.getEClasses(genPack)»
-					EClass «TemplateUtil.getLiteral(clazz)» = eINSTANCE.get«clazz.name»();
+					EClass «TemplateUtil.getLiteral(clazz)» = eINSTANCE.get«TemplateUtil.getClassName(clazz)»();
 					
 					«FOR feature : clazz.EStructuralFeatures»
 						«IF feature instanceof EReference»EReference«ELSE»EAttribute«ENDIF» «TemplateUtil.getLiteral(feature).toUpperCase» = eINSTANCE.get«clazz.name»_«feature.name.toFirstUpper»();

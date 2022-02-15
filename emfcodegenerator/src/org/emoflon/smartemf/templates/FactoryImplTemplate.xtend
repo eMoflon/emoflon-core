@@ -51,7 +51,7 @@ class FactoryImplTemplate implements CodeTemplate{
 						if (the«TemplateUtil.getFactoryName(genPack)» != null) {
 							return the«TemplateUtil.getFactoryName(genPack)»;
 						}
-					} catch (Exception exception) {
+					} catch (java.lang.Exception exception) {
 						EcorePlugin.INSTANCE.log(exception);
 					}
 					return new «className»();
