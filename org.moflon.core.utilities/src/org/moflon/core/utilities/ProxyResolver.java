@@ -1,6 +1,8 @@
 package org.moflon.core.utilities;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -124,72 +126,55 @@ public class ProxyResolver {
 				if(r.isLoaded()) {
 					epkg = (EPackage) r.getContents().get(0);
 					uri2packages.put(uri, epkg);
+					EcoreUtil.resolveAll(rs);
 				}
 			}
 			catch(Exception e) {
 			}
 		}
-		if(epkg != null)
-			resolveProxies(epkg);
+//		if(epkg != null)
+//			findAndFixProxies(epkg);
 
 		return epkg;
 	}
 
-	private static void resolveProxies(EPackage epkg) {
-		EObject proxy = null;
-		do {
-			EObject newProxy = findProxy(epkg);
-			EcoreUtil.resolveAll(epkg);
-			if(newProxy == null)
-				return;
-			
-			if(newProxy.equals(proxy)) 
-				throw new RuntimeException("Could not resolve proxy for " + newProxy);
-			
-			if(newProxy instanceof EClass) {
-				EObject obj = ProxyResolver.resolve((EClass) newProxy);
-			}
-			else {
-				throw new RuntimeException("Could not resolve " + newProxy);
-			}
-			EcoreUtil.resolveAll(epkg);
-			proxy = newProxy;
-		} while(proxy.eIsProxy());
-	}
-	
-	private static EObject findProxy(EPackage epkg) {
-		if(epkg.eIsProxy())
-			return epkg;
-		
+	private static void findAndFixProxies(EPackage epkg) {
 		for(EPackage subPkg : epkg.getESubpackages()) {
-			EObject proxy = findProxy(subPkg);
-			if(proxy != null)
-				return proxy;
+			findAndFixProxies(subPkg);
 		}
 		
 		// check if type is a proxy or any subtype, references or attribute types
 		for(EClassifier classifier : epkg.getEClassifiers()) {
 			if(classifier instanceof EClass eClass) {
-				if(eClass.eIsProxy()) 
-					return eClass;
-				
+				Collection<EClass> newSuperTypes = new LinkedList<>();
 				for(EClass subClass : eClass.getEAllSuperTypes()) {
-					if(subClass.eIsProxy()) 
-						return subClass;
+					EClassifier resolve = ProxyResolver.resolve(subClass);
+					if(resolve == null) 
+						throw new RuntimeException("Could not resolve " + resolve);
+					newSuperTypes.add((EClass) resolve);
 				}
+//				eClass.getEAllSuperTypes().clear();
+//				eClass.getEAllSuperTypes().addAll(newSuperTypes);
 				
 				for(EReference ref : eClass.getEAllReferences()) {
-					if(ref.getEType().eIsProxy())
-						return ref.getEType();
+					if(ref.getEType().eIsProxy()) {
+						EClassifier resolve = ProxyResolver.resolve(ref.getEType());
+						if(resolve == null) 
+							throw new RuntimeException("Could not resolve " + resolve);
+						ref.setEType(resolve);
+					}
 				}
 				
 				for(EAttribute attr : eClass.getEAllAttributes()) {
-					if(attr.getEType().eIsProxy())
-						return attr.getEType();
+					if(attr.getEType().eIsProxy()) {
+						EClassifier resolve = ProxyResolver.resolve(attr.getEType());
+						if(resolve == null) 
+							throw new RuntimeException("Could not resolve " + resolve);
+						attr.setEType(resolve);
+					}
 				}
 			}
 		}
-		return null;
 	}
 }
 
