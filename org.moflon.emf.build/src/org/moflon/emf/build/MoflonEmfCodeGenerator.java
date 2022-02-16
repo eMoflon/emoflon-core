@@ -38,6 +38,7 @@ import org.moflon.core.propertycontainer.MoflonPropertiesContainer;
 import org.moflon.core.propertycontainer.MoflonPropertiesContainerHelper;
 import org.moflon.core.propertycontainer.PropertycontainerFactory;
 import org.moflon.core.utilities.LogUtils;
+import org.moflon.core.utilities.ProxyResolver;
 import org.moflon.core.utilities.WorkspaceHelper;
 import org.moflon.core.utilities.eMoflonEMFUtil;
 import org.moflon.emf.codegen.CodeGenerator;
@@ -86,7 +87,12 @@ public class MoflonEmfCodeGenerator implements ITask {
 					return Status.CANCEL_STATUS;
 				if (genModelBuilderStatus.matches(IStatus.ERROR))
 					return genModelBuilderStatus;
-				this.setGenModel(genModelBuilderJob.getGenModel());
+				genModel = genModelBuilderJob.getGenModel();
+				GenPackage genPackage = genModel.getGenPackages().get(0);
+				EPackage ePkg = genPackage.getEcorePackage();
+				if(ePkg.eIsProxy()) {
+					genPackage.setEcorePackage(ProxyResolver.resolvePackage(URI.createURI(ePkg.getNsURI())));
+				}
 				if (subMon.isCanceled())
 					return Status.CANCEL_STATUS;
 			}
@@ -130,9 +136,10 @@ public class MoflonEmfCodeGenerator implements ITask {
 					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();			
 					File ecoreFile = new File(root.findMember(ecoreIFile.getFullPath().toString()).getLocationURI());
 					String ecorePath = ecoreFile.getAbsolutePath();
-					EPackage ePack = (EPackage) (new ResourceSetImpl()).getResource(URI.createFileURI(ecorePath), true).getContents().get(0);
+//					EPackage ePack = (EPackage) (new ResourceSetImpl()).getResource(URI.createFileURI(ecorePath), true).getContents().get(0);
 		
 					if(ecoreFile.exists() && !ecoreFile.isDirectory()) {
+						EPackage ePack = ProxyResolver.resolvePackage(URI.createFileURI(ecorePath));
 						//paths of the files necessary for smartEMF extension
 						final SmartEMFGenerator codeGenerator = new SmartEMFGenerator(project, ePack, genModel);
 						codeGenerator.generateModelCode();
