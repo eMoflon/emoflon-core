@@ -82,6 +82,15 @@ public class ProxyResolver {
 		for(EClassifier ec : pkg.getEClassifiers()) {
 			uri2class.put(URI.createURI(packageUri + ec.getName()), ec);
 		}
+		pkg.getESubpackages().forEach(p -> registerEClassifier(p, packageUri));
+	}
+	
+	private static void registerEClassifier(EPackage pkg, String parentPackageURI) {
+		String packageUri = parentPackageURI + "/" + pkg.getName();
+		for(EClassifier ec : pkg.getEClassifiers()) {
+			uri2class.put(URI.createURI(packageUri + "/" + ec.getName()), ec);
+		}
+		pkg.getESubpackages().forEach(p -> registerEClassifier(p, packageUri));
 	}
 
 	private static String getTypeFromURI(URI uri) {
