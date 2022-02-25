@@ -50,7 +50,6 @@ Export-Package: org.jdom2,
  org.jdom2.xpath,
  org.jdom2.xpath.jaxen,
  org.jdom2.xpath.util
-Require-Bundle: org.apache.xerces,
- org.junit
+Require-Bundle: org.junit
 Bundle-RequiredExecutionEnvironment: JavaSE-15
 Automatic-Module-Name: org.emoflon.smartemf.dependencies
