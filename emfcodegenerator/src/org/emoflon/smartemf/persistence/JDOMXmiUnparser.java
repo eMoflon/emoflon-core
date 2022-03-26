@@ -273,9 +273,8 @@ public class JDOMXmiUnparser {
 			}
 			
 			// Attributes
-			EFactory factory = metamodel.getEFactoryInstance();
 			for(EAttribute attribute : currentClass.getEAllAttributes()) {
-				String value = XmiParserUtil.valueToString(factory, attribute, currentEObject.eGet(attribute));
+				String value = XmiParserUtil.valueToString(attribute, currentEObject.eGet(attribute));
 				if(value == null)
 					continue;
 				

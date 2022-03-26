@@ -397,7 +397,7 @@ public class JDOMXmiParser {
 				
 				switch(attribute.getAttributeType()) {
 				case CDATA:
-					eRoot.eSet(eAttribute, XmiParserUtil.stringToValue(factory, eAttribute, attribute.getValue()));
+					eRoot.eSet(eAttribute, XmiParserUtil.stringToValue(eAttribute, attribute.getValue()));
 					break;
 				case ENTITIES:
 					throw new IOException("Unsupported XML attribute type: "+attribute.getAttributeType()+" for attribute: "+attribute.getName());

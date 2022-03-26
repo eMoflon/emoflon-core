@@ -180,9 +180,11 @@ public final class XmiParserUtil {
 		}
 	}
 	
-	public static Object stringToValue(final EFactory factory, final EAttribute atr, final String value) throws Exception {
+	public static Object stringToValue(final EAttribute atr, final String value) throws Exception {
 		EcorePackage epack = EcorePackage.eINSTANCE;
 		EFactory efac = epack.getEFactoryInstance();
+		EFactory factory = atr.getEContainingClass().getEPackage().getEFactoryInstance();
+
 		if(atr.getEAttributeType() == epack.getEString()) {
 			return value;
 		} else if(atr.getEAttributeType() == epack.getEBoolean()) {
@@ -208,9 +210,11 @@ public final class XmiParserUtil {
 		}
 	}
 	
-	public static String valueToString(final EFactory factory, final EAttribute atr, final Object value) throws IOException {
+	public static String valueToString(final EAttribute atr, final Object value) throws IOException {
 		EcorePackage epack = EcorePackage.eINSTANCE;
 		EFactory efac = epack.getEFactoryInstance();
+		EFactory factory = atr.getEContainingClass().getEPackage().getEFactoryInstance();
+
 		if(atr.getEAttributeType() == epack.getEString()) {
 			return (String) value;
 		} else if(atr.getEAttributeType() == epack.getEBoolean()) {
