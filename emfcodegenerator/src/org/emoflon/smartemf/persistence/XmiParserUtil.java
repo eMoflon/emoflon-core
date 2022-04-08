@@ -183,7 +183,6 @@ public final class XmiParserUtil {
 	public static Object stringToValue(final EAttribute atr, final String value) throws Exception {
 		EcorePackage epack = EcorePackage.eINSTANCE;
 		EFactory efac = epack.getEFactoryInstance();
-		EFactory factory = atr.getEContainingClass().getEPackage().getEFactoryInstance();
 
 		if(atr.getEAttributeType() == epack.getEString()) {
 			return value;
@@ -206,6 +205,7 @@ public final class XmiParserUtil {
 		} else if(atr.getEAttributeType() == epack.getEShort()) {
 			return Short.parseShort(value);
 		} else {
+			EFactory factory = atr.getEType().getEPackage().getEFactoryInstance();
 			return factory.createFromString(atr.getEAttributeType(), value);
 		}
 	}
@@ -213,7 +213,6 @@ public final class XmiParserUtil {
 	public static String valueToString(final EAttribute atr, final Object value) throws IOException {
 		EcorePackage epack = EcorePackage.eINSTANCE;
 		EFactory efac = epack.getEFactoryInstance();
-		EFactory factory = atr.getEContainingClass().getEPackage().getEFactoryInstance();
 
 		if(atr.getEAttributeType() == epack.getEString()) {
 			return (String) value;
@@ -238,6 +237,7 @@ public final class XmiParserUtil {
 		} else if(atr.getEAttributeType() == epack.getEFeatureMapEntry()) {
 			return null;
 		}else {
+			EFactory factory = atr.getEType().getEPackage().getEFactoryInstance();
 			return factory.convertToString(atr.getEAttributeType(), value);
 		}
 	}
