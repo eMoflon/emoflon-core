@@ -16,14 +16,10 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.gervarro.eclipse.workspace.util.WorkspaceTask;
-import org.moflon.core.plugins.PluginProperties;
-import org.moflon.core.plugins.manifest.ManifestFileUpdater.AttributeUpdatePolicy;
-import org.moflon.core.utilities.WorkspaceHelper;
 
 public class ExportedPackagesInManifestUpdater extends WorkspaceTask {
 
@@ -34,9 +30,10 @@ public class ExportedPackagesInManifestUpdater extends WorkspaceTask {
 	private IProject project;
 
 	private GenModel genModel;
-	
+
 	/**
-	 * flag that shows if emf builder is smart emf or regular emf. If smart emf is built, then there are extra dependencies and less packages to export
+	 * flag that shows if emf builder is smart emf or regular emf. If smart emf is
+	 * built, then there are extra dependencies and less packages to export
 	 */
 	private boolean isSmartEMF;
 
@@ -51,10 +48,9 @@ public class ExportedPackagesInManifestUpdater extends WorkspaceTask {
 		final ExportedPackagesInManifestUpdater manifestUpdater = new ExportedPackagesInManifestUpdater(project,
 				genModel);
 		WorkspaceTask.executeInCurrentThread(manifestUpdater, IWorkspace.AVOID_UPDATE, new NullProgressMonitor());
-		
-		manifestUpdater.updateManifestForSmartEMF();
+		manifestUpdater.updateManifestForSmartEMF(genModel.getGenPackages().get(0).getUtilitiesPackageName());
 	}
-	
+
 	@Override
 	public void run(final IProgressMonitor monitor) throws CoreException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, "Update exported packages extension", 1);
@@ -63,41 +59,45 @@ public class ExportedPackagesInManifestUpdater extends WorkspaceTask {
 		});
 		subMon.worked(1);
 	}
+
 	/**
 	 * changes MANIFEST.MF for smartemf code generation module
 	 */
-	public void updateManifestForSmartEMF() {
-		
-		if(isSmartEMF) {		
-			//change Manifest
+	public void updateManifestForSmartEMF(String utilPkg) {
+
+		if (isSmartEMF) {
+			// change Manifest
 			ManifestFileUpdater manifestFileBuilder = new ManifestFileUpdater();
-			
+
 			try {
 				manifestFileBuilder.processManifest(project, manifest -> {
 					boolean changed = false;
-					//if model generator is smart emf, then extra dependencies(org.emoflon.smartemf) are necessary
-	
-					changed |= ManifestFileUpdater.updateDependencies(manifest, Arrays
-							.asList(new String[] {"org.emoflon.smartemf"}));
-					//exported packages are only "model" and "model".impl; so the .util package needs to be removed
+					// if model generator is smart emf, then extra
+					// dependencies(org.emoflon.smartemf) are necessary
+
+					changed |= ManifestFileUpdater.updateDependencies(manifest,
+							Arrays.asList(new String[] { "org.emoflon.smartemf" }));
+					// exported packages are only "model" and "model".impl; so the .util package
+					// needs to be removed
 					String atr = (String) manifest.getMainAttributes().get(PluginManifestConstants.EXPORT_PACKAGE);
-					List<String> exportsList = ManifestFileUpdater
-							.extractDependencies(atr);
-					exportsList.removeIf(s -> s.endsWith(".util"));
+					List<String> exportsList = ManifestFileUpdater.extractDependencies(atr);
+					if (utilPkg != null && !utilPkg.isEmpty())
+						exportsList.removeIf(s -> s.endsWith(utilPkg));
+
 					changed |= ManifestFileUpdater.changeExports(manifest, exportsList);
 					return changed;
 				});
 			} catch (CoreException e) {
-				//TODO: Exception handling
+				// TODO: Exception handling
 			}
-		
-		}		
+
+		}
 	}
-	
+
 	private boolean updateExportedPackages(final Manifest manifest) {
 		// Check and update basic settings
 		boolean changed = ManifestFileUpdater.setBasicProperties(manifest, project.getName());
-		
+
 		String exportedPackageString = (String) manifest.getMainAttributes().get(EXPORT_PACKAGE);
 		List<String> exportedPackages = new ArrayList<>();
 		if (exportedPackageString != null && !exportedPackageString.isEmpty()) {
@@ -108,7 +108,7 @@ public class ExportedPackagesInManifestUpdater extends WorkspaceTask {
 		if (newPackages.isEmpty() && !changed) {
 			// No update necessary
 			return false;
-		} else if(newPackages.isEmpty() && changed) {
+		} else if (newPackages.isEmpty() && changed) {
 			return true;
 		}
 
@@ -120,7 +120,7 @@ public class ExportedPackagesInManifestUpdater extends WorkspaceTask {
 		} else {
 			manifest.getMainAttributes().remove(EXPORT_PACKAGE);
 		}
-		
+
 		return true;
 	}
 
