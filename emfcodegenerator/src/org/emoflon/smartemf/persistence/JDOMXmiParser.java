@@ -76,7 +76,7 @@ public class JDOMXmiParser {
 		}
 		
 		if(initialUri == null) {
-			String resolvedPath = XmiParserUtil.resolveURIToPath(resource.getURI(), workspacePath);
+			String resolvedPath = XmiParserUtil.resolveURIToPath(resource.getURI(), workspacePath, true);
 			initialUri = URI.createFileURI(resolvedPath);
 		}
 		

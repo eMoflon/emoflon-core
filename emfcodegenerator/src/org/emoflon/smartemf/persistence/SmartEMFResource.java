@@ -69,7 +69,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 
 	@Override
 	public void save(Map<?, ?> options) throws IOException {
-		String path = XmiParserUtil.resolveURIToPath(uri, workspacePath);
+		String path = XmiParserUtil.resolveURIToPath(uri, workspacePath, false);
 
 		if (path == null)
 			throw new FileNotFoundException("Invalid path at: " + uri);
@@ -119,7 +119,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 
 	@Override
 	public void load(Map<?, ?> options) throws IOException {
-		String path = XmiParserUtil.resolveURIToPath(uri, workspacePath);
+		String path = XmiParserUtil.resolveURIToPath(uri, workspacePath, true);
 		if (path == null)
 			throw new FileNotFoundException("No valid xmi file present at: " + uri);
 
