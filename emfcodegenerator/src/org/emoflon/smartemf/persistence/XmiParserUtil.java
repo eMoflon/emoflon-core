@@ -47,12 +47,15 @@ public final class XmiParserUtil {
 		path = path.trim().replaceAll("%20", " ");
 
 		File file = new File(path);
+		String parent = file.getParent();
 
 		// Try if a canonical path exists
 		if (file != null) {
-			try {
-				return file.getCanonicalPath();
-			} catch (IOException e) {
+			if (parent != null && new File(parent).exists()) {
+				try {
+					return file.getCanonicalPath();
+				} catch (IOException e) {
+				}
 			}
 		}
 
