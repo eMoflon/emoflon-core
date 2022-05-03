@@ -126,7 +126,7 @@ public class ExportedPackagesInManifestUpdater extends WorkspaceTask {
 
 	private List<String> getExportPackage() {
 		final List<String> exportedPackages = new ArrayList<>();
-		genModel.getAllGenPackagesWithClassifiers().forEach(genPackage -> {
+		genModel.getGenPackages().forEach(genPackage -> {
 			String interfacePackageName = genPackage.getInterfacePackageName();
 			String utilitiesPackageName = genPackage.getUtilitiesPackageName();
 			String classPackageName = genPackage.getClassPackageName();
