@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: eMoflon::Core eMoflon preferences infrastructure
 Bundle-SymbolicName: org.moflon.core.preferences;singleton:=true
 Bundle-Version: 2.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-16
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: eMoflon developers
 Require-Bundle: 
  org.eclipse.core.runtime;bundle-version="[3.5.0,4.0.0)"

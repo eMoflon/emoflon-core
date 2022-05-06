@@ -77,7 +77,7 @@ Export-Package: org.apache.commons.lang3,
  org.gervarro.plan.dynprog,
  org.gervarro.util,
  org.gervarro.util.index
-Bundle-RequiredExecutionEnvironment: JavaSE-16
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.emoflon.core.dependencies
 Require-Bundle: com.google.guava;visibility:=reexport,
  org.apache.ant;bundle-version="1.10.5";visibility:=reexport,
