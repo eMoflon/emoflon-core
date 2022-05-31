@@ -2,6 +2,8 @@ name: Validate eMoflon-core versions
 on:
   push
 
+env:
+  VERSION: "1.7.0"
 
 jobs:
   # Validate updatesite 'site.xml' file
@@ -13,9 +15,9 @@ jobs:
       - run: |
           SITEXMLFILE="./org.moflon.core.releng.updatesite/site.xml"
           exec 1>&2
-          NUMZEROS=$(grep "version=\"1.0.0.qualifier\">" $SITEXMLFILE | wc -l)
+          NUMZEROS=$(grep "version=\"$VERSION.qualifier\">" $SITEXMLFILE | wc -l)
           NUMVERS=$(grep -o -P '(?<=version=\").*(?=.qualifier\">)' $SITEXMLFILE | wc -l)
-          if [ $NUMZEROS -ne $NUMVERS ]; then echo "site.xml has versions != 1.0.0" && exit 1; fi
+          if [ $NUMZEROS -ne $NUMVERS ]; then echo "site.xml has versions != $VERSION" && exit 1; fi
 
   # Validate all 'feature.xml' files
   validate-feature-xml:
