@@ -33,8 +33,8 @@ See here for more details on EPL: https://www.eclipse.org/org/documents/epl-v10.
    </url>
 
    <requires>
-      <import plugin="net.sourceforge.plantuml.eclipse" version="1.1.19" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.runtime" version="2.12.0" match="greaterOrEqual"/>
+      <import plugin="net.sourceforge.plantuml.eclipse" version="1.1.19"/>
+      <import feature="org.eclipse.xtext.runtime" version="2.12.0"/>
    </requires>
 
    <plugin
