@@ -202,7 +202,7 @@ class PackageImplTemplate implements CodeTemplate{
 		
 				// Initialize classes, features, and operations; add parameters
 				«FOR clazz : TemplateUtil.getEClasses(genPack)»
-					initEClass(«clazz.name.toFirstLower»EClass, «clazz.name».class, "«clazz.name»", !IS_ABSTRACT, !IS_INTERFACE,
+					initEClass(«clazz.name.toFirstLower»EClass, «clazz.name».class, "«clazz.name»", «clazz.abstract?"":"!"»IS_ABSTRACT, «clazz.interface?"":"!"»IS_INTERFACE,
 						IS_GENERATED_INSTANCE_CLASS);
 					«FOR feature : clazz.EStructuralFeatures»
 						«IF feature instanceof EReference»«val ref = feature as EReference»
