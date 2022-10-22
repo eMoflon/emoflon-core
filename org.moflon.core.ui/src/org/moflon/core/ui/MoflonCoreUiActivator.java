@@ -27,17 +27,20 @@ public class MoflonCoreUiActivator extends AbstractUIPlugin {
 
 	// The config file used for logging in plugin
 	private File loggingConfigurationFile;
+	
+	
 
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-
+		
 		setUpLogging();
 	}
 
 	@Override
 	public void stop(final BundleContext context) throws Exception {
+		
 		plugin = null;
 		super.stop(context);
 	}

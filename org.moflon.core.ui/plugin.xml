@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="DiagramTextProvider" name="DiagramTextProvider" schema="schema/DiagramTextProvider.exsd"/>
+   <extension-point id="EMoflonViewVisualizer" name="EMoflonViewVisualizer" schema="schema/EMoflonViewVisualizer.exsd"/>
   <extension point="org.eclipse.core.expressions.propertyTesters">
     <propertyTester class="org.moflon.core.ui.propertytester.PerspectivePropertyTester" id="org.moflon.core.ui.propertytester.PerspectivePropertyTester" namespace="org.moflon.core.ui.property" properties="perspectiveId" type="org.eclipse.e4.ui.model.application.ui.advanced.MPerspective"/>
   </extension>
@@ -448,5 +449,21 @@
            priority="10"
            providerClass="org.moflon.core.ui.visualisation.common.EMoflonIntentProvider">
      </diagramIntentProvider>
+  </extension>
+  <extension
+        point="org.eclipse.ui.views">
+     <view
+           allowMultiple="false"
+           category="org.moflon.ide.ui.MoflonViewCategory"
+           class="org.moflon.core.ui.EMoflonView"
+           icon="resources/icons/moflonSmall.png"
+           id="org.moflon.ide.ui.MoflonView"
+           name="eMoflon"
+           restorable="true">
+     </view>
+     <category
+           id="org.moflon.ide.ui.MoflonViewCategory"
+           name="eMoflon">
+     </category>
   </extension>
 </plugin>
