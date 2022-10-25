@@ -27,8 +27,8 @@ public final class XmiParserUtil {
 	final public static String HREF_ATR = "href";
 
 	public static boolean URIsAreEqual(final URI uri1, final URI uri2, final String workspacePath) {
-		String path1 = resolveURIToPath(uri1, workspacePath);
-		String path2 = resolveURIToPath(uri2, workspacePath);
+		String path1 = resolveURIToPath(uri1, workspacePath, false);
+		String path2 = resolveURIToPath(uri2, workspacePath, false);
 		return path1.equals(path2);
 	}
 
@@ -39,7 +39,7 @@ public final class XmiParserUtil {
 		return path1.equals(path2);
 	}
 
-	public static String resolveURIToPath(final URI uri, final String workspacePath) {
+	public static String resolveURIToPath(final URI uri, final String workspacePath, boolean newFile) {
 		String path = uri.devicePath();
 		if (path.startsWith("/resource")) {
 			path = path.replaceFirst("/resource", " ");
@@ -56,6 +56,18 @@ public final class XmiParserUtil {
 					return file.getCanonicalPath();
 				} catch (IOException e) {
 				}
+			}
+		}
+
+		// This might be a new file that has not existed before
+		if (newFile) {
+			File parentFolder = new File(parent);
+			if (!parentFolder.exists())
+				parentFolder.mkdirs();
+
+			try {
+				return file.getCanonicalPath();
+			} catch (IOException e) {
 			}
 		}
 
@@ -97,7 +109,7 @@ public final class XmiParserUtil {
 	}
 
 	public static String resolveURIRelativeToBaseURI(final URI baseUri, final URI uri, final String workspacePath) {
-		String filePath = resolveURIToPath(uri, workspacePath);
+		String filePath = resolveURIToPath(uri, workspacePath, false);
 		if (filePath != null)
 			return filePath;
 
