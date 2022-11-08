@@ -19,7 +19,8 @@ import org.emoflon.smartemf.persistence.SmartEMFResource;
 import org.emoflon.smartemf.runtime.SmartObject;
 import org.emoflon.smartemf.runtime.notification.SmartEMFNotification;
 
-public final class ResourceContentSmartEList<T extends EObject> extends LinkedHashSet<T> implements EList<T>, InternalEList<T> {
+public final class ResourceContentSmartEList<T extends EObject> extends LinkedHashSet<T>
+		implements EList<T>, InternalEList<T> {
 
 	/**
 	 * 
@@ -98,15 +99,14 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 		if (oldContainer != null) {
 			if (e.eContainingFeature().isMany()) {
 				Object getResult = oldContainer.eGet(e.eContainingFeature());
-				if(removeRecursively)
+				if (removeRecursively)
 					((SmartCollection<?, ?>) getResult).remove(e);
 				else
 					((SmartCollection<?, ?>) getResult).removeWithoutContainerResetting(e);
 			} else {
-				if(removeRecursively) {
+				if (removeRecursively) {
 					oldContainer.eUnset(e.eContainingFeature());
-				}
-				else {
+				} else {
 					Resource tmp = e.eResource();
 					((SmartObject) e).setResourceWithoutChecks(null);
 					oldContainer.eUnset(e.eContainingFeature());
@@ -115,7 +115,8 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 				}
 			}
 		} else {
-			// if there is no eContainer, then this element is only contained within the resource and should be removed before setting the new eContainer
+			// if there is no eContainer, then this element is only contained within the
+			// resource and should be removed before setting the new eContainer
 			if (e.eResource() != null) {
 				e.eResource().getContents().remove(e);
 			}
@@ -174,7 +175,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 
 		Collection<?> objs = new LinkedList<>(c);
 		for (Object t : objs)
-			success =  this.remove(t) || success;
+			success = this.remove(t) || success;
 
 		return success;
 	}
@@ -317,8 +318,8 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 	@Override
 	public T get(int index) {
 		int counter = 0;
-		for(T t : this) {
-			if(counter == index)
+		for (T t : this) {
+			if (counter == index)
 				return t;
 			counter++;
 		}
@@ -333,8 +334,8 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 	@Override
 	public int indexOf(Object o) {
 		int counter = 0;
-		for(T t : this) {
-			if(t.equals(o)) {
+		for (T t : this) {
+			if (t.equals(o)) {
 				return counter;
 			}
 			counter++;

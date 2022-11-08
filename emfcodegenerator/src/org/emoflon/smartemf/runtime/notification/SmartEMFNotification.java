@@ -12,7 +12,8 @@ public final class SmartEMFNotification implements Notification {
 	private Object newValue;
 	private int position;
 
-	private SmartEMFNotification(int eventType, Object notifier, EStructuralFeature feature, Object oldValue, Object newValue, int position) {
+	private SmartEMFNotification(int eventType, Object notifier, EStructuralFeature feature, Object oldValue,
+			Object newValue, int position) {
 		this.eventType = eventType;
 		this.notifier = notifier;
 		this.feature = feature;
@@ -21,35 +22,43 @@ public final class SmartEMFNotification implements Notification {
 		this.position = position;
 	}
 
-	public static Notification createAddNotification(Object notifier, EStructuralFeature feature, Object newValue, int index) {
+	public static Notification createAddNotification(Object notifier, EStructuralFeature feature, Object newValue,
+			int index) {
 		return new SmartEMFNotification(ADD, notifier, feature, null, newValue, index);
 	}
 
-	public static Notification createAddManyNotification(Object notifier, EStructuralFeature feature, Object newValue, int index) {
+	public static Notification createAddManyNotification(Object notifier, EStructuralFeature feature, Object newValue,
+			int index) {
 		return new SmartEMFNotification(ADD_MANY, notifier, feature, null, newValue, index);
 	}
 
-	public static Notification createSetNotification(Object notifier, EStructuralFeature feature, Object oldValue, Object newValue, int index) {
+	public static Notification createSetNotification(Object notifier, EStructuralFeature feature, Object oldValue,
+			Object newValue, int index) {
 		return new SmartEMFNotification(SET, notifier, feature, oldValue, newValue, index);
 	}
 
-	public static Notification createUnSetNotification(Object notifier, EStructuralFeature feature, Object oldValue, int index) {
+	public static Notification createUnSetNotification(Object notifier, EStructuralFeature feature, Object oldValue,
+			int index) {
 		return new SmartEMFNotification(UNSET, notifier, feature, oldValue, null, index);
 	}
 
-	public static Notification createRemoveNotification(Object notifier, EStructuralFeature feature, Object oldValue, int index) {
+	public static Notification createRemoveNotification(Object notifier, EStructuralFeature feature, Object oldValue,
+			int index) {
 		return new SmartEMFNotification(REMOVE, notifier, feature, oldValue, null, index);
 	}
 
-	public static Notification createRemoveManyNotification(Object notifier, EStructuralFeature feature, Object oldValue, int index) {
+	public static Notification createRemoveManyNotification(Object notifier, EStructuralFeature feature,
+			Object oldValue, int index) {
 		return new SmartEMFNotification(REMOVE_MANY, notifier, feature, oldValue, null, index);
 	}
 
-	public static Notification createRemovingAdapterNotification(Object notifier, EStructuralFeature feature, Object oldValue, int index) {
+	public static Notification createRemovingAdapterNotification(Object notifier, EStructuralFeature feature,
+			Object oldValue, int index) {
 		return new SmartEMFNotification(REMOVING_ADAPTER, notifier, feature, oldValue, null, index);
 	}
 
-	public static Notification createMoveNotification(Object notifier, EStructuralFeature feature, Object value, int oldIndex, int newIndex) {
+	public static Notification createMoveNotification(Object notifier, EStructuralFeature feature, Object value,
+			int oldIndex, int newIndex) {
 		return new SmartEMFNotification(MOVE, notifier, feature, oldIndex, value, newIndex);
 	}
 
@@ -139,7 +148,8 @@ public final class SmartEMFNotification implements Notification {
 
 	@Override
 	/**
-	 * Returns whether the notification can be and has been merged with this one. <br/>
+	 * Returns whether the notification can be and has been merged with this one.
+	 * <br/>
 	 * Notifications can be merged when all these conditions are met:
 	 * <ul>
 	 * <li>They have the same notifier</li>
@@ -152,10 +162,12 @@ public final class SmartEMFNotification implements Notification {
 	 * </ul>
 	 * </li>
 	 * </ul>
-	 * <tt>null</tt> is treated as a "nothing new happened" notification and will always be merged; the
-	 * result of this merging is the unmodified old notification.
+	 * <tt>null</tt> is treated as a "nothing new happened" notification and will
+	 * always be merged; the result of this merging is the unmodified old
+	 * notification.
 	 * 
-	 * @param notification a notification that happened after this one (if order is relevant)
+	 * @param notification a notification that happened after this one (if order is
+	 *                     relevant)
 	 * @return whether the notification can be and has been merged with this one.
 	 */
 	public boolean merge(Notification notification) {
