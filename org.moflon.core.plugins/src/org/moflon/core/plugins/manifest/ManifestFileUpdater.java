@@ -90,13 +90,12 @@ public class ManifestFileUpdater {
 
 			try {
 				new ManifestWriter().write(manifest, stream);
-				String formattedManifestString = prettyPrintManifest(stream.toString());
 				if (!manifestFile.exists()) {
 					WorkspaceHelper.addAllFoldersAndFile(project, manifestFile.getProjectRelativePath(),
-							formattedManifestString, subMon.split(10));
+							stream.toString(), subMon.split(10));
 				} else {
 					final ByteArrayInputStream fileOutputStream = new ByteArrayInputStream(
-							formattedManifestString.getBytes());
+							stream.toString().getBytes());
 					manifestFile.setContents(fileOutputStream, IFile.FORCE, subMon.split(10));
 				}
 			} catch (final IOException e) {
@@ -338,10 +337,6 @@ public class ManifestFileUpdater {
 		}
 
 		return extractedDependencies;
-	}
-
-	private String prettyPrintManifest(final String string) {
-		return new ManifestPrettyPrinter().print(string);
 	}
 
 	private void readManifestFile(final IFile manifestFile, final Manifest manifest) throws CoreException {
