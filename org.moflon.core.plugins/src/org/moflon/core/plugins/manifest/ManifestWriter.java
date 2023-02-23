@@ -36,34 +36,18 @@ public class ManifestWriter {
 			Map.Entry<String, Attributes> e = it.next();
 			StringBuffer buffer = new StringBuffer("Name: ");
 			String value = e.getKey();
+			value = linebreaks(value);
 			if (value != null) {
 				byte[] vb = value.getBytes("UTF8");
 				value = createEmptyString(vb);
 			}
 			buffer.append(value);
 			buffer.append(NL);
-			make72Safe(buffer);
 			dos.writeBytes(buffer.toString());
 			write(e.getValue(), dos);
 		}
 		dos.flush();
 		dos.close();
-	}
-
-	/**
-	 * Copy of {@link Manifest#make72Safe(StringBuffer)}
-	 */
-	private static void make72Safe(final StringBuffer line) {
-		int length = line.length();
-		if (length > 72) {
-			int index = 70;
-			while (index < length - 2) {
-				line.insert(index, NL + " ");
-				index += 72;
-				length += 3;
-			}
-		}
-		return;
 	}
 
 	/**
@@ -94,6 +78,7 @@ public class ManifestWriter {
 				buffer.append(": ");
 
 				String value = (String) e.getValue();
+				value = linebreaks(value);
 				if (value != null) {
 					byte[] vb = value.getBytes("UTF8");
 					value = createEmptyString(vb);
@@ -101,11 +86,25 @@ public class ManifestWriter {
 				buffer.append(value);
 
 				buffer.append(NL);
-				make72Safe(buffer);
 				out.writeBytes(buffer.toString());
 			}
 		}
 		out.writeBytes(NL);
+	}
+
+	/**
+	 * Replaces all ',' with ",$newline " to break all dependencies into individual
+	 * lines.
+	 * 
+	 * @param oldValue Input string.
+	 * @return Modified string (with line breaks after ',')
+	 */
+	private String linebreaks(final String oldValue) {
+		// TODO: Find longer strings than 70 characters and break them at '.'
+		// ^This also needs modifications in, e.g., 'ManifestFileUpdater.java'.
+
+		// This does **not** add multiple newlines!
+		return oldValue.replaceAll(",", "," + NL + " ");
 	}
 
 	private void write(final Attributes attributes, final DataOutputStream os) throws IOException {
@@ -116,6 +115,7 @@ public class ManifestWriter {
 			buffer.append(": ");
 
 			String value = (String) e.getValue();
+			value = linebreaks(value);
 			if (value != null) {
 				byte[] vb = value.getBytes("UTF8");
 				value = createEmptyString(vb);
@@ -123,7 +123,6 @@ public class ManifestWriter {
 			buffer.append(value);
 
 			buffer.append(NL);
-			make72Safe(buffer);
 			os.writeBytes(buffer.toString());
 		}
 		os.writeBytes(NL);
