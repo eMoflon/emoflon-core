@@ -30,8 +30,7 @@ public class MoflonPerspective implements IPerspectiveFactory {
 	private static final String LAUNCH_ACTION_SET_ID = "org.eclipse.debug.ui.launchActionSet";
 	private static final String MOFLON_ACTION_SET_ID = "org.moflon.ide.ui.actionSet";
 	private static final String JAVA_PACKAGE_EXPLORER_ID = "org.eclipse.jdt.ui.PackageExplorer";
-//	private static final String PLANT_UML_VIEW = "net.sourceforge.plantuml.eclipse.views.PlantUmlView";
-	private static final String PLANT_UML_VIEW = "net.sourceforge.plantuml.eclipse.svg.PlantumlSvgView";
+	private static final String PLANT_UML_VIEW = "net.sourceforge.plantuml.eclipse.views.PlantUmlSvgView";
 
 	/**
 	 * Opens the eMoflon perspective in the given {@link IWorkbench}
