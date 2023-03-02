@@ -5,12 +5,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.WriterAppender;
 import org.apache.log4j.spi.LoggingEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -24,11 +26,17 @@ public class MoflonConsole extends WriterAppender {
 	private static final String PATTERN_KEY = "log4j.appender." + MOFLON_CONSOLE + ".layout.ConversionPattern";
 	private static final String DEFAULT_PATTERN = "%5p [%c{2}::%L]: %m";
 
+	private static final Color WHITE = new Color(Display.getDefault(), 255, 255, 255);
+	private static final Color BLACK = new Color(Display.getDefault(), 0, 0, 0);
+
 	private static final Color RED = new Color(Display.getDefault(), 255, 0, 0);
+	private static final Color BRIGHT_RED = new Color(Display.getDefault(), 252, 63, 63);
 
 	private static final Color BLUE = new Color(Display.getDefault(), 0, 0, 128);
+	private static final Color LIGHT_BLUE = new Color(Display.getDefault(), 85, 85, 230);
 
 	private static final Color YELLOW = new Color(Display.getDefault(), 239, 155, 15);
+	private static final Color BRIGHT_YELLOW = new Color(Display.getDefault(), 245, 191, 100);
 
 	public MoflonConsole(final URL configFile) {
 		Properties properties = new Properties();
@@ -60,45 +68,41 @@ public class MoflonConsole extends WriterAppender {
 	/**
 	 * Prints a message on the MoflonConsole.
 	 * 
-	 * @param message
-	 *            The message to print.
+	 * @param message The message to print.
 	 */
 	private static void printMessage(final String message) {
-		printMessage(message, null);
+		printMessage(message, () -> (calcBGLuminance() > 0.5) ? BLACK : WHITE);
 	}
 
 	/**
 	 * Prints a message in red on the MoflonConsole.
 	 * 
-	 * @param message
-	 *            The message to print.
+	 * @param message The message to print.
 	 */
 	private static void printErrorMessage(final String message) {
-		printMessage(message, RED);
+		printMessage(message, () -> (calcBGLuminance() < 0.5) ? BRIGHT_RED : RED);
 	}
 
 	/**
 	 * Prints a message in blue on the MoflonConsole.
 	 * 
-	 * @param message
-	 *            The message to print.
+	 * @param message The message to print.
 	 */
 	private static void printInfoMessage(final String message) {
-		printMessage(message, BLUE);
+		printMessage(message, () -> (calcBGLuminance() < 0.5) ? LIGHT_BLUE : BLUE);
 	}
 
 	/**
 	 * Prints a message on the MoflonConsole.
 	 * 
-	 * @param message
-	 *            The message to print.
+	 * @param message The message to print.
 	 */
-	private static synchronized void printMessage(final String message, final Color color) {
+	private static synchronized void printMessage(final String message, final Supplier<Color> color) {
 		Display device = Display.getDefault();
 		device.asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				_printMessage(message, color);
+				_printMessage(message, color.get());
 			}
 		});
 	}
@@ -147,6 +151,18 @@ public class MoflonConsole extends WriterAppender {
 	}
 
 	private void printWarningMessage(final String message) {
-		printMessage(message, YELLOW);
+		printMessage(message, () -> (calcBGLuminance() < 0.5) ? BRIGHT_YELLOW : YELLOW);
+	}
+
+	public static double calcBGLuminance() {
+		if (ConsolePlugin.getStandardDisplay().getActiveShell() == null)
+			return 0.0;
+
+		Color col = ConsolePlugin.getStandardDisplay().getActiveShell().getBackground();
+		if (col == null)
+			return 0.0;
+
+		RGB rgb = col.getRGB();
+		return (0.299 * rgb.red + 0.587 * rgb.green + 0.114 * rgb.blue) / 255;
 	}
 }
