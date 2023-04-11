@@ -1,5 +1,6 @@
 package org.moflon.emf.build;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -44,6 +45,9 @@ public class MoflonEmfBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
 		IFolder folder = project.getFolder("model");
+		if(!folder.exists()) {
+			return new IProject[] {project};
+		}
 		Collection<IResource> resources = Arrays.asList(folder.members());
 		Collection<IResource> genModelResources = resources.stream().filter(r -> r.getName().endsWith(".genmodel")).collect(Collectors.toList());
 		Collection<IResource> ecoreResources = resources.stream().filter(r -> r.getName().endsWith(".ecore")).collect(Collectors.toList());
