@@ -98,10 +98,10 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 		if (oldContainer != null) {
 			if (e.eContainingFeature().isMany()) {
 				Object getResult = oldContainer.eGet(e.eContainingFeature());
-				if(removeRecursively)
+//				if(removeRecursively)
 					((SmartCollection<?, ?>) getResult).remove(e);
-				else
-					((SmartCollection<?, ?>) getResult).removeWithoutContainerResetting(e);
+//				else
+//					((SmartCollection<?, ?>) getResult).removeWithoutContainerResetting(e);
 			} else {
 				if(removeRecursively) {
 					oldContainer.eUnset(e.eContainingFeature());
