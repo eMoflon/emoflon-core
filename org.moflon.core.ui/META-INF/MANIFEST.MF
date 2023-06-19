@@ -17,7 +17,7 @@ Require-Bundle: net.sourceforge.plantuml.eclipse;bundle-version="1.1.19",
  org.moflon.core.ui;bundle-version="1.0.0",
  org.moflon.core.build;bundle-version="1.0.0",
  org.moflon.core.propertycontainer,
- org.apache.commons.commons-io
+ org.apache.commons.io
 Export-Package: org.moflon.core.ui,
  org.moflon.core.ui.errorhandling,
  org.moflon.core.ui.handler,
