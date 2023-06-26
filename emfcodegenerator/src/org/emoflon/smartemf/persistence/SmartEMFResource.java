@@ -30,8 +30,8 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 /**
- * A simplified resource implementation that serializes to XMI. Ignores save
- * options. Can enable notification cascading for its contents.
+ * A simplified resource implementation that serializes to XMI. Ignores save options. Can enable
+ * notification cascading for its contents.
  */
 public class SmartEMFResource extends UnlockedResourceImpl implements XMIResource {
 
@@ -69,7 +69,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 
 	@Override
 	public void save(Map<?, ?> options) throws IOException {
-		String path = XmiParserUtil.resolveURIToPath(uri, workspacePath, true);
+		String path = XmiParserUtil.resolveURIToPath(uri, workspacePath);
 
 		if (path == null)
 			throw new FileNotFoundException("Invalid path at: " + uri);
@@ -90,8 +90,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 	@Override
 	public void save(OutputStream outputStream, Map<?, ?> options) throws IOException {
 
-		URIConverter.Cipher cipher = (options != null) ? (URIConverter.Cipher) options.get(Resource.OPTION_CIPHER)
-				: null;
+		URIConverter.Cipher cipher = (options != null) ? (URIConverter.Cipher) options.get(Resource.OPTION_CIPHER) : null;
 		if (cipher != null) {
 			throw new UnsupportedOperationException("Encryption through cipher is not supported!");
 		}
@@ -120,7 +119,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 
 	@Override
 	public void load(Map<?, ?> options) throws IOException {
-		String path = XmiParserUtil.resolveURIToPath(uri, workspacePath, false);
+		String path = XmiParserUtil.resolveURIToPath(uri, workspacePath);
 		if (path == null)
 			throw new FileNotFoundException("No valid xmi file present at: " + uri);
 
@@ -147,8 +146,7 @@ public class SmartEMFResource extends UnlockedResourceImpl implements XMIResourc
 		Notification notification = setLoaded(true);
 		isLoading = true;
 
-		URIConverter.Cipher cipher = (options != null) ? (URIConverter.Cipher) options.get(Resource.OPTION_CIPHER)
-				: null;
+		URIConverter.Cipher cipher = (options != null) ? (URIConverter.Cipher) options.get(Resource.OPTION_CIPHER) : null;
 		if (cipher != null) {
 			throw new UnsupportedOperationException("Encryption through cipher is not supported!");
 		}
