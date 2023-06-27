@@ -18,6 +18,8 @@ public class EMoflonView extends ViewPart {
 	
 	private static EMoflonWindowListener listener;
 	protected Collection<EMoflonViewVisualizer> visualizerPlugins;
+	
+	private Composite parentComposite;
 		
 	private Label label;
 	public EMoflonView() {
@@ -35,19 +37,22 @@ public class EMoflonView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		PlatformUI.getWorkbench().addWindowListener(listener);
-		
-		label = new Label(parent, 0);
-        label.setText("Hello World");
-		
+        
+        parentComposite = parent;
+        visualizerPlugins.forEach(plugin -> plugin.createPartControl(parent));
 	}
 
 	@Override
 	public void setFocus() {
-		label.setFocus();
+		
 	}
 	
 	public Collection<EMoflonViewVisualizer> getVisualizerPlugins() {
 		return visualizerPlugins;
 	}
 
+	public Composite getParentComposite() {
+		return parentComposite;
+	}
+	
 }
