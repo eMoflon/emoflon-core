@@ -49,6 +49,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EContentsEList;
 import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -1139,5 +1140,18 @@ public class eMoflonEMFUtil {
 				.filter(genClassifier -> genClassifier.getName().equals(genPackage.getPackageName())).findAny()
 				.isPresent();
 	}
-
+	
+	public static <T> CopyResult<T> copyAll(Collection<? extends T> eObjects) {
+		Copier copier = new Copier();
+	    Collection<T> result = copier.copyAll(eObjects);
+	    copier.copyReferences();
+	    
+	    Map<EObject, EObject> inversed = new HashMap<>();
+	    for (var entry : copier.entrySet())
+	        inversed.put(entry.getValue(), entry.getKey());
+	    return new CopyResult<T>(result, inversed);
+	}
+	
+	public record CopyResult<T>(Collection<T> copies, Map<EObject, EObject> copies2originals) {
+	}
 }
