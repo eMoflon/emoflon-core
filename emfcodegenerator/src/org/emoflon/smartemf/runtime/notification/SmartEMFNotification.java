@@ -245,11 +245,15 @@ public final class SmartEMFNotification implements Notification {
 
 	@Override
 	public String getOldStringValue() {
+		if(oldValue == null)
+			return null;
 		return oldValue.toString();
 	}
 
 	@Override
 	public String getNewStringValue() {
+		if(newValue == null)
+			return null;
 		return newValue.toString();
 	}
 
