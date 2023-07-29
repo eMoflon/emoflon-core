@@ -361,7 +361,13 @@ class SmartEMFObjectTemplate implements CodeTemplate{
 			}	
 			«ENDIF»
 
+	       	«IF feature.container»
+	       	if(this.«TemplateUtil.getValidName(feature.name)» != null && value == null) {
+	       		resetContainmentSilently();
+	       	}
+	       	«ENDIF»
 	        this.«TemplateUtil.getValidName(feature.name)» = value;
+	        
 
 	        «IF feature.isMany && !"EFeatureMapEntry".equals(feature.EType.name) && !feature.EType.name.contains("MapEntry")»
 	        

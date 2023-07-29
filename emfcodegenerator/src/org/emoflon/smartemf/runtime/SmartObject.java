@@ -387,6 +387,11 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		status = setResource(eContainer.eResource(), true);
 		return status;
 	}
+	
+	protected void resetContainmentSilently() {
+		this.eContainer = null;
+		this.eContainingFeature = null;
+	}
 
 	@Override
 	public boolean isContainmentObject() {
