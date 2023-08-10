@@ -41,7 +41,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 		if (element instanceof SmartObject) {
 			resetContainment(element, !resource.equals(element.eResource()));
 			((SmartObject) element).setResource(resource, true);
-			sendAddNotification(element);
+//			sendAddNotification(element);
 			return super.add(element);
 		} else {
 			element.eAdapters().addAll(resource.eAdapters());
@@ -156,8 +156,8 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 	@Override
 	public boolean remove(Object o) {
 		boolean success = super.remove(o);
-		if (success)
-			sendRemoveNotification((EObject) o);
+//		if (success)
+//			sendRemoveNotification((EObject) o);
 
 		if (o instanceof SmartObject) {
 			((SmartObject) o).setResource(null, true);
