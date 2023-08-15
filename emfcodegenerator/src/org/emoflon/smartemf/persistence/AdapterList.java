@@ -61,9 +61,10 @@ public class AdapterList implements EList<Adapter> {
 	@Override
 	public boolean remove(Object o) {
 		boolean remove = adapters.remove(o);
-		if (remove)
+		if (remove) {
 			resource.adapterRemoved((Adapter) o);
-		resource.sendRemoveAdapterMessages((Adapter) o);
+			resource.sendRemoveAdapterMessages((Adapter) o);
+		}
 		return remove;
 	}
 
