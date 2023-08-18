@@ -2,6 +2,7 @@ package org.emoflon.smartemf.runtime.notification;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.emoflon.smartemf.runtime.SmartObject;
 
 public final class SmartEMFNotification implements Notification {
 
@@ -304,15 +305,28 @@ public final class SmartEMFNotification implements Notification {
 		b.append("eventType: ");
 		b.append(getEventTypeAsString());
 		b.append(", notifier: ");
-		b.append(notifier);
+		b.append(objectToString(notifier));
 		b.append(", feature: ");
-		b.append(feature);
+		b.append(feature != null ? feature.getName() : feature);
 		b.append(", oldValue: ");
-		b.append(oldValue);
+		b.append(objectToString(oldValue));
 		b.append(", newValue: ");
-		b.append(newValue);
+		b.append(objectToString(newValue));
 		b.append(")");
 
 		return b.toString();
+	}
+	
+	private Object objectToString(Object obj) {
+		if(obj == null)
+			return obj;
+		
+		if(obj instanceof SmartObject smartObject) {
+			for(var attribute : smartObject.eClass().getEAllAttributes()) {
+				if(attribute.getName().equals("name"))
+					return smartObject.eClass().getName() + "(" + (String) smartObject.eGet(attribute) + ")";
+			}
+		}
+		return obj.toString();
 	}
 }
