@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.moflon.core.ui.VisualiserUtilities;
@@ -68,6 +70,15 @@ public class EMoflonModelVisualiser extends EMoflonEcoreVisualiser<ObjectDiagram
 	}
 
 	private String getLabel(EObject current) {
+		for(var attr : current.eClass().getEAllAttributes()) {
+			if(attr.getName().equals("name") && attr.getEAttributeType() == EcorePackage.Literals.ESTRING) {
+				var name = (String) current.eGet(attr);
+				if(name == null)
+					break;
+				return name;
+			}
+		}
+			
 		if(current.eContainingFeature() != null) {
 			return current.eContainingFeature().getName();
 		} else {
