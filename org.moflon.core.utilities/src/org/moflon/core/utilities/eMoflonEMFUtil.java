@@ -1128,7 +1128,7 @@ public class eMoflonEMFUtil {
 	}
 
 	/**
-	 * Returns true iff the given {@link GenPackage} contains an {@link EClassifier}
+	 * Returns true if the given {@link GenPackage} contains an {@link EClassifier}
 	 * with the same name as the package.
 	 *
 	 * @param genPackage
@@ -1149,9 +1149,9 @@ public class eMoflonEMFUtil {
 	    Map<EObject, EObject> inversed = new HashMap<>();
 	    for (var entry : copier.entrySet())
 	        inversed.put(entry.getValue(), entry.getKey());
-	    return new CopyResult<T>(result, inversed);
+	    return new CopyResult<T>(result, inversed, new HashMap<>(copier));
 	}
 	
-	public record CopyResult<T>(Collection<T> copies, Map<EObject, EObject> copies2originals) {
+	public record CopyResult<T>(Collection<T> copies, Map<EObject, EObject> copies2originals, Map<EObject, EObject> originals2copies) {
 	}
 }
