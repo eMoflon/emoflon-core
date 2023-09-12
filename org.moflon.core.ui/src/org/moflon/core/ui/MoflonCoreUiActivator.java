@@ -3,8 +3,10 @@ package org.moflon.core.ui;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.core.runtime.IPath;
@@ -77,7 +79,7 @@ public class MoflonCoreUiActivator extends AbstractUIPlugin {
 						RESOURCES_DEFAULT_FILES_PATH + LOG4J_CONFIG_PROPERTIES,
 						WorkspaceHelper.getPluginId(getClass()));
 
-				FileUtils.copyURLToFile(defaultConfigFile, loggingConfigurationFile);
+				Files.copy(Path.of(defaultConfigFile.toURI()), loggingConfigurationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			} catch (Exception e) {
 				LogUtils.error(logger, e, "Unable to open default config file.");
 			}

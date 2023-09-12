@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
@@ -149,7 +148,12 @@ public class WorkspaceHelper {
 		try {
 			projectFile.create(contents, true, subMon.split(1));
 		} finally {
-			IOUtils.closeQuietly(contents);
+			try {
+		        if( contents != null ) {
+		            contents.close();
+		        }
+		    } catch(final IOException e) {
+		    }
 		}
 	}
 
