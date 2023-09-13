@@ -1,6 +1,7 @@
 package org.moflon.core.plugins.manifest;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.io.IOUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -146,7 +146,7 @@ public class PluginXmlUpdater extends WorkspaceTask {
 		IFile pluginXmlFile = getPluginXml(project);
 		String content = "";
 		if (pluginXmlFile.exists()) {
-			content = IOUtils.toString(pluginXmlFile.getContents());
+			content = Files.readString(pluginXmlFile.getLocation().toPath());
 		} else {
 			content = DEFAULT_PLUGIN_XML_CONTENT;
 		}

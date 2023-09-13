@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Files;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,7 +21,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -114,7 +114,7 @@ public class XMLUtils {
 	 *             if a problem occurs while reading the file
 	 */
 	public static Document parseXmlDocument(File file) throws CoreException, IOException {
-		return parseXmlDocument(FileUtils.readFileToString(file));
+		return parseXmlDocument(Files.readString(file.toPath()));
 	}
 
 }

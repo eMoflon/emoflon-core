@@ -7,13 +7,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -42,8 +43,9 @@ public final class PsfFileUtils {
 
 		final Iterator<File> iter = files.iterator();
 		final File file1 = iter.next();
-		if (files.size() == 1)
-			return FileUtils.readFileToString(file1);
+		if (files.size() == 1) {
+			return Files.readString(file1.toPath());
+		}
 
 		final Document document1 = XMLUtils.parseXmlDocument(file1);
 		final Node root1 = document1.getChildNodes().item(0);
@@ -68,7 +70,7 @@ public final class PsfFileUtils {
 	public static List<String> extractPsfFileContents(final List<String> absolutePathsToPSF) throws IOException {
 		final List<String> psfContents = new ArrayList<>();
 		for (final String absolutePathToPSF : absolutePathsToPSF) {
-			psfContents.add(FileUtils.readFileToString(new File(absolutePathToPSF)));
+			psfContents.add(Files.readString(Path.of(absolutePathToPSF)));
 		}
 		return psfContents;
 	}

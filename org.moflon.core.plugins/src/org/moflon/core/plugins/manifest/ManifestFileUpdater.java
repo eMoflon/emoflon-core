@@ -16,7 +16,6 @@ import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -102,7 +101,12 @@ public class ManifestFileUpdater {
 				throw new CoreException(new Status(IStatus.ERROR, WorkspaceHelper.getPluginId(getClass()),
 						"Problem while stream Manifest file: " + e.getMessage(), e));
 			} finally {
-				IOUtils.closeQuietly(stream);
+				try {
+			        if( stream != null ) {
+			            stream.close();
+			        }
+			    } catch(final IOException e) {
+			    }
 			}
 		} else {
 			subMon.worked(10);
