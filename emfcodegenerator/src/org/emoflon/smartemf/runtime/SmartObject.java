@@ -315,7 +315,7 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 			resource.getContents().remove(this);
 		}
 
-		setResource(null, true);
+		var setResourceState = setResource(null, true);
 		if (eContainingFeature == null)
 			return NotifyStatus.SUCCESS_NO_NOTIFICATION;
 
@@ -326,6 +326,10 @@ public abstract class SmartObject implements MinimalSObjectContainer, InternalEO
 		eContainingFeature = null;
 
 		if (oldFeature.isMany()) {
+			if(setResourceState == NotifyStatus.SUCCESS_NOTIFICATION_SEND) {
+				((SmartCollection<?, ?>) oldContainer.eGet(oldFeature)).removeInternal(this, true, false);
+				return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
+			}
 			if (((Collection<?>) oldContainer.eGet(oldFeature)).remove(this)) {
 				return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
 			} else {
