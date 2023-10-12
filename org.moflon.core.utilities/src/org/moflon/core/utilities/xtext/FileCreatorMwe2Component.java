@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import org.apache.commons.io.IOUtils;
 import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.lib.AbstractWorkflowComponent2;
@@ -61,9 +60,12 @@ public class FileCreatorMwe2Component extends AbstractWorkflowComponent2 {
 			printStream = new PrintStream(file);
 			printStream.append(this.fileContent);
 		} catch (final IOException e) {
-			IOUtils.closeQuietly(printStream);
 			issues.addError(this,
 					String.format("Failed to creating file '%s'. Reason: '%s'", this.filePath, e.getMessage()));
+		} finally {
+	        if (printStream != null) {
+	            printStream.close();
+	        }
 		}
 	}
 

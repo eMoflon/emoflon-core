@@ -8,6 +8,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.moflon.core.plugins,
  org.moflon.core.plugins.manifest
 Require-Bundle: org.moflon.core.utilities,
- org.emoflon.core.dependencies,
- org.apache.commons.io
+ org.emoflon.core.dependencies
 Automatic-Module-Name: org.moflon.core.plugins
