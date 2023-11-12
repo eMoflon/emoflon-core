@@ -1,0 +1,29 @@
+module org.moflon.core.propertycontainer.GenerateEmoflonPropertyContainerModel
+
+import org.eclipse.xtext.ecore.EcoreSupport
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+
+import org.eclipse.emf.mwe.utils.StandaloneSetup
+import org.eclipse.emf.mwe2.ecore.EcoreGenerator
+import org.eclipse.emf.mwe2.runtime.workflow.Workflow
+
+var rootPath = ".."
+
+Workflow {
+    bean = ResourceSetImpl : resourceSet {}
+    
+    bean = StandaloneSetup {
+        resourceSet = resourceSet
+        platformUri = rootPath
+        scanClassPath = true
+    }
+    
+    component = EcoreGenerator {
+        resourceSet = resourceSet
+        
+		genModel = "platform:/resource/org.moflon.core.propertycontainer/model/Propertycontainer.genmodel"
+		srcPath = "platform:/resource/org.moflon.core.propertycontainer/gen/"
+
+		generateModel = true
+    }
+}
