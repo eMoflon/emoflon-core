@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="propertycontainer" nsURI="platform:/resource/org.moflon.core.propertycontainer/model/Propertycontainer.ecore"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="propertycontainer" nsURI="platform:/plugin/org.moflon.core.propertycontainer/model/Propertycontainer.ecore"
     nsPrefix="org.moflon.core.propertycontainer">
   <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
     <details key="basePackage" value="org.moflon.core"/>
