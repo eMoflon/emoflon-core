@@ -409,7 +409,7 @@ public class ManifestFileUpdater {
 		changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_ACTIVATION_POLICY,
 				"lazy", AttributeUpdatePolicy.KEEP);
 		changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT,
-				"JavaSE-17", AttributeUpdatePolicy.FORCE);
+				JavaVersionHelper.getJavaVersion(), AttributeUpdatePolicy.FORCE);
 		return changed;
 	}
 
