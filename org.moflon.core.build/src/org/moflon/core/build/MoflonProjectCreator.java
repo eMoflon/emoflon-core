@@ -31,6 +31,7 @@ import org.moflon.core.build.nature.MoflonProjectConfigurator;
 import org.moflon.core.build.nature.ProjectNatureAndBuilderConfiguratorTask;
 import org.moflon.core.plugins.BuildPropertiesFileBuilder;
 import org.moflon.core.plugins.PluginProperties;
+import org.moflon.core.plugins.manifest.JavaVersionHelper;
 import org.moflon.core.plugins.manifest.ManifestFileUpdater;
 import org.moflon.core.plugins.manifest.ManifestFileUpdater.AttributeUpdatePolicy;
 import org.moflon.core.plugins.manifest.PluginManifestConstants;
@@ -182,7 +183,7 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_ACTIVATION_POLICY,
 					"lazy", AttributeUpdatePolicy.KEEP);
 			changed |= ManifestFileUpdater.updateAttribute(manifest,
-					PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT, "JavaSE-17", AttributeUpdatePolicy.FORCE);
+					PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT, JavaVersionHelper.getJavaVersion(), AttributeUpdatePolicy.FORCE);
 			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.AUTOMATIC_MODULE_NAME,
 					pluginId, AttributeUpdatePolicy.KEEP);
 			return changed;
@@ -347,4 +348,5 @@ public abstract class MoflonProjectCreator extends WorkspaceTask implements Proj
 		}
 		return buildSpecs;
 	}
+
 }
