@@ -4,7 +4,7 @@ Bundle-Name: eMoflon::Core EMF build infrastructure
 Bundle-SymbolicName: org.moflon.emf.build;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: eMoflon developers
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.0.0",
  org.eclipse.core.resources;bundle-version="3.0.0";visibility:=reexport,
  org.emoflon.smartemf;bundle-version="1.0.0",
