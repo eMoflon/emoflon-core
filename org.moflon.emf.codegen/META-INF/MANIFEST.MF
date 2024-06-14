@@ -4,7 +4,7 @@ Bundle-Name: eMoflon::Core EMF code generator
 Bundle-SymbolicName: org.moflon.emf.codegen;singleton:=true
 Bundle-Version: 2.0.0.qualifier
 Bundle-Vendor: eMoflon developers
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: org.moflon.emf.codegen,
  org.moflon.emf.codegen.resource,
  org.moflon.emf.codegen.template
