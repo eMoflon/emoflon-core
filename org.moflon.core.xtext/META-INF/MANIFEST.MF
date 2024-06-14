@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: eMoflon::Core components for working with Xtext
 Bundle-SymbolicName: org.moflon.core.xtext;singleton:=true
 Bundle-Version: 2.1.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.xtext.ui,
  org.moflon.core.utilities;bundle-version="3.0.0"
 Export-Package: org.moflon.core.xtext.exceptions,
