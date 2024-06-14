@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: eMoflon::Core UI components for EMF code generation
 Bundle-SymbolicName: org.moflon.emf.ui;singleton:=true
 Bundle-Version: 1.1.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.eclipse.ui.workbench;bundle-version="3.0.0",
  org.eclipse.jface;bundle-version="3.0.0",
  org.eclipse.xtext.xbase.lib,

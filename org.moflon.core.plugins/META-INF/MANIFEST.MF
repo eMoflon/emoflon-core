@@ -4,7 +4,7 @@ Bundle-SymbolicName: org.moflon.core.plugins;singleton:=true
 Bundle-Name: eMoflon::Core components for reading, creating, and updating Eclipse plugin projects
 Bundle-Version: 3.1.0.qualifier
 Bundle-Vendor: eMoflon developers
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.moflon.core.plugins,
  org.moflon.core.plugins.manifest
 Require-Bundle: org.moflon.core.utilities,
