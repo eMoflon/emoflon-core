@@ -19,8 +19,9 @@ import org.emoflon.smartemf.persistence.SmartEMFResource;
 import org.emoflon.smartemf.runtime.SmartObject;
 import org.emoflon.smartemf.runtime.notification.SmartEMFNotification;
 
-public final class ResourceContentSmartEList<T extends EObject> extends LinkedHashSet<T>
-		implements EList<T>, InternalEList<T> {
+public final class ResourceContentSmartEList<T extends EObject> implements EList<T>, InternalEList<T> {
+
+	private LinkedHashSet<T> set;
 
 	/**
 	 * 
@@ -31,6 +32,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 
 	public ResourceContentSmartEList(SmartEMFResource r) {
 		this.resource = (SmartEMFResource) r;
+		this.set = new LinkedHashSet<T>();
 	}
 
 	@Override
@@ -42,14 +44,14 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 			resetContainment(element, !resource.equals(element.eResource()));
 			((SmartObject) element).setResource(resource, true);
 			sendAddNotification(element);
-			return super.add(element);
+			return this.set.add(element);
 		} else {
 			element.eAdapters().addAll(resource.eAdapters());
 //			resetContainment(element,!resource.equals(element.eResource()));
 
 			NotificationChain notificationChain = ((InternalEObject) element).eSetResource(resource, null);
 			sendNotifications(notificationChain);
-			boolean success = super.add(element);
+			boolean success = this.set.add(element);
 			sendAddNotification(element);
 			return success;
 		}
@@ -136,7 +138,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 				sendNotifications(notificationChain);
 			}
 		}
-		super.clear();
+		this.set.clear();
 	}
 
 	@Override
@@ -155,7 +157,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 
 	@Override
 	public boolean remove(Object o) {
-		boolean success = super.remove(o);
+		boolean success = this.set.remove(o);
 		if (success)
 			sendRemoveNotification((EObject) o);
 
@@ -238,7 +240,7 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 
 	@Override
 	public NotificationChain basicRemove(Object o, NotificationChain notifications) {
-		boolean success = super.remove(o);
+		boolean success = this.set.remove(o);
 		if (success)
 			sendRemoveNotification((EObject) o);
 
@@ -362,6 +364,46 @@ public final class ResourceContentSmartEList<T extends EObject> extends LinkedHa
 	@Override
 	public List<T> subList(int fromIndex, int toIndex) {
 		throw new UnsupportedOperationException("Sublists are not supported by SmartEMF");
+	}
+
+	@Override
+	public int size() {
+		return this.set.size();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return this.set.isEmpty();
+	}
+
+	@Override
+	public boolean contains(final Object o) {
+		return this.set.contains(o);
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return this.set.iterator();
+	}
+
+	@Override
+	public Object[] toArray() {
+		return this.set.toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		return this.set.toArray(a);
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		return this.set.containsAll(c);
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		return this.set.retainAll(c);
 	}
 
 }

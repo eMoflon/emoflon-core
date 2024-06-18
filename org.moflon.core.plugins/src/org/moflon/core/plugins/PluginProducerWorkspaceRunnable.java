@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.moflon.core.plugins.manifest.JavaVersionHelper;
 import org.moflon.core.plugins.manifest.ManifestFileUpdater;
 import org.moflon.core.plugins.manifest.ManifestFileUpdater.AttributeUpdatePolicy;
 import org.moflon.core.plugins.manifest.PluginManifestConstants;
@@ -101,7 +102,7 @@ public class PluginProducerWorkspaceRunnable implements IWorkspaceRunnable {
 			changed |= ManifestFileUpdater.updateAttribute(manifest, PluginManifestConstants.BUNDLE_ACTIVATION_POLICY,
 					"lazy", AttributeUpdatePolicy.KEEP);
 			changed |= ManifestFileUpdater.updateAttribute(manifest,
-					PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT, "JavaSE-17", AttributeUpdatePolicy.FORCE);
+					PluginManifestConstants.BUNDLE_EXECUTION_ENVIRONMENT, JavaVersionHelper.getJavaVersion(), AttributeUpdatePolicy.FORCE);
 
 			changed |= ManifestFileUpdater.updateDependencies(manifest, Arrays
 					.asList(new String[] { WorkspaceHelper.PLUGIN_ID_ECORE, WorkspaceHelper.PLUGIN_ID_ECORE_XMI }));
