@@ -22,12 +22,18 @@ public class JavaVersionHelper {
 	 * @return Java version specified in the plug-in project containing this class.
 	 */
 	private String getJavaSpecVer() {
-
 		// path of either this class file or the JAR containing this class file
-		final String helperPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+		String helperPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+
+		// workaround for Windows-based systems
+		if (runsOnWindows() && helperPath.startsWith("/")) {
+			// removes the leading slash (that is never correct ...). thank you Java and thank you Windows!
+			helperPath = helperPath.substring(1);
+		}
+
 		String javaVersion = "";
 		try {
-			// Running in deployed mode -> MANIFEST.MF must be read from JAR file	
+			// Running in deployed mode -> MANIFEST.MF must be read from JAR file
 			if (helperPath.endsWith(".jar")) {
 				final JarInputStream jarStream = new JarInputStream(new FileInputStream(helperPath));
 				final Manifest mf = jarStream.getManifest();
@@ -36,7 +42,7 @@ public class JavaVersionHelper {
 				jarStream.close();
 			} else {
 				// Running in development mode -> MANIFEST.MF can directly be read
-				final String manifestPath = helperPath + "/META-INF/MANIFEST.MF";
+				final String manifestPath = helperPath + "META-INF/MANIFEST.MF";
 				final String manifestContent = Files.readString(Path.of(manifestPath));
 				final int indexContent = manifestContent.indexOf("Bundle-RequiredExecutionEnvironment: ");
 				final String line = manifestContent.substring(indexContent,
@@ -53,6 +59,11 @@ public class JavaVersionHelper {
 
 	public static String getJavaVersion() {
 		return new JavaVersionHelper().getJavaSpecVer();
+	}
+
+	private boolean runsOnWindows() {
+		String os = System.getProperty("os.name");
+		return os.contains("win") || os.contains("Win");
 	}
 
 }
