@@ -31,6 +31,8 @@ public class MoflonPerspective implements IPerspectiveFactory {
 	private static final String MOFLON_ACTION_SET_ID = "org.moflon.ide.ui.actionSet";
 	private static final String JAVA_PACKAGE_EXPLORER_ID = "org.eclipse.jdt.ui.PackageExplorer";
 	private static final String PLANT_UML_VIEW = "net.sourceforge.plantuml.eclipse.views.PlantUmlSvgView";
+	private static final String JUNIT_VIEW = "org.eclipse.jdt.junit.ResultView";
+	private static final String PROGRESS_VIEW = "org.eclipse.ui.views.ProgressView";
 
 	/**
 	 * Opens the eMoflon perspective in the given {@link IWorkbench}
@@ -70,11 +72,13 @@ public class MoflonPerspective implements IPerspectiveFactory {
 
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
+		bottom.addView(PROGRESS_VIEW);
 
 		// Outline
 		IFolderLayout topRight = layout.createFolder("topRight", IPageLayout.RIGHT, 0.75f, layout.getEditorArea());
 		topRight.addView(IPageLayout.ID_OUTLINE);
 		topRight.addView(PLANT_UML_VIEW);
+		topRight.addView(JUNIT_VIEW);
 	}
 
 	/**
