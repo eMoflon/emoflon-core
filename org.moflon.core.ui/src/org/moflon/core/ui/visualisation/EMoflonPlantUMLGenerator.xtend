@@ -212,7 +212,8 @@ class EMoflonPlantUMLGenerator {
 	}
 	
 	private def static Object identifierForObject(EObject o){
-		'''«instanceNames.get(o)».«nameFor(o.eClass)»'''	
+		// String of the object's name must be sanitized for PlantUML
+		'''«sanitize(instanceNames.get(o))».«nameFor(o.eClass)»'''	
 	}
 	
 	def static CharSequence plantUMLPreamble(){
@@ -290,5 +291,16 @@ class EMoflonPlantUMLGenerator {
 	
 	def private static String abbr(String longString) {
 		'''«StringUtils.abbreviateMiddle(longString, REPL_STR, REPL_LEN)»'''
+	}
+	
+	/**
+	 * Sanitizes the given string for PlantUML. Currently, this method
+	 * replaces the characters " " and "-" with an underscore ("_").
+	 * 
+	 * @param s String to be sanitized.
+	 * @return Sanitized string.
+	 */
+	def private static String sanitize(String s) {
+		return s.replace(" ", "_").replace("-", "_")
 	}
 }
