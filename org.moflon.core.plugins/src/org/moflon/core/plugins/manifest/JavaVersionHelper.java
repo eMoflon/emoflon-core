@@ -49,9 +49,9 @@ public class JavaVersionHelper {
 						manifestContent.indexOf(System.lineSeparator(), indexContent));
 				javaVersion = line.substring(line.indexOf(":") + 2);
 			}
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			// fall back solution if file could not be read
-			javaVersion = "JavaSE-17";
+			javaVersion = "JavaSE-21";
 		}
 
 		return javaVersion;
