@@ -22,7 +22,7 @@ public class LinkedSmartESet<T> extends SmartCollection<T, LinkedHashSet<T>> {
 	protected void initializeCollection(EObject eContainer, EReference feature) {
 		elements = new LinkedHashSet<T>();
 	}
-	
+
 	@Override
 	public T basicGet(int index) {
 		return get(index);
@@ -105,17 +105,19 @@ public class LinkedSmartESet<T> extends SmartCollection<T, LinkedHashSet<T>> {
 			@Override
 			public void replace(T element) {
 				if (iteratorIndex <= 0)
-					throw new NoSuchElementException("There is no last element to replace! Please call method next(), first!");
+					throw new NoSuchElementException(
+							"There is no last element to replace! Please call method next(), first!");
 				elements.remove(copiedElements[iteratorIndex - 1]);
-				// since this SmartCollection behaves like a set, we do not have to insert the new element at the
+				// since this SmartCollection behaves like a set, we do not have to insert the
+				// new element at the
 				// same position as the removed one
 				elements.add(element);
 			}
 		};
 	}
-	
+
 // Unsupported EList operations
-	
+
 	@Override
 	public void move(int newPosition, T object) {
 		throw new UnsupportedOperationException("Not supported for Sets");
@@ -161,7 +163,7 @@ public class LinkedSmartESet<T> extends SmartCollection<T, LinkedHashSet<T>> {
 	public List<T> subList(int fromIndex, int toIndex) {
 		throw new UnsupportedOperationException("Not supported for Sets");
 	}
-	
+
 	@Override
 	public NotificationChain basicRemove(Object object, NotificationChain notifications) {
 		throw new UnsupportedOperationException("Not supported for SmartESets");
@@ -171,7 +173,7 @@ public class LinkedSmartESet<T> extends SmartCollection<T, LinkedHashSet<T>> {
 	public NotificationChain basicAdd(T object, NotificationChain notifications) {
 		throw new UnsupportedOperationException("Not supported for SmartESets");
 	}
-	
+
 	@Override
 	public T setUnique(int index, T object) {
 		throw new UnsupportedOperationException("Not supported for SmartESets");

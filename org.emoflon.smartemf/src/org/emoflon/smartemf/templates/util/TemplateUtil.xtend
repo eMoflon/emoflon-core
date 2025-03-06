@@ -132,7 +132,9 @@ class TemplateUtil {
 		for(genpkg : genModel.genPackages) {
 			val pkgURI = genpkg.NSURI
 			val genModelURI = pkgURI.replace(".ecore", ".genmodel")
-			val resourceURI = genModelURI.replace("platform:/", "platform:/resource/")
+			var resourceURI = genModelURI
+			if(!resourceURI.contains("platform:/resource/")) 
+			 	resourceURI = resourceURI.replace("platform:/", "platform:/resource/")
 			uriStringToGenModelMap.put(resourceURI, genModel)
 		}
 	}

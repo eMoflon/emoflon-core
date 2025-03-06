@@ -102,10 +102,10 @@ public final class ResourceContentSmartEList<T extends EObject> implements EList
 		if (oldContainer != null) {
 			if (e.eContainingFeature().isMany()) {
 				Object getResult = oldContainer.eGet(e.eContainingFeature());
-//				if(removeRecursively)
-				((SmartCollection<?, ?>) getResult).remove(e);
-//				else
-//					((SmartCollection<?, ?>) getResult).removeWithoutContainerResetting(e);
+				if (removeRecursively)
+					((SmartCollection<?, ?>) getResult).remove(e);
+				else
+					((SmartCollection<?, ?>) getResult).removeWithoutContainerResetting(e);
 			} else {
 				if (removeRecursively) {
 					oldContainer.eUnset(e.eContainingFeature());
