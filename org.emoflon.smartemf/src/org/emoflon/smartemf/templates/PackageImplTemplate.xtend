@@ -211,7 +211,7 @@ class PackageImplTemplate implements CodeTemplate{
 							«(ref.isUnsettable)?"":"!"»IS_UNSETTABLE, «(ref.isUnique)?"":"!"»IS_UNIQUE, «(ref.isDerived)?"":"!"»IS_DERIVED, «(ref.isOrdered)?"":"!"»IS_ORDERED);
 						«ELSE»«val attr = feature as EAttribute»
 						initEAttribute(get«clazz.name»_«attr.name.toFirstUpper»(), «IF attr.EType.EPackage.equals(EcorePackage.eINSTANCE)»ecorePackage.get«attr.EType.name»()«ELSE»«IF genPack.getEcorePackage().nsURI.equals(attr.EType.EPackage.nsURI)»this«ELSE»«TemplateUtil.getPackageClassName(attr.EType)».eINSTANCE«ENDIF».get«attr.EType.name.toFirstUpper»()«ENDIF»,
-							"«attr.name»", «(attr.defaultValue === null)?"null":"\""+attr.defaultValue+"\""», «attr.lowerBound», «attr.upperBound», «clazz.name».class, «(attr.isTransient)?"":"!"»IS_TRANSIENT, «(attr.isVolatile)?"":"!"»IS_VOLATILE, «(attr.isChangeable)?"":"!"»IS_CHANGEABLE, «(attr.isUnsettable)?"":"!"»IS_UNSETTABLE, «(attr.isUnique)?"":"!"»IS_ID, IS_UNIQUE,
+							"«attr.name»", «(attr.defaultValue === null)?"null":"\""+attr.defaultValue+"\""», «attr.lowerBound», «attr.upperBound», «clazz.name».class, «(attr.isTransient)?"":"!"»IS_TRANSIENT, «(attr.isVolatile)?"":"!"»IS_VOLATILE, «(attr.isChangeable)?"":"!"»IS_CHANGEABLE, «(attr.isUnsettable)?"":"!"»IS_UNSETTABLE, «(attr.isID)?"":"!"»IS_ID, «(attr.isUnique)?"":"!"»IS_UNIQUE,
 							«(attr.isDerived)?"":"!"»IS_DERIVED, «(attr.isOrdered)?"":"!"»IS_ORDERED);
 						«ENDIF»
 					«ENDFOR»
