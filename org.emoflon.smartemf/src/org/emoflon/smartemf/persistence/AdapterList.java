@@ -13,11 +13,11 @@ public class AdapterList implements EList<Adapter> {
 
 	private Collection<Adapter> adapters = new LinkedHashSet<>();
 	private SmartEMFResource resource;
-	
+
 	public AdapterList(SmartEMFResource resource) {
 		this.resource = resource;
 	}
-	
+
 	@Override
 	public int size() {
 		return adapters.size();
@@ -50,7 +50,7 @@ public class AdapterList implements EList<Adapter> {
 
 	@Override
 	public boolean add(Adapter e) {
-		if(!adapters.contains(e)) {
+		if (!adapters.contains(e)) {
 			boolean result = adapters.add(e);
 			resource.adapterAdded(e);
 			return result;
@@ -76,7 +76,7 @@ public class AdapterList implements EList<Adapter> {
 	@Override
 	public boolean addAll(Collection<? extends Adapter> c) {
 		boolean changed = false;
-		for(Adapter a : c) {
+		for (Adapter a : c) {
 			changed = changed || add(a);
 		}
 		return changed;
@@ -90,10 +90,10 @@ public class AdapterList implements EList<Adapter> {
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		boolean changed = false;
-		for(Object a : c) {
+		for (Object a : c) {
 			boolean success = remove(a);
 			changed = changed || success;
-			if(success)
+			if (success)
 				resource.sendRemoveAdapterMessages((Adapter) a);
 		}
 		return changed;

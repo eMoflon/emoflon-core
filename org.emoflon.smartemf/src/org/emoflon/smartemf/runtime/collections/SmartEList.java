@@ -198,7 +198,8 @@ public class SmartEList<T> extends SmartCollection<T, LinkedList<T>> {
 			@Override
 			public void replace(T element) {
 				if (iteratorIndex <= 0)
-					throw new NoSuchElementException("There is no last element to replace! Please call method next(), first!");
+					throw new NoSuchElementException(
+							"There is no last element to replace! Please call method next(), first!");
 				elements.set(iteratorIndex - 1, element);
 			}
 

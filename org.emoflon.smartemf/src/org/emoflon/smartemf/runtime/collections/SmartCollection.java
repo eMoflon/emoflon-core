@@ -28,7 +28,7 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		this(eContainer, feature);
 		this.sendNotifications = sendNotifications;
 	}
-	
+
 	public SmartCollection(EObject eContainer, EReference feature) {
 		this.eContainer = eContainer;
 		this.feature = feature;
@@ -123,7 +123,8 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 				status = addStatus;
 		}
 
-		// if feature is containment then set resource should have sent this notification already
+		// if feature is containment then set resource should have sent this
+		// notification already
 		if (!feature.isContainment())
 			sendNotification(SmartEMFNotification.createAddManyNotification(eContainer, feature, newList, 0));
 
@@ -140,7 +141,6 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 		return NotifyStatus.SUCCESS_NOTIFICATION_SEND;
 	}
 
-	
 	/**
 	 * Returns status of execution and if a REMOVE notification was sent or not
 	 */
@@ -238,12 +238,13 @@ public abstract class SmartCollection<T, L extends Collection<T>> implements ELi
 	}
 
 	protected void sendNotification(Notification n) {
-		// if the feature is a containment, then notifications are handled when setting the resource
+		// if the feature is a containment, then notifications are handled when setting
+		// the resource
 //		if(feature.isContainment())
 //			return;
-		if(!sendNotifications)
+		if (!sendNotifications)
 			return;
-		
+
 		Resource r = eContainer.eResource();
 		if (r != null) {
 			for (Adapter a : r.eAdapters()) {

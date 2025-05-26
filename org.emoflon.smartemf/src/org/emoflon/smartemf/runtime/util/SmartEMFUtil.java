@@ -26,7 +26,8 @@ import org.emoflon.smartemf.runtime.collections.SmartCollection;
 public class SmartEMFUtil {
 
 	public static void deleteNode(EObject node, boolean recursive) {
-		// reset containment is only called for this element (and not recursively) like in EMF
+		// reset containment is only called for this element (and not recursively) like
+		// in EMF
 		deleteNode_internal(node, recursive);
 		((SmartObject) node).resetContainment();
 	}
@@ -93,7 +94,8 @@ public class SmartEMFUtil {
 
 	@SuppressWarnings("unchecked")
 	private static void resolveCrossReferences(EObject eObject) {
-		// for all but SmartEMF objects we assume the references are resolved by iterating over them
+		// for all but SmartEMF objects we assume the references are resolved by
+		// iterating over them
 		if (eObject instanceof SmartObject) {
 			for (EReference reference : eObject.eClass().getEAllReferences()) {
 				if (reference.isContainment())
@@ -124,7 +126,8 @@ public class SmartEMFUtil {
 	}
 
 	private static void resolveProxyContainer(EObject eObject) {
-		// for all but SmartEMF objects we assume the container is resolved by calling EObject#eContainer
+		// for all but SmartEMF objects we assume the container is resolved by calling
+		// EObject#eContainer
 		EObject eContainer = eObject.eContainer();
 		if (eContainer != null && eContainer instanceof SmartObject && eContainer.eIsProxy()) {
 			EObject resolved = EcoreUtil.resolve(eContainer, eObject);
