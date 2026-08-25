@@ -6,6 +6,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 public class SmartEMFResourceFactoryImpl implements Resource.Factory {
 
 	private final String workspacePath;
+
 	/**
 	 * Constructor for XtendXMIResourceFactoryImpl
 	 */

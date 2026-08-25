@@ -8,17 +8,15 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 
 public class SmartContentAdapter extends EContentAdapter {
-	
+
 	@Override
-	protected void unsetTarget(Resource target)
-	  {
-	    basicUnsetTarget(target);
-	    List<EObject> contents = target.getContents();
-	    for (EObject e : contents)
-	    {
-	      Notifier notifier = e;
-	      removeAdapter(notifier, true, false);
-	    }
-	  }
+	protected void unsetTarget(Resource target) {
+		basicUnsetTarget(target);
+		List<EObject> contents = target.getContents();
+		for (EObject e : contents) {
+			Notifier notifier = e;
+			removeAdapter(notifier, true, false);
+		}
+	}
 
 }

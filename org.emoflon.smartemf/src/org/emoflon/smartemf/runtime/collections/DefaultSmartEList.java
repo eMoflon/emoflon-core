@@ -20,15 +20,15 @@ import org.eclipse.emf.ecore.util.InternalEList;
 public final class DefaultSmartEList<T> extends LinkedList<T> implements EList<T>, InternalEList<T> {
 
 	private EStructuralFeature feature = null;
-	
+
 	public DefaultSmartEList() {
-		
+
 	}
-	
+
 	public DefaultSmartEList(EStructuralFeature feature) {
 		this.feature = feature;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -38,42 +38,42 @@ public final class DefaultSmartEList<T> extends LinkedList<T> implements EList<T
 	public boolean add(T e) {
 		return super.add(e);
 	}
-	
+
 	@Override
 	public void add(int index, T element) {
 		super.add(index, element);
 	}
-	
+
 	@Override
 	public boolean addAll(Collection<? extends T> c) {
 		return super.addAll(c);
 	}
-	
+
 	@Override
 	public boolean addAll(int index, Collection<? extends T> c) {
 		return super.addAll(index, c);
 	}
-	
+
 	@Override
 	public void clear() {
 		super.clear();
 	}
-	
+
 	@Override
 	public T remove(int index) {
 		return super.remove(index);
 	}
-	
+
 	@Override
 	public boolean remove(Object o) {
 		return super.remove(o);
 	}
-	
+
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		return super.removeAll(c);
 	}
-	
+
 	@Override
 	public T basicGet(int index) {
 		return get(index);
@@ -83,7 +83,7 @@ public final class DefaultSmartEList<T> extends LinkedList<T> implements EList<T
 	public List<T> basicList() {
 		return this;
 	}
-	
+
 	@Override
 	public Iterator<T> iterator() {
 		return basicIterator();
@@ -93,7 +93,7 @@ public final class DefaultSmartEList<T> extends LinkedList<T> implements EList<T
 	public Iterator<T> basicIterator() {
 		Iterator<T> listIterator = super.iterator();
 		Iterator<T> featureIterator = new EContentsEList.FeatureIterator<T>() {
-			
+
 			@Override
 			public boolean hasNext() {
 				return listIterator.hasNext();

@@ -16,9 +16,9 @@ import org.eclipse.emf.ecore.EReference;
 public class SmartESet<T> extends SmartCollection<T, LinkedHashSet<T>> {
 
 	public SmartESet(EObject eContainer, EReference feature, boolean sendNotifications) {
-		super(eContainer, feature, sendNotifications);		
+		super(eContainer, feature, sendNotifications);
 	}
-	
+
 	public SmartESet(EObject eContainer, EReference feature) {
 		super(eContainer, feature);
 	}
@@ -170,9 +170,11 @@ public class SmartESet<T> extends SmartCollection<T, LinkedHashSet<T>> {
 			@Override
 			public void replace(T element) {
 				if (iteratorIndex <= 0)
-					throw new NoSuchElementException("There is no last element to replace! Please call method next(), first!");
+					throw new NoSuchElementException(
+							"There is no last element to replace! Please call method next(), first!");
 				elements.remove(copiedElements[iteratorIndex - 1]);
-				// since this SmartCollection behaves like a set, we do not have to insert the new element at the
+				// since this SmartCollection behaves like a set, we do not have to insert the
+				// new element at the
 				// same position as the removed one
 				elements.add(element);
 			}
